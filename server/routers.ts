@@ -242,14 +242,82 @@ export const appRouter = router({
     getSourcesStatus: publicProcedure.query(async () => {
       const hasGNewsKey = !!process.env.GNEWS_API_KEY;
       const hasNewsAPIKey = !!process.env.NEWS_API_KEY;
+      const hasYouTubeKey = !!process.env.YOUTUBE_API_KEY;
 
       return {
         gnews: { available: hasGNewsKey, name: 'GNews API' },
         newsapi: { available: hasNewsAPIKey, name: 'NewsAPI' },
+        reddit: { available: true, name: 'Reddit (Public)' },
+        mastodon: { available: true, name: 'Mastodon (Public)' },
+        bluesky: { available: true, name: 'Bluesky (Public)' },
+        youtube: { available: hasYouTubeKey, name: 'YouTube Comments' },
+        telegram: { available: true, name: 'Telegram (Simulation)' },
         aiAnalysis: { available: true, name: 'AI Sentiment Analysis' },
         fallback: { available: true, name: 'Simulation Mode' },
       };
     }),
+  }),
+
+  // Social Media Integration
+  social: router({
+    /**
+     * Search all social media platforms
+     */
+    searchAll: publicProcedure
+      .input(z.object({ query: z.string().min(1).max(200), limit: z.number().min(1).max(100).default(50) }))
+      .query(async ({ input }) => {
+        const { fetchAllSocialMedia } = await import("./socialMediaService");
+        return await fetchAllSocialMedia(input);
+      }),
+
+    /**
+     * Search specific platforms
+     */
+    searchPlatforms: publicProcedure
+      .input(z.object({
+        platforms: z.array(z.enum(['reddit', 'mastodon', 'bluesky', 'youtube', 'telegram'])),
+        query: z.string().min(1).max(200),
+        limit: z.number().min(1).max(50).default(25),
+      }))
+      .query(async ({ input }) => {
+        const { fetchFromPlatforms } = await import("./socialMediaService");
+        return await fetchFromPlatforms(input.platforms, { query: input.query, limit: input.limit });
+      }),
+
+    /**
+     * Get social media posts for a country
+     */
+    getCountryPosts: publicProcedure
+      .input(z.object({ countryCode: z.string().length(2), limit: z.number().min(1).max(50).default(30) }))
+      .query(async ({ input }) => {
+        const { fetchCountrySocialMedia } = await import("./socialMediaService");
+        return await fetchCountrySocialMedia(input.countryCode, input.limit);
+      }),
+
+    /**
+     * Analyze social media posts with AI
+     */
+    analyzePostsWithAI: publicProcedure
+      .input(z.object({ query: z.string().min(1).max(200), limit: z.number().min(1).max(30).default(20) }))
+      .query(async ({ input }) => {
+        const { fetchAllSocialMedia } = await import("./socialMediaService");
+        const { analyzeTextsWithAI } = await import("./aiSentimentAnalyzer");
+
+        // Fetch posts
+        const socialData = await fetchAllSocialMedia(input);
+
+        // Analyze texts
+        const texts = socialData.posts.map(p => p.text).slice(0, 20);
+        const analysis = await analyzeTextsWithAI(texts);
+
+        return {
+          ...socialData,
+          analysis: analysis.aggregated,
+          detailedResults: analysis.results,
+          isAIAnalyzed: analysis.isAIAnalyzed,
+          analyzedAt: new Date(),
+        };
+      }),
   }),
 });
 

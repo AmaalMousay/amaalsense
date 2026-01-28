@@ -57,6 +57,12 @@ export default function Home() {
             >
               Live
             </button>
+            <button
+              onClick={() => navigate('/social')}
+              className="text-sm hover:text-accent transition-colors"
+            >
+              Social
+            </button>
             <Button
               onClick={() => navigate('/dashboard')}
               className="glow-button text-white"

@@ -72,3 +72,15 @@
 - [x] Add data source indicators in UI
 - [x] Implement caching for API responses
 - [x] Add fallback to simulation when API unavailable
+
+
+## Phase 11: Social Media Integration (NEW)
+- [x] Create Reddit API integration service
+- [x] Create Mastodon API integration service
+- [x] Create Bluesky API integration service
+- [x] Create YouTube Comments API integration service
+- [x] Create Telegram public channels integration service
+- [x] Add unified social media data fetcher
+- [x] Update UI to display multiple data sources
+- [x] Add source selection and filtering
+- [x] Create tests for social media services
