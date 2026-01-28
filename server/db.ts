@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc, asc, gte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,72 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+/**
+ * Get the latest emotion indices
+ */
+export async function getLatestEmotionIndices() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(emotionIndices)
+    .orderBy((t) => desc(t.analyzedAt))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Get emotion indices history for a given time range
+ */
+export async function getEmotionIndicesHistory(hoursBack: number = 24) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(emotionIndices)
+    .where(gte(emotionIndices.analyzedAt, cutoffTime))
+    .orderBy((t) => asc(t.analyzedAt));
+}
+
+/**
+ * Create a new emotion analysis record
+ */
+export async function createEmotionAnalysis(analysis: InsertEmotionAnalysis) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(emotionAnalyses).values(analysis);
+  return result;
+}
+
+/**
+ * Create a new emotion index snapshot
+ */
+export async function createEmotionIndex(index: InsertEmotionIndex) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(emotionIndices).values(index);
+  return result;
+}
+
+/**
+ * Get recent emotion analyses
+ */
+export async function getRecentEmotionAnalyses(limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(emotionAnalyses)
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+
