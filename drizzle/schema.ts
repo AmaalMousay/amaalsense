@@ -77,3 +77,62 @@ export const emotionAnalyses = mysqlTable("emotion_analyses", {
 
 export type EmotionAnalysis = typeof emotionAnalyses.$inferSelect;
 export type InsertEmotionAnalysis = typeof emotionAnalyses.$inferInsert;
+
+/**
+ * Country Emotion Indices Table - stores emotion indices for each country
+ * Allows tracking emotional state by geographic region
+ */
+export const countryEmotionIndices = mysqlTable("country_emotion_indices", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ISO 3166-1 alpha-2 country code (e.g., 'SA', 'US', 'GB') */
+  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  /** Country name */
+  countryName: varchar("country_name", { length: 100 }).notNull(),
+  /** Global Mood Index for the country (-100 to +100) */
+  gmi: int("gmi").notNull().default(0),
+  /** Collective Fear Index for the country (0 to 100) */
+  cfi: int("cfi").notNull().default(0),
+  /** Hope Resilience Index for the country (0 to 100) */
+  hri: int("hri").notNull().default(0),
+  /** Confidence score for the analysis */
+  confidence: int("confidence").notNull().default(75),
+  /** Timestamp of the analysis */
+  analyzedAt: timestamp("analyzedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CountryEmotionIndex = typeof countryEmotionIndices.$inferSelect;
+export type InsertCountryEmotionIndex = typeof countryEmotionIndices.$inferInsert;
+
+/**
+ * Country Emotion Analyses - stores detailed emotion vectors for each country
+ */
+export const countryEmotionAnalyses = mysqlTable("country_emotion_analyses", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ISO 3166-1 alpha-2 country code */
+  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  /** Country name */
+  countryName: varchar("country_name", { length: 100 }).notNull(),
+  /** The analyzed headline or news source */
+  source: text("source").notNull(),
+  /** Emotion vector: joy (0-100) */
+  joy: int("joy").notNull().default(0),
+  /** Emotion vector: fear (0-100) */
+  fear: int("fear").notNull().default(0),
+  /** Emotion vector: anger (0-100) */
+  anger: int("anger").notNull().default(0),
+  /** Emotion vector: sadness (0-100) */
+  sadness: int("sadness").notNull().default(0),
+  /** Emotion vector: hope (0-100) */
+  hope: int("hope").notNull().default(0),
+  /** Emotion vector: curiosity (0-100) */
+  curiosity: int("curiosity").notNull().default(0),
+  /** Dominant emotion detected */
+  dominantEmotion: varchar("dominant_emotion", { length: 32 }).notNull(),
+  /** Confidence score of the analysis */
+  confidence: int("confidence").notNull().default(75),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CountryEmotionAnalysis = typeof countryEmotionAnalyses.$inferSelect;
+export type InsertCountryEmotionAnalysis = typeof countryEmotionAnalyses.$inferInsert;

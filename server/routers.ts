@@ -85,6 +85,47 @@ export const appRouter = router({
         return await getRecentEmotionAnalyses(input.limit);
       }),
   }),
+
+  map: router({
+    /**
+     * Get all countries emotion data for world map
+     */
+    getAllCountriesEmotions: publicProcedure.query(async () => {
+      const { generateAllCountriesEmotionData } = await import("./countryEmotionAnalyzer");
+      const { getLatestEmotionIndices } = await import("./db");
+
+      const globalIndices = await getLatestEmotionIndices();
+      const baseGMI = globalIndices?.gmi || 0;
+      const baseCFI = globalIndices?.cfi || 50;
+      const baseHRI = globalIndices?.hri || 50;
+
+      return generateAllCountriesEmotionData(baseGMI, baseCFI, baseHRI);
+    }),
+
+    /**
+     * Get emotion data for a specific country
+     */
+    getCountryEmotions: publicProcedure
+      .input(z.object({ countryCode: z.string().length(2) }))
+      .query(async ({ input }) => {
+        const { COUNTRIES, generateCountryEmotionData } = await import("./countryEmotionAnalyzer");
+        const { getLatestEmotionIndices } = await import("./db");
+
+        const country = COUNTRIES.find((c) => c.code === input.countryCode);
+        if (!country) {
+          throw new Error(`Country code ${input.countryCode} not found`);
+        }
+
+        const globalIndices = await getLatestEmotionIndices();
+        return generateCountryEmotionData(
+          input.countryCode,
+          country.name,
+          globalIndices?.gmi || 0,
+          globalIndices?.cfi || 50,
+          globalIndices?.hri || 50
+        );
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -15,6 +15,13 @@
       "when": 1769641916639,
       "tag": "0001_messy_medusa",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769642416649,
+      "tag": "0002_aromatic_nightshade",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { eq, desc, asc, gte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex } from "../drizzle/schema";
+import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -153,6 +153,79 @@ export async function getRecentEmotionAnalyses(limit: number = 10) {
   return await db
     .select()
     .from(emotionAnalyses)
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get all country emotion indices
+ */
+export async function getAllCountryEmotionIndices() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .orderBy((t) => desc(t.analyzedAt));
+}
+
+/**
+ * Get latest emotion index for a specific country
+ */
+export async function getCountryEmotionIndex(countryCode: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(eq(countryEmotionIndices.countryCode, countryCode))
+    .orderBy((t) => desc(t.analyzedAt))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Create or update country emotion index
+ */
+export async function upsertCountryEmotionIndex(data: InsertCountryEmotionIndex) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(countryEmotionIndices).values(data).onDuplicateKeyUpdate({
+    set: {
+      gmi: data.gmi,
+      cfi: data.cfi,
+      hri: data.hri,
+      confidence: data.confidence,
+      analyzedAt: new Date(),
+    },
+  });
+}
+
+/**
+ * Create country emotion analysis record
+ */
+export async function createCountryEmotionAnalysis(data: InsertCountryEmotionAnalysis) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(countryEmotionAnalyses).values(data);
+}
+
+/**
+ * Get recent analyses for a specific country
+ */
+export async function getCountryRecentAnalyses(countryCode: string, limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(countryEmotionAnalyses)
+    .where(eq(countryEmotionAnalyses.countryCode, countryCode))
     .orderBy((t) => desc(t.createdAt))
     .limit(limit);
 }

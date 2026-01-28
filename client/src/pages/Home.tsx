@@ -45,6 +45,12 @@ export default function Home() {
             >
               Analyzer
             </button>
+            <button
+              onClick={() => navigate('/map')}
+              className="text-sm hover:text-accent transition-colors"
+            >
+              Map
+            </button>
             <Button
               onClick={() => navigate('/dashboard')}
               className="glow-button text-white"
