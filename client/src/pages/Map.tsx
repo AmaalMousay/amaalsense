@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { WorldMap } from '@/components/WorldMap';
 import { IndexCard } from '@/components/IndexCard';
+import { CountryHistoricalChart } from '@/components/CountryHistoricalChart';
+import { TimeRangeSelector } from '@/components/TimeRangeSelector';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Globe } from 'lucide-react';
@@ -16,11 +18,21 @@ interface CountryEmotionData {
   confidence: number;
 }
 
+interface HistoricalDataPoint {
+  timestamp: Date;
+  gmi: number;
+  cfi: number;
+  hri: number;
+  confidence: number;
+}
+
 export default function Map() {
   const [, navigate] = useLocation();
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [countriesData, setCountriesData] = useState<CountryEmotionData[]>([]);
   const [selectedCountryData, setSelectedCountryData] = useState<CountryEmotionData | null>(null);
+  const [timeRange, setTimeRange] = useState<number>(24);
+  const [historicalData, setHistoricalData] = useState<HistoricalDataPoint[]>([]);
 
   // Fetch all countries emotion data
   const { data: allCountriesData, isLoading } = trpc.map.getAllCountriesEmotions.useQuery();
@@ -31,10 +43,15 @@ export default function Map() {
     { enabled: !!selectedCountry }
   );
 
+  // Fetch historical data for selected country
+  const { data: historicalCountryData, isLoading: isLoadingHistorical } = trpc.map.getCountryHistoricalData.useQuery(
+    { countryCode: selectedCountry || 'SA', hoursBack: timeRange },
+    { enabled: !!selectedCountry }
+  );
+
   useEffect(() => {
     if (allCountriesData) {
       setCountriesData(allCountriesData);
-      // Set first country as default
       if (!selectedCountry && allCountriesData.length > 0) {
         setSelectedCountry(allCountriesData[0].countryCode);
       }
@@ -47,8 +64,26 @@ export default function Map() {
     }
   }, [countryData]);
 
+  useEffect(() => {
+    if (historicalCountryData) {
+      setHistoricalData(
+        historicalCountryData.map((d: any) => ({
+          timestamp: new Date(d.timestamp),
+          gmi: d.gmi,
+          cfi: d.cfi,
+          hri: d.hri,
+          confidence: d.confidence,
+        }))
+      );
+    }
+  }, [historicalCountryData]);
+
   const handleCountrySelect = (countryCode: string) => {
     setSelectedCountry(countryCode);
+  };
+
+  const handleTimeRangeChange = (hours: number) => {
+    setTimeRange(hours);
   };
 
   return (
@@ -74,6 +109,13 @@ export default function Map() {
       {/* Main Content */}
       <div className="flex-1 py-12">
         <div className="container space-y-8">
+          {/* Time Range Selector */}
+          <TimeRangeSelector
+            selectedRange={timeRange}
+            onRangeChange={handleTimeRangeChange}
+            isLoading={isLoadingHistorical}
+          />
+
           {/* World Map */}
           {isLoading ? (
             <Card className="cosmic-card p-8 text-center">
@@ -126,6 +168,19 @@ export default function Map() {
                   />
                 </div>
               </div>
+
+              {/* Historical Chart */}
+              {isLoadingHistorical ? (
+                <Card className="cosmic-card p-8 text-center">
+                  <p className="text-muted-foreground">Loading historical data...</p>
+                </Card>
+              ) : historicalData.length > 0 ? (
+                <CountryHistoricalChart
+                  countryName={selectedCountryData.countryName}
+                  data={historicalData}
+                  chartType="area"
+                />
+              ) : null}
 
               {/* Country Statistics */}
               <Card className="cosmic-card p-6">

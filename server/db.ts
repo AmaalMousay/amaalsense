@@ -1,4 +1,4 @@
-import { eq, desc, asc, gte } from "drizzle-orm";
+import { eq, desc, asc, gte, and, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -231,3 +231,68 @@ export async function getCountryRecentAnalyses(countryCode: string, limit: numbe
 }
 
 
+
+
+/**
+ * Get historical emotion indices for a country within a time range
+ */
+export async function getCountryHistoricalIndices(
+  countryCode: string,
+  hoursBack: number = 24
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(
+      and(
+        eq(countryEmotionIndices.countryCode, countryCode),
+        gte(countryEmotionIndices.analyzedAt, startTime)
+      )
+    )
+    .orderBy((t) => asc(t.analyzedAt));
+}
+
+/**
+ * Get historical emotion indices for all countries within a time range
+ */
+export async function getAllCountriesHistoricalIndices(hoursBack: number = 24) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(gte(countryEmotionIndices.analyzedAt, startTime))
+    .orderBy((t) => asc(t.analyzedAt));
+}
+
+/**
+ * Get historical emotion indices for multiple countries
+ */
+export async function getMultipleCountriesHistoricalIndices(
+  countryCodes: string[],
+  hoursBack: number = 24
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(
+      and(
+        inArray(countryEmotionIndices.countryCode, countryCodes),
+        gte(countryEmotionIndices.analyzedAt, startTime)
+      )
+    )
+    .orderBy((t) => asc(t.analyzedAt));
+}

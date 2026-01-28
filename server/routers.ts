@@ -125,6 +125,43 @@ export const appRouter = router({
           globalIndices?.hri || 50
         );
       }),
+
+    /**
+     * Get historical emotion data for a country
+     */
+    getCountryHistoricalData: publicProcedure
+      .input(z.object({ countryCode: z.string().length(2), hoursBack: z.number().min(1).max(720).default(24) }))
+      .query(async ({ input }) => {
+        const { generateCountryHistoricalData } = await import("./countryTimeSeriesGenerator");
+        const { COUNTRIES } = await import("./countryEmotionAnalyzer");
+
+        const country = COUNTRIES.find((c) => c.code === input.countryCode);
+        if (!country) {
+          throw new Error(`Country code ${input.countryCode} not found`);
+        }
+
+        return generateCountryHistoricalData(input.countryCode, country.name, input.hoursBack);
+      }),
+
+    /**
+     * Get historical data for multiple countries
+     */
+    getMultipleCountriesHistoricalData: publicProcedure
+      .input(z.object({ countryCodes: z.array(z.string().length(2)), hoursBack: z.number().min(1).max(720).default(24) }))
+      .query(async ({ input }) => {
+        const { generateMultipleCountriesHistoricalData } = await import("./countryTimeSeriesGenerator");
+        const { COUNTRIES } = await import("./countryEmotionAnalyzer");
+
+        const countries = input.countryCodes
+          .map((code) => COUNTRIES.find((c) => c.code === code))
+          .filter((c) => c !== undefined) as Array<{ code: string; name: string }>;
+
+        if (countries.length === 0) {
+          throw new Error('No valid country codes provided');
+        }
+
+        return generateMultipleCountriesHistoricalData(countries, input.hoursBack);
+      }),
   }),
 });
 

@@ -51,3 +51,13 @@
 - [x] Create map visualization page with country details
 - [x] Implement color coding based on emotion indices
 - [x] Add country selection and detail view
+
+
+## Phase 9: Time-Series System for World Map (NEW)
+- [x] Add database functions for historical country emotion data
+- [x] Create time-range data generation for countries
+- [x] Build historical charts component for countries
+- [x] Add time slider/selector on map page
+- [x] Implement time-based map updates
+- [x] Create comparison view for different time periods
+- [x] Add animation for time progression
