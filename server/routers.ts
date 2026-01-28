@@ -163,6 +163,94 @@ export const appRouter = router({
         return generateMultipleCountriesHistoricalData(countries, input.hoursBack);
       }),
   }),
+
+  // Real-time news and AI analysis
+  realtime: router({
+    /**
+     * Analyze a headline using AI
+     */
+    analyzeWithAI: publicProcedure
+      .input(z.object({ text: z.string().min(1).max(1000) }))
+      .mutation(async ({ input }) => {
+        const { analyzeTextWithAI } = await import("./aiSentimentAnalyzer");
+        return await analyzeTextWithAI(input.text);
+      }),
+
+    /**
+     * Fetch and analyze news for a country
+     */
+    getCountryNewsAnalysis: publicProcedure
+      .input(z.object({ countryCode: z.string().length(2), pageSize: z.number().min(1).max(20).default(10) }))
+      .query(async ({ input }) => {
+        const { getNewsWithFallback } = await import("./newsService");
+        const { analyzeTextsWithAI } = await import("./aiSentimentAnalyzer");
+
+        // Fetch news
+        const { articles, isReal } = await getNewsWithFallback(input.countryCode, input.pageSize);
+
+        // Analyze headlines
+        const headlines = articles.map(a => a.title);
+        const analysis = await analyzeTextsWithAI(headlines);
+
+        return {
+          countryCode: input.countryCode,
+          articles,
+          analysis: analysis.aggregated,
+          detailedResults: analysis.results,
+          isRealNews: isReal,
+          isAIAnalyzed: analysis.isAIAnalyzed,
+          analyzedAt: new Date(),
+        };
+      }),
+
+    /**
+     * Fetch global news and analyze
+     */
+    getGlobalNewsAnalysis: publicProcedure
+      .input(z.object({ pageSize: z.number().min(1).max(30).default(20) }))
+      .query(async ({ input }) => {
+        const { fetchGlobalNews, generateMockNews } = await import("./newsService");
+        const { analyzeTextsWithAI } = await import("./aiSentimentAnalyzer");
+
+        // Fetch global news
+        let articles = await fetchGlobalNews(input.pageSize);
+        let isReal = articles.length > 0;
+
+        // Fallback to mock if no real news
+        if (articles.length === 0) {
+          articles = generateMockNews('US', input.pageSize);
+          isReal = false;
+        }
+
+        // Analyze headlines
+        const headlines = articles.map(a => a.title);
+        const analysis = await analyzeTextsWithAI(headlines);
+
+        return {
+          articles,
+          analysis: analysis.aggregated,
+          detailedResults: analysis.results,
+          isRealNews: isReal,
+          isAIAnalyzed: analysis.isAIAnalyzed,
+          analyzedAt: new Date(),
+        };
+      }),
+
+    /**
+     * Get available news sources status
+     */
+    getSourcesStatus: publicProcedure.query(async () => {
+      const hasGNewsKey = !!process.env.GNEWS_API_KEY;
+      const hasNewsAPIKey = !!process.env.NEWS_API_KEY;
+
+      return {
+        gnews: { available: hasGNewsKey, name: 'GNews API' },
+        newsapi: { available: hasNewsAPIKey, name: 'NewsAPI' },
+        aiAnalysis: { available: true, name: 'AI Sentiment Analysis' },
+        fallback: { available: true, name: 'Simulation Mode' },
+      };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

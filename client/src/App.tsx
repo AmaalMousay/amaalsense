@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Analyzer from "./pages/Analyzer";
 import Dashboard from "./pages/Dashboard";
 import Map from "./pages/Map";
+import LiveAnalysis from "./pages/LiveAnalysis";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path={"/analyzer"} component={Analyzer} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/map"} component={Map} />
+      <Route path={"/live"} component={LiveAnalysis} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
