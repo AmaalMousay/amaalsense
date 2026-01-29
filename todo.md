@@ -339,3 +339,30 @@
 - [x] Create shared emotionColors.ts for consistency
 - [x] Update IndexCard component with indexType
 - [x] Update CountryHistoricalChart colors
+
+## Phase 31: Dynamic Indicators & UI Improvements (NEW)
+
+### Dynamic Stock-like Indicators
+- [x] Create real-time updating indicators like stock market charts
+- [x] Add mini sparkline charts showing trend (up/down)
+- [x] Add percentage change indicator (+/-%)
+- [x] Add animated value transitions
+- [x] Show historical mini-chart in each indicator card
+
+### Unified Color Legend
+- [x] Create EmotionLegend component
+- [x] Add legend to footer of main pages
+- [x] Show color meanings (anger, fear, hope, etc.)
+
+### Multi-language Support
+- [x] Apply translations to Analyzer page
+- [ ] Apply translations to Map page
+- [ ] Apply translations to Weather page
+- [ ] Apply translations to About page
+- [ ] Apply translations to Pricing page
+
+### Dark/Light Mode Toggle
+- [x] Add theme toggle button to navbar
+- [x] Create light mode color scheme
+- [x] Persist theme preference in localStorage
+- [x] Ensure emotion colors remain consistent in both modes

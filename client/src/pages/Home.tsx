@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { IndexCard } from '@/components/IndexCard';
+import { StockStyleIndicator } from '@/components/StockStyleIndicator';
 import { trpc } from '@/lib/trpc';
 import { Link, useLocation } from 'wouter';
 import { 
@@ -10,19 +10,45 @@ import {
   ChevronRight, Globe, Brain, Shield, Users
 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { FooterLegend } from '@/components/EmotionLegend';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useI18n } from '@/i18n';
 
 export default function Home() {
   const [, navigate] = useLocation();
   const [indices, setIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
+  const [previousIndices, setPreviousIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t, isRTL } = useI18n();
 
-  // Fetch latest indices
-  const { data: latestIndices } = trpc.emotion.getLatestIndices.useQuery();
+  // Fetch latest indices with auto-refresh every 30 seconds
+  const { data: latestIndices, isLoading: indicesLoading } = trpc.emotion.getLatestIndices.useQuery(
+    undefined,
+    { refetchInterval: 30000 }
+  );
+
+  // Fetch historical data for sparklines
+  const { data: historicalIndices } = trpc.emotion.getHistoricalIndices.useQuery(
+    { hoursBack: 6 },
+    { refetchInterval: 60000 }
+  );
+
+  // Extract historical arrays for sparklines
+  const historicalData = useMemo(() => {
+    if (!historicalIndices || historicalIndices.length === 0) {
+      return { gmi: [], cfi: [], hri: [] };
+    }
+    return {
+      gmi: historicalIndices.map((h: any) => h.gmi),
+      cfi: historicalIndices.map((h: any) => h.cfi),
+      hri: historicalIndices.map((h: any) => h.hri),
+    };
+  }, [historicalIndices]);
 
   useEffect(() => {
     if (latestIndices) {
+      // Store previous values for trend calculation
+      setPreviousIndices(indices);
       setIndices({
         gmi: latestIndices.gmi || 0,
         cfi: latestIndices.cfi || 50,
@@ -92,6 +118,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
+            <ThemeToggle />
             <LanguageSwitcher />
             <Button
               onClick={() => navigate('/contact')}
@@ -136,7 +163,8 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
-              <div className="pt-2">
+              <div className="pt-2 flex items-center gap-4">
+                <ThemeToggle />
                 <LanguageSwitcher />
               </div>
               <Button
@@ -197,35 +225,41 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <IndexCard
-              title={`${t.indices.gmi} (GMI)`}
+            <StockStyleIndicator
+              title={t.indices.gmi}
+              shortName="GMI"
               value={indices.gmi}
+              previousValue={previousIndices.gmi}
               min={-100}
               max={100}
-              unit=""
               description={t.indices.gmiDesc}
-              icon={<TrendingUp />}
-              color="purple"
+              indexType="gmi"
+              historicalData={historicalData.gmi}
+              isLoading={indicesLoading}
             />
-            <IndexCard
-              title={`${t.indices.cfi} (CFI)`}
+            <StockStyleIndicator
+              title={t.indices.cfi}
+              shortName="CFI"
               value={indices.cfi}
+              previousValue={previousIndices.cfi}
               min={0}
               max={100}
-              unit=""
               description={t.indices.cfiDesc}
-              icon={<Zap />}
-              color="cyan"
+              indexType="cfi"
+              historicalData={historicalData.cfi}
+              isLoading={indicesLoading}
             />
-            <IndexCard
-              title={`${t.indices.hri} (HRI)`}
+            <StockStyleIndicator
+              title={t.indices.hri}
+              shortName="HRI"
               value={indices.hri}
+              previousValue={previousIndices.hri}
               min={0}
               max={100}
-              unit=""
               description={t.indices.hriDesc}
-              icon={<Heart />}
-              color="green"
+              indexType="hri"
+              historicalData={historicalData.hri}
+              isLoading={indicesLoading}
             />
           </div>
         </div>
@@ -367,6 +401,9 @@ export default function Home() {
               </ul>
             </div>
           </div>
+
+          {/* Emotion Color Legend */}
+          <FooterLegend />
 
           <div className="border-t border-border/50 mt-8 pt-8 text-center text-sm text-muted-foreground">
             {t.footer.copyright}
