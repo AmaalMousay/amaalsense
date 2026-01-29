@@ -242,6 +242,9 @@ export const ar = {
     product: "المنتج",
     resources: "الموارد",
     company: "الشركة",
+    legal: "قانوني",
+    terms: "شروط الخدمة",
+    privacy: "سياسة الخصوصية",
     copyright: "© 2025 AmalSense Engine | بواسطة أمال رضوان",
   },
 };

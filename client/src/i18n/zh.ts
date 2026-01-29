@@ -242,6 +242,9 @@ export const zh = {
     product: "产品",
     resources: "资源",
     company: "公司",
+    legal: "法律",
+    terms: "服务条款",
+    privacy: "隐私政策",
     copyright: "© 2025 AmalSense Engine | 作者：Amaal Radwan",
   },
 };

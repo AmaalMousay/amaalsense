@@ -242,6 +242,9 @@ export const en = {
     product: "Product",
     resources: "Resources",
     company: "Company",
+    legal: "Legal",
+    terms: "Terms of Service",
+    privacy: "Privacy Policy",
     copyright: "© 2025 AmalSense Engine | By Amaal Radwan",
   },
 };

@@ -400,6 +400,11 @@ export default function Home() {
                 <li><Link href="/theory" className="hover:text-accent">{t.nav.theory}</Link></li>
                 <li><Link href="/contact" className="hover:text-accent">{t.nav.contact}</Link></li>
               </ul>
+              <h4 className="font-semibold mb-4 mt-6">{t.footer.legal || 'Legal'}</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/terms" className="hover:text-accent">{t.footer.terms || 'Terms of Service'}</Link></li>
+                <li><Link href="/privacy" className="hover:text-accent">{t.footer.privacy || 'Privacy Policy'}</Link></li>
+              </ul>
             </div>
           </div>
 

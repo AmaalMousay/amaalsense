@@ -242,6 +242,9 @@ export const de = {
     product: "Produkt",
     resources: "Ressourcen",
     company: "Unternehmen",
+    legal: "Rechtliches",
+    terms: "Nutzungsbedingungen",
+    privacy: "Datenschutzrichtlinie",
     copyright: "© 2025 AmalSense Engine | Von Amaal Radwan",
   },
 };

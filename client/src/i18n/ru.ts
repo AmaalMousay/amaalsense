@@ -242,6 +242,9 @@ export const ru = {
     product: "Продукт",
     resources: "Ресурсы",
     company: "Компания",
+    legal: "Юридическая информация",
+    terms: "Условия использования",
+    privacy: "Политика конфиденциальности",
     copyright: "© 2025 AmalSense Engine | Автор: Амаль Радван",
   },
 };
