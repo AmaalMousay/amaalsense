@@ -15,6 +15,10 @@ import Weather from "./pages/Weather";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
+import HowItWorks from "./pages/HowItWorks";
+import CaseStudies from "./pages/CaseStudies";
+import FAQ from "./pages/FAQ";
+import Blog from "./pages/Blog";
 
 function Router() {
   return (
@@ -30,6 +34,10 @@ function Router() {
       <Route path={"/about"} component={About} />
       <Route path={"/pricing"} component={Pricing} />
       <Route path={"/contact"} component={Contact} />
+      <Route path={"/how-it-works"} component={HowItWorks} />
+      <Route path={"/case-studies"} component={CaseStudies} />
+      <Route path={"/faq"} component={FAQ} />
+      <Route path={"/blog"} component={Blog} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

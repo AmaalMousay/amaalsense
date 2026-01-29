@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/card';
 import { IndexCard } from '@/components/IndexCard';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
-import { ArrowLeft, TrendingUp, Zap, Heart, Calendar } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Zap, Heart, Calendar, Download } from 'lucide-react';
+import { ExportButton } from '@/components/ExportButton';
 import {
   LineChart,
   Line,
@@ -80,7 +81,7 @@ export default function Dashboard() {
             <span>Back</span>
           </button>
           <h1 className="text-2xl font-bold gradient-text">Dashboard</h1>
-          <div className="w-20" />
+          <ExportButton type="global" timeRange="24h" />
         </div>
       </nav>
 

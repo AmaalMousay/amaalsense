@@ -300,3 +300,137 @@
     height: 200px;
   }
 }
+
+
+/* RTL Support */
+html.rtl {
+  direction: rtl;
+}
+
+html.rtl body {
+  font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* RTL specific adjustments */
+html.rtl .flex-row {
+  flex-direction: row-reverse;
+}
+
+html.rtl .text-left {
+  text-align: right;
+}
+
+html.rtl .text-right {
+  text-align: left;
+}
+
+html.rtl .ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html.rtl .mr-auto {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* RTL spacing adjustments */
+html.rtl .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+html.rtl .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+html.rtl .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* RTL gap adjustments for icons */
+html.rtl .gap-2 {
+  gap: 0.5rem;
+}
+
+/* RTL navigation */
+html.rtl nav .flex {
+  flex-direction: row-reverse;
+}
+
+/* RTL dropdown alignment */
+html.rtl [data-radix-popper-content-wrapper] {
+  direction: rtl;
+}
+
+/* RTL progress bar */
+html.rtl [role="progressbar"] > div {
+  transform-origin: right;
+}
+
+/* RTL charts */
+html.rtl .recharts-wrapper {
+  direction: ltr;
+}
+
+/* RTL card content */
+html.rtl .card-content {
+  text-align: right;
+}
+
+/* RTL form inputs */
+html.rtl input,
+html.rtl textarea,
+html.rtl select {
+  text-align: right;
+}
+
+html.rtl input::placeholder,
+html.rtl textarea::placeholder {
+  text-align: right;
+}
+
+/* RTL buttons with icons */
+html.rtl button .lucide {
+  order: 2;
+}
+
+html.rtl button span {
+  order: 1;
+}
+
+/* RTL sidebar */
+html.rtl .sidebar {
+  left: auto;
+  right: 0;
+}
+
+/* RTL animations */
+html.rtl .animate-slide-in-left {
+  animation-name: slide-in-right;
+}
+
+html.rtl .animate-slide-in-right {
+  animation-name: slide-in-left;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

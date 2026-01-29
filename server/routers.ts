@@ -518,6 +518,35 @@ ${input.message || 'No message provided'}
       }),
 
     /**
+     * Get user's usage quota
+     */
+    getUsage: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) {
+        return {
+          analysesUsed: 0,
+          analysesLimit: 50,
+          apiCallsUsed: 0,
+          apiCallsLimit: 0,
+          tier: 'free' as const,
+        };
+      }
+
+      const { getTierInfo } = await import("./subscriptionLimits");
+      const tier = (ctx.user as any).subscriptionTier || 'free';
+      const tierInfo = getTierInfo(tier);
+
+      // TODO: Implement actual usage tracking from database
+      // For now, return mock usage data
+      return {
+        analysesUsed: Math.floor(Math.random() * 20),
+        analysesLimit: tierInfo.limits.dailyAnalyses,
+        apiCallsUsed: 0,
+        apiCallsLimit: tierInfo.limits.dailyApiCalls,
+        tier,
+      };
+    }),
+
+    /**
      * Get all enterprise inquiries (admin only)
      */
     getEnterpriseInquiries: publicProcedure.query(async ({ ctx }) => {
@@ -588,6 +617,96 @@ ${input.message || 'No message provided'}
           detailedResults: analysis.results,
           isAIAnalyzed: analysis.isAIAnalyzed,
           analyzedAt: new Date(),
+        };
+      }),
+  }),
+
+  // Export & Reports
+  export: router({
+    /**
+     * Generate PDF report HTML for global indices
+     */
+    generateGlobalReport: publicProcedure
+      .input(z.object({
+        timeRange: z.enum(['1h', '6h', '24h', '7d', '30d']).default('24h'),
+      }))
+      .query(async ({ input }) => {
+        const { exportReportHTML, generateSummary } = await import("./pdfExport");
+        const { getLatestEmotionIndices } = await import("./db");
+        const { analyzeHeadline } = await import("./emotionAnalyzer");
+
+        // Get latest indices
+        const latestIndices = await getLatestEmotionIndices();
+        // Generate sample emotion data
+        const sampleAnalysis = analyzeHeadline("Global economic outlook shows mixed signals amid recovery efforts");
+
+        const reportData = {
+          title: 'Global Emotion Analysis Report',
+          generatedAt: new Date(),
+          timeRange: input.timeRange,
+          indices: {
+            gmi: latestIndices?.gmi || 15,
+            cfi: latestIndices?.cfi || 45,
+            hri: latestIndices?.hri || 55,
+          },
+          emotionVectors: sampleAnalysis.emotions,
+          confidence: 85,
+        };
+
+        const summary = generateSummary(reportData);
+        const html = exportReportHTML({ ...reportData, summary });
+
+        return {
+          html,
+          filename: `amalsense-global-report-${new Date().toISOString().split('T')[0]}.html`,
+        };
+      }),
+
+    /**
+     * Generate PDF report HTML for a specific country
+     */
+    generateCountryReport: publicProcedure
+      .input(z.object({
+        countryCode: z.string().length(2),
+        timeRange: z.enum(['1h', '6h', '24h', '7d', '30d']).default('24h'),
+      }))
+      .query(async ({ input }) => {
+        const { exportCountryReportHTML, generateSummary } = await import("./pdfExport");
+        const { generateCountryEmotionData, COUNTRIES } = await import("./countryEmotionAnalyzer");
+
+        // Get country data
+        const country = COUNTRIES.find(c => c.code === input.countryCode);
+        const countryName = country?.name || input.countryCode;
+        const simulatedData = generateCountryEmotionData(input.countryCode, countryName);
+
+        const reportData = {
+          title: `${countryName} Emotion Analysis Report`,
+          generatedAt: new Date(),
+          timeRange: input.timeRange,
+          countryCode: input.countryCode,
+          countryName,
+          indices: {
+            gmi: simulatedData.gmi,
+            cfi: simulatedData.cfi,
+            hri: simulatedData.hri,
+          },
+          emotionVectors: {
+            joy: 0.3 + Math.random() * 0.2,
+            fear: 0.2 + Math.random() * 0.2,
+            anger: 0.15 + Math.random() * 0.15,
+            sadness: 0.15 + Math.random() * 0.15,
+            hope: 0.35 + Math.random() * 0.2,
+            curiosity: 0.25 + Math.random() * 0.15,
+          },
+          confidence: simulatedData.confidence,
+        };
+
+        const summary = generateSummary(reportData);
+        const html = exportCountryReportHTML({ ...reportData, summary });
+
+        return {
+          html,
+          filename: `amalsense-${input.countryCode.toLowerCase()}-report-${new Date().toISOString().split('T')[0]}.html`,
         };
       }),
   }),

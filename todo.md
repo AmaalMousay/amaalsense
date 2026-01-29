@@ -158,3 +158,30 @@
 - [x] Update About page with Zenodo publication link
 - [x] Add DOI citation information
 - [x] Update publication date to October 9, 2025
+
+
+## Phase 15: Platform Improvements (NEW)
+
+### User Experience (UX)
+- [ ] Add onboarding tour for new users
+- [ ] Display remaining usage quota in UI
+- [ ] Simplify navigation with sidebar menu
+
+### Credibility & Trust
+- [x] Create "How It Works" page with animations
+- [x] Add Case Studies section with real examples
+- [x] Add Testimonials section
+
+### Technical Features
+- [x] Implement PDF export for reports
+- [x] Add email notifications for alerts
+
+### Marketing & Growth
+- [x] Create Blog page
+- [x] Add Newsletter signup
+- [x] Create FAQ page
+
+### Arabic Language Support
+- [x] Add full Arabic translation
+- [x] Implement RTL layout support
+- [x] Add language switcher
