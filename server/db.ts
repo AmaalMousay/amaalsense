@@ -367,3 +367,119 @@ export async function getUserDailyUsage(userId: number, usageType: string) {
 
   return result.reduce((sum, r) => sum + r.count, 0);
 }
+
+
+// Import payment records
+import { paymentRecords, InsertPaymentRecord, PaymentRecord } from "../drizzle/schema";
+
+/**
+ * Create a new payment record
+ */
+export async function createPaymentRecord(data: InsertPaymentRecord) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(paymentRecords).values(data);
+  return result;
+}
+
+/**
+ * Get all payment records (for admin)
+ */
+export async function getAllPaymentRecords() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get payment records by status
+ */
+export async function getPaymentRecordsByStatus(status: "pending" | "confirmed" | "rejected" | "refunded") {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.status, status))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get payment record by ID
+ */
+export async function getPaymentRecordById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Update payment record status
+ */
+export async function updatePaymentRecordStatus(
+  id: number, 
+  status: "pending" | "confirmed" | "rejected" | "refunded",
+  adminNotes?: string,
+  confirmedBy?: number
+) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const updateData: Partial<PaymentRecord> = { 
+    status,
+    adminNotes: adminNotes || null,
+  };
+
+  if (status === "confirmed") {
+    updateData.confirmedAt = new Date();
+    if (confirmedBy) {
+      updateData.confirmedBy = confirmedBy;
+    }
+  }
+
+  return await db
+    .update(paymentRecords)
+    .set(updateData)
+    .where(eq(paymentRecords.id, id));
+}
+
+/**
+ * Get user's payment records
+ */
+export async function getUserPaymentRecords(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.userId, userId))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get payment records by email
+ */
+export async function getPaymentRecordsByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.email, email))
+    .orderBy((t) => desc(t.createdAt));
+}

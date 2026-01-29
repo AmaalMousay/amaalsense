@@ -329,3 +329,42 @@ export const trendAlerts = mysqlTable("trend_alerts", {
 
 export type TrendAlert = typeof trendAlerts.$inferSelect;
 export type InsertTrendAlert = typeof trendAlerts.$inferInsert;
+
+
+/**
+ * Payment Records - stores payment submissions and confirmations
+ */
+export const paymentRecords = mysqlTable("payment_records", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID (null for guest payments) */
+  userId: int("userId"),
+  /** Subscriber email */
+  email: varchar("email", { length: 320 }).notNull(),
+  /** Subscriber name */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** Selected plan: pro, enterprise, government */
+  plan: varchar("plan", { length: 32 }).notNull(),
+  /** Payment amount in USD */
+  amount: int("amount").notNull(),
+  /** Billing period: monthly, annual */
+  billingPeriod: varchar("billingPeriod", { length: 16 }).default("monthly").notNull(),
+  /** Payment method: paypal, bank_transfer, western_union, moneygram, crypto */
+  paymentMethod: varchar("paymentMethod", { length: 32 }).notNull(),
+  /** Transaction reference/ID provided by user */
+  transactionRef: varchar("transactionRef", { length: 255 }),
+  /** Additional payment details (JSON) */
+  paymentDetails: text("paymentDetails"),
+  /** Payment status: pending, confirmed, rejected, refunded */
+  status: mysqlEnum("status", ["pending", "confirmed", "rejected", "refunded"]).default("pending").notNull(),
+  /** Admin notes */
+  adminNotes: text("adminNotes"),
+  /** Confirmation date */
+  confirmedAt: timestamp("confirmedAt"),
+  /** Confirmed by (admin user ID) */
+  confirmedBy: int("confirmedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PaymentRecord = typeof paymentRecords.$inferSelect;
+export type InsertPaymentRecord = typeof paymentRecords.$inferInsert;

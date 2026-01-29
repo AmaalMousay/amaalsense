@@ -36,6 +36,13 @@
       "when": 1769683949106,
       "tag": "0004_gifted_smiling_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769690050658,
+      "tag": "0005_bouncy_mister_fear",
+      "breakpoints": true
     }
   ]
 }

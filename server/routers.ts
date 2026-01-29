@@ -997,6 +997,225 @@ ${input.message || 'No message provided'}
         return await generateWeeklyDigest();
       }),
   }),
+
+  // Payment management
+  payments: router({
+    /**
+     * Submit a new payment record
+     */
+    submitPayment: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().min(1).max(255),
+        plan: z.enum(["pro", "enterprise", "government"]),
+        amount: z.number().min(1),
+        billingPeriod: z.enum(["monthly", "annual"]).default("monthly"),
+        paymentMethod: z.enum(["paypal", "bank_transfer", "western_union", "moneygram", "crypto"]),
+        transactionRef: z.string().optional(),
+        paymentDetails: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { createPaymentRecord } = await import("./db");
+        const { notifyOwner } = await import("./_core/notification");
+        
+        // Create payment record
+        await createPaymentRecord({
+          email: input.email,
+          name: input.name,
+          plan: input.plan,
+          amount: input.amount,
+          billingPeriod: input.billingPeriod,
+          paymentMethod: input.paymentMethod,
+          transactionRef: input.transactionRef || null,
+          paymentDetails: input.paymentDetails || null,
+          status: "pending",
+        });
+
+        // Notify owner about new payment
+        const planNames: Record<string, string> = {
+          pro: "Professional ($49/month)",
+          enterprise: "Enterprise ($299/month)",
+          government: "Government & NGO (Custom)",
+        };
+        const methodNames: Record<string, string> = {
+          paypal: "PayPal",
+          bank_transfer: "Bank Transfer",
+          western_union: "Western Union",
+          moneygram: "MoneyGram",
+          crypto: "Cryptocurrency (USDT)",
+        };
+
+        await notifyOwner({
+          title: `💰 New Payment Submission - ${planNames[input.plan]}`,
+          content: `
+**New Payment Received!**
+
+**Customer Details:**
+- Name: ${input.name}
+- Email: ${input.email}
+
+**Payment Details:**
+- Plan: ${planNames[input.plan]}
+- Amount: $${input.amount}
+- Billing: ${input.billingPeriod === "annual" ? "Annual" : "Monthly"}
+- Method: ${methodNames[input.paymentMethod]}
+${input.transactionRef ? `- Transaction Ref: ${input.transactionRef}` : ""}
+
+**Status:** Pending Confirmation
+
+Please verify the payment and confirm in the admin panel.
+          `.trim(),
+        });
+
+        return { success: true, message: "Payment submitted successfully. We will confirm your payment shortly." };
+      }),
+
+    /**
+     * Get all payment records (admin only)
+     */
+    getAllPayments: publicProcedure
+      .query(async ({ ctx }) => {
+        // Check if user is admin
+        if (!ctx.user || ctx.user.role !== "admin") {
+          return [];
+        }
+        const { getAllPaymentRecords } = await import("./db");
+        return await getAllPaymentRecords();
+      }),
+
+    /**
+     * Get pending payments (admin only)
+     */
+    getPendingPayments: publicProcedure
+      .query(async ({ ctx }) => {
+        if (!ctx.user || ctx.user.role !== "admin") {
+          return [];
+        }
+        const { getPaymentRecordsByStatus } = await import("./db");
+        return await getPaymentRecordsByStatus("pending");
+      }),
+
+    /**
+     * Confirm a payment (admin only)
+     */
+    confirmPayment: publicProcedure
+      .input(z.object({
+        paymentId: z.number(),
+        adminNotes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user || ctx.user.role !== "admin") {
+          throw new Error("Unauthorized: Admin access required");
+        }
+        const { updatePaymentRecordStatus, getPaymentRecordById } = await import("./db");
+        const { notifyOwner } = await import("./_core/notification");
+        
+        const payment = await getPaymentRecordById(input.paymentId);
+        if (!payment) {
+          throw new Error("Payment not found");
+        }
+
+        await updatePaymentRecordStatus(
+          input.paymentId, 
+          "confirmed", 
+          input.adminNotes,
+          ctx.user.id
+        );
+
+        // TODO: Send confirmation email to customer
+        // For now, just notify owner
+        await notifyOwner({
+          title: `✅ Payment Confirmed - ${payment.name}`,
+          content: `Payment #${input.paymentId} for ${payment.email} has been confirmed.`,
+        });
+
+        return { success: true };
+      }),
+
+    /**
+     * Reject a payment (admin only)
+     */
+    rejectPayment: publicProcedure
+      .input(z.object({
+        paymentId: z.number(),
+        adminNotes: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user || ctx.user.role !== "admin") {
+          throw new Error("Unauthorized: Admin access required");
+        }
+        const { updatePaymentRecordStatus } = await import("./db");
+        
+        await updatePaymentRecordStatus(
+          input.paymentId, 
+          "rejected", 
+          input.adminNotes,
+          ctx.user.id
+        );
+
+        return { success: true };
+      }),
+
+    /**
+     * Get user's own payments
+     */
+    getMyPayments: publicProcedure
+      .query(async ({ ctx }) => {
+        if (!ctx.user) {
+          return [];
+        }
+        const { getUserPaymentRecords } = await import("./db");
+        return await getUserPaymentRecords(ctx.user.id);
+      }),
+
+    /**
+     * Get payment methods info
+     */
+    getPaymentMethods: publicProcedure
+      .query(() => {
+        return {
+          paypal: {
+            name: "PayPal",
+            description: "Pay securely via PayPal",
+            email: "amaalmousay@gmail.com",
+            instructions: "Send payment to our PayPal account and include your email in the note.",
+          },
+          bank_transfer: {
+            name: "Bank Transfer",
+            description: "Direct bank transfer",
+            details: {
+              bankName: "To be provided upon request",
+              accountName: "Amaal Radwan Bashir",
+              note: "Contact us for bank details",
+            },
+            instructions: "Contact us at amaalmousay@gmail.com for bank transfer details.",
+          },
+          western_union: {
+            name: "Western Union",
+            description: "International money transfer via Western Union",
+            receiverName: "Amaal Radwan Bashir",
+            country: "Libya",
+            city: "Sabha",
+            instructions: "Send money via Western Union to the receiver details above. Keep your MTCN number.",
+          },
+          moneygram: {
+            name: "MoneyGram",
+            description: "International money transfer via MoneyGram",
+            receiverName: "Amaal Radwan Bashir",
+            country: "Libya",
+            city: "Sabha",
+            instructions: "Send money via MoneyGram to the receiver details above. Keep your reference number.",
+          },
+          crypto: {
+            name: "Cryptocurrency (USDT)",
+            description: "Pay with USDT (Tether)",
+            network: "TRC20 (Tron)",
+            address: "Contact us for wallet address",
+            instructions: "Contact us at amaalmousay@gmail.com for our USDT wallet address.",
+          },
+        };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -22,6 +22,7 @@ import Blog from "./pages/Blog";
 import Trends from "./pages/Trends";
 import Admin from "./pages/Admin";
 import NotificationSettings from "./pages/NotificationSettings";
+import Checkout from "./pages/Checkout";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -45,6 +46,7 @@ function Router() {
       <Route path={"/trends"} component={Trends} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/notifications"} component={NotificationSettings} />
+      <Route path={"/checkout"} component={Checkout} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
