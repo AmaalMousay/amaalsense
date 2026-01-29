@@ -1,5 +1,5 @@
 /**
- * Arabic translations for AmaálSense
+ * Arabic translations for AmalSense
  */
 
 export const ar = {
@@ -58,7 +58,7 @@ export const ar = {
     useCases: "حالات الاستخدام",
     useCasesDesc: "موثوق به من قبل المنظمات حول العالم",
     resources: "الموارد",
-    resourcesDesc: "تعرف على المزيد حول AmaálSense وتحليل المشاعر",
+    resourcesDesc: "تعرف على المزيد حول AmalSense وتحليل المشاعر",
     readyToStart: "هل أنت مستعد لفهم المشاعر الجماعية؟",
     launchAnalyzer: "ابدأ المحلل الآن",
   },
@@ -182,7 +182,7 @@ export const ar = {
 
   // About
   about: {
-    title: "حول AmaálSense",
+    title: "حول AmalSense",
     subtitle: "فهم المشاعر الجماعية من خلال الذكاء الاصطناعي",
     author: "المؤلف",
     publication: "المنشور العلمي",
@@ -195,7 +195,7 @@ export const ar = {
   // Theory
   theory: {
     title: "نظرية حقل الوعي الرقمي",
-    subtitle: "الأساس العلمي وراء AmaálSense",
+    subtitle: "الأساس العلمي وراء AmalSense",
     dcft: "DCFT",
     dcftFull: "نظرية حقل الوعي الرقمي",
     formula: "المعادلة",
@@ -242,7 +242,7 @@ export const ar = {
     product: "المنتج",
     resources: "الموارد",
     company: "الشركة",
-    copyright: "© 2025 AmaálSense Engine | بواسطة أمال رضوان",
+    copyright: "© 2025 AmalSense Engine | بواسطة أمال رضوان",
   },
 };
 

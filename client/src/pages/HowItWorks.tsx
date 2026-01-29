@@ -145,10 +145,10 @@ export default function HowItWorks() {
           className="text-center mb-16"
         >
           <Badge className="mb-4 bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
-            The Technology Behind AmaálSense
+            The Technology Behind AmalSense
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-            How AmaálSense Works
+            How AmalSense Works
           </h1>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
             From raw text to emotional insights - discover the journey of data through our AI-powered emotion analysis pipeline.
@@ -301,7 +301,7 @@ export default function HowItWorks() {
               <Brain className="w-12 h-12 text-purple-400 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-white mb-2">Ready to Explore?</h3>
               <p className="text-slate-300 mb-6">
-                Start analyzing the emotional pulse of humanity with AmaálSense Engine.
+                Start analyzing the emotional pulse of humanity with AmalSense Engine.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link href="/analyzer">

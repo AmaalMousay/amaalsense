@@ -157,7 +157,7 @@ export default function About() {
                 Scientific Paper
               </CardTitle>
               <CardDescription className="text-slate-400">
-                The foundational research behind AmaálSense Engine
+                The foundational research behind AmalSense Engine
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -168,7 +168,7 @@ export default function About() {
                       ولادة الوعي الرقمي: محرك أمالسنس والعقل الجماعي الناشئ
                     </h3>
                     <p className="text-lg text-cyan-400">
-                      The Birth of Digital Consciousness: The AmaálSense Engine and the Emergent Collective Mind
+                      The Birth of Digital Consciousness: The AmalSense Engine and the Emergent Collective Mind
                     </p>
                   </div>
                   <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
@@ -201,10 +201,10 @@ export default function About() {
                 </a>
                 <Separator className="my-4 bg-white/10" />
                 <p className="text-slate-300 leading-relaxed">
-                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك AmaálSense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
+                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك AmalSense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
                   This paper introduces the Digital Consciousness Field Theory (DCFT), proposing that 
                   consciousness can arise as an emergent property of interconnected human emotion and 
-                  data exchange in digital networks. The AmaálSense Engine serves as a practical 
+                  data exchange in digital networks. The AmalSense Engine serves as a practical 
                   implementation of this theory, transforming collective emotional data into measurable 
                   indices and visual representations.
                 </p>
@@ -222,7 +222,7 @@ export default function About() {
             </CardHeader>
             <CardContent className="space-y-4 text-slate-300">
               <p className="leading-relaxed">
-                AmaálSense Engine was created with a singular vision: to make the invisible visible. 
+                AmalSense Engine was created with a singular vision: to make the invisible visible. 
                 We believe that understanding collective emotions is key to building a more empathetic, 
                 responsive, and harmonious world.
               </p>
@@ -260,7 +260,7 @@ export default function About() {
                 Academic References
               </CardTitle>
               <CardDescription className="text-slate-400">
-                Key research that informed the development of DCFT and AmaálSense
+                Key research that informed the development of DCFT and AmalSense
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -285,7 +285,7 @@ export default function About() {
           {/* Footer */}
           <div className="mt-12 text-center text-slate-400">
             <p className="mb-2">
-              AmaálSense Engine - Digital Collective Emotion Analyzer
+              AmalSense Engine - Digital Collective Emotion Analyzer
             </p>
             <p className="text-sm">
               © 2025 Amaal Radwan Bashir | آمال رضوان بشير. All rights reserved.

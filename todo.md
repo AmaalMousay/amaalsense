@@ -370,7 +370,7 @@
 ## Phase 32: Rebranding (NEW)
 
 ### Name Changes
-- [x] Change AmalSense to AmaálSense in all files
+- [x] Change AmalSense to AmalSense in all files
 - [x] Change أمل رضوان to أمال رضوان in all files
 - [x] Update footer copyright text
 

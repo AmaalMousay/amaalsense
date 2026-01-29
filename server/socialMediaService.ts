@@ -42,7 +42,7 @@ export async function fetchRedditPosts(params: SocialSearchParams): Promise<Soci
       `https://www.reddit.com/search.json?q=${query}&limit=${limit}&sort=relevance&t=week`,
       {
         headers: {
-          'User-Agent': 'AmaálSense/1.0 (Emotion Analysis Platform)',
+          'User-Agent': 'AmalSense/1.0 (Emotion Analysis Platform)',
         },
         timeout: 10000,
       }
@@ -311,7 +311,7 @@ export async function fetchTelegramPosts(params: SocialSearchParams): Promise<So
           { 
             timeout: 5000,
             headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; AmaálSense/1.0)',
+              'User-Agent': 'Mozilla/5.0 (compatible; AmalSense/1.0)',
             }
           }
         );

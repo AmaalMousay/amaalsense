@@ -23,9 +23,9 @@ interface TourStep {
 
 const tourSteps: TourStep[] = [
   {
-    title: "Welcome to AmaálSense",
+    title: "Welcome to AmalSense",
     titleAr: "مرحباً بك في أمالسنس",
-    description: "AmaálSense is a revolutionary platform that analyzes collective emotions from digital sources worldwide. Let's take a quick tour!",
+    description: "AmalSense is a revolutionary platform that analyzes collective emotions from digital sources worldwide. Let's take a quick tour!",
     descriptionAr: "أمالسنس هي منصة ثورية تحلل المشاعر الجماعية من المصادر الرقمية حول العالم. دعنا نأخذ جولة سريعة!",
     icon: <Brain className="w-8 h-8 text-purple-400" />,
   },
@@ -56,7 +56,7 @@ const tourSteps: TourStep[] = [
   {
     title: "DCFT Theory",
     titleAr: "نظرية DCFT",
-    description: "Learn about the Digital Consciousness Field Theory - the scientific foundation behind AmaálSense.",
+    description: "Learn about the Digital Consciousness Field Theory - the scientific foundation behind AmalSense.",
     descriptionAr: "تعرف على نظرية مجال الوعي الرقمي - الأساس العلمي وراء أمالسنس.",
     icon: <Brain className="w-8 h-8 text-pink-400" />,
     highlight: "theory",

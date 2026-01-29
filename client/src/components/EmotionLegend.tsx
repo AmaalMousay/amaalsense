@@ -9,7 +9,7 @@ interface EmotionLegendProps {
 
 /**
  * Unified Emotion Color Legend Component
- * Displays the psychological meaning of each color used in AmaálSense
+ * Displays the psychological meaning of each color used in AmalSense
  */
 export function EmotionLegend({ variant = 'compact', showIndices = false }: EmotionLegendProps) {
   const { t, language } = useI18n();

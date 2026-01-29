@@ -1,5 +1,5 @@
 /**
- * AmaálSense Emotion Color System
+ * AmalSense Emotion Color System
  * 
  * This file defines the unified color palette for emotions across the platform.
  * Each color has a specific psychological meaning and should be used consistently.

@@ -34,7 +34,7 @@ export default function Terms() {
               <div className="flex items-center gap-3 mb-4">
                 <LogoIcon size="lg" />
                 <div>
-                  <CardTitle className="text-3xl gradient-text">AmaálSense</CardTitle>
+                  <CardTitle className="text-3xl gradient-text">AmalSense</CardTitle>
                   <p className="text-muted-foreground">
                     {isRTL ? 'شروط الخدمة والاستخدام' : 'Terms of Service'}
                   </p>
@@ -50,14 +50,14 @@ export default function Terms() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">1. قبول الشروط</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      باستخدامك لمنصة AmaálSense، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، يرجى عدم استخدام خدماتنا.
+                      باستخدامك لمنصة AmalSense، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، يرجى عدم استخدام خدماتنا.
                     </p>
                   </section>
 
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">2. وصف الخدمة</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      AmaálSense هي منصة لتحليل المشاعر الجماعية الرقمية تستخدم الذكاء الاصطناعي لتحليل النصوص والأخبار ومنشورات وسائل التواصل الاجتماعي. نقدم مؤشرات عاطفية وتحليلات وتوقعات بناءً على البيانات المتاحة للعموم.
+                      AmalSense هي منصة لتحليل المشاعر الجماعية الرقمية تستخدم الذكاء الاصطناعي لتحليل النصوص والأخبار ومنشورات وسائل التواصل الاجتماعي. نقدم مؤشرات عاطفية وتحليلات وتوقعات بناءً على البيانات المتاحة للعموم.
                     </p>
                   </section>
 
@@ -78,7 +78,7 @@ export default function Terms() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">5. الملكية الفكرية</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      جميع المحتويات والعلامات التجارية والشعارات والبرمجيات على المنصة مملوكة لـ AmaálSense أو مرخصيها. لا يجوز نسخ أو توزيع أي محتوى دون إذن كتابي مسبق.
+                      جميع المحتويات والعلامات التجارية والشعارات والبرمجيات على المنصة مملوكة لـ AmalSense أو مرخصيها. لا يجوز نسخ أو توزيع أي محتوى دون إذن كتابي مسبق.
                     </p>
                   </section>
 
@@ -92,7 +92,7 @@ export default function Terms() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">7. حدود المسؤولية</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      لن تكون AmaálSense مسؤولة عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو تبعية ناتجة عن استخدام أو عدم القدرة على استخدام خدماتنا.
+                      لن تكون AmalSense مسؤولة عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو تبعية ناتجة عن استخدام أو عدم القدرة على استخدام خدماتنا.
                     </p>
                   </section>
 
@@ -115,14 +115,14 @@ export default function Terms() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">1. Acceptance of Terms</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      By using AmaálSense, you agree to be bound by these terms and conditions. If you do not agree to any part of these terms, please do not use our services.
+                      By using AmalSense, you agree to be bound by these terms and conditions. If you do not agree to any part of these terms, please do not use our services.
                     </p>
                   </section>
 
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">2. Description of Service</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      AmaálSense is a digital collective emotion analysis platform that uses artificial intelligence to analyze texts, news, and social media posts. We provide emotional indices, analytics, and forecasts based on publicly available data.
+                      AmalSense is a digital collective emotion analysis platform that uses artificial intelligence to analyze texts, news, and social media posts. We provide emotional indices, analytics, and forecasts based on publicly available data.
                     </p>
                   </section>
 
@@ -143,7 +143,7 @@ export default function Terms() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">5. Intellectual Property</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      All content, trademarks, logos, and software on the platform are owned by AmaálSense or its licensors. No content may be copied or distributed without prior written permission.
+                      All content, trademarks, logos, and software on the platform are owned by AmalSense or its licensors. No content may be copied or distributed without prior written permission.
                     </p>
                   </section>
 
@@ -157,7 +157,7 @@ export default function Terms() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">7. Limitation of Liability</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      AmaálSense shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use or inability to use our services.
+                      AmalSense shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use or inability to use our services.
                     </p>
                   </section>
 

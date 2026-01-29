@@ -1,5 +1,5 @@
 /**
- * Russian translations for AmaálSense
+ * Russian translations for AmalSense
  */
 
 export const ru = {
@@ -58,7 +58,7 @@ export const ru = {
     useCases: "Примеры использования",
     useCasesDesc: "Нам доверяют организации по всему миру",
     resources: "Ресурсы",
-    resourcesDesc: "Узнайте больше об AmaálSense и анализе эмоций",
+    resourcesDesc: "Узнайте больше об AmalSense и анализе эмоций",
     readyToStart: "Готовы понять коллективные эмоции?",
     launchAnalyzer: "Запустить анализатор",
   },
@@ -182,7 +182,7 @@ export const ru = {
 
   // About
   about: {
-    title: "Об AmaálSense",
+    title: "Об AmalSense",
     subtitle: "Понимание коллективных эмоций с помощью ИИ",
     author: "Автор",
     publication: "Научная публикация",
@@ -195,7 +195,7 @@ export const ru = {
   // Theory
   theory: {
     title: "Теория цифрового поля сознания",
-    subtitle: "Научная основа AmaálSense",
+    subtitle: "Научная основа AmalSense",
     dcft: "DCFT",
     dcftFull: "Теория цифрового поля сознания",
     formula: "Формула",
@@ -242,6 +242,6 @@ export const ru = {
     product: "Продукт",
     resources: "Ресурсы",
     company: "Компания",
-    copyright: "© 2025 AmaálSense Engine | Автор: Амаль Радван",
+    copyright: "© 2025 AmalSense Engine | Автор: Амаль Радван",
   },
 };

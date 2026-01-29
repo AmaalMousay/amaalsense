@@ -34,7 +34,7 @@ export default function Privacy() {
               <div className="flex items-center gap-3 mb-4">
                 <LogoIcon size="lg" />
                 <div>
-                  <CardTitle className="text-3xl gradient-text">AmaálSense</CardTitle>
+                  <CardTitle className="text-3xl gradient-text">AmalSense</CardTitle>
                   <p className="text-muted-foreground">
                     {isRTL ? 'سياسة الخصوصية وحماية البيانات' : 'Privacy Policy'}
                   </p>
@@ -50,7 +50,7 @@ export default function Privacy() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">1. مقدمة</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      نحن في AmaálSense نلتزم بحماية خصوصيتك. توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية معلوماتك الشخصية عند استخدام منصتنا.
+                      نحن في AmalSense نلتزم بحماية خصوصيتك. توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية معلوماتك الشخصية عند استخدام منصتنا.
                     </p>
                   </section>
 
@@ -136,7 +136,7 @@ export default function Privacy() {
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">1. Introduction</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      At AmaálSense, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect your personal information when using our platform.
+                      At AmalSense, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect your personal information when using our platform.
                     </p>
                   </section>
 

@@ -89,7 +89,7 @@ export default function Contact() {
           <div className="container py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
               <LogoIcon size="md" />
-              <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
+              <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
             </div>
           </div>
         </nav>
@@ -126,7 +126,7 @@ export default function Contact() {
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
             <LogoIcon size="md" />
-            <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
+            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
           </div>
           <div className="flex items-center gap-4">
             <button onClick={() => navigate('/')} className="text-sm hover:text-accent transition-colors">
@@ -324,7 +324,7 @@ export default function Contact() {
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 mt-auto">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>AmaálSense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
+          <p>AmalSense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
         </div>
       </footer>
     </div>

@@ -156,7 +156,7 @@ export default function Admin() {
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <span className="text-2xl font-bold gradient-text cursor-pointer">AmaálSense</span>
+              <span className="text-2xl font-bold gradient-text cursor-pointer">AmalSense</span>
             </Link>
             <span className="text-muted-foreground">/</span>
             <span className="font-semibold">Admin Dashboard</span>

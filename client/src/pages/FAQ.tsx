@@ -29,16 +29,16 @@ const faqCategories = [
     color: "text-cyan-400",
     questions: [
       {
-        q: "What is AmaálSense?",
-        a: "AmaálSense is an AI-powered platform that analyzes collective emotions from digital text sources (news, social media, forums) and converts them into measurable indices. It helps organizations understand the emotional pulse of societies in real-time."
+        q: "What is AmalSense?",
+        a: "AmalSense is an AI-powered platform that analyzes collective emotions from digital text sources (news, social media, forums) and converts them into measurable indices. It helps organizations understand the emotional pulse of societies in real-time."
       },
       {
-        q: "How is AmaálSense different from other sentiment analysis tools?",
-        a: "Unlike traditional sentiment analysis that only measures positive/negative, AmaálSense uses the Digital Consciousness Field Theory (DCFT) to extract 6 emotional dimensions (Joy, Fear, Anger, Sadness, Hope, Curiosity) and calculates unique indices like the Hope & Resilience Index (HRI) that other tools don't provide."
+        q: "How is AmalSense different from other sentiment analysis tools?",
+        a: "Unlike traditional sentiment analysis that only measures positive/negative, AmalSense uses the Digital Consciousness Field Theory (DCFT) to extract 6 emotional dimensions (Joy, Fear, Anger, Sadness, Hope, Curiosity) and calculates unique indices like the Hope & Resilience Index (HRI) that other tools don't provide."
       },
       {
-        q: "Who can benefit from using AmaálSense?",
-        a: "AmaálSense is designed for governments, NGOs, media companies, research institutions, and enterprises who need to understand public sentiment, monitor crises, track policy impact, or analyze market emotions."
+        q: "Who can benefit from using AmalSense?",
+        a: "AmalSense is designed for governments, NGOs, media companies, research institutions, and enterprises who need to understand public sentiment, monitor crises, track policy impact, or analyze market emotions."
       },
     ]
   },
@@ -48,19 +48,19 @@ const faqCategories = [
     color: "text-purple-400",
     questions: [
       {
-        q: "What AI models does AmaálSense use?",
-        a: "AmaálSense uses a combination of Transformer-based models (similar to BERT) for deep contextual understanding and VADER for rapid sentiment scoring. For Arabic text, we use AraBERT for culturally-aware analysis."
+        q: "What AI models does AmalSense use?",
+        a: "AmalSense uses a combination of Transformer-based models (similar to BERT) for deep contextual understanding and VADER for rapid sentiment scoring. For Arabic text, we use AraBERT for culturally-aware analysis."
       },
       {
         q: "What is DCFT (Digital Consciousness Field Theory)?",
-        a: "DCFT is the scientific framework behind AmaálSense, developed by Amaal Radwan. It treats collective digital emotions as a measurable field with mathematical formulas like D(t) = Σ [Ei × Wi × ΔTi] to quantify the emotional state of digital communities."
+        a: "DCFT is the scientific framework behind AmalSense, developed by Amaal Radwan. It treats collective digital emotions as a measurable field with mathematical formulas like D(t) = Σ [Ei × Wi × ΔTi] to quantify the emotional state of digital communities."
       },
       {
         q: "How accurate is the emotion analysis?",
         a: "Our models achieve 85-94% accuracy depending on the language and context. We continuously improve accuracy through feedback loops and model updates. The confidence score shown with each analysis indicates reliability."
       },
       {
-        q: "What data sources does AmaálSense use?",
+        q: "What data sources does AmalSense use?",
         a: "We aggregate data from news APIs (GNews, NewsAPI), social platforms (Reddit, Mastodon, Bluesky), YouTube comments, Telegram public channels, and RSS feeds. Enterprise customers can add custom data sources."
       },
     ]
@@ -121,7 +121,7 @@ const faqCategories = [
         a: "Our API is language-agnostic (REST/JSON). We provide SDKs and code examples for Python, JavaScript, and cURL. Any language that can make HTTP requests can use our API."
       },
       {
-        q: "Can I integrate AmaálSense with my existing tools?",
+        q: "Can I integrate AmalSense with my existing tools?",
         a: "Absolutely! Our API can be integrated with dashboards, BI tools, Slack/Teams for alerts, and custom applications. Enterprise customers get dedicated integration support."
       },
     ]
@@ -140,7 +140,7 @@ const faqCategories = [
         a: "By default, analyzed text is stored temporarily for improving our models. You can opt out of this in your account settings. Enterprise plans include full data isolation."
       },
       {
-        q: "Is AmaálSense GDPR compliant?",
+        q: "Is AmalSense GDPR compliant?",
         a: "Yes, we are fully GDPR compliant. Users can request data deletion at any time. We only process publicly available data and do not collect personal information without consent."
       },
     ]
@@ -197,7 +197,7 @@ export default function FAQ() {
             How Can We Help?
           </h1>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-            Find answers to common questions about AmaálSense, our technology, pricing, and more.
+            Find answers to common questions about AmalSense, our technology, pricing, and more.
           </p>
         </div>
 

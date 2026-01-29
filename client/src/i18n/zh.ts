@@ -1,5 +1,5 @@
 /**
- * Chinese (Simplified) translations for AmaálSense
+ * Chinese (Simplified) translations for AmalSense
  */
 
 export const zh = {
@@ -58,7 +58,7 @@ export const zh = {
     useCases: "使用案例",
     useCasesDesc: "受到全球组织的信赖",
     resources: "资源",
-    resourcesDesc: "了解更多关于AmaálSense和情绪分析",
+    resourcesDesc: "了解更多关于AmalSense和情绪分析",
     readyToStart: "准备好理解集体情绪了吗？",
     launchAnalyzer: "启动分析器",
   },
@@ -182,7 +182,7 @@ export const zh = {
 
   // About
   about: {
-    title: "关于AmaálSense",
+    title: "关于AmalSense",
     subtitle: "通过AI理解集体情绪",
     author: "作者",
     publication: "科学出版物",
@@ -195,7 +195,7 @@ export const zh = {
   // Theory
   theory: {
     title: "数字意识场理论",
-    subtitle: "AmaálSense背后的科学基础",
+    subtitle: "AmalSense背后的科学基础",
     dcft: "DCFT",
     dcftFull: "数字意识场理论",
     formula: "公式",
@@ -242,6 +242,6 @@ export const zh = {
     product: "产品",
     resources: "资源",
     company: "公司",
-    copyright: "© 2025 AmaálSense Engine | 作者：Amaal Radwan",
+    copyright: "© 2025 AmalSense Engine | 作者：Amaal Radwan",
   },
 };
