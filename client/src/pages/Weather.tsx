@@ -27,8 +27,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { AlertSubscription } from "@/components/AlertSubscription";
+import { useI18n } from "@/i18n";
 
 export default function Weather() {
+  const { t, isRTL } = useI18n();
   const [forecastHours, setForecastHours] = useState(24);
   
   const { data: forecast, refetch: refetchForecast, isLoading: forecastLoading } = 
@@ -90,14 +92,14 @@ export default function Weather() {
       <nav className="relative z-10 border-b border-white/10 bg-black/20 backdrop-blur-xl">
         <div className="container flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back to Home</span>
+            <ArrowLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+            <span>{t.common.back}</span>
           </Link>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Cloud className="w-6 h-6 text-blue-400" />
               <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Emotional Weather
+                {t.weather.title}
               </span>
             </div>
             <AlertSubscription compact />
@@ -110,13 +112,13 @@ export default function Weather() {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-blue-500/20 text-blue-300 border-blue-500/30">
-            Emotional Forecasting System
+            {isRTL ? 'نظام التنبؤ العاطفي' : 'Emotional Forecasting System'}
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Global Emotional Weather
+            {t.weather.title}
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-            Forecasting hope, fear, and collective clarity for the planet
+            {t.weather.subtitle}
           </p>
         </div>
 

@@ -8,6 +8,7 @@ import { TimeRangeSelector } from '@/components/TimeRangeSelector';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Globe } from 'lucide-react';
+import { useI18n } from '@/i18n';
 
 interface CountryEmotionData {
   countryCode: string;
@@ -28,6 +29,7 @@ interface HistoricalDataPoint {
 
 export default function Map() {
   const [, navigate] = useLocation();
+  const { t, language, isRTL } = useI18n();
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [countriesData, setCountriesData] = useState<CountryEmotionData[]>([]);
   const [selectedCountryData, setSelectedCountryData] = useState<CountryEmotionData | null>(null);
@@ -87,7 +89,7 @@ export default function Map() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
+    <div className={`min-h-screen flex flex-col relative z-10 ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Navigation */}
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4 flex items-center justify-between">
@@ -95,12 +97,12 @@ export default function Map() {
             onClick={() => navigate('/')}
             className="flex items-center gap-2 hover:text-accent transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
+            <ArrowLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+            <span>{t.common.back}</span>
           </button>
           <div className="flex items-center gap-2">
             <Globe className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold gradient-text">Global Emotion Map</h1>
+            <h1 className="text-2xl font-bold gradient-text">{t.map.title}</h1>
           </div>
           <div className="w-20" />
         </div>
@@ -119,7 +121,7 @@ export default function Map() {
           {/* World Map */}
           {isLoading ? (
             <Card className="cosmic-card p-8 text-center">
-              <p className="text-muted-foreground">Loading world emotion map...</p>
+              <p className="text-muted-foreground">{t.common.loading}...</p>
             </Card>
           ) : (
             <WorldMap
@@ -134,36 +136,36 @@ export default function Map() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold cosmic-text mb-4">
-                  {selectedCountryData.countryName} Emotion Profile
+                  {isRTL ? `الملف العاطفي لـ ${selectedCountryData.countryName}` : `${selectedCountryData.countryName} Emotion Profile`}
                 </h2>
 
                 {/* Indices Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <IndexCard
-                    title="Global Mood Index"
+                    title={t.indices.gmi}
                     value={selectedCountryData.gmi}
                     min={-100}
                     max={100}
                     unit=""
-                    description="Overall sentiment"
+                    description={t.indices.gmiDesc}
                     indexType="gmi"
                   />
                   <IndexCard
-                    title="Collective Fear Index"
+                    title={t.indices.cfi}
                     value={selectedCountryData.cfi}
                     min={0}
                     max={100}
                     unit=""
-                    description="Anxiety level"
+                    description={t.indices.cfiDesc}
                     indexType="cfi"
                   />
                   <IndexCard
-                    title="Hope Resilience Index"
+                    title={t.indices.hri}
                     value={selectedCountryData.hri}
                     min={0}
                     max={100}
                     unit=""
-                    description="Optimism level"
+                    description={t.indices.hriDesc}
                     indexType="hri"
                   />
                 </div>
@@ -172,7 +174,7 @@ export default function Map() {
               {/* Historical Chart */}
               {isLoadingHistorical ? (
                 <Card className="cosmic-card p-8 text-center">
-                  <p className="text-muted-foreground">Loading historical data...</p>
+                  <p className="text-muted-foreground">{t.common.loading}...</p>
                 </Card>
               ) : historicalData.length > 0 ? (
                 <CountryHistoricalChart
@@ -184,43 +186,53 @@ export default function Map() {
 
               {/* Country Statistics */}
               <Card className="cosmic-card p-6">
-                <h3 className="text-lg font-bold cosmic-text mb-4">Emotional State Analysis</h3>
+                <h3 className="text-lg font-bold cosmic-text mb-4">
+                  {isRTL ? 'تحليل الحالة العاطفية' : 'Emotional State Analysis'}
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Overall Sentiment</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {isRTL ? 'المشاعر العامة' : 'Overall Sentiment'}
+                    </p>
                     <p className="text-lg font-semibold cosmic-text">
                       {selectedCountryData.gmi > 30
-                        ? '📈 Optimistic'
+                        ? isRTL ? '📈 متفائل' : '📈 Optimistic'
                         : selectedCountryData.gmi < -30
-                        ? '📉 Pessimistic'
-                        : '➡️ Neutral'}
+                        ? isRTL ? '📉 متشائم' : '📉 Pessimistic'
+                        : isRTL ? '➡️ محايد' : '➡️ Neutral'}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Fear Level</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {isRTL ? 'مستوى الخوف' : 'Fear Level'}
+                    </p>
                     <p className="text-lg font-semibold cosmic-text">
                       {selectedCountryData.cfi > 60
-                        ? '😰 High'
+                        ? isRTL ? '😰 مرتفع' : '😰 High'
                         : selectedCountryData.cfi < 30
-                        ? '😊 Low'
-                        : '😐 Moderate'}
+                        ? isRTL ? '😊 منخفض' : '😊 Low'
+                        : isRTL ? '😐 معتدل' : '😐 Moderate'}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Hope & Resilience</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {isRTL ? 'الأمل والمرونة' : 'Hope & Resilience'}
+                    </p>
                     <p className="text-lg font-semibold cosmic-text">
                       {selectedCountryData.hri > 60
-                        ? '🌟 Strong'
+                        ? isRTL ? '🌟 قوي' : '🌟 Strong'
                         : selectedCountryData.hri < 30
-                        ? '💔 Weak'
-                        : '⚖️ Moderate'}
+                        ? isRTL ? '💔 ضعيف' : '💔 Weak'
+                        : isRTL ? '⚖️ معتدل' : '⚖️ Moderate'}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Analysis Confidence</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {isRTL ? 'دقة التحليل' : 'Analysis Confidence'}
+                    </p>
                     <p className="text-lg font-semibold cosmic-text">{selectedCountryData.confidence}%</p>
                   </div>
                 </div>
@@ -228,33 +240,67 @@ export default function Map() {
 
               {/* Interpretation */}
               <Card className="cosmic-card p-6">
-                <h3 className="text-lg font-bold cosmic-text mb-4">Interpretation</h3>
+                <h3 className="text-lg font-bold cosmic-text mb-4">
+                  {isRTL ? 'التفسير' : 'Interpretation'}
+                </h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  {selectedCountryData.countryName} is currently experiencing{' '}
-                  <span className="text-accent font-semibold">
-                    {selectedCountryData.gmi > 30
-                      ? 'a positive emotional climate'
-                      : selectedCountryData.gmi < -30
-                      ? 'challenging emotional conditions'
-                      : 'a balanced emotional state'}
-                  </span>
-                  . The collective fear index is{' '}
-                  <span className="text-cyan-400 font-semibold">
-                    {selectedCountryData.cfi > 60
-                      ? 'elevated'
-                      : selectedCountryData.cfi < 30
-                      ? 'low'
-                      : 'moderate'}
-                  </span>
-                  , while hope and resilience levels are{' '}
-                  <span className="text-green-400 font-semibold">
-                    {selectedCountryData.hri > 60
-                      ? 'strong'
-                      : selectedCountryData.hri < 30
-                      ? 'concerning'
-                      : 'stable'}
-                  </span>
-                  .
+                  {isRTL ? (
+                    <>
+                      تشهد {selectedCountryData.countryName} حالياً{' '}
+                      <span className="text-accent font-semibold">
+                        {selectedCountryData.gmi > 30
+                          ? 'مناخاً عاطفياً إيجابياً'
+                          : selectedCountryData.gmi < -30
+                          ? 'ظروفاً عاطفية صعبة'
+                          : 'حالة عاطفية متوازنة'}
+                      </span>
+                      . مؤشر الخوف الجماعي{' '}
+                      <span className="text-cyan-400 font-semibold">
+                        {selectedCountryData.cfi > 60
+                          ? 'مرتفع'
+                          : selectedCountryData.cfi < 30
+                          ? 'منخفض'
+                          : 'معتدل'}
+                      </span>
+                      ، بينما مستويات الأمل والمرونة{' '}
+                      <span className="text-green-400 font-semibold">
+                        {selectedCountryData.hri > 60
+                          ? 'قوية'
+                          : selectedCountryData.hri < 30
+                          ? 'مقلقة'
+                          : 'مستقرة'}
+                      </span>
+                      .
+                    </>
+                  ) : (
+                    <>
+                      {selectedCountryData.countryName} is currently experiencing{' '}
+                      <span className="text-accent font-semibold">
+                        {selectedCountryData.gmi > 30
+                          ? 'a positive emotional climate'
+                          : selectedCountryData.gmi < -30
+                          ? 'challenging emotional conditions'
+                          : 'a balanced emotional state'}
+                      </span>
+                      . The collective fear index is{' '}
+                      <span className="text-cyan-400 font-semibold">
+                        {selectedCountryData.cfi > 60
+                          ? 'elevated'
+                          : selectedCountryData.cfi < 30
+                          ? 'low'
+                          : 'moderate'}
+                      </span>
+                      , while hope and resilience levels are{' '}
+                      <span className="text-green-400 font-semibold">
+                        {selectedCountryData.hri > 60
+                          ? 'strong'
+                          : selectedCountryData.hri < 30
+                          ? 'concerning'
+                          : 'stable'}
+                      </span>
+                      .
+                    </>
+                  )}
                 </p>
               </Card>
             </div>
@@ -262,7 +308,9 @@ export default function Map() {
 
           {/* Countries List */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold cosmic-text">All Countries</h3>
+            <h3 className="text-xl font-bold cosmic-text">
+              {isRTL ? 'جميع الدول' : 'All Countries'}
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
               {countriesData.map((country) => (
                 <Button
