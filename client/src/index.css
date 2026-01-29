@@ -434,3 +434,47 @@ html.rtl .animate-slide-in-right {
     opacity: 1;
   }
 }
+
+
+/* Multi-language Font Support */
+
+/* Default font (English and others) */
+html.lang-en body,
+html.lang-fr body,
+html.lang-de body,
+html.lang-es body {
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Arabic font */
+html.lang-ar body {
+  font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Russian font */
+html.lang-ru body {
+  font-family: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Chinese font */
+html.lang-zh body {
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* Language-specific adjustments */
+html.lang-zh {
+  line-height: 1.8;
+}
+
+html.lang-ru {
+  letter-spacing: 0.01em;
+}
+
+/* Ensure proper rendering for all scripts */
+html.lang-ar *,
+html.lang-zh *,
+html.lang-ru * {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

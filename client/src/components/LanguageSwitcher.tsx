@@ -4,6 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Globe, Check } from "lucide-react";
 import { useI18n, Language } from "@/i18n";
@@ -21,9 +22,14 @@ export function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const { language, setLanguage } = useI18n();
 
-  const languages: { code: Language; label: string; nativeLabel: string }[] = [
-    { code: "en", label: "English", nativeLabel: "English" },
-    { code: "ar", label: "Arabic", nativeLabel: "العربية" },
+  const languages: { code: Language; label: string; nativeLabel: string; flag: string }[] = [
+    { code: "en", label: "English", nativeLabel: "English", flag: "🇺🇸" },
+    { code: "ar", label: "Arabic", nativeLabel: "العربية", flag: "🇸🇦" },
+    { code: "fr", label: "French", nativeLabel: "Français", flag: "🇫🇷" },
+    { code: "de", label: "German", nativeLabel: "Deutsch", flag: "🇩🇪" },
+    { code: "es", label: "Spanish", nativeLabel: "Español", flag: "🇪🇸" },
+    { code: "ru", label: "Russian", nativeLabel: "Русский", flag: "🇷🇺" },
+    { code: "zh", label: "Chinese", nativeLabel: "中文", flag: "🇨🇳" },
   ];
 
   const currentLang = languages.find(l => l.code === language);
@@ -36,7 +42,11 @@ export function LanguageSwitcher({
           {showLabel && <span>{currentLang?.nativeLabel}</span>}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-slate-900 border-white/10">
+      <DropdownMenuContent align="end" className="bg-slate-900 border-white/10 max-h-80 overflow-y-auto">
+        <div className="px-2 py-1.5 text-xs text-slate-500 font-medium">
+          Select Language
+        </div>
+        <DropdownMenuSeparator className="bg-white/10" />
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
@@ -44,6 +54,7 @@ export function LanguageSwitcher({
             className="cursor-pointer hover:bg-white/5 flex items-center justify-between"
           >
             <span className="flex items-center gap-2">
+              <span className="text-base">{lang.flag}</span>
               <span>{lang.nativeLabel}</span>
               <span className="text-xs text-slate-500">({lang.label})</span>
             </span>

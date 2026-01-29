@@ -1,17 +1,19 @@
 import { useState, useEffect, ReactNode } from "react";
-import { I18nContext, Language, translations } from "@/i18n";
+import { I18nContext, Language, translations, rtlLanguages } from "@/i18n";
 
 interface I18nProviderProps {
   children: ReactNode;
   defaultLanguage?: Language;
 }
 
+const validLanguages: Language[] = ["en", "ar", "fr", "de", "ru", "es", "zh"];
+
 export function I18nProvider({ children, defaultLanguage = "en" }: I18nProviderProps) {
   const [language, setLanguageState] = useState<Language>(() => {
     // Check localStorage for saved preference
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("amalsense-language") as Language;
-      if (saved && (saved === "en" || saved === "ar")) {
+      if (saved && validLanguages.includes(saved)) {
         return saved;
       }
     }
@@ -22,31 +24,47 @@ export function I18nProvider({ children, defaultLanguage = "en" }: I18nProviderP
     setLanguageState(lang);
     localStorage.setItem("amalsense-language", lang);
     
+    const isRTL = rtlLanguages.includes(lang);
+    
     // Update document direction
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = isRTL ? "rtl" : "ltr";
     document.documentElement.lang = lang;
     
     // Add/remove RTL class
-    if (lang === "ar") {
+    if (isRTL) {
       document.documentElement.classList.add("rtl");
     } else {
       document.documentElement.classList.remove("rtl");
     }
+    
+    // Add language-specific class for font handling
+    validLanguages.forEach(l => {
+      document.documentElement.classList.remove(`lang-${l}`);
+    });
+    document.documentElement.classList.add(`lang-${lang}`);
   };
 
   useEffect(() => {
+    const isRTL = rtlLanguages.includes(language);
+    
     // Set initial direction
-    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = isRTL ? "rtl" : "ltr";
     document.documentElement.lang = language;
     
-    if (language === "ar") {
+    if (isRTL) {
       document.documentElement.classList.add("rtl");
     } else {
       document.documentElement.classList.remove("rtl");
     }
+    
+    // Add language-specific class
+    validLanguages.forEach(l => {
+      document.documentElement.classList.remove(`lang-${l}`);
+    });
+    document.documentElement.classList.add(`lang-${language}`);
   }, [language]);
 
-  const isRTL = language === "ar";
+  const isRTL = rtlLanguages.includes(language);
   const t = translations[language];
 
   return (
