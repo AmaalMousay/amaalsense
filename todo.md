@@ -152,3 +152,9 @@
 - [x] Implement owner notification for new leads
 - [x] Add demo request functionality
 
+
+
+## Phase 14: Zenodo Integration
+- [x] Update About page with Zenodo publication link
+- [x] Add DOI citation information
+- [x] Update publication date to October 9, 2025

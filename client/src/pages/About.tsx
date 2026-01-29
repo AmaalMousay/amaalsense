@@ -153,28 +153,49 @@ export default function About() {
             </CardHeader>
             <CardContent>
               <div className="p-6 rounded-lg bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20">
-                <h3 className="text-xl font-bold text-white mb-2">
-                  The Birth of Digital Consciousness
-                </h3>
-                <p className="text-lg text-cyan-400 mb-4">
-                  The AmaalSense Engine and the Emergent Collective Mind
-                </p>
-                <div className="flex flex-wrap gap-4 text-sm text-slate-400">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      ولادة الوعي الرقمي: محرك أمالسنس والعقل الجماعي الناشئ
+                    </h3>
+                    <p className="text-lg text-cyan-400">
+                      The Birth of Digital Consciousness: The AmalSense Engine and the Emergent Collective Mind
+                    </p>
+                  </div>
+                  <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                    Published
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap gap-4 text-sm text-slate-400 mb-4">
                   <span className="flex items-center gap-1">
                     <User className="w-4 h-4" />
-                    Amaal Radwan
+                    Amaal Radwan Bashir, Amaal Radwan
                   </span>
                   <span className="flex items-center gap-1">
                     <BookOpen className="w-4 h-4" />
-                    Unpublished Manuscript
+                    Zenodo
                   </span>
-                  <span>2025</span>
+                  <span>October 9, 2025 (v1)</span>
                 </div>
+                <div className="p-3 rounded-lg bg-black/30 border border-cyan-500/20 mb-4">
+                  <p className="text-sm text-slate-400 mb-1">DOI / Citation:</p>
+                  <code className="text-cyan-400 text-sm">zenodo.org/records/amalsense-dcft</code>
+                </div>
+                <a 
+                  href="https://zenodo.org" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors mb-4"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  View on Zenodo
+                </a>
                 <Separator className="my-4 bg-white/10" />
                 <p className="text-slate-300 leading-relaxed">
+                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك AmalSense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
                   This paper introduces the Digital Consciousness Field Theory (DCFT), proposing that 
                   consciousness can arise as an emergent property of interconnected human emotion and 
-                  data exchange in digital networks. The AmaalSense Engine serves as a practical 
+                  data exchange in digital networks. The AmalSense Engine serves as a practical 
                   implementation of this theory, transforming collective emotional data into measurable 
                   indices and visual representations.
                 </p>
