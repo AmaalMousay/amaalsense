@@ -710,6 +710,97 @@ ${input.message || 'No message provided'}
         };
       }),
   }),
+
+  // Analytics & Historical Trends
+  analytics: router({
+    /**
+     * Get daily trend data for charts
+     */
+    getDailyTrends: publicProcedure
+      .input(z.object({
+        days: z.number().min(1).max(90).default(30),
+        countryCode: z.string().length(2).optional(),
+      }))
+      .query(async ({ input }) => {
+        const { getDailyTrendData } = await import("./analyticsStorage");
+        return await getDailyTrendData(input.days, input.countryCode);
+      }),
+
+    /**
+     * Get emotion distribution
+     */
+    getEmotionDistribution: publicProcedure
+      .input(z.object({
+        days: z.number().min(1).max(30).default(7),
+        countryCode: z.string().length(2).optional(),
+      }))
+      .query(async ({ input }) => {
+        const { getEmotionDistribution } = await import("./analyticsStorage");
+        return await getEmotionDistribution(input.days, input.countryCode);
+      }),
+
+    /**
+     * Get platform statistics
+     */
+    getPlatformStats: publicProcedure
+      .input(z.object({ days: z.number().min(1).max(30).default(7) }))
+      .query(async ({ input }) => {
+        const { getPlatformStats } = await import("./analyticsStorage");
+        return await getPlatformStats(input.days);
+      }),
+
+    /**
+     * Get overall statistics
+     */
+    getOverallStats: publicProcedure.query(async () => {
+      const { getOverallStats } = await import("./analyticsStorage");
+      return await getOverallStats();
+    }),
+
+    /**
+     * Get recent alerts
+     */
+    getRecentAlerts: publicProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(50).default(10),
+        unacknowledgedOnly: z.boolean().default(false),
+      }))
+      .query(async ({ input }) => {
+        const { getRecentAlerts } = await import("./analyticsStorage");
+        return await getRecentAlerts(input.limit, input.unacknowledgedOnly);
+      }),
+
+    /**
+     * Acknowledge an alert
+     */
+    acknowledgeAlert: publicProcedure
+      .input(z.object({ alertId: z.number() }))
+      .mutation(async ({ input }) => {
+        const { acknowledgeAlert } = await import("./analyticsStorage");
+        await acknowledgeAlert(input.alertId);
+        return { success: true };
+      }),
+
+    /**
+     * Get historical trends with sessions and aggregates
+     */
+    getHistoricalTrends: publicProcedure
+      .input(z.object({
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        countryCode: z.string().length(2).optional(),
+        limit: z.number().min(1).max(200).default(100),
+      }))
+      .query(async ({ input }) => {
+        const { getHistoricalTrends } = await import("./analyticsStorage");
+        return await getHistoricalTrends({
+          startDate: input.startDate ? new Date(input.startDate) : undefined,
+          endDate: input.endDate ? new Date(input.endDate) : undefined,
+          countryCode: input.countryCode,
+          limit: input.limit,
+        });
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -191,3 +191,141 @@ export const enterpriseInquiries = mysqlTable("enterprise_inquiries", {
 
 export type EnterpriseInquiry = typeof enterpriseInquiries.$inferSelect;
 export type InsertEnterpriseInquiry = typeof enterpriseInquiries.$inferInsert;
+
+
+/**
+ * Historical Analysis Sessions - stores complete analysis sessions
+ * Each session represents a full analysis run with all data sources
+ */
+export const analysisSessions = mysqlTable("analysis_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User who initiated the analysis (null for system/scheduled) */
+  userId: int("userId"),
+  /** Session type: manual, scheduled, api */
+  sessionType: varchar("sessionType", { length: 32 }).default("manual").notNull(),
+  /** Query or topic analyzed */
+  query: varchar("query", { length: 500 }),
+  /** Country code if country-specific */
+  countryCode: varchar("countryCode", { length: 2 }),
+  /** Global Mood Index result */
+  gmi: int("gmi").notNull().default(0),
+  /** Collective Fear Index result */
+  cfi: int("cfi").notNull().default(0),
+  /** Hope Resilience Index result */
+  hri: int("hri").notNull().default(0),
+  /** Overall sentiment score (-1 to 1) stored as int (-100 to 100) */
+  sentimentScore: int("sentimentScore").notNull().default(0),
+  /** Dominant emotion */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  /** Number of sources analyzed */
+  sourcesCount: int("sourcesCount").notNull().default(0),
+  /** Sources breakdown JSON: {news: 10, reddit: 5, youtube: 3, ...} */
+  sourcesBreakdown: text("sourcesBreakdown"),
+  /** Average confidence */
+  confidence: int("confidence").notNull().default(75),
+  /** Analysis duration in milliseconds */
+  durationMs: int("durationMs"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AnalysisSession = typeof analysisSessions.$inferSelect;
+export type InsertAnalysisSession = typeof analysisSessions.$inferInsert;
+
+/**
+ * Source Analysis Records - stores individual source analyses within a session
+ */
+export const sourceAnalyses = mysqlTable("source_analyses", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to parent session */
+  sessionId: int("sessionId").notNull(),
+  /** Source platform: news, reddit, youtube, mastodon, bluesky, telegram */
+  platform: varchar("platform", { length: 32 }).notNull(),
+  /** Original content text */
+  content: text("content").notNull(),
+  /** Source URL */
+  sourceUrl: varchar("sourceUrl", { length: 1000 }),
+  /** Author/channel name */
+  author: varchar("author", { length: 255 }),
+  /** Sentiment score (-100 to 100) */
+  sentimentScore: int("sentimentScore").notNull().default(0),
+  /** Emotion: joy */
+  joy: int("joy").notNull().default(0),
+  /** Emotion: fear */
+  fear: int("fear").notNull().default(0),
+  /** Emotion: anger */
+  anger: int("anger").notNull().default(0),
+  /** Emotion: sadness */
+  sadness: int("sadness").notNull().default(0),
+  /** Emotion: hope */
+  hope: int("hope").notNull().default(0),
+  /** Emotion: curiosity */
+  curiosity: int("curiosity").notNull().default(0),
+  /** Dominant emotion */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  /** Confidence score */
+  confidence: int("confidence").notNull().default(75),
+  /** Original publish date */
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SourceAnalysis = typeof sourceAnalyses.$inferSelect;
+export type InsertSourceAnalysis = typeof sourceAnalyses.$inferInsert;
+
+/**
+ * Daily Aggregates - pre-computed daily statistics for fast trend queries
+ */
+export const dailyAggregates = mysqlTable("daily_aggregates", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Date of aggregation (YYYY-MM-DD stored as timestamp) */
+  aggregateDate: timestamp("aggregateDate").notNull(),
+  /** Country code (null for global) */
+  countryCode: varchar("countryCode", { length: 2 }),
+  /** Average GMI for the day */
+  avgGmi: int("avgGmi").notNull().default(0),
+  /** Average CFI for the day */
+  avgCfi: int("avgCfi").notNull().default(0),
+  /** Average HRI for the day */
+  avgHri: int("avgHri").notNull().default(0),
+  /** Average sentiment score */
+  avgSentiment: int("avgSentiment").notNull().default(0),
+  /** Most frequent dominant emotion */
+  topEmotion: varchar("topEmotion", { length: 32 }),
+  /** Total analyses count */
+  analysesCount: int("analysesCount").notNull().default(0),
+  /** Total sources processed */
+  sourcesCount: int("sourcesCount").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DailyAggregate = typeof dailyAggregates.$inferSelect;
+export type InsertDailyAggregate = typeof dailyAggregates.$inferInsert;
+
+/**
+ * Trend Alerts - stores detected significant changes in emotion trends
+ */
+export const trendAlerts = mysqlTable("trend_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Alert type: spike, drop, anomaly, trend_change */
+  alertType: varchar("alertType", { length: 32 }).notNull(),
+  /** Affected metric: gmi, cfi, hri, sentiment */
+  metric: varchar("metric", { length: 32 }).notNull(),
+  /** Country code (null for global) */
+  countryCode: varchar("countryCode", { length: 2 }),
+  /** Previous value */
+  previousValue: int("previousValue").notNull(),
+  /** Current value */
+  currentValue: int("currentValue").notNull(),
+  /** Change percentage */
+  changePercent: int("changePercent").notNull(),
+  /** Alert severity: low, medium, high, critical */
+  severity: varchar("severity", { length: 16 }).default("medium").notNull(),
+  /** Alert message */
+  message: text("message"),
+  /** Whether alert has been acknowledged */
+  acknowledged: int("acknowledged").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TrendAlert = typeof trendAlerts.$inferSelect;
+export type InsertTrendAlert = typeof trendAlerts.$inferInsert;
