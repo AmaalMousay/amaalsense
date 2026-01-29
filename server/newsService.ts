@@ -151,15 +151,17 @@ export async function fetchCountryNews(countryCode: string, pageSize: number = 1
 
   // Try primary query first
   const primaryQuery = queries[0];
-  let articles = await fetchGNews({
+  
+  // Try NewsAPI first (primary source)
+  let articles = await fetchNewsAPI({
     query: primaryQuery,
     country: countryCode,
     pageSize,
   });
 
-  // If no results, try NewsAPI as fallback
+  // If no results, try GNews as fallback
   if (articles.length === 0) {
-    articles = await fetchNewsAPI({
+    articles = await fetchGNews({
       query: primaryQuery,
       country: countryCode,
       pageSize,
@@ -178,7 +180,14 @@ export async function fetchGlobalNews(pageSize: number = 20): Promise<NewsArticl
   let allArticles: NewsArticle[] = [];
   
   for (const query of queries) {
-    const articles = await fetchGNews({ query, pageSize: Math.ceil(pageSize / queries.length) });
+    // Try NewsAPI first
+    let articles = await fetchNewsAPI({ query, pageSize: Math.ceil(pageSize / queries.length) });
+    
+    // Fallback to GNews
+    if (articles.length === 0) {
+      articles = await fetchGNews({ query, pageSize: Math.ceil(pageSize / queries.length) });
+    }
+    
     allArticles = [...allArticles, ...articles];
     
     if (allArticles.length >= pageSize) break;
