@@ -234,3 +234,9 @@
 - [x] Update routers to auto-save analyses
 - [x] Create historical trends page
 - [x] Add charts for trend visualization
+
+## Phase 23: Navigation & UI Improvements (NEW)
+- [x] Add Trends link to main navigation
+- [x] Add abbreviations (GMI, CFI, HRI) to home page index cards
+- [x] Add automatic analysis scheduling (cron job)
+- [x] Add data export as CSV/JSON

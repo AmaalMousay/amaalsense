@@ -709,6 +709,72 @@ ${input.message || 'No message provided'}
           filename: `amalsense-${input.countryCode.toLowerCase()}-report-${new Date().toISOString().split('T')[0]}.html`,
         };
       }),
+
+    /**
+     * Export daily aggregates as CSV/JSON
+     */
+    dailyAggregates: publicProcedure
+      .input(
+        z.object({
+          format: z.enum(["csv", "json"]).default("csv"),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          countryCode: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { exportDailyAggregates } = await import("./dataExport");
+        return await exportDailyAggregates({
+          format: input.format,
+          startDate: input.startDate ? new Date(input.startDate) : undefined,
+          endDate: input.endDate ? new Date(input.endDate) : undefined,
+          countryCode: input.countryCode,
+        });
+      }),
+
+    /**
+     * Export historical sessions as CSV/JSON
+     */
+    historicalSessions: publicProcedure
+      .input(
+        z.object({
+          format: z.enum(["csv", "json"]).default("csv"),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          countryCode: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { exportHistoricalTrends } = await import("./dataExport");
+        return await exportHistoricalTrends({
+          format: input.format,
+          startDate: input.startDate ? new Date(input.startDate) : undefined,
+          endDate: input.endDate ? new Date(input.endDate) : undefined,
+          countryCode: input.countryCode,
+        });
+      }),
+
+    /**
+     * Export emotion summary as CSV/JSON
+     */
+    emotionSummary: publicProcedure
+      .input(
+        z.object({
+          format: z.enum(["csv", "json"]).default("csv"),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          countryCode: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { exportEmotionSummary } = await import("./dataExport");
+        return await exportEmotionSummary({
+          format: input.format,
+          startDate: input.startDate ? new Date(input.startDate) : undefined,
+          endDate: input.endDate ? new Date(input.endDate) : undefined,
+          countryCode: input.countryCode,
+        });
+      }),
   }),
 
   // Analytics & Historical Trends
@@ -800,6 +866,44 @@ ${input.message || 'No message provided'}
           limit: input.limit,
         });
       }),
+  }),
+
+  scheduler: router({
+    /**
+     * Get scheduler status
+     */
+    getStatus: publicProcedure.query(async () => {
+      const { getSchedulerStatus } = await import("./scheduledAnalysis");
+      return getSchedulerStatus();
+    }),
+
+    /**
+     * Start the scheduler (admin only)
+     */
+    start: publicProcedure
+      .input(z.object({ intervalMinutes: z.number().min(5).max(1440).optional() }))
+      .mutation(async ({ input }) => {
+        const { startScheduler, getSchedulerStatus } = await import("./scheduledAnalysis");
+        startScheduler(input.intervalMinutes || 60);
+        return getSchedulerStatus();
+      }),
+
+    /**
+     * Stop the scheduler (admin only)
+     */
+    stop: publicProcedure.mutation(async () => {
+      const { stopScheduler, getSchedulerStatus } = await import("./scheduledAnalysis");
+      stopScheduler();
+      return getSchedulerStatus();
+    }),
+
+    /**
+     * Run a single analysis cycle manually
+     */
+    runNow: publicProcedure.mutation(async () => {
+      const { runAnalysisCycle } = await import("./scheduledAnalysis");
+      return await runAnalysisCycle();
+    }),
   }),
 });
 

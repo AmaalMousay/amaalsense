@@ -37,6 +37,7 @@ export default function Home() {
     { href: '/social', label: 'Social' },
     { href: '/theory', label: 'Theory' },
     { href: '/weather', label: 'Weather' },
+    { href: '/trends', label: 'Trends' },
     { href: '/about', label: 'About' },
     { href: '/pricing', label: 'Pricing' },
   ];
@@ -189,7 +190,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <IndexCard
-              title="Global Mood Index"
+              title="Global Mood Index (GMI)"
               value={indices.gmi}
               min={-100}
               max={100}
@@ -199,7 +200,7 @@ export default function Home() {
               color="purple"
             />
             <IndexCard
-              title="Collective Fear Index"
+              title="Collective Fear Index (CFI)"
               value={indices.cfi}
               min={0}
               max={100}
@@ -209,7 +210,7 @@ export default function Home() {
               color="cyan"
             />
             <IndexCard
-              title="Hope Resilience Index"
+              title="Hope Resilience Index (HRI)"
               value={indices.hri}
               min={0}
               max={100}
