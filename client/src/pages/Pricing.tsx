@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card';
 import { useLocation, useSearch } from 'wouter';
 import { PayPalButton } from '@/components/PayPalButton';
 import { 
-  Sparkles, 
   Check, 
   X, 
   Zap, 
@@ -14,8 +13,10 @@ import {
   ArrowRight,
   Star,
   CheckCircle,
-  XCircle
+  XCircle,
+  Brain
 } from 'lucide-react';
+import { LogoIcon } from '@/components/Logo';
 import { toast } from 'sonner';
 
 interface PricingTier {
@@ -184,8 +185,8 @@ export default function Pricing() {
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <Sparkles className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <LogoIcon size="md" />
+            <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
           </div>
           <div className="flex items-center gap-4">
             <button onClick={() => navigate('/')} className="text-sm hover:text-accent transition-colors">
@@ -414,7 +415,7 @@ export default function Pricing() {
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 mt-auto">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>AmalSense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
+          <p>AmaálSense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
         </div>
       </footer>
     </div>

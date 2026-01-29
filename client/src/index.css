@@ -78,7 +78,7 @@
   --sidebar-border: oklch(0.88 0.01 240);
   --sidebar-ring: oklch(0.55 0.2 280);
   
-  /* AmalSense Emotion Color System - Psychological Meaning */
+  /* AmaálSense Emotion Color System - Psychological Meaning */
   /* Red = Anger / Tension / Crisis (#E63946) */
   --emotion-anger: oklch(0.55 0.22 25);
   --emotion-anger-light: oklch(0.65 0.18 25);
@@ -571,7 +571,7 @@ html.lang-ru * {
 
 
 /* ============================================
-   AmalSense Emotion Color Utility Classes
+   AmaálSense Emotion Color Utility Classes
    ============================================ */
 
 /* Background Colors */

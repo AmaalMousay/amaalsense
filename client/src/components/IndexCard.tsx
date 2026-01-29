@@ -23,7 +23,7 @@ export interface IndexCardProps {
 
 /**
  * Get the appropriate color based on index type and value
- * Using the unified AmalSense color system
+ * Using the unified AmaálSense color system
  */
 function getIndexColor(indexType: string | undefined, value: number, min: number, max: number): string {
   // Normalize value to 0-100 scale

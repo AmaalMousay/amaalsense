@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { IndexCard } from '@/components/IndexCard';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Newspaper, Globe, Sparkles, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Newspaper, Globe, Brain, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { LogoIcon } from '@/components/Logo';
 
 interface NewsArticle {
   title: string;
@@ -118,7 +119,7 @@ export default function LiveAnalysis() {
           {/* Custom Text Analysis */}
           <Card className="cosmic-card p-6">
             <h2 className="text-xl font-bold cosmic-text mb-4 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-accent" />
+              <LogoIcon size="sm" />
               AI-Powered Text Analysis
             </h2>
             <p className="text-muted-foreground mb-4">
@@ -139,7 +140,7 @@ export default function LiveAnalysis() {
                 {analyzeWithAI.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
                 ) : (
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <Brain className="w-4 h-4 mr-2" />
                 )}
                 Analyze with AI
               </Button>

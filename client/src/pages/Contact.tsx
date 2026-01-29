@@ -8,7 +8,6 @@ import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { 
-  Sparkles, 
   Send, 
   Building2, 
   Mail, 
@@ -18,6 +17,7 @@ import {
   CheckCircle,
   Loader2
 } from 'lucide-react';
+import { LogoIcon } from '@/components/Logo';
 
 const organizationTypes = [
   { value: 'government', label: 'Government Agency', labelAr: 'جهة حكومية' },
@@ -88,8 +88,8 @@ export default function Contact() {
         <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
           <div className="container py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <Sparkles className="w-6 h-6 text-accent" />
-              <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+              <LogoIcon size="md" />
+              <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
             </div>
           </div>
         </nav>
@@ -125,8 +125,8 @@ export default function Contact() {
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <Sparkles className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <LogoIcon size="md" />
+            <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
           </div>
           <div className="flex items-center gap-4">
             <button onClick={() => navigate('/')} className="text-sm hover:text-accent transition-colors">
@@ -324,7 +324,7 @@ export default function Contact() {
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 mt-auto">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>AmalSense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
+          <p>AmaálSense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
         </div>
       </footer>
     </div>

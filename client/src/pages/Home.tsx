@@ -5,10 +5,11 @@ import { StockStyleIndicator } from '@/components/StockStyleIndicator';
 import { trpc } from '@/lib/trpc';
 import { Link, useLocation } from 'wouter';
 import { 
-  Sparkles, TrendingUp, Zap, Heart, Menu, X, 
+  TrendingUp, Zap, Heart, Menu, X, 
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users
 } from 'lucide-react';
+import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { FooterLegend } from '@/components/EmotionLegend';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -83,8 +84,8 @@ export default function Home() {
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 bg-background/80">
         <div className="container py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <LogoIcon size="md" />
+            <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
           </Link>
           
           {/* Desktop Navigation */}
@@ -364,8 +365,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-accent" />
-                <span className="font-bold gradient-text">AmalSense</span>
+                <LogoIcon size="sm" />
+                <span className="font-bold gradient-text">AmaálSense</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 {t.home.subtitle}

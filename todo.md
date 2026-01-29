@@ -366,3 +366,16 @@
 - [x] Create light mode color scheme
 - [x] Persist theme preference in localStorage
 - [x] Ensure emotion colors remain consistent in both modes
+
+## Phase 32: Rebranding (NEW)
+
+### Name Changes
+- [x] Change AmalSense to AmaálSense in all files
+- [x] Change أمل رضوان to أمال رضوان in all files
+- [x] Update footer copyright text
+
+### New Logo
+- [x] Design unique logo for the platform (brain-wave design)
+- [x] Create Logo component with LogoIcon
+- [x] Apply logo to all pages (navbar, footer, etc.)
+- [x] Replace all Sparkles icons with Brain/LogoIcon

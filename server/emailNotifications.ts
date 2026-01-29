@@ -85,7 +85,7 @@ export async function generateDailyReport(): Promise<string> {
   const avgHRI = trends.reduce((sum, t) => sum + (t.hri || 0), 0) / trends.length;
 
   return `
-📊 AmalSense Daily Report
+📊 AmaálSense Daily Report
 ========================
 
 📅 Date: ${new Date().toLocaleDateString()}
@@ -105,7 +105,7 @@ export async function generateDailyReport(): Promise<string> {
 🔗 View full dashboard: https://amalsense.manus.space/dashboard
 
 ---
-AmalSense Engine - Digital Collective Emotion Analyzer
+AmaálSense Engine - Digital Collective Emotion Analyzer
 By Amaal Radwan Bashir
   `.trim();
 }
@@ -132,7 +132,7 @@ export async function generateWeeklyDigest(): Promise<string> {
   const hriChange = thisWeekAvgHRI - lastWeekAvgHRI;
 
   return `
-📊 AmalSense Weekly Digest
+📊 AmaálSense Weekly Digest
 ==========================
 
 📅 Week of ${new Date().toLocaleDateString()}
@@ -162,7 +162,7 @@ ${hriChange > 5 ? '• Hope and resilience on the rise' : hriChange < -5 ? '• 
 🔗 View full trends: https://amalsense.manus.space/trends
 
 ---
-AmalSense Engine - Digital Collective Emotion Analyzer
+AmaálSense Engine - Digital Collective Emotion Analyzer
 By Amaal Radwan Bashir
   `.trim();
 }
@@ -178,7 +178,7 @@ export function generateAlertNotification(
   message: string
 ): string {
   return `
-⚠️ AmalSense Alert
+⚠️ AmaálSense Alert
 ==================
 
 🚨 Alert Type: ${alertType}
@@ -192,7 +192,7 @@ ${message}
 🔗 View dashboard: https://amalsense.manus.space/dashboard
 
 ---
-AmalSense Engine - Digital Collective Emotion Analyzer
+AmaálSense Engine - Digital Collective Emotion Analyzer
   `.trim();
 }
 

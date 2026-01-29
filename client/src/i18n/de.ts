@@ -1,5 +1,5 @@
 /**
- * German translations for AmalSense
+ * German translations for AmaálSense
  */
 
 export const de = {
@@ -58,7 +58,7 @@ export const de = {
     useCases: "Anwendungsfälle",
     useCasesDesc: "Vertraut von Organisationen weltweit",
     resources: "Ressourcen",
-    resourcesDesc: "Erfahren Sie mehr über AmalSense und Emotionsanalyse",
+    resourcesDesc: "Erfahren Sie mehr über AmaálSense und Emotionsanalyse",
     readyToStart: "Bereit, kollektive Emotionen zu verstehen?",
     launchAnalyzer: "Analysator starten",
   },
@@ -182,7 +182,7 @@ export const de = {
 
   // About
   about: {
-    title: "Über AmalSense",
+    title: "Über AmaálSense",
     subtitle: "Kollektive Emotionen durch KI verstehen",
     author: "Autor",
     publication: "Wissenschaftliche Publikation",
@@ -195,7 +195,7 @@ export const de = {
   // Theory
   theory: {
     title: "Theorie des Digitalen Bewusstseinsfeldes",
-    subtitle: "Die wissenschaftliche Grundlage hinter AmalSense",
+    subtitle: "Die wissenschaftliche Grundlage hinter AmaálSense",
     dcft: "DCFT",
     dcftFull: "Theorie des Digitalen Bewusstseinsfeldes",
     formula: "Formel",
@@ -242,6 +242,6 @@ export const de = {
     product: "Produkt",
     resources: "Ressourcen",
     company: "Unternehmen",
-    copyright: "© 2025 AmalSense Engine | Von Amaal Radwan",
+    copyright: "© 2025 AmaálSense Engine | Von Amaal Radwan",
   },
 };

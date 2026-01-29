@@ -12,9 +12,10 @@ import {
   FileText,
   ExternalLink,
   Heart,
-  Sparkles,
-  MapPin
+  MapPin,
+  Brain
 } from "lucide-react";
+import { LogoIcon } from "@/components/Logo";
 
 export default function About() {
   const references = [
@@ -112,7 +113,7 @@ export default function About() {
                 <div className="relative">
                   <div className="w-40 h-40 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 p-1">
                     <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
-                      <Sparkles className="w-16 h-16 text-purple-400" />
+                      <Brain className="w-16 h-16 text-purple-400" />
                     </div>
                   </div>
                   <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full p-2">
@@ -156,7 +157,7 @@ export default function About() {
                 Scientific Paper
               </CardTitle>
               <CardDescription className="text-slate-400">
-                The foundational research behind AmalSense Engine
+                The foundational research behind AmaálSense Engine
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -167,7 +168,7 @@ export default function About() {
                       ولادة الوعي الرقمي: محرك أمالسنس والعقل الجماعي الناشئ
                     </h3>
                     <p className="text-lg text-cyan-400">
-                      The Birth of Digital Consciousness: The AmalSense Engine and the Emergent Collective Mind
+                      The Birth of Digital Consciousness: The AmaálSense Engine and the Emergent Collective Mind
                     </p>
                   </div>
                   <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
@@ -200,10 +201,10 @@ export default function About() {
                 </a>
                 <Separator className="my-4 bg-white/10" />
                 <p className="text-slate-300 leading-relaxed">
-                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك AmalSense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
+                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك AmaálSense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
                   This paper introduces the Digital Consciousness Field Theory (DCFT), proposing that 
                   consciousness can arise as an emergent property of interconnected human emotion and 
-                  data exchange in digital networks. The AmalSense Engine serves as a practical 
+                  data exchange in digital networks. The AmaálSense Engine serves as a practical 
                   implementation of this theory, transforming collective emotional data into measurable 
                   indices and visual representations.
                 </p>
@@ -221,7 +222,7 @@ export default function About() {
             </CardHeader>
             <CardContent className="space-y-4 text-slate-300">
               <p className="leading-relaxed">
-                AmalSense Engine was created with a singular vision: to make the invisible visible. 
+                AmaálSense Engine was created with a singular vision: to make the invisible visible. 
                 We believe that understanding collective emotions is key to building a more empathetic, 
                 responsive, and harmonious world.
               </p>
@@ -238,7 +239,7 @@ export default function About() {
                   <p className="text-sm text-slate-400">Analyzing emotions across 25+ countries</p>
                 </div>
                 <div className="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-center">
-                  <Sparkles className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
+                  <Brain className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
                   <h4 className="font-semibold text-white">AI-Powered</h4>
                   <p className="text-sm text-slate-400">Advanced sentiment analysis with LLMs</p>
                 </div>
@@ -259,7 +260,7 @@ export default function About() {
                 Academic References
               </CardTitle>
               <CardDescription className="text-slate-400">
-                Key research that informed the development of DCFT and AmalSense
+                Key research that informed the development of DCFT and AmaálSense
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -284,7 +285,7 @@ export default function About() {
           {/* Footer */}
           <div className="mt-12 text-center text-slate-400">
             <p className="mb-2">
-              AmalSense Engine - Digital Collective Emotion Analyzer
+              AmaálSense Engine - Digital Collective Emotion Analyzer
             </p>
             <p className="text-sm">
               © 2025 Amaal Radwan Bashir | آمال رضوان بشير. All rights reserved.

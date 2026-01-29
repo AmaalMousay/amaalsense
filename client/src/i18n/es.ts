@@ -1,5 +1,5 @@
 /**
- * Spanish translations for AmalSense
+ * Spanish translations for AmaálSense
  */
 
 export const es = {
@@ -58,7 +58,7 @@ export const es = {
     useCases: "Casos de uso",
     useCasesDesc: "Confiado por organizaciones de todo el mundo",
     resources: "Recursos",
-    resourcesDesc: "Aprende más sobre AmalSense y el análisis de emociones",
+    resourcesDesc: "Aprende más sobre AmaálSense y el análisis de emociones",
     readyToStart: "¿Listo para entender las emociones colectivas?",
     launchAnalyzer: "Iniciar analizador",
   },
@@ -182,7 +182,7 @@ export const es = {
 
   // About
   about: {
-    title: "Acerca de AmalSense",
+    title: "Acerca de AmaálSense",
     subtitle: "Entendiendo las emociones colectivas a través de la IA",
     author: "Autor",
     publication: "Publicación científica",
@@ -195,7 +195,7 @@ export const es = {
   // Theory
   theory: {
     title: "Teoría del Campo de Conciencia Digital",
-    subtitle: "La base científica detrás de AmalSense",
+    subtitle: "La base científica detrás de AmaálSense",
     dcft: "DCFT",
     dcftFull: "Teoría del Campo de Conciencia Digital",
     formula: "Fórmula",
@@ -242,6 +242,6 @@ export const es = {
     product: "Producto",
     resources: "Recursos",
     company: "Empresa",
-    copyright: "© 2025 AmalSense Engine | Por Amaal Radwan",
+    copyright: "© 2025 AmaálSense Engine | Por Amaal Radwan",
   },
 };

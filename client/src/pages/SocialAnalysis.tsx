@@ -9,7 +9,7 @@ import {
   ArrowLeft, 
   Search, 
   Globe, 
-  Sparkles, 
+  Brain, 
   CheckCircle, 
   Loader2,
   MessageCircle,
@@ -17,6 +17,7 @@ import {
   Share2,
   ExternalLink
 } from 'lucide-react';
+import { LogoIcon } from '@/components/Logo';
 
 // Platform icons (using emojis for simplicity)
 const PLATFORM_ICONS: Record<string, string> = {
@@ -238,7 +239,7 @@ export default function SocialAnalysis() {
               {/* Emotion Analysis */}
               <Card className="cosmic-card p-6">
                 <h3 className="text-lg font-bold cosmic-text mb-4 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-accent" />
+                  <LogoIcon size="sm" />
                   Collective Emotion Analysis
                 </h3>
                 

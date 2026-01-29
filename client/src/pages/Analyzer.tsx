@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
-import { Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Brain } from 'lucide-react';
+import { LogoIcon } from '@/components/Logo';
 import { EMOTION_COLORS, getEmotionColor } from '@shared/emotionColors';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n';
@@ -86,8 +87,8 @@ export default function Analyzer() {
             <span>{t.common.back}</span>
           </button>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <LogoIcon size="md" />
+            <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
           </div>
           <div className="w-20" />
         </div>

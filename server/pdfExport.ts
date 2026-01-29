@@ -1,5 +1,5 @@
 /**
- * PDF Export Service for AmalSense Reports
+ * PDF Export Service for AmaálSense Reports
  * Generates PDF reports for emotion analysis data
  */
 
@@ -224,7 +224,7 @@ function generateReportHTML(data: EmotionReportData): string {
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">✨ AmalSense</div>
+      <div class="logo">✨ AmaálSense</div>
       <div class="subtitle">Digital Collective Emotion Analyzer</div>
       <h1 class="title">${data.title}</h1>
       <div class="meta">
@@ -294,7 +294,7 @@ function generateReportHTML(data: EmotionReportData): string {
     ` : ''}
 
     <div class="footer">
-      <p>AmalSense Engine © 2025 | Based on Digital Consciousness Field Theory (DCFT)</p>
+      <p>AmaálSense Engine © 2025 | Based on Digital Consciousness Field Theory (DCFT)</p>
       <p>By Amaal Radwan | Published on Zenodo (DOI: 10.5281/zenodo.14049498)</p>
     </div>
   </div>

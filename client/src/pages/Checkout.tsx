@@ -6,13 +6,14 @@ import { Label } from '@/components/ui/label';
 import { useLocation, useSearch } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { 
-  Sparkles, 
+  Brain, 
   ArrowLeft,
   Copy,
   CheckCircle,
   Loader2,
   CreditCard
 } from 'lucide-react';
+import { LogoIcon } from '@/components/Logo';
 import { toast } from 'sonner';
 
 const planDetails: Record<string, { name: string; price: number; priceAnnual: number }> = {
@@ -83,8 +84,8 @@ export default function Checkout() {
         <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
           <div className="container py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <Sparkles className="w-6 h-6 text-accent" />
-              <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+              <LogoIcon size="md" />
+              <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
             </div>
           </div>
         </nav>
@@ -120,8 +121,8 @@ export default function Checkout() {
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <Sparkles className="w-6 h-6 text-accent" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <LogoIcon size="md" />
+            <h1 className="text-2xl font-bold gradient-text">AmaálSense</h1>
           </div>
           <Button variant="ghost" onClick={() => navigate('/pricing')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -263,7 +264,7 @@ export default function Checkout() {
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 mt-auto">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>AmalSense Engine © 2025 | Secure Payment Processing</p>
+          <p>AmaálSense Engine © 2025 | Secure Payment Processing</p>
         </div>
       </footer>
     </div>

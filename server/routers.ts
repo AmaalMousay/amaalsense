@@ -500,7 +500,7 @@ export const appRouter = router({
         await notifyOwner({
           title: `New Enterprise Inquiry: ${input.organizationName}`,
           content: `
-**New Lead from AmalSense!**
+**New Lead from AmaálSense!**
 
 **Contact:** ${input.contactName}
 **Email:** ${input.contactEmail}
