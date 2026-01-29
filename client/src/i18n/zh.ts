@@ -42,6 +42,7 @@ export const zh = {
     learnMore: "了解更多",
     getStarted: "开始使用",
     tryFree: "免费试用",
+    back: "返回",
   },
 
   // Home Page
@@ -123,6 +124,7 @@ export const zh = {
     last24Hours: "最近24小时",
     last7Days: "最近7天",
     last30Days: "最近30天",
+    allIndices: "所有指数对比",
   },
 
   // Map

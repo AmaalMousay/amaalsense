@@ -8,13 +8,67 @@ interface I18nProviderProps {
 
 const validLanguages: Language[] = ["en", "ar", "fr", "de", "ru", "es", "zh"];
 
+// Map browser language codes to our supported languages
+const browserLanguageMap: Record<string, Language> = {
+  "en": "en",
+  "en-US": "en",
+  "en-GB": "en",
+  "ar": "ar",
+  "ar-SA": "ar",
+  "ar-EG": "ar",
+  "ar-LY": "ar",
+  "ar-TN": "ar",
+  "fr": "fr",
+  "fr-FR": "fr",
+  "fr-CA": "fr",
+  "de": "de",
+  "de-DE": "de",
+  "de-AT": "de",
+  "ru": "ru",
+  "ru-RU": "ru",
+  "es": "es",
+  "es-ES": "es",
+  "es-MX": "es",
+  "zh": "zh",
+  "zh-CN": "zh",
+  "zh-TW": "zh",
+};
+
+function detectBrowserLanguage(): Language | null {
+  if (typeof window === "undefined" || !navigator) return null;
+  
+  // Get browser languages in order of preference
+  const browserLanguages = navigator.languages || [navigator.language];
+  
+  for (const browserLang of browserLanguages) {
+    // Try exact match first
+    if (browserLanguageMap[browserLang]) {
+      return browserLanguageMap[browserLang];
+    }
+    
+    // Try base language (e.g., "en" from "en-US")
+    const baseLang = browserLang.split("-")[0];
+    if (browserLanguageMap[baseLang]) {
+      return browserLanguageMap[baseLang];
+    }
+  }
+  
+  return null;
+}
+
 export function I18nProvider({ children, defaultLanguage = "en" }: I18nProviderProps) {
   const [language, setLanguageState] = useState<Language>(() => {
-    // Check localStorage for saved preference
     if (typeof window !== "undefined") {
+      // 1. First check localStorage for saved preference
       const saved = localStorage.getItem("amalsense-language") as Language;
       if (saved && validLanguages.includes(saved)) {
         return saved;
+      }
+      
+      // 2. If no saved preference, detect browser language
+      const detectedLang = detectBrowserLanguage();
+      if (detectedLang) {
+        return detectedLang;
       }
     }
     return defaultLanguage;
@@ -62,6 +116,11 @@ export function I18nProvider({ children, defaultLanguage = "en" }: I18nProviderP
       document.documentElement.classList.remove(`lang-${l}`);
     });
     document.documentElement.classList.add(`lang-${language}`);
+    
+    // Save detected language to localStorage on first load
+    if (!localStorage.getItem("amalsense-language")) {
+      localStorage.setItem("amalsense-language", language);
+    }
   }, [language]);
 
   const isRTL = rtlLanguages.includes(language);

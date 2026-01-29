@@ -4,8 +4,9 @@ import { Card } from '@/components/ui/card';
 import { IndexCard } from '@/components/IndexCard';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
-import { ArrowLeft, TrendingUp, Zap, Heart, Calendar, Download } from 'lucide-react';
+import { ArrowLeft, ArrowRight, TrendingUp, Zap, Heart, Calendar, Download } from 'lucide-react';
 import { ExportButton } from '@/components/ExportButton';
+import { useI18n } from '@/i18n';
 import {
   LineChart,
   Line,
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const [timeRange, setTimeRange] = useState(24);
   const [indices, setIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
   const [chartData, setChartData] = useState<any[]>([]);
+  const { t, isRTL } = useI18n();
 
   // Fetch latest indices
   const { data: latestIndices } = trpc.emotion.getLatestIndices.useQuery();
@@ -68,8 +70,10 @@ export default function Dashboard() {
     { label: '7D', value: 168 },
   ];
 
+  const BackArrow = isRTL ? ArrowRight : ArrowLeft;
+
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
+    <div className={`min-h-screen flex flex-col relative z-10 ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Navigation */}
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4 flex items-center justify-between">
@@ -77,10 +81,10 @@ export default function Dashboard() {
             onClick={() => navigate('/')}
             className="flex items-center gap-2 hover:text-accent transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
+            <BackArrow className="w-5 h-5" />
+            <span>{t.common.back}</span>
           </button>
-          <h1 className="text-2xl font-bold gradient-text">Dashboard</h1>
+          <h1 className="text-2xl font-bold gradient-text">{t.nav.dashboard}</h1>
           <ExportButton type="global" timeRange="24h" />
         </div>
       </nav>
@@ -90,35 +94,35 @@ export default function Dashboard() {
         <div className="container space-y-8">
           {/* Live Indices */}
           <div>
-            <h2 className="text-3xl font-bold cosmic-text mb-6">Live Collective Indices</h2>
+            <h2 className="text-3xl font-bold cosmic-text mb-6">{t.home.liveIndices}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <IndexCard
-                title="Global Mood Index"
+                title={`${t.indices.gmi} (GMI)`}
                 value={indices.gmi}
                 min={-100}
                 max={100}
                 unit=""
-                description="Overall collective sentiment"
+                description={t.indices.gmiDesc}
                 icon={<TrendingUp />}
                 color="purple"
               />
               <IndexCard
-                title="Collective Fear Index"
+                title={`${t.indices.cfi} (CFI)`}
                 value={indices.cfi}
                 min={0}
                 max={100}
                 unit=""
-                description="Level of collective anxiety"
+                description={t.indices.cfiDesc}
                 icon={<Zap />}
                 color="cyan"
               />
               <IndexCard
-                title="Hope Resilience Index"
+                title={`${t.indices.hri} (HRI)`}
                 value={indices.hri}
                 min={0}
                 max={100}
                 unit=""
-                description="Societal optimism & resilience"
+                description={t.indices.hriDesc}
                 icon={<Heart />}
                 color="green"
               />
@@ -128,7 +132,7 @@ export default function Dashboard() {
           {/* Time Range Selector */}
           <div className="flex items-center gap-2 flex-wrap">
             <Calendar className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Time Range:</span>
+            <span className="text-sm text-muted-foreground">{t.dashboard.timeRange}:</span>
             {timeRanges.map((range) => (
               <Button
                 key={range.value}
@@ -146,7 +150,7 @@ export default function Dashboard() {
             <div className="space-y-6">
               {/* GMI Chart */}
               <Card className="cosmic-card p-6">
-                <h3 className="text-lg font-bold cosmic-text mb-4">Global Mood Index (GMI)</h3>
+                <h3 className="text-lg font-bold cosmic-text mb-4">{t.indices.gmi} (GMI)</h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={chartData}>
                     <defs>
@@ -179,7 +183,7 @@ export default function Dashboard() {
               {/* CFI & HRI Charts */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="cosmic-card p-6">
-                  <h3 className="text-lg font-bold cosmic-text mb-4">Collective Fear Index (CFI)</h3>
+                  <h3 className="text-lg font-bold cosmic-text mb-4">{t.indices.cfi} (CFI)</h3>
                   <ResponsiveContainer width="100%" height={250}>
                     <LineChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
@@ -204,7 +208,7 @@ export default function Dashboard() {
                 </Card>
 
                 <Card className="cosmic-card p-6">
-                  <h3 className="text-lg font-bold cosmic-text mb-4">Hope Resilience Index (HRI)</h3>
+                  <h3 className="text-lg font-bold cosmic-text mb-4">{t.indices.hri} (HRI)</h3>
                   <ResponsiveContainer width="100%" height={250}>
                     <LineChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
@@ -231,7 +235,7 @@ export default function Dashboard() {
 
               {/* Combined Chart */}
               <Card className="cosmic-card p-6">
-                <h3 className="text-lg font-bold cosmic-text mb-4">All Indices Comparison</h3>
+                <h3 className="text-lg font-bold cosmic-text mb-4">{t.dashboard.allIndices}</h3>
                 <ResponsiveContainer width="100%" height={350}>
                   <ComposedChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
@@ -275,7 +279,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <Card className="cosmic-card p-8 text-center">
-              <p className="text-muted-foreground">Loading chart data...</p>
+              <p className="text-muted-foreground">{t.common.loading}...</p>
             </Card>
           )}
         </div>

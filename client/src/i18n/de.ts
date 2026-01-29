@@ -42,6 +42,7 @@ export const de = {
     learnMore: "Mehr erfahren",
     getStarted: "Loslegen",
     tryFree: "Kostenlos testen",
+    back: "Zurück",
   },
 
   // Home Page
@@ -123,6 +124,7 @@ export const de = {
     last24Hours: "Letzte 24 Stunden",
     last7Days: "Letzte 7 Tage",
     last30Days: "Letzte 30 Tage",
+    allIndices: "Alle Indizes vergleichen",
   },
 
   // Map

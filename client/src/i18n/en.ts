@@ -27,7 +27,7 @@ export const en = {
 
   // Common
   common: {
-    loading: "Loading...",
+    loading: "Loading",
     error: "An error occurred",
     submit: "Submit",
     cancel: "Cancel",
@@ -42,6 +42,7 @@ export const en = {
     learnMore: "Learn More",
     getStarted: "Get Started",
     tryFree: "Try Free",
+    back: "Back",
   },
 
   // Home Page
@@ -123,6 +124,7 @@ export const en = {
     last24Hours: "Last 24 Hours",
     last7Days: "Last 7 Days",
     last30Days: "Last 30 Days",
+    allIndices: "All Indices Comparison",
   },
 
   // Map

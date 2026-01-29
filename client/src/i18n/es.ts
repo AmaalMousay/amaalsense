@@ -42,6 +42,7 @@ export const es = {
     learnMore: "Saber más",
     getStarted: "Comenzar",
     tryFree: "Probar gratis",
+    back: "Volver",
   },
 
   // Home Page
@@ -123,6 +124,7 @@ export const es = {
     last24Hours: "Últimas 24 horas",
     last7Days: "Últimos 7 días",
     last30Days: "Últimos 30 días",
+    allIndices: "Comparación de todos los índices",
   },
 
   // Map

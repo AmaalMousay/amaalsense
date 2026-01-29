@@ -42,6 +42,7 @@ export const ru = {
     learnMore: "Узнать больше",
     getStarted: "Начать",
     tryFree: "Попробовать бесплатно",
+    back: "Назад",
   },
 
   // Home Page
@@ -123,6 +124,7 @@ export const ru = {
     last24Hours: "Последние 24 часа",
     last7Days: "Последние 7 дней",
     last30Days: "Последние 30 дней",
+    allIndices: "Сравнение всех индексов",
   },
 
   // Map

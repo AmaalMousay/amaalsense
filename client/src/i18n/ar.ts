@@ -27,7 +27,7 @@ export const ar = {
 
   // Common
   common: {
-    loading: "جاري التحميل...",
+    loading: "جاري التحميل",
     error: "حدث خطأ",
     submit: "إرسال",
     cancel: "إلغاء",
@@ -42,6 +42,7 @@ export const ar = {
     learnMore: "اعرف المزيد",
     getStarted: "ابدأ الآن",
     tryFree: "جرب مجاناً",
+    back: "رجوع",
   },
 
   // Home Page
@@ -123,6 +124,7 @@ export const ar = {
     last24Hours: "آخر 24 ساعة",
     last7Days: "آخر 7 أيام",
     last30Days: "آخر 30 يوم",
+    allIndices: "مقارنة جميع المؤشرات",
   },
 
   // Map
