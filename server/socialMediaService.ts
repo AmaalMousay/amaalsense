@@ -174,14 +174,67 @@ export async function fetchBlueskyPosts(params: SocialSearchParams): Promise<Soc
 // ============================================
 
 /**
+ * Fetch YouTube videos via RSS (no API key required)
+ * Uses YouTube's public RSS feeds for channel content
+ */
+async function fetchYouTubeRSS(params: SocialSearchParams): Promise<SocialPost[]> {
+  try {
+    // Use YouTube's trending/popular videos RSS or search via Invidious API
+    const query = encodeURIComponent(params.query);
+    const limit = params.limit || 10;
+    
+    // Try Invidious public API (YouTube frontend alternative)
+    const instances = ['vid.puffyan.us', 'invidious.snopyta.org', 'yewtu.be'];
+    
+    for (const instance of instances) {
+      try {
+        const response = await axios.get(
+          `https://${instance}/api/v1/search?q=${query}&type=video`,
+          { timeout: 8000 }
+        );
+        
+        if (response.data && Array.isArray(response.data)) {
+          return response.data.slice(0, limit).map((video: any) => ({
+            id: video.videoId,
+            text: video.title + (video.description ? ' - ' + video.description.slice(0, 200) : ''),
+            author: video.author || 'Unknown',
+            platform: 'youtube' as const,
+            url: `https://youtube.com/watch?v=${video.videoId}`,
+            publishedAt: new Date(video.published * 1000 || Date.now()),
+            engagement: {
+              likes: video.likeCount || 0,
+              comments: 0,
+              shares: 0,
+            },
+            metadata: {
+              viewCount: video.viewCount,
+              lengthSeconds: video.lengthSeconds,
+            },
+          }));
+        }
+      } catch {
+        continue; // Try next instance
+      }
+    }
+    
+    console.warn('[SocialMedia] All YouTube RSS fallbacks failed');
+    return [];
+  } catch (error) {
+    console.error('[SocialMedia] YouTube RSS error:', error);
+    return [];
+  }
+}
+
+/**
  * Fetch YouTube video comments (requires API key)
+ * Falls back to YouTube RSS feed if no API key
  */
 export async function fetchYouTubeComments(params: SocialSearchParams): Promise<SocialPost[]> {
   const apiKey = process.env.YOUTUBE_API_KEY;
   
   if (!apiKey) {
-    console.warn('[SocialMedia] YouTube API key not configured');
-    return generateMockYouTubeComments(params.query, params.limit || 10);
+    console.warn('[SocialMedia] YouTube API key not configured, trying RSS fallback');
+    return fetchYouTubeRSS(params);
   }
 
   try {
@@ -232,13 +285,75 @@ export async function fetchYouTubeComments(params: SocialSearchParams): Promise<
 // ============================================
 
 /**
- * Fetch posts from Telegram public channels
- * Note: Telegram doesn't have a public search API, so we use known news channels
+ * Fetch posts from Telegram public channels via web preview
+ * Uses Telegram's public channel web interface
  */
 export async function fetchTelegramPosts(params: SocialSearchParams): Promise<SocialPost[]> {
-  // Telegram doesn't provide a public search API
-  // We generate realistic mock data based on known patterns
-  return generateMockTelegramPosts(params.query, params.limit || 10);
+  try {
+    // Known public news channels on Telegram
+    const newsChannels = [
+      'bbcnews',
+      'cikirizim', // Arabic news
+      'rt_arabic',
+      'aborashed', // Arabic news
+    ];
+    
+    const allPosts: SocialPost[] = [];
+    const limit = params.limit || 10;
+    
+    // Try to fetch from Telegram's public web interface
+    for (const channel of newsChannels) {
+      if (allPosts.length >= limit) break;
+      
+      try {
+        const response = await axios.get(
+          `https://t.me/s/${channel}`,
+          { 
+            timeout: 5000,
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; AmalSense/1.0)',
+            }
+          }
+        );
+        
+        // Parse basic info from HTML (limited extraction)
+        const html = response.data as string;
+        const messageMatches = html.match(/tgme_widget_message_text[^>]*>([^<]+)</g) || [];
+        
+        messageMatches.slice(0, 3).forEach((match, index) => {
+          const text = match.replace(/tgme_widget_message_text[^>]*>/, '').replace(/<.*/, '');
+          if (text && text.length > 20) {
+            allPosts.push({
+              id: `tg-${channel}-${Date.now()}-${index}`,
+              text: text.trim(),
+              author: channel,
+              platform: 'telegram' as const,
+              url: `https://t.me/${channel}`,
+              publishedAt: new Date(Date.now() - index * 3600000),
+              engagement: {
+                likes: 0,
+                comments: 0,
+                shares: 0,
+              },
+              metadata: { channel, isReal: true },
+            });
+          }
+        });
+      } catch {
+        continue;
+      }
+    }
+    
+    if (allPosts.length === 0) {
+      console.warn('[SocialMedia] Telegram fetch failed, returning empty');
+      return [];
+    }
+    
+    return allPosts.slice(0, limit);
+  } catch (error) {
+    console.error('[SocialMedia] Telegram error:', error);
+    return [];
+  }
 }
 
 // ============================================

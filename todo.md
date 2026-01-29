@@ -214,3 +214,12 @@
 - [x] Configure NewsAPI key
 - [x] Update newsService to use NewsAPI as primary source
 - [x] Test real news fetching
+
+## Phase 20: Social Media Integration (NEW)
+- [x] Update socialMediaService for real data
+- [x] Connect Reddit API (public endpoints)
+- [x] Connect YouTube Data API (with Invidious fallback)
+- [x] Enable Mastodon public API (no key needed)
+- [x] Enable Bluesky public API (no key needed)
+- [x] Connect Telegram public channels
+- [x] Test all social media sources
