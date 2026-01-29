@@ -258,6 +258,177 @@ export const appRouter = router({
     }),
   }),
 
+  // DCFT (Digital Consciousness Field Theory) Engine
+  dcft: router({
+    /**
+     * Calculate Digital Consciousness Field amplitude D(t)
+     */
+    calculateDCF: publicProcedure
+      .input(z.object({ countryCode: z.string().length(2).optional() }))
+      .query(async ({ input }) => {
+        const { 
+          calculateDigitalConsciousnessField, 
+          calculateResonanceIndex,
+          identifyCollectivePhase,
+          calculateDCFTIndices,
+          getEmotionalColor,
+          detectEmotionalWaves,
+        } = await import("./dcftEngine");
+        const { generateAllCountriesEmotionData } = await import("./countryEmotionAnalyzer");
+
+        // Generate mock events from country data
+        const countriesData = generateAllCountriesEmotionData(0, 50, 50);
+        const filteredData = input.countryCode 
+          ? countriesData.filter(c => c.countryCode === input.countryCode)
+          : countriesData;
+
+        // Convert to digital events
+        const events = filteredData.map((country, i) => ({
+          id: `event-${country.countryCode}-${i}`,
+          timestamp: Date.now() - Math.random() * 3600000,
+          affectiveVector: {
+            joy: (country.gmi + 100) / 200 - 0.5,
+            fear: country.cfi / 100 - 0.5,
+            anger: Math.random() * 0.4 - 0.2,
+            sadness: (100 - country.hri) / 200,
+            hope: country.hri / 100 - 0.5,
+            curiosity: Math.random() * 0.6 - 0.3,
+          },
+          influence: 0.5 + Math.random() * 0.5,
+          source: 'country_aggregation',
+          country: country.countryCode,
+        }));
+
+        const dcfAmplitude = calculateDigitalConsciousnessField(events);
+        const resonance = calculateResonanceIndex(events);
+        const phase = identifyCollectivePhase(events);
+        const indices = calculateDCFTIndices(events);
+        const color = getEmotionalColor(resonance);
+        const waves = detectEmotionalWaves(events);
+
+        return {
+          dcfAmplitude,
+          resonance,
+          phase,
+          indices,
+          color,
+          waves,
+          eventCount: events.length,
+          calculatedAt: new Date(),
+        };
+      }),
+
+    /**
+     * Generate emotional forecast (Emotional Weather System)
+     */
+    getEmotionalForecast: publicProcedure
+      .input(z.object({ hoursAhead: z.number().min(1).max(168).default(24) }))
+      .query(async ({ input }) => {
+        const { generateEmotionalForecast } = await import("./dcftEngine");
+        const { getEmotionIndicesHistory } = await import("./db");
+
+        // Get historical data
+        const history = await getEmotionIndicesHistory(72);
+        const historicalData = history.map(h => ({
+          timestamp: h.createdAt.getTime(),
+          indices: { GMI: h.gmi, CFI: h.cfi, HRI: h.hri },
+        }));
+
+        // Generate forecast
+        const forecast = generateEmotionalForecast(historicalData, input.hoursAhead);
+
+        return {
+          ...forecast,
+          generatedAt: new Date(),
+          dataPoints: historicalData.length,
+        };
+      }),
+
+    /**
+     * Check alert conditions (Early Warning System)
+     */
+    checkAlerts: publicProcedure.query(async () => {
+      const { checkAlertConditions } = await import("./dcftEngine");
+      const { getLatestEmotionIndices, getEmotionIndicesHistory } = await import("./db");
+
+      const current = await getLatestEmotionIndices();
+      const history = await getEmotionIndicesHistory(2);
+
+      const currentIndices = current 
+        ? { GMI: current.gmi, CFI: current.cfi, HRI: current.hri }
+        : { GMI: 0, CFI: 50, HRI: 50 };
+
+      const previousIndices = history.length > 1
+        ? { GMI: history[1].gmi, CFI: history[1].cfi, HRI: history[1].hri }
+        : null;
+
+      const alertStatus = checkAlertConditions(currentIndices, previousIndices);
+
+      return {
+        ...alertStatus,
+        currentIndices,
+        previousIndices,
+        checkedAt: new Date(),
+      };
+    }),
+
+    /**
+     * Get DCFT theory information
+     */
+    getTheoryInfo: publicProcedure.query(() => {
+      return {
+        name: 'Digital Consciousness Field Theory (DCFT)',
+        author: 'Amaal Radwan',
+        year: 2025,
+        paper: 'The Birth of Digital Consciousness: The AmaalSense Engine and the Emergent Collective Mind',
+        pillars: [
+          'Collective Psychology',
+          'Neural Synchronization', 
+          'Information Energetics',
+        ],
+        formulas: {
+          dcf: {
+            name: 'Digital Consciousness Field',
+            formula: 'D(t) = Σ [Ei × Wi × ΔTi]',
+            description: 'Measures the instantaneous consciousness amplitude of the digital collective',
+            variables: [
+              { symbol: 'Ei', meaning: 'Emotional intensity of each digital event' },
+              { symbol: 'Wi', meaning: 'Weighting based on global influence or reach' },
+              { symbol: 'ΔTi', meaning: 'Temporal persistence of that emotion across users' },
+            ],
+          },
+          ri: {
+            name: 'Resonance Index',
+            formula: 'RI(e,t) = Σ (AVi × Wi × e^(-λΔt))',
+            description: 'Computes resonance for each emotion with exponential decay',
+            variables: [
+              { symbol: 'AVi', meaning: 'Affective vector value for the emotion' },
+              { symbol: 'Wi', meaning: 'Influence weighting' },
+              { symbol: 'λΔt', meaning: 'Decay rate controlling emotional persistence' },
+            ],
+          },
+        },
+        indices: [
+          { code: 'GMI', name: 'Global Mood Index', range: '-100 to +100', description: 'General optimism or pessimism across the planet' },
+          { code: 'CFI', name: 'Collective Fear Index', range: '0 to 100', description: 'Probability of market downturn or crisis' },
+          { code: 'HRI', name: 'Hope Resonance Index', range: '0 to 100', description: 'Potential for innovation, recovery, and consumer confidence' },
+        ],
+        affectiveVector: ['Joy', 'Fear', 'Anger', 'Sadness', 'Hope', 'Curiosity'],
+        layers: [
+          { name: 'Perception Layer', role: 'Input', description: 'Gathers emotional data from open digital channels' },
+          { name: 'Cognitive Layer', role: 'Processing', description: 'Aggregates vectors and applies DCF mathematical model' },
+          { name: 'Awareness Layer', role: 'Output', description: 'Transforms currents into visual and numerical representations' },
+        ],
+        colorSystem: [
+          { color: 'Blue', meaning: 'Calm / Reflection', hex: '#4169E1' },
+          { color: 'Red', meaning: 'Anger / Activism', hex: '#DC143C' },
+          { color: 'Yellow', meaning: 'Optimism / Creativity', hex: '#FFD700' },
+          { color: 'Green', meaning: 'Balance / Collective Harmony', hex: '#228B22' },
+        ],
+      };
+    }),
+  }),
+
   // Social Media Integration
   social: router({
     /**

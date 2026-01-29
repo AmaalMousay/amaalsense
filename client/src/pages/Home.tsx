@@ -63,6 +63,24 @@ export default function Home() {
             >
               Social
             </button>
+            <button
+              onClick={() => navigate('/theory')}
+              className="text-sm hover:text-accent transition-colors"
+            >
+              Theory
+            </button>
+            <button
+              onClick={() => navigate('/weather')}
+              className="text-sm hover:text-accent transition-colors"
+            >
+              Weather
+            </button>
+            <button
+              onClick={() => navigate('/about')}
+              className="text-sm hover:text-accent transition-colors"
+            >
+              About
+            </button>
             <Button
               onClick={() => navigate('/dashboard')}
               className="glow-button text-white"
@@ -243,7 +261,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 mt-16">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>AmalSense Engine © 2026 | Transforming Human Emotion into Data</p>
+          <p>AmalSense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
         </div>
       </footer>
     </div>

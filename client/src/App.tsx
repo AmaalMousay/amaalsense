@@ -10,6 +10,9 @@ import Dashboard from "./pages/Dashboard";
 import Map from "./pages/Map";
 import LiveAnalysis from "./pages/LiveAnalysis";
 import SocialAnalysis from "./pages/SocialAnalysis";
+import Theory from "./pages/Theory";
+import Weather from "./pages/Weather";
+import About from "./pages/About";
 
 function Router() {
   return (
@@ -20,6 +23,9 @@ function Router() {
       <Route path={"/map"} component={Map} />
       <Route path={"/live"} component={LiveAnalysis} />
       <Route path={"/social"} component={SocialAnalysis} />
+      <Route path={"/theory"} component={Theory} />
+      <Route path={"/weather"} component={Weather} />
+      <Route path={"/about"} component={About} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
