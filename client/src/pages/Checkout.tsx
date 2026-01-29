@@ -8,64 +8,12 @@ import { trpc } from '@/lib/trpc';
 import { 
   Sparkles, 
   ArrowLeft,
-  CreditCard,
-  Building2,
-  Globe,
-  Wallet,
   Copy,
   CheckCircle,
   Loader2,
-  Info
+  CreditCard
 } from 'lucide-react';
 import { toast } from 'sonner';
-
-type PaymentMethod = 'paypal' | 'bank_transfer' | 'western_union' | 'moneygram' | 'crypto';
-
-interface PaymentMethodInfo {
-  id: PaymentMethod;
-  name: string;
-  nameAr: string;
-  icon: React.ReactNode;
-  description: string;
-}
-
-const paymentMethods: PaymentMethodInfo[] = [
-  {
-    id: 'paypal',
-    name: 'PayPal',
-    nameAr: 'باي بال',
-    icon: <CreditCard className="w-6 h-6" />,
-    description: 'Pay securely via PayPal',
-  },
-  {
-    id: 'bank_transfer',
-    name: 'Bank Transfer',
-    nameAr: 'تحويل بنكي',
-    icon: <Building2 className="w-6 h-6" />,
-    description: 'Direct bank transfer',
-  },
-  {
-    id: 'western_union',
-    name: 'Western Union',
-    nameAr: 'ويسترن يونيون',
-    icon: <Globe className="w-6 h-6" />,
-    description: 'International money transfer',
-  },
-  {
-    id: 'moneygram',
-    name: 'MoneyGram',
-    nameAr: 'موني جرام',
-    icon: <Globe className="w-6 h-6" />,
-    description: 'International money transfer',
-  },
-  {
-    id: 'crypto',
-    name: 'Cryptocurrency (USDT)',
-    nameAr: 'عملة رقمية',
-    icon: <Wallet className="w-6 h-6" />,
-    description: 'Pay with USDT (Tether)',
-  },
-];
 
 const planDetails: Record<string, { name: string; price: number; priceAnnual: number }> = {
   pro: { name: 'Professional', price: 49, priceAnnual: 470 },
@@ -81,7 +29,6 @@ export default function Checkout() {
   const plan = params.get('plan') || 'pro';
   const billing = params.get('billing') || 'monthly';
   
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('paypal');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -120,7 +67,7 @@ export default function Checkout() {
       plan: plan as 'pro' | 'enterprise' | 'government',
       amount,
       billingPeriod: billing as 'monthly' | 'annual',
-      paymentMethod: selectedMethod,
+      paymentMethod: 'paypal',
       transactionRef: formData.transactionRef || undefined,
     });
   };
@@ -128,113 +75,6 @@ export default function Checkout() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard!');
-  };
-
-  const getPaymentInstructions = () => {
-    switch (selectedMethod) {
-      case 'paypal':
-        return (
-          <div className="space-y-4">
-            <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-              <h4 className="font-bold text-blue-400 mb-2">PayPal Payment</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Send payment to our PayPal account:
-              </p>
-              <div className="flex items-center gap-2 bg-background/50 p-3 rounded">
-                <span className="font-mono text-accent">amaalmousay@gmail.com</span>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => copyToClipboard('amaalmousay@gmail.com')}
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Amount: <span className="text-accent font-bold">${amount}</span>
-              </p>
-              <a 
-                href={`https://paypal.me/amaalmousay/${amount}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-3"
-              >
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Pay with PayPal.me
-                </Button>
-              </a>
-            </div>
-          </div>
-        );
-      
-      case 'bank_transfer':
-        return (
-          <div className="space-y-4">
-            <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-              <h4 className="font-bold text-green-400 mb-2">Bank Transfer</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Contact us for bank transfer details:
-              </p>
-              <div className="space-y-2 text-sm">
-                <p><span className="text-muted-foreground">Email:</span> <span className="text-accent">amaalmousay@gmail.com</span></p>
-                <p><span className="text-muted-foreground">Account Name:</span> Amaal Radwan Bashir</p>
-                <p><span className="text-muted-foreground">Amount:</span> <span className="text-accent font-bold">${amount}</span></p>
-              </div>
-              <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded text-xs">
-                <Info className="w-4 h-4 inline mr-1 text-yellow-400" />
-                Please email us to receive bank account details for your region.
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'western_union':
-      case 'moneygram':
-        const serviceName = selectedMethod === 'western_union' ? 'Western Union' : 'MoneyGram';
-        return (
-          <div className="space-y-4">
-            <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg">
-              <h4 className="font-bold text-orange-400 mb-2">{serviceName} Transfer</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Send money to the following receiver:
-              </p>
-              <div className="space-y-2 text-sm bg-background/50 p-3 rounded">
-                <p><span className="text-muted-foreground">Receiver Name:</span> <span className="font-bold">Amaal Radwan Bashir</span></p>
-                <p><span className="text-muted-foreground">Country:</span> Libya</p>
-                <p><span className="text-muted-foreground">City:</span> Sabha</p>
-                <p><span className="text-muted-foreground">Amount:</span> <span className="text-accent font-bold">${amount} USD</span></p>
-              </div>
-              <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded text-xs">
-                <Info className="w-4 h-4 inline mr-1 text-yellow-400" />
-                After sending, enter the {selectedMethod === 'western_union' ? 'MTCN' : 'Reference'} number below.
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'crypto':
-        return (
-          <div className="space-y-4">
-            <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
-              <h4 className="font-bold text-purple-400 mb-2">Cryptocurrency (USDT)</h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Pay with USDT (Tether) on TRC20 network:
-              </p>
-              <div className="space-y-2 text-sm">
-                <p><span className="text-muted-foreground">Network:</span> <span className="text-accent">TRC20 (Tron)</span></p>
-                <p><span className="text-muted-foreground">Amount:</span> <span className="text-accent font-bold">${amount} USDT</span></p>
-              </div>
-              <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded text-xs">
-                <Info className="w-4 h-4 inline mr-1 text-yellow-400" />
-                Contact us at amaalmousay@gmail.com to receive the USDT wallet address.
-              </div>
-            </div>
-          </div>
-        );
-      
-      default:
-        return null;
-    }
   };
 
   if (submitted) {
@@ -291,7 +131,7 @@ export default function Checkout() {
       </nav>
 
       <div className="flex-1 py-12">
-        <div className="container max-w-4xl">
+        <div className="container max-w-2xl">
           <h2 className="text-3xl font-bold cosmic-text text-center mb-2">
             Complete Your <span className="gradient-text">Payment</span>
           </h2>
@@ -299,50 +139,62 @@ export default function Checkout() {
             {planInfo.name} Plan - ${amount}/{billing === 'annual' ? 'year' : 'month'}
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Payment Methods */}
-            <div>
-              <h3 className="text-lg font-bold mb-4">Select Payment Method</h3>
-              <div className="space-y-3">
-                {paymentMethods.map((method) => (
-                  <Card
-                    key={method.id}
-                    className={`p-4 cursor-pointer transition-all ${
-                      selectedMethod === method.id 
-                        ? 'ring-2 ring-accent bg-accent/10' 
-                        : 'hover:bg-muted/50'
-                    }`}
-                    onClick={() => setSelectedMethod(method.id)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`p-2 rounded-lg ${
-                        selectedMethod === method.id ? 'bg-accent text-white' : 'bg-muted'
-                      }`}>
-                        {method.icon}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold">{method.name}</h4>
-                        <p className="text-xs text-muted-foreground">{method.nameAr}</p>
-                      </div>
-                      {selectedMethod === method.id && (
-                        <CheckCircle className="w-5 h-5 text-accent" />
-                      )}
-                    </div>
-                  </Card>
-                ))}
+          <div className="grid gap-8">
+            {/* PayPal Payment Instructions */}
+            <Card className="p-6 bg-blue-500/10 border-blue-500/30">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-blue-600 rounded-lg">
+                  <CreditCard className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-blue-400">PayPal Payment</h3>
+                  <p className="text-sm text-muted-foreground">Secure payment via PayPal</p>
+                </div>
               </div>
-            </div>
-
-            {/* Payment Form */}
-            <div>
-              <h3 className="text-lg font-bold mb-4">Payment Details</h3>
               
-              {/* Instructions */}
-              <div className="mb-6">
-                {getPaymentInstructions()}
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Send payment to our PayPal account:
+                </p>
+                <div className="flex items-center gap-2 bg-background/50 p-3 rounded-lg">
+                  <span className="font-mono text-accent flex-1">amaalmousay@gmail.com</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => copyToClipboard('amaalmousay@gmail.com')}
+                  >
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-background/30 rounded-lg">
+                  <span className="text-muted-foreground">Amount to pay:</span>
+                  <span className="text-2xl font-bold text-accent">${amount}</span>
+                </div>
+                
+                <a 
+                  href={`https://paypal.me/amaalmousay/${amount}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6">
+                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.77.77 0 0 1 .757-.629h6.724c2.332 0 4.076.643 5.186 1.91.516.589.86 1.27 1.022 2.026.17.788.162 1.73-.023 2.796l-.012.063v.556l.433.248a3.56 3.56 0 0 1 .876.717c.446.52.757 1.168.927 1.927.176.787.21 1.72.097 2.77-.13 1.213-.442 2.269-.928 3.14a5.49 5.49 0 0 1-1.608 1.83c-.644.476-1.407.83-2.27 1.05-.837.214-1.77.323-2.77.323H12.06a.95.95 0 0 0-.938.803l-.012.063-.597 3.785-.01.051a.95.95 0 0 1-.937.803H7.076z"/>
+                    </svg>
+                    Pay ${amount} with PayPal
+                  </Button>
+                </a>
               </div>
+            </Card>
 
-              {/* Form */}
+            {/* Confirmation Form */}
+            <Card className="p-6">
+              <h3 className="font-bold mb-4">Confirm Your Payment</h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                After completing the PayPal payment, fill in your details below to confirm your subscription.
+              </p>
+              
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="name">Full Name *</Label>
@@ -368,26 +220,21 @@ export default function Checkout() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="transactionRef">
-                    {selectedMethod === 'western_union' ? 'MTCN Number' : 
-                     selectedMethod === 'moneygram' ? 'Reference Number' :
-                     selectedMethod === 'crypto' ? 'Transaction Hash' :
-                     'Transaction Reference'} (Optional)
-                  </Label>
+                  <Label htmlFor="transactionRef">PayPal Transaction ID (Optional)</Label>
                   <Input
                     id="transactionRef"
                     value={formData.transactionRef}
                     onChange={(e) => setFormData({ ...formData, transactionRef: e.target.value })}
-                    placeholder="Enter after completing payment"
+                    placeholder="e.g., 1AB23456CD789012E"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Enter this after you complete the payment
+                    You can find this in your PayPal receipt email
                   </p>
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full glow-button text-white"
+                  className="w-full glow-button text-white py-6"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -396,16 +243,19 @@ export default function Checkout() {
                       Submitting...
                     </>
                   ) : (
-                    'Submit Payment Confirmation'
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Confirm Payment
+                    </>
                   )}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  By submitting, you confirm that you have completed the payment.
+                  By submitting, you confirm that you have completed the PayPal payment.
                   We will verify and activate your subscription within 24 hours.
                 </p>
               </form>
-            </div>
+            </Card>
           </div>
         </div>
       </div>

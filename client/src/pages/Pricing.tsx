@@ -315,35 +315,17 @@ export default function Pricing() {
 
                 {/* CTA */}
                 {tier.id === 'pro' ? (
-                  <div className="space-y-2">
-                    <PayPalButton 
-                      tier="pro" 
-                      billingCycle={billingCycle === 'annual' ? 'yearly' : 'monthly'}
-                      className="w-full glow-button text-white"
-                    />
-                    <Button
-                      onClick={() => navigate(`/checkout?plan=pro&billing=${billingCycle}`)}
-                      variant="outline"
-                      className="w-full text-xs"
-                    >
-                      More Payment Options
-                    </Button>
-                  </div>
+                  <PayPalButton 
+                    tier="pro" 
+                    billingCycle={billingCycle === 'annual' ? 'yearly' : 'monthly'}
+                    className="w-full glow-button text-white"
+                  />
                 ) : tier.id === 'enterprise' ? (
-                  <div className="space-y-2">
-                    <PayPalButton 
-                      tier="enterprise" 
-                      billingCycle={billingCycle === 'annual' ? 'yearly' : 'monthly'}
-                      className="w-full"
-                    />
-                    <Button
-                      onClick={() => navigate(`/checkout?plan=enterprise&billing=${billingCycle}`)}
-                      variant="outline"
-                      className="w-full text-xs"
-                    >
-                      More Payment Options
-                    </Button>
-                  </div>
+                  <PayPalButton 
+                    tier="enterprise" 
+                    billingCycle={billingCycle === 'annual' ? 'yearly' : 'monthly'}
+                    className="w-full"
+                  />
                 ) : (
                   <Button
                     onClick={() => navigate(tier.ctaLink)}
@@ -400,8 +382,8 @@ export default function Pricing() {
             <div className="cosmic-card p-6 rounded-lg">
               <h4 className="font-bold mb-2">What payment methods do you accept?</h4>
               <p className="text-muted-foreground text-sm">
-                We accept PayPal, Bank Transfer, Western Union, MoneyGram, and Cryptocurrency (USDT).
-                Click "More Payment Options" to see all available methods.
+                We currently accept PayPal for secure and fast payments.
+                Click "Pay with PayPal" to complete your subscription.
               </p>
             </div>
             <div className="cosmic-card p-6 rounded-lg">

@@ -308,3 +308,10 @@
 - [x] Add Cryptocurrency (USDT) option
 - [x] Create Checkout page with all payment methods
 - [x] Update Pricing page with "More Payment Options" button
+
+## Phase 29: Payment Management & Simplification (NEW)
+- [x] Add payment management section to Admin page
+- [x] Show pending payments list with confirm/reject buttons
+- [x] Show payment history with status
+- [x] Remove all payment methods except PayPal
+- [x] Simplify Checkout page for PayPal only
