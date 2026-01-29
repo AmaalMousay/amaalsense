@@ -146,7 +146,7 @@ export default function Map() {
                     max={100}
                     unit=""
                     description="Overall sentiment"
-                    color="purple"
+                    indexType="gmi"
                   />
                   <IndexCard
                     title="Collective Fear Index"
@@ -155,7 +155,7 @@ export default function Map() {
                     max={100}
                     unit=""
                     description="Anxiety level"
-                    color="cyan"
+                    indexType="cfi"
                   />
                   <IndexCard
                     title="Hope Resilience Index"
@@ -164,7 +164,7 @@ export default function Map() {
                     max={100}
                     unit=""
                     description="Optimism level"
-                    color="green"
+                    indexType="hri"
                   />
                 </div>
               </div>

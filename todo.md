@@ -315,3 +315,27 @@
 - [x] Show payment history with status
 - [x] Remove all payment methods except PayPal
 - [x] Simplify Checkout page for PayPal only
+
+## Phase 30: Unified Color System (NEW)
+
+### Color Palette (Psychological Meaning)
+- [x] Red (#E63946) = Anger / Tension / Crisis
+- [x] Orange (#F4A261) = Fear / Anxiety
+- [x] Yellow (#E9C46A) = Curiosity / Uncertainty
+- [x] Green (#2A9D8F) = Hope / Balance / Resilience
+- [x] Blue (#457B9D) = Calm / Stability
+- [x] Purple (#8D5CF6) = Sadness / Grief
+- [x] Gray (#6C757D) = Neutral
+
+### Implementation Tasks
+- [x] Update index.css with new color variables
+- [x] Update Analyzer page emotion colors
+- [x] Update Map page country colors (WorldMap component)
+- [x] Update Weather page indicators
+- [x] Update Dashboard charts
+- [x] Update GMI indicator (red→yellow→green)
+- [x] Update CFI indicator (blue→orange→red)
+- [x] Update HRI indicator (gray→light green→dark green)
+- [x] Create shared emotionColors.ts for consistency
+- [x] Update IndexCard component with indexType
+- [x] Update CountryHistoricalChart colors

@@ -1,4 +1,10 @@
 import { trpc } from "@/lib/trpc";
+import { 
+  EMOTION_COLORS, 
+  GMI_COLORS, 
+  CFI_COLORS, 
+  HRI_COLORS 
+} from '@shared/emotionColors';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,26 +39,28 @@ export default function Weather() {
   
   const { data: dcfData } = trpc.dcft.calculateDCF.useQuery({});
 
+  // Using unified emotion color system
   const getWeatherIcon = (trend: string, cfi: number) => {
-    if (cfi > 70) return <CloudLightning className="w-24 h-24 text-red-400" />;
-    if (cfi > 50) return <CloudRain className="w-24 h-24 text-orange-400" />;
-    if (trend === 'improving') return <Sun className="w-24 h-24 text-yellow-400" />;
-    if (trend === 'declining') return <Cloud className="w-24 h-24 text-slate-400" />;
-    return <Wind className="w-24 h-24 text-cyan-400" />;
+    if (cfi > 70) return <CloudLightning className="w-24 h-24" style={{ color: EMOTION_COLORS.anger }} />;
+    if (cfi > 50) return <CloudRain className="w-24 h-24" style={{ color: EMOTION_COLORS.fear }} />;
+    if (trend === 'improving') return <Sun className="w-24 h-24" style={{ color: EMOTION_COLORS.hope }} />;
+    if (trend === 'declining') return <Cloud className="w-24 h-24" style={{ color: EMOTION_COLORS.sadness }} />;
+    return <Wind className="w-24 h-24" style={{ color: EMOTION_COLORS.calm }} />;
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === 'improving') return <TrendingUp className="w-5 h-5 text-green-400" />;
-    if (trend === 'declining') return <TrendingDown className="w-5 h-5 text-red-400" />;
-    return <Minus className="w-5 h-5 text-slate-400" />;
+    if (trend === 'improving') return <TrendingUp className="w-5 h-5" style={{ color: EMOTION_COLORS.hope }} />;
+    if (trend === 'declining') return <TrendingDown className="w-5 h-5" style={{ color: EMOTION_COLORS.anger }} />;
+    return <Minus className="w-5 h-5" style={{ color: EMOTION_COLORS.neutral }} />;
   };
 
   const getAlertColor = (level: string) => {
+    // Using unified emotion colors for alerts
     switch (level) {
-      case 'critical': return 'bg-red-500/20 border-red-500/50 text-red-300';
-      case 'high': return 'bg-orange-500/20 border-orange-500/50 text-orange-300';
-      case 'medium': return 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300';
-      default: return 'bg-green-500/20 border-green-500/50 text-green-300';
+      case 'critical': return { bg: `${EMOTION_COLORS.anger}20`, border: `${EMOTION_COLORS.anger}50`, text: EMOTION_COLORS.anger };
+      case 'high': return { bg: `${EMOTION_COLORS.fear}20`, border: `${EMOTION_COLORS.fear}50`, text: EMOTION_COLORS.fear };
+      case 'medium': return { bg: `${EMOTION_COLORS.curiosity}20`, border: `${EMOTION_COLORS.curiosity}50`, text: EMOTION_COLORS.curiosity };
+      default: return { bg: `${EMOTION_COLORS.hope}20`, border: `${EMOTION_COLORS.hope}50`, text: EMOTION_COLORS.hope };
     }
   };
 
@@ -273,7 +281,13 @@ export default function Weather() {
                     </CardDescription>
                   </div>
                   {alerts && (
-                    <Badge className={getAlertColor(alerts.alertLevel)}>
+                    <Badge 
+                      style={{
+                        backgroundColor: getAlertColor(alerts.alertLevel).bg,
+                        borderColor: getAlertColor(alerts.alertLevel).border,
+                        color: getAlertColor(alerts.alertLevel).text
+                      }}
+                    >
                       {alerts.alertLevel.toUpperCase()}
                     </Badge>
                   )}

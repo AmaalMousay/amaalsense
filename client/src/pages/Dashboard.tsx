@@ -5,6 +5,12 @@ import { IndexCard } from '@/components/IndexCard';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
 import { ArrowLeft, ArrowRight, TrendingUp, Zap, Heart, Calendar, Download } from 'lucide-react';
+import { 
+  EMOTION_COLORS, 
+  GMI_COLORS, 
+  CFI_COLORS, 
+  HRI_COLORS 
+} from '@shared/emotionColors';
 import { ExportButton } from '@/components/ExportButton';
 import { useI18n } from '@/i18n';
 import {
@@ -104,7 +110,7 @@ export default function Dashboard() {
                 unit=""
                 description={t.indices.gmiDesc}
                 icon={<TrendingUp />}
-                color="purple"
+                indexType="gmi"
               />
               <IndexCard
                 title={`${t.indices.cfi} (CFI)`}
@@ -114,7 +120,7 @@ export default function Dashboard() {
                 unit=""
                 description={t.indices.cfiDesc}
                 icon={<Zap />}
-                color="cyan"
+                indexType="cfi"
               />
               <IndexCard
                 title={`${t.indices.hri} (HRI)`}
@@ -124,7 +130,7 @@ export default function Dashboard() {
                 unit=""
                 description={t.indices.hriDesc}
                 icon={<Heart />}
-                color="green"
+                indexType="hri"
               />
             </div>
           </div>
@@ -155,8 +161,8 @@ export default function Dashboard() {
                   <AreaChart data={chartData}>
                     <defs>
                       <linearGradient id="colorGmi" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                        <stop offset="5%" stopColor={GMI_COLORS.positive} stopOpacity={0.8} />
+                        <stop offset="95%" stopColor={GMI_COLORS.positive} stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
@@ -172,7 +178,7 @@ export default function Dashboard() {
                     <Area
                       type="monotone"
                       dataKey="gmi"
-                      stroke="#a855f7"
+                      stroke={GMI_COLORS.positive}
                       fillOpacity={1}
                       fill="url(#colorGmi)"
                     />
@@ -199,7 +205,7 @@ export default function Dashboard() {
                       <Line
                         type="monotone"
                         dataKey="cfi"
-                        stroke="#22d3ee"
+                        stroke={CFI_COLORS.medium}
                         strokeWidth={2}
                         dot={false}
                       />
@@ -224,7 +230,7 @@ export default function Dashboard() {
                       <Line
                         type="monotone"
                         dataKey="hri"
-                        stroke="#22c55e"
+                        stroke={HRI_COLORS.high}
                         strokeWidth={2}
                         dot={false}
                       />
@@ -252,7 +258,7 @@ export default function Dashboard() {
                     <Line
                       type="monotone"
                       dataKey="gmi"
-                      stroke="#a855f7"
+                      stroke={GMI_COLORS.positive}
                       strokeWidth={2}
                       dot={false}
                       name="GMI"
@@ -260,7 +266,7 @@ export default function Dashboard() {
                     <Line
                       type="monotone"
                       dataKey="cfi"
-                      stroke="#22d3ee"
+                      stroke={CFI_COLORS.medium}
                       strokeWidth={2}
                       dot={false}
                       name="CFI"
@@ -268,7 +274,7 @@ export default function Dashboard() {
                     <Line
                       type="monotone"
                       dataKey="hri"
-                      stroke="#22c55e"
+                      stroke={HRI_COLORS.high}
                       strokeWidth={2}
                       dot={false}
                       name="HRI"

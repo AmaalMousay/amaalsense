@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
 import { Sparkles, ArrowLeft } from 'lucide-react';
+import { EMOTION_COLORS, getEmotionColor } from '@shared/emotionColors';
 import { toast } from 'sonner';
 
 export default function Analyzer() {
@@ -35,13 +36,10 @@ export default function Analyzer() {
     analyzeHeadline.mutate({ headline });
   };
 
-  const emotionColors = {
-    joy: 'from-yellow-400 to-yellow-600',
-    fear: 'from-red-400 to-red-600',
-    anger: 'from-orange-400 to-orange-600',
-    sadness: 'from-blue-400 to-blue-600',
-    hope: 'from-green-400 to-green-600',
-    curiosity: 'from-purple-400 to-purple-600',
+  // Use unified emotion color system
+  const getEmotionStyle = (emotion: string) => {
+    const color = getEmotionColor(emotion);
+    return { backgroundColor: color };
   };
 
   return (
@@ -132,10 +130,11 @@ export default function Analyzer() {
                         {/* Progress bar */}
                         <div className="relative h-2 bg-muted rounded-full overflow-hidden">
                           <div
-                            className={`h-full bg-gradient-to-r ${
-                              emotionColors[emotion as keyof typeof emotionColors]
-                            } transition-all duration-500`}
-                            style={{ width: `${score}%` }}
+                            className="h-full transition-all duration-500 rounded-full"
+                            style={{ 
+                              width: `${score}%`,
+                              backgroundColor: getEmotionColor(emotion)
+                            }}
                           />
                         </div>
                       </div>

@@ -52,6 +52,57 @@
   --chart-3: oklch(0.6 0.2 300);
   --chart-4: oklch(0.55 0.18 320);
   --chart-5: oklch(0.5 0.15 340);
+  
+  /* AmalSense Emotion Color System - Psychological Meaning */
+  /* Red = Anger / Tension / Crisis (#E63946) */
+  --emotion-anger: oklch(0.55 0.22 25);
+  --emotion-anger-light: oklch(0.65 0.18 25);
+  --emotion-anger-dark: oklch(0.45 0.25 25);
+  
+  /* Orange = Fear / Anxiety (#F4A261) */
+  --emotion-fear: oklch(0.72 0.14 55);
+  --emotion-fear-light: oklch(0.82 0.12 55);
+  --emotion-fear-dark: oklch(0.62 0.16 55);
+  
+  /* Yellow = Curiosity / Uncertainty (#E9C46A) */
+  --emotion-curiosity: oklch(0.8 0.12 85);
+  --emotion-curiosity-light: oklch(0.88 0.1 85);
+  --emotion-curiosity-dark: oklch(0.7 0.14 85);
+  
+  /* Green = Hope / Balance / Resilience (#2A9D8F) */
+  --emotion-hope: oklch(0.6 0.12 175);
+  --emotion-hope-light: oklch(0.7 0.1 175);
+  --emotion-hope-dark: oklch(0.5 0.14 175);
+  
+  /* Blue = Calm / Stability (#457B9D) */
+  --emotion-calm: oklch(0.52 0.1 230);
+  --emotion-calm-light: oklch(0.62 0.08 230);
+  --emotion-calm-dark: oklch(0.42 0.12 230);
+  
+  /* Purple = Sadness / Grief (#8D5CF6) */
+  --emotion-sadness: oklch(0.55 0.22 280);
+  --emotion-sadness-light: oklch(0.65 0.18 280);
+  --emotion-sadness-dark: oklch(0.45 0.25 280);
+  
+  /* Gray = Neutral (#6C757D) */
+  --emotion-neutral: oklch(0.5 0.02 250);
+  --emotion-neutral-light: oklch(0.6 0.02 250);
+  --emotion-neutral-dark: oklch(0.4 0.02 250);
+  
+  /* GMI Indicator Gradient (Red → Yellow → Green) */
+  --gmi-negative: var(--emotion-anger);
+  --gmi-neutral: var(--emotion-curiosity);
+  --gmi-positive: var(--emotion-hope);
+  
+  /* CFI Indicator Gradient (Blue → Orange → Red) */
+  --cfi-low: var(--emotion-calm-light);
+  --cfi-medium: var(--emotion-fear);
+  --cfi-high: var(--emotion-anger-dark);
+  
+  /* HRI Indicator Gradient (Gray → Light Green → Dark Green) */
+  --hri-low: var(--emotion-neutral);
+  --hri-medium: var(--emotion-hope-light);
+  --hri-high: var(--emotion-hope-dark);
   --radius: 0.65rem;
   --background: oklch(0.08 0.01 240);
   --foreground: oklch(0.92 0.01 240);
@@ -477,4 +528,110 @@ html.lang-ru * {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* ============================================
+   AmalSense Emotion Color Utility Classes
+   ============================================ */
+
+/* Background Colors */
+.bg-emotion-anger { background-color: var(--emotion-anger); }
+.bg-emotion-fear { background-color: var(--emotion-fear); }
+.bg-emotion-curiosity { background-color: var(--emotion-curiosity); }
+.bg-emotion-hope { background-color: var(--emotion-hope); }
+.bg-emotion-calm { background-color: var(--emotion-calm); }
+.bg-emotion-sadness { background-color: var(--emotion-sadness); }
+.bg-emotion-neutral { background-color: var(--emotion-neutral); }
+
+/* Text Colors */
+.text-emotion-anger { color: var(--emotion-anger); }
+.text-emotion-fear { color: var(--emotion-fear); }
+.text-emotion-curiosity { color: var(--emotion-curiosity); }
+.text-emotion-hope { color: var(--emotion-hope); }
+.text-emotion-calm { color: var(--emotion-calm); }
+.text-emotion-sadness { color: var(--emotion-sadness); }
+.text-emotion-neutral { color: var(--emotion-neutral); }
+
+/* Border Colors */
+.border-emotion-anger { border-color: var(--emotion-anger); }
+.border-emotion-fear { border-color: var(--emotion-fear); }
+.border-emotion-curiosity { border-color: var(--emotion-curiosity); }
+.border-emotion-hope { border-color: var(--emotion-hope); }
+.border-emotion-calm { border-color: var(--emotion-calm); }
+.border-emotion-sadness { border-color: var(--emotion-sadness); }
+.border-emotion-neutral { border-color: var(--emotion-neutral); }
+
+/* GMI Indicator Colors */
+.bg-gmi-negative { background-color: var(--gmi-negative); }
+.bg-gmi-neutral { background-color: var(--gmi-neutral); }
+.bg-gmi-positive { background-color: var(--gmi-positive); }
+.text-gmi-negative { color: var(--gmi-negative); }
+.text-gmi-neutral { color: var(--gmi-neutral); }
+.text-gmi-positive { color: var(--gmi-positive); }
+
+/* CFI Indicator Colors */
+.bg-cfi-low { background-color: var(--cfi-low); }
+.bg-cfi-medium { background-color: var(--cfi-medium); }
+.bg-cfi-high { background-color: var(--cfi-high); }
+.text-cfi-low { color: var(--cfi-low); }
+.text-cfi-medium { color: var(--cfi-medium); }
+.text-cfi-high { color: var(--cfi-high); }
+
+/* HRI Indicator Colors */
+.bg-hri-low { background-color: var(--hri-low); }
+.bg-hri-medium { background-color: var(--hri-medium); }
+.bg-hri-high { background-color: var(--hri-high); }
+.text-hri-low { color: var(--hri-low); }
+.text-hri-medium { color: var(--hri-medium); }
+.text-hri-high { color: var(--hri-high); }
+
+/* Emotion Cards with Glow Effect */
+.emotion-card-anger {
+  background: linear-gradient(135deg, oklch(0.55 0.22 25 / 0.2), oklch(0.55 0.22 25 / 0.1));
+  border: 1px solid var(--emotion-anger);
+  box-shadow: 0 0 20px oklch(0.55 0.22 25 / 0.3);
+}
+
+.emotion-card-fear {
+  background: linear-gradient(135deg, oklch(0.72 0.14 55 / 0.2), oklch(0.72 0.14 55 / 0.1));
+  border: 1px solid var(--emotion-fear);
+  box-shadow: 0 0 20px oklch(0.72 0.14 55 / 0.3);
+}
+
+.emotion-card-curiosity {
+  background: linear-gradient(135deg, oklch(0.8 0.12 85 / 0.2), oklch(0.8 0.12 85 / 0.1));
+  border: 1px solid var(--emotion-curiosity);
+  box-shadow: 0 0 20px oklch(0.8 0.12 85 / 0.3);
+}
+
+.emotion-card-hope {
+  background: linear-gradient(135deg, oklch(0.6 0.12 175 / 0.2), oklch(0.6 0.12 175 / 0.1));
+  border: 1px solid var(--emotion-hope);
+  box-shadow: 0 0 20px oklch(0.6 0.12 175 / 0.3);
+}
+
+.emotion-card-calm {
+  background: linear-gradient(135deg, oklch(0.52 0.1 230 / 0.2), oklch(0.52 0.1 230 / 0.1));
+  border: 1px solid var(--emotion-calm);
+  box-shadow: 0 0 20px oklch(0.52 0.1 230 / 0.3);
+}
+
+.emotion-card-sadness {
+  background: linear-gradient(135deg, oklch(0.55 0.22 280 / 0.2), oklch(0.55 0.22 280 / 0.1));
+  border: 1px solid var(--emotion-sadness);
+  box-shadow: 0 0 20px oklch(0.55 0.22 280 / 0.3);
+}
+
+/* Indicator Gauge Gradients */
+.gmi-gradient {
+  background: linear-gradient(90deg, var(--gmi-negative), var(--gmi-neutral), var(--gmi-positive));
+}
+
+.cfi-gradient {
+  background: linear-gradient(90deg, var(--cfi-low), var(--cfi-medium), var(--cfi-high));
+}
+
+.hri-gradient {
+  background: linear-gradient(90deg, var(--hri-low), var(--hri-medium), var(--hri-high));
 }

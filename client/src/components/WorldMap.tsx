@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
+import { 
+  EMOTION_COLORS, 
+  GMI_COLORS, 
+  CFI_COLORS, 
+  HRI_COLORS,
+  withOpacity 
+} from '@shared/emotionColors';
 
 interface CountryEmotionData {
   countryCode: string;
@@ -45,28 +52,37 @@ const COUNTRY_POSITIONS: Record<string, { x: number; y: number; size: number }> 
   'MY': { x: 70, y: 50, size: 3 },
 };
 
+/**
+ * Get emotion color based on GMI, CFI, and HRI values
+ * Using the unified AmalSense color system
+ */
 function getEmotionColor(gmi: number, cfi: number, hri: number): string {
+  // High fear takes priority (Orange → Red gradient)
   if (cfi > 60) {
-    const intensity = Math.round((cfi / 100) * 200);
-    return `rgb(${intensity + 55}, 50, 50)`;
+    return CFI_COLORS.high; // Dark Red for high fear
+  }
+  if (cfi > 35) {
+    return CFI_COLORS.medium; // Orange for medium fear
   }
 
+  // High hope/resilience (Green gradient)
   if (hri > 60) {
-    const intensity = Math.round((hri / 100) * 155);
-    return `rgb(50, ${intensity + 100}, 100)`;
+    return HRI_COLORS.high; // Dark Green for strong hope
+  }
+  if (hri > 35) {
+    return HRI_COLORS.medium; // Light Green for moderate hope
   }
 
-  if (gmi > 20) {
-    const intensity = Math.round(((gmi + 100) / 200) * 155);
-    return `rgb(100, ${intensity + 100}, 200)`;
+  // GMI-based coloring (Red → Yellow → Green)
+  if (gmi > 30) {
+    return GMI_COLORS.positive; // Green for positive mood
+  }
+  if (gmi < -30) {
+    return GMI_COLORS.negative; // Red for negative mood
   }
 
-  if (gmi < -20) {
-    const intensity = Math.round(((-gmi + 100) / 200) * 155);
-    return `rgb(${intensity + 100}, 150, 50)`;
-  }
-
-  return 'rgb(200, 150, 100)';
+  // Neutral state
+  return GMI_COLORS.neutral; // Yellow for neutral
 }
 
 function getEmotionIntensity(gmi: number, cfi: number, hri: number): number {
@@ -93,6 +109,27 @@ export function WorldMap({ countriesData, selectedCountry, onCountrySelect }: Wo
   const handleCountryLeave = () => {
     setHoveredCountry(null);
     setTooltip(null);
+  };
+
+  // Get GMI color for tooltip
+  const getGMIDisplayColor = (gmi: number) => {
+    if (gmi > 30) return GMI_COLORS.positive;
+    if (gmi < -30) return GMI_COLORS.negative;
+    return GMI_COLORS.neutral;
+  };
+
+  // Get CFI color for tooltip
+  const getCFIDisplayColor = (cfi: number) => {
+    if (cfi > 60) return CFI_COLORS.high;
+    if (cfi > 35) return CFI_COLORS.medium;
+    return CFI_COLORS.low;
+  };
+
+  // Get HRI color for tooltip
+  const getHRIDisplayColor = (hri: number) => {
+    if (hri > 60) return HRI_COLORS.high;
+    if (hri > 35) return HRI_COLORS.medium;
+    return HRI_COLORS.low;
   };
 
   return (
@@ -185,30 +222,30 @@ export function WorldMap({ countriesData, selectedCountry, onCountrySelect }: Wo
         >
           <p className="font-bold cosmic-text">{tooltip.data.countryName}</p>
           <div className="text-xs text-muted-foreground mt-2 space-y-1">
-            <p>GMI: <span className="text-accent">{tooltip.data.gmi}</span></p>
-            <p>CFI: <span className="text-cyan-400">{tooltip.data.cfi}</span></p>
-            <p>HRI: <span className="text-green-400">{tooltip.data.hri}</span></p>
+            <p>GMI: <span style={{ color: getGMIDisplayColor(tooltip.data.gmi) }}>{tooltip.data.gmi}</span></p>
+            <p>CFI: <span style={{ color: getCFIDisplayColor(tooltip.data.cfi) }}>{tooltip.data.cfi}</span></p>
+            <p>HRI: <span style={{ color: getHRIDisplayColor(tooltip.data.hri) }}>{tooltip.data.hri}</span></p>
             <p>Confidence: {tooltip.data.confidence}%</p>
           </div>
         </div>
       )}
 
-      {/* Legend */}
+      {/* Legend - Using unified color system */}
       <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'rgb(255, 105, 105)' }} />
-          <span className="text-muted-foreground">High Fear</span>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.anger }} />
+          <span className="text-muted-foreground">High Fear/Anger</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'rgb(100, 200, 100)' }} />
-          <span className="text-muted-foreground">High Hope</span>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.fear }} />
+          <span className="text-muted-foreground">Moderate Fear</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'rgb(100, 150, 200)' }} />
-          <span className="text-muted-foreground">Positive</span>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.hope }} />
+          <span className="text-muted-foreground">Hope/Positive</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'rgb(200, 150, 100)' }} />
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.curiosity }} />
           <span className="text-muted-foreground">Neutral</span>
         </div>
       </div>
