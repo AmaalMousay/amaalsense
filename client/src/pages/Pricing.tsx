@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useLocation } from 'wouter';
+import { useLocation, useSearch } from 'wouter';
+import { PayPalButton } from '@/components/PayPalButton';
 import { 
   Sparkles, 
   Check, 
@@ -11,8 +12,11 @@ import {
   Crown,
   Globe,
   ArrowRight,
-  Star
+  Star,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PricingTier {
   id: string;
@@ -159,7 +163,20 @@ const pricingTiers: PricingTier[] = [
 
 export default function Pricing() {
   const [, navigate] = useLocation();
+  const search = useSearch();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+
+  // Check for payment success/cancel from PayPal redirect
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    if (params.get('success') === 'true') {
+      toast.success('Payment initiated! Please email your receipt to amaalmousay@gmail.com to activate your subscription.', {
+        duration: 10000,
+      });
+    } else if (params.get('cancelled') === 'true') {
+      toast.error('Payment was cancelled. You can try again anytime.');
+    }
+  }, [search]);
 
   return (
     <div className="min-h-screen flex flex-col relative z-10">
@@ -297,14 +314,28 @@ export default function Pricing() {
                 </div>
 
                 {/* CTA */}
-                <Button
-                  onClick={() => navigate(tier.ctaLink)}
-                  className={`w-full ${tier.popular ? 'glow-button text-white' : ''}`}
-                  variant={tier.popular ? 'default' : 'outline'}
-                >
-                  {tier.ctaText}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                {tier.id === 'pro' ? (
+                  <PayPalButton 
+                    tier="pro" 
+                    billingCycle={billingCycle === 'annual' ? 'yearly' : 'monthly'}
+                    className="w-full glow-button text-white"
+                  />
+                ) : tier.id === 'enterprise' ? (
+                  <PayPalButton 
+                    tier="enterprise" 
+                    billingCycle={billingCycle === 'annual' ? 'yearly' : 'monthly'}
+                    className="w-full"
+                  />
+                ) : (
+                  <Button
+                    onClick={() => navigate(tier.ctaLink)}
+                    className={`w-full ${tier.popular ? 'glow-button text-white' : ''}`}
+                    variant={tier.popular ? 'default' : 'outline'}
+                  >
+                    {tier.ctaText}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                )}
               </Card>
             ))}
           </div>
