@@ -10,11 +10,13 @@ import {
   ChevronRight, Globe, Brain, Shield, Users
 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useI18n } from '@/i18n';
 
 export default function Home() {
   const [, navigate] = useLocation();
   const [indices, setIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t, isRTL } = useI18n();
 
   // Fetch latest indices
   const { data: latestIndices } = trpc.emotion.getLatestIndices.useQuery();
@@ -30,27 +32,27 @@ export default function Home() {
   }, [latestIndices]);
 
   const navLinks = [
-    { href: '/dashboard', label: 'Dashboard' },
-    { href: '/analyzer', label: 'Analyzer' },
-    { href: '/map', label: 'Map' },
-    { href: '/live', label: 'Live' },
-    { href: '/social', label: 'Social' },
-    { href: '/theory', label: 'Theory' },
-    { href: '/weather', label: 'Weather' },
+    { href: '/dashboard', label: t.nav.dashboard },
+    { href: '/analyzer', label: t.nav.analyzer },
+    { href: '/map', label: t.nav.map },
+    { href: '/live', label: t.nav.live },
+    { href: '/social', label: t.nav.social },
+    { href: '/theory', label: t.nav.theory },
+    { href: '/weather', label: t.nav.weather },
     { href: '/trends', label: 'Trends' },
-    { href: '/about', label: 'About' },
-    { href: '/pricing', label: 'Pricing' },
+    { href: '/about', label: t.nav.about },
+    { href: '/pricing', label: t.nav.pricing },
   ];
 
   const resourceLinks = [
-    { href: '/how-it-works', label: 'How It Works', icon: <Zap className="w-4 h-4" /> },
-    { href: '/case-studies', label: 'Case Studies', icon: <Building2 className="w-4 h-4" /> },
-    { href: '/faq', label: 'FAQ', icon: <HelpCircle className="w-4 h-4" /> },
-    { href: '/blog', label: 'Blog', icon: <BookOpen className="w-4 h-4" /> },
+    { href: '/how-it-works', label: t.nav.howItWorks, icon: <Zap className="w-4 h-4" /> },
+    { href: '/case-studies', label: t.nav.caseStudies, icon: <Building2 className="w-4 h-4" /> },
+    { href: '/faq', label: t.nav.faq, icon: <HelpCircle className="w-4 h-4" /> },
+    { href: '/blog', label: t.nav.blog, icon: <BookOpen className="w-4 h-4" /> },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
+    <div className={`min-h-screen flex flex-col relative z-10 ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Navigation */}
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 bg-background/80">
         <div className="container py-4 flex items-center justify-between">
@@ -70,9 +72,9 @@ export default function Home() {
             ))}
             <div className="relative group">
               <button className="text-sm hover:text-accent transition-colors flex items-center gap-1">
-                More <ChevronRight className="w-3 h-3 group-hover:rotate-90 transition-transform" />
+                {t.nav.more} <ChevronRight className={`w-3 h-3 group-hover:rotate-90 transition-transform ${isRTL ? 'rotate-180' : ''}`} />
               </button>
-              <div className="absolute top-full right-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <div className={`absolute top-full ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all`}>
                 {navLinks.slice(6).map((link) => (
                   <Link key={link.href} href={link.href}>
                     <span className="block px-4 py-2 text-sm hover:bg-accent/10 transition-colors cursor-pointer">
@@ -95,7 +97,7 @@ export default function Home() {
               onClick={() => navigate('/contact')}
               className="glow-button text-white"
             >
-              Contact Sales
+              {t.nav.contactSales}
             </Button>
           </div>
 
@@ -134,11 +136,14 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
+              <div className="pt-2">
+                <LanguageSwitcher />
+              </div>
               <Button
                 onClick={() => { navigate('/contact'); setMobileMenuOpen(false); }}
                 className="glow-button text-white w-full mt-4"
               >
-                Contact Sales
+                {t.nav.contactSales}
               </Button>
             </div>
           </div>
@@ -152,11 +157,14 @@ export default function Home() {
             {/* Title */}
             <div className="space-y-4">
               <h2 className="text-5xl md:text-6xl font-bold cosmic-text">
-                Digital Collective <span className="gradient-text">Emotion</span> Analyzer
+                {t.home.title.split(' ').map((word, i) => 
+                  word === 'Emotion' || word === 'المشاعر' || word === 'Émotion' || word === 'Emotion' || word === 'Эмоций' || word === 'Emociones' || word === '情感' ? 
+                    <span key={i} className="gradient-text">{word} </span> : 
+                    <span key={i}>{word} </span>
+                )}
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Transform the invisible pulse of human emotion into measurable, actionable insights.
-                Understand the collective mood of society in real-time.
+                {t.home.subtitle}
               </p>
             </div>
 
@@ -166,14 +174,14 @@ export default function Home() {
                 onClick={() => navigate('/analyzer')}
                 className="glow-button text-white px-8 py-6 text-lg"
               >
-                Try Analyzer
+                {t.home.tryAnalyzer}
               </Button>
               <Button
                 onClick={() => navigate('/how-it-works')}
                 variant="outline"
                 className="px-8 py-6 text-lg"
               >
-                How It Works
+                {t.nav.howItWorks}
               </Button>
             </div>
           </div>
@@ -184,38 +192,38 @@ export default function Home() {
       <section className="py-16 border-t border-border/50">
         <div className="container">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold cosmic-text mb-2">Live Collective Indices</h3>
-            <p className="text-muted-foreground">Real-time emotional pulse of global consciousness</p>
+            <h3 className="text-3xl font-bold cosmic-text mb-2">{t.home.liveIndices}</h3>
+            <p className="text-muted-foreground">{t.home.liveIndicesDesc}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <IndexCard
-              title="Global Mood Index (GMI)"
+              title={`${t.indices.gmi} (GMI)`}
               value={indices.gmi}
               min={-100}
               max={100}
               unit=""
-              description="Overall collective sentiment"
+              description={t.indices.gmiDesc}
               icon={<TrendingUp />}
               color="purple"
             />
             <IndexCard
-              title="Collective Fear Index (CFI)"
+              title={`${t.indices.cfi} (CFI)`}
               value={indices.cfi}
               min={0}
               max={100}
               unit=""
-              description="Level of collective anxiety"
+              description={t.indices.cfiDesc}
               icon={<Zap />}
               color="cyan"
             />
             <IndexCard
-              title="Hope Resilience Index (HRI)"
+              title={`${t.indices.hri} (HRI)`}
               value={indices.hri}
               min={0}
               max={100}
               unit=""
-              description="Societal optimism & resilience"
+              description={t.indices.hriDesc}
               icon={<Heart />}
               color="green"
             />
@@ -227,40 +235,40 @@ export default function Home() {
       <section className="py-16 border-t border-border/50">
         <div className="container">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold cosmic-text mb-2">Powered by Advanced AI</h3>
-            <p className="text-muted-foreground">Combining Transformers and VADER for unprecedented accuracy</p>
+            <h3 className="text-3xl font-bold cosmic-text mb-2">{t.home.poweredByAI}</h3>
+            <p className="text-muted-foreground">{t.home.aiDesc}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="cosmic-card p-6">
               <Brain className="w-8 h-8 text-purple-400 mb-4" />
-              <h4 className="text-lg font-bold cosmic-text mb-3">Emotion Analysis</h4>
+              <h4 className="text-lg font-bold cosmic-text mb-3">{t.analyzer.title}</h4>
               <p className="text-muted-foreground text-sm">
-                Detect six distinct emotions: Joy, Fear, Anger, Sadness, Hope, and Curiosity from any text.
+                {t.emotions.joy}, {t.emotions.fear}, {t.emotions.anger}, {t.emotions.sadness}, {t.emotions.hope}, {t.emotions.curiosity}
               </p>
             </Card>
 
             <Card className="cosmic-card p-6">
               <Globe className="w-8 h-8 text-cyan-400 mb-4" />
-              <h4 className="text-lg font-bold cosmic-text mb-3">Global Coverage</h4>
+              <h4 className="text-lg font-bold cosmic-text mb-3">{t.map.title}</h4>
               <p className="text-muted-foreground text-sm">
-                Monitor emotions across 25+ countries with real-time world map visualization.
+                {t.map.subtitle}
               </p>
             </Card>
 
             <Card className="cosmic-card p-6">
               <TrendingUp className="w-8 h-8 text-green-400 mb-4" />
-              <h4 className="text-lg font-bold cosmic-text mb-3">Historical Analysis</h4>
+              <h4 className="text-lg font-bold cosmic-text mb-3">{t.dashboard.historicalData}</h4>
               <p className="text-muted-foreground text-sm">
-                Compare emotional patterns across time periods and identify significant shifts.
+                {t.map.historicalTrends}
               </p>
             </Card>
 
             <Card className="cosmic-card p-6">
               <Shield className="w-8 h-8 text-red-400 mb-4" />
-              <h4 className="text-lg font-bold cosmic-text mb-3">Early Warning</h4>
+              <h4 className="text-lg font-bold cosmic-text mb-3">{t.weather.alerts}</h4>
               <p className="text-muted-foreground text-sm">
-                Get alerts when emotional indices cross critical thresholds.
+                {t.alerts.subtitle}
               </p>
             </Card>
           </div>
@@ -271,172 +279,97 @@ export default function Home() {
       <section className="py-16 border-t border-border/50">
         <div className="container">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold cosmic-text mb-2">Use Cases</h3>
-            <p className="text-muted-foreground">Trusted by organizations worldwide</p>
+            <h3 className="text-3xl font-bold cosmic-text mb-2">{t.home.useCases}</h3>
+            <p className="text-muted-foreground">{t.home.useCasesDesc}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="cosmic-card p-6">
-              <h4 className="text-lg font-bold cosmic-text mb-2">Governments & NGOs</h4>
-              <p className="text-sm text-muted-foreground">
-                Monitor social stability and predict crisis points before they escalate.
+            <Card className="cosmic-card p-6 text-center">
+              <Users className="w-12 h-12 text-purple-400 mx-auto mb-4" />
+              <h4 className="text-lg font-bold cosmic-text mb-2">{t.pricing.government}</h4>
+              <p className="text-muted-foreground text-sm">
+                Policy makers & public health officials
               </p>
             </Card>
 
-            <Card className="cosmic-card p-6">
-              <h4 className="text-lg font-bold cosmic-text mb-2">Media & Journalism</h4>
-              <p className="text-sm text-muted-foreground">
-                Enhance data journalism with real-time emotional intelligence from news coverage.
+            <Card className="cosmic-card p-6 text-center">
+              <Building2 className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
+              <h4 className="text-lg font-bold cosmic-text mb-2">{t.pricing.enterprise}</h4>
+              <p className="text-muted-foreground text-sm">
+                Market research & brand monitoring
               </p>
             </Card>
 
-            <Card className="cosmic-card p-6">
-              <h4 className="text-lg font-bold cosmic-text mb-2">Enterprises</h4>
-              <p className="text-sm text-muted-foreground">
-                Understand market sentiment before launching campaigns or major initiatives.
+            <Card className="cosmic-card p-6 text-center">
+              <BookOpen className="w-12 h-12 text-green-400 mx-auto mb-4" />
+              <h4 className="text-lg font-bold cosmic-text mb-2">Research</h4>
+              <p className="text-muted-foreground text-sm">
+                Academic studies & social science
               </p>
             </Card>
-          </div>
-
-          <div className="text-center mt-8">
-            <Link href="/case-studies">
-              <Button variant="outline" className="gap-2">
-                <Building2 className="w-4 h-4" />
-                View Case Studies
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Resources Section */}
-      <section className="py-16 border-t border-border/50 bg-accent/5">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold cosmic-text mb-2">Resources</h3>
-            <p className="text-muted-foreground">Learn more about AmalSense and emotion analysis</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link href="/how-it-works">
-              <Card className="cosmic-card p-6 hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <Zap className="w-8 h-8 text-yellow-400 mb-4" />
-                <h4 className="text-lg font-bold cosmic-text mb-2">How It Works</h4>
-                <p className="text-sm text-muted-foreground">
-                  Understand the technology and methodology behind AmalSense.
-                </p>
-              </Card>
-            </Link>
-
-            <Link href="/case-studies">
-              <Card className="cosmic-card p-6 hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <Building2 className="w-8 h-8 text-green-400 mb-4" />
-                <h4 className="text-lg font-bold cosmic-text mb-2">Case Studies</h4>
-                <p className="text-sm text-muted-foreground">
-                  Real-world examples of how organizations use AmalSense.
-                </p>
-              </Card>
-            </Link>
-
-            <Link href="/faq">
-              <Card className="cosmic-card p-6 hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <HelpCircle className="w-8 h-8 text-cyan-400 mb-4" />
-                <h4 className="text-lg font-bold cosmic-text mb-2">FAQ</h4>
-                <p className="text-sm text-muted-foreground">
-                  Find answers to common questions about our platform.
-                </p>
-              </Card>
-            </Link>
-
-            <Link href="/blog">
-              <Card className="cosmic-card p-6 hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <BookOpen className="w-8 h-8 text-orange-400 mb-4" />
-                <h4 className="text-lg font-bold cosmic-text mb-2">Blog</h4>
-                <p className="text-sm text-muted-foreground">
-                  Latest research, tutorials, and insights on emotion analysis.
-                </p>
-              </Card>
-            </Link>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 border-t border-border/50">
-        <div className="container text-center space-y-6">
-          <h3 className="text-3xl font-bold cosmic-text">Ready to Understand Collective Emotion?</h3>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Start analyzing headlines and discover the emotional pulse of society.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={() => navigate('/analyzer')}
-              className="glow-button text-white px-8 py-6 text-lg"
-            >
-              Launch Analyzer Now
-            </Button>
-            <Button
-              onClick={() => navigate('/pricing')}
-              variant="outline"
-              className="px-8 py-6 text-lg"
-            >
-              View Pricing
-            </Button>
-          </div>
+      <section className="py-20 border-t border-border/50">
+        <div className="container text-center">
+          <h3 className="text-3xl font-bold cosmic-text mb-4">{t.home.readyToStart}</h3>
+          <Button
+            onClick={() => navigate('/analyzer')}
+            className="glow-button text-white px-8 py-6 text-lg"
+          >
+            {t.home.launchAnalyzer}
+          </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-12 mt-16">
+      <footer className="border-t border-border/50 py-12">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Brand */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-6 h-6 text-accent" />
-                <span className="text-xl font-bold gradient-text">AmalSense</span>
+                <Sparkles className="w-5 h-5 text-accent" />
+                <span className="font-bold gradient-text">AmalSense</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Transforming Human Emotion into Data
+                {t.home.subtitle}
               </p>
             </div>
 
-            {/* Product */}
             <div>
-              <h4 className="font-bold mb-4">Product</h4>
+              <h4 className="font-semibold mb-4">{t.footer.product}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/analyzer"><span className="hover:text-accent cursor-pointer">Analyzer</span></Link></li>
-                <li><Link href="/dashboard"><span className="hover:text-accent cursor-pointer">Dashboard</span></Link></li>
-                <li><Link href="/map"><span className="hover:text-accent cursor-pointer">World Map</span></Link></li>
-                <li><Link href="/weather"><span className="hover:text-accent cursor-pointer">Emotional Weather</span></Link></li>
+                <li><Link href="/analyzer" className="hover:text-accent">{t.nav.analyzer}</Link></li>
+                <li><Link href="/dashboard" className="hover:text-accent">{t.nav.dashboard}</Link></li>
+                <li><Link href="/map" className="hover:text-accent">{t.nav.map}</Link></li>
+                <li><Link href="/pricing" className="hover:text-accent">{t.nav.pricing}</Link></li>
               </ul>
             </div>
 
-            {/* Resources */}
             <div>
-              <h4 className="font-bold mb-4">Resources</h4>
+              <h4 className="font-semibold mb-4">{t.footer.resources}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/how-it-works"><span className="hover:text-accent cursor-pointer">How It Works</span></Link></li>
-                <li><Link href="/case-studies"><span className="hover:text-accent cursor-pointer">Case Studies</span></Link></li>
-                <li><Link href="/faq"><span className="hover:text-accent cursor-pointer">FAQ</span></Link></li>
-                <li><Link href="/blog"><span className="hover:text-accent cursor-pointer">Blog</span></Link></li>
+                <li><Link href="/how-it-works" className="hover:text-accent">{t.nav.howItWorks}</Link></li>
+                <li><Link href="/case-studies" className="hover:text-accent">{t.nav.caseStudies}</Link></li>
+                <li><Link href="/faq" className="hover:text-accent">{t.nav.faq}</Link></li>
+                <li><Link href="/blog" className="hover:text-accent">{t.nav.blog}</Link></li>
               </ul>
             </div>
 
-            {/* Company */}
             <div>
-              <h4 className="font-bold mb-4">Company</h4>
+              <h4 className="font-semibold mb-4">{t.footer.company}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/about"><span className="hover:text-accent cursor-pointer">About</span></Link></li>
-                <li><Link href="/theory"><span className="hover:text-accent cursor-pointer">Theory</span></Link></li>
-                <li><Link href="/pricing"><span className="hover:text-accent cursor-pointer">Pricing</span></Link></li>
-                <li><Link href="/contact"><span className="hover:text-accent cursor-pointer">Contact</span></Link></li>
+                <li><Link href="/about" className="hover:text-accent">{t.nav.about}</Link></li>
+                <li><Link href="/theory" className="hover:text-accent">{t.nav.theory}</Link></li>
+                <li><Link href="/contact" className="hover:text-accent">{t.nav.contact}</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-border/50 mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>AmalSense Engine © 2025 | By Amaal Radwan</p>
+            {t.footer.copyright}
           </div>
         </div>
       </footer>

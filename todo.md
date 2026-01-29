@@ -261,3 +261,8 @@
 - [x] Add daily/weekly report templates
 - [x] Add subscriber management
 - [x] Create notification settings pages settings
+
+## Phase 25: Fix Language Switching (BUG FIX)
+- [x] Update Home page to use translations (useI18n hook)
+- [x] Update other pages to use translations
+- [x] Test language switching functionality
