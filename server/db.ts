@@ -1,6 +1,6 @@
 import { eq, desc, asc, gte, and, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis } from "../drizzle/schema";
+import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -295,4 +295,75 @@ export async function getMultipleCountriesHistoricalIndices(
       )
     )
     .orderBy((t) => asc(t.analyzedAt));
+}
+
+
+/**
+ * Create an enterprise inquiry
+ */
+export async function createEnterpriseInquiry(data: InsertEnterpriseInquiry) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(enterpriseInquiries).values(data);
+}
+
+/**
+ * Get all enterprise inquiries (for admin)
+ */
+export async function getEnterpriseInquiries() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(enterpriseInquiries)
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Update enterprise inquiry status
+ */
+export async function updateEnterpriseInquiryStatus(id: number, status: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(enterpriseInquiries)
+    .set({ status })
+    .where(eq(enterpriseInquiries.id, id));
+}
+
+/**
+ * Track user usage
+ */
+export async function trackUsage(data: InsertUsageTracking) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(usageTracking).values(data);
+}
+
+/**
+ * Get user's daily usage count
+ */
+export async function getUserDailyUsage(userId: number, usageType: string) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const result = await db
+    .select()
+    .from(usageTracking)
+    .where(
+      and(
+        eq(usageTracking.userId, userId),
+        eq(usageTracking.usageType, usageType),
+        gte(usageTracking.usageDate, today)
+      )
+    );
+
+  return result.reduce((sum, r) => sum + r.count, 0);
 }

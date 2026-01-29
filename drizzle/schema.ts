@@ -17,6 +17,14 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  /** Subscription tier: free, pro, enterprise, government */
+  subscriptionTier: mysqlEnum("subscriptionTier", ["free", "pro", "enterprise", "government"]).default("free").notNull(),
+  /** Subscription start date */
+  subscriptionStartDate: timestamp("subscriptionStartDate"),
+  /** Subscription end date */
+  subscriptionEndDate: timestamp("subscriptionEndDate"),
+  /** Organization name for enterprise/government users */
+  organizationName: varchar("organizationName", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -136,3 +144,50 @@ export const countryEmotionAnalyses = mysqlTable("country_emotion_analyses", {
 
 export type CountryEmotionAnalysis = typeof countryEmotionAnalyses.$inferSelect;
 export type InsertCountryEmotionAnalysis = typeof countryEmotionAnalyses.$inferInsert;
+
+/**
+ * Usage Tracking Table - tracks API calls and analyses per user
+ */
+export const usageTracking = mysqlTable("usage_tracking", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID */
+  userId: int("userId").notNull(),
+  /** Type of usage: analysis, api_call, report, map_view */
+  usageType: varchar("usageType", { length: 32 }).notNull(),
+  /** Count of usage for this record */
+  count: int("count").notNull().default(1),
+  /** Date of usage (for daily tracking) */
+  usageDate: timestamp("usageDate").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UsageTracking = typeof usageTracking.$inferSelect;
+export type InsertUsageTracking = typeof usageTracking.$inferInsert;
+
+/**
+ * Enterprise Inquiries Table - stores contact requests from potential enterprise clients
+ */
+export const enterpriseInquiries = mysqlTable("enterprise_inquiries", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Contact name */
+  contactName: varchar("contactName", { length: 255 }).notNull(),
+  /** Contact email */
+  contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
+  /** Organization name */
+  organizationName: varchar("organizationName", { length: 255 }).notNull(),
+  /** Organization type: government, ngo, media, enterprise, academic */
+  organizationType: varchar("organizationType", { length: 64 }).notNull(),
+  /** Country */
+  country: varchar("country", { length: 100 }),
+  /** Interested tier: pro, enterprise, government */
+  interestedTier: varchar("interestedTier", { length: 32 }).notNull(),
+  /** Message/requirements */
+  message: text("message"),
+  /** Status: new, contacted, demo_scheduled, negotiating, closed_won, closed_lost */
+  status: varchar("status", { length: 32 }).default("new").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EnterpriseInquiry = typeof enterpriseInquiries.$inferSelect;
+export type InsertEnterpriseInquiry = typeof enterpriseInquiries.$inferInsert;

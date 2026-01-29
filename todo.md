@@ -124,3 +124,31 @@
 - [x] Include scientific paper reference
 - [x] Add academic references section
 - [x] Create contact information section
+
+
+## Phase 13: Subscription & Pricing System (NEW)
+
+### Database & Backend
+- [x] Add subscription tier to user schema (free, pro, enterprise, government)
+- [x] Create usage tracking table for API calls and analyses
+- [x] Add subscription limits configuration
+- [x] Create usage checking middleware
+
+### Pricing Page
+- [x] Create Pricing page with 4 tiers display
+- [x] Add feature comparison table
+- [x] Add CTA buttons for each tier
+- [x] Style with cosmic theme
+
+### Usage Limits System
+- [x] Implement daily analysis limit checking
+- [x] Add API rate limiting per tier
+- [x] Create usage dashboard for users
+- [x] Add upgrade prompts when limits reached
+
+### Enterprise Contact
+- [x] Create Contact/Enterprise page
+- [x] Add contact form for enterprise inquiries
+- [x] Implement owner notification for new leads
+- [x] Add demo request functionality
+

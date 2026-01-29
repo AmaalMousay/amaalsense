@@ -81,11 +81,17 @@ export default function Home() {
             >
               About
             </button>
+            <button
+              onClick={() => navigate('/pricing')}
+              className="text-sm hover:text-accent transition-colors"
+            >
+              Pricing
+            </button>
             <Button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/contact')}
               className="glow-button text-white"
             >
-              Explore
+              Contact Sales
             </Button>
           </div>
         </div>

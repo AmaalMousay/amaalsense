@@ -429,6 +429,107 @@ export const appRouter = router({
     }),
   }),
 
+  // Subscription & Pricing System
+  subscription: router({
+    /**
+     * Get all pricing tiers
+     */
+    getTiers: publicProcedure.query(async () => {
+      const { getAllTiers } = await import("./subscriptionLimits");
+      return getAllTiers();
+    }),
+
+    /**
+     * Get user's current subscription and usage
+     */
+    getUserSubscription: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) {
+        return {
+          tier: 'free' as const,
+          usage: { analyses: 0, apiCalls: 0 },
+          limits: {
+            dailyAnalyses: 50,
+            dailyApiCalls: 0,
+            countriesAccess: 5,
+            historicalDays: 1,
+          },
+        };
+      }
+
+      const { getTierInfo } = await import("./subscriptionLimits");
+      const tier = (ctx.user as any).subscriptionTier || 'free';
+      const tierInfo = getTierInfo(tier);
+
+      return {
+        tier,
+        usage: { analyses: 0, apiCalls: 0 }, // TODO: Implement usage tracking
+        limits: tierInfo.limits,
+      };
+    }),
+
+    /**
+     * Submit enterprise inquiry
+     */
+    submitEnterpriseInquiry: publicProcedure
+      .input(z.object({
+        contactName: z.string().min(1).max(255),
+        contactEmail: z.string().email().max(320),
+        organizationName: z.string().min(1).max(255),
+        organizationType: z.string().min(1).max(64),
+        country: z.string().max(100).optional(),
+        interestedTier: z.string().min(1).max(32),
+        message: z.string().max(2000).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { createEnterpriseInquiry } = await import("./db");
+        const { notifyOwner } = await import("./_core/notification");
+
+        // Save to database
+        await createEnterpriseInquiry({
+          contactName: input.contactName,
+          contactEmail: input.contactEmail,
+          organizationName: input.organizationName,
+          organizationType: input.organizationType,
+          country: input.country || null,
+          interestedTier: input.interestedTier,
+          message: input.message || null,
+          status: 'new',
+        });
+
+        // Notify owner
+        await notifyOwner({
+          title: `New Enterprise Inquiry: ${input.organizationName}`,
+          content: `
+**New Lead from AmalSense!**
+
+**Contact:** ${input.contactName}
+**Email:** ${input.contactEmail}
+**Organization:** ${input.organizationName}
+**Type:** ${input.organizationType}
+**Country:** ${input.country || 'Not specified'}
+**Interested Tier:** ${input.interestedTier}
+
+**Message:**
+${input.message || 'No message provided'}
+          `.trim(),
+        });
+
+        return { success: true };
+      }),
+
+    /**
+     * Get all enterprise inquiries (admin only)
+     */
+    getEnterpriseInquiries: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user || (ctx.user as any).role !== 'admin') {
+        throw new Error('Unauthorized');
+      }
+
+      const { getEnterpriseInquiries } = await import("./db");
+      return await getEnterpriseInquiries();
+    }),
+  }),
+
   // Social Media Integration
   social: router({
     /**
