@@ -196,3 +196,8 @@
 - [x] Update language switcher component
 - [x] Add appropriate fonts for each language
 - [x] Update i18n index file
+
+
+## Phase 17: Author Information Update (NEW)
+- [x] Update About page with author full name: Amaal Radwan Bashir
+- [x] Add location: Sabha, Libya

@@ -12,7 +12,8 @@ import {
   FileText,
   ExternalLink,
   Heart,
-  Sparkles
+  Sparkles,
+  MapPin
 } from "lucide-react";
 
 export default function About() {
@@ -125,10 +126,17 @@ export default function About() {
                     Creator & Researcher
                   </Badge>
                   <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-                    Amaal Radwan
+                    Amaal Radwan Bashir
                   </h1>
-                  <p className="text-lg text-slate-300 mb-4">
+                  <h2 className="text-xl text-purple-300 mb-1 font-semibold">
+                    آمال رضوان بشير
+                  </h2>
+                  <p className="text-lg text-slate-300 mb-2">
                     AI Researcher & Digital Consciousness Theorist
+                  </p>
+                  <p className="flex items-center justify-center md:justify-start gap-2 text-cyan-400 mb-4">
+                    <MapPin className="w-4 h-4" />
+                    <span>Sabha, Libya | سبها، ليبيا</span>
                   </p>
                   <p className="text-slate-400 leading-relaxed">
                     Pioneer of the Digital Consciousness Field Theory (DCFT), exploring the intersection 
@@ -279,7 +287,7 @@ export default function About() {
               AmalSense Engine - Digital Collective Emotion Analyzer
             </p>
             <p className="text-sm">
-              © 2025 Amaal Radwan. All rights reserved.
+              © 2025 Amaal Radwan Bashir | آمال رضوان بشير. All rights reserved.
             </p>
           </div>
         </div>
