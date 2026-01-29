@@ -20,6 +20,9 @@ import CaseStudies from "./pages/CaseStudies";
 import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
 import Trends from "./pages/Trends";
+import Admin from "./pages/Admin";
+import NotificationSettings from "./pages/NotificationSettings";
+import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
   return (
@@ -40,6 +43,8 @@ function Router() {
       <Route path={"/faq"} component={FAQ} />
       <Route path={"/blog"} component={Blog} />
       <Route path={"/trends"} component={Trends} />
+      <Route path={"/admin"} component={Admin} />
+      <Route path={"/notifications"} component={NotificationSettings} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -53,6 +58,8 @@ function Router() {
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
+  const { showTour, setShowTour } = useOnboarding();
+
   return (
     <ErrorBoundary>
       <ThemeProvider
@@ -62,6 +69,12 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
+          {showTour && (
+            <OnboardingTour
+              onComplete={() => setShowTour(false)}
+              language="en"
+            />
+          )}
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

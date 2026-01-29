@@ -905,6 +905,98 @@ ${input.message || 'No message provided'}
       return await runAnalysisCycle();
     }),
   }),
+
+  notifications: router({
+    /**
+     * Subscribe to email notifications
+     */
+    subscribe: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().min(1).max(100),
+        frequency: z.enum(["daily", "weekly", "realtime"]).default("daily"),
+        types: z.array(z.enum(["report", "alert", "digest"])).default(["report", "alert"]),
+      }))
+      .mutation(async ({ input }) => {
+        const { subscribeToNotifications } = await import("./emailNotifications");
+        const success = subscribeToNotifications(input.email, input.name, input.frequency, input.types);
+        return { success };
+      }),
+
+    /**
+     * Unsubscribe from email notifications
+     */
+    unsubscribe: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const { unsubscribeFromNotifications } = await import("./emailNotifications");
+        const success = unsubscribeFromNotifications(input.email);
+        return { success };
+      }),
+
+    /**
+     * Update notification preferences
+     */
+    updatePreferences: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        frequency: z.enum(["daily", "weekly", "realtime"]).optional(),
+        types: z.array(z.enum(["report", "alert", "digest"])).optional(),
+        enabled: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { updateNotificationPreferences } = await import("./emailNotifications");
+        const { email, ...preferences } = input;
+        const success = updateNotificationPreferences(email, preferences);
+        return { success };
+      }),
+
+    /**
+     * Get subscriber info
+     */
+    getSubscriber: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .query(async ({ input }) => {
+        const { getSubscriber } = await import("./emailNotifications");
+        return getSubscriber(input.email) || null;
+      }),
+
+    /**
+     * Send daily reports (admin only)
+     */
+    sendDailyReports: publicProcedure
+      .mutation(async () => {
+        const { sendDailyReports } = await import("./emailNotifications");
+        return await sendDailyReports();
+      }),
+
+    /**
+     * Send weekly digests (admin only)
+     */
+    sendWeeklyDigests: publicProcedure
+      .mutation(async () => {
+        const { sendWeeklyDigests } = await import("./emailNotifications");
+        return await sendWeeklyDigests();
+      }),
+
+    /**
+     * Generate preview of daily report
+     */
+    previewDailyReport: publicProcedure
+      .query(async () => {
+        const { generateDailyReport } = await import("./emailNotifications");
+        return await generateDailyReport();
+      }),
+
+    /**
+     * Generate preview of weekly digest
+     */
+    previewWeeklyDigest: publicProcedure
+      .query(async () => {
+        const { generateWeeklyDigest } = await import("./emailNotifications");
+        return await generateWeeklyDigest();
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
