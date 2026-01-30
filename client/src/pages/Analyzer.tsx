@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc';
-import { useLocation } from 'wouter';
+import { useLocation, useRoute } from 'wouter';
 import { ArrowLeft, ArrowRight, Search, Users, MapPin, TrendingUp, TrendingDown, Minus, Globe, ChevronDown } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { EMOTION_COLORS, getEmotionColor } from '@shared/emotionColors';
@@ -47,11 +47,11 @@ const COUNTRIES = [
 ];
 
 export default function Analyzer() {
+  const { t, isRTL, language } = useI18n();
   const [, navigate] = useLocation();
   const [headline, setHeadline] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
-  const { t, isRTL, language } = useI18n();
   
   // Advanced analysis state
   const [analysisMode, setAnalysisMode] = useState<'simple' | 'advanced'>('simple');
