@@ -89,11 +89,44 @@ export const appRouter = router({
 
     /**
      * Get the latest emotion indices
+     * Automatically fetches and analyzes real data if database is empty
      */
     getLatestIndices: publicProcedure.query(async () => {
-      const { getLatestEmotionIndices } = await import("./db");
-      const indices = await getLatestEmotionIndices();
-      return indices || { gmi: 0, cfi: 50, hri: 50, confidence: 0 };
+      const { getLatestEmotionIndices, createEmotionIndex } = await import("./db");
+      
+      // First check if we have existing indices
+      let indices = await getLatestEmotionIndices();
+      
+      // If no data exists, fetch and analyze real data
+      if (!indices) {
+        try {
+          const { getGlobalMood } = await import("./unifiedDataService");
+          const globalMood = await getGlobalMood();
+          
+          // Save to database
+          await createEmotionIndex({
+            gmi: globalMood.gmi,
+            cfi: globalMood.cfi,
+            hri: globalMood.hri,
+            confidence: Math.round(globalMood.confidence * 100),
+          });
+          
+          // Return the fresh data
+          return {
+            gmi: globalMood.gmi,
+            cfi: globalMood.cfi,
+            hri: globalMood.hri,
+            confidence: Math.round(globalMood.confidence * 100),
+            dataPoints: globalMood.dataPoints,
+            realDataPoints: globalMood.realDataPoints,
+          };
+        } catch (error) {
+          console.error('[Indices] Failed to fetch real data:', error);
+          return { gmi: 0, cfi: 50, hri: 50, confidence: 0 };
+        }
+      }
+      
+      return indices;
     }),
 
     /**
