@@ -21,38 +21,54 @@ export const appRouter = router({
   emotion: router({
     /**
      * Analyze a headline and return emotion vector
+     * Uses DCFT Engine with formulas:
+     * D(t) = Σ [Ei × Wi × ΔTi]
+     * RI(e,t) = Σ (AVi × Wi × e^(-λΔt))
      */
     analyzeHeadline: publicProcedure
       .input(z.object({ headline: z.string().min(1).max(500) }))
       .mutation(async ({ input }) => {
-        const { analyzeHeadline, calculateIndices } = await import("./emotionAnalyzer");
-        const analysis = analyzeHeadline(input.headline);
+        // Use DCFT Engine for analysis - all data flows through D(t) and RI(e,t) formulas
+        const { analyzeTextDCFT } = await import("./dcft");
+        const dcftResult = await analyzeTextDCFT(input.headline, 'headline');
 
         // Save to database
         const { createEmotionAnalysis, createEmotionIndex } = await import("./db");
         await createEmotionAnalysis({
-          headline: analysis.headline,
-          joy: analysis.emotions.joy,
-          fear: analysis.emotions.fear,
-          anger: analysis.emotions.anger,
-          sadness: analysis.emotions.sadness,
-          hope: analysis.emotions.hope,
-          curiosity: analysis.emotions.curiosity,
-          dominantEmotion: analysis.dominantEmotion,
-          confidence: analysis.confidence,
-          model: analysis.model,
+          headline: input.headline,
+          joy: dcftResult.emotions.joy,
+          fear: dcftResult.emotions.fear,
+          anger: dcftResult.emotions.anger,
+          sadness: dcftResult.emotions.sadness,
+          hope: dcftResult.emotions.hope,
+          curiosity: dcftResult.emotions.curiosity,
+          dominantEmotion: dcftResult.dominantEmotion,
+          confidence: Math.round(dcftResult.confidence * 100),
+          model: 'dcft', // Using DCFT model
         });
 
-        // Calculate and save indices
-        const indices = calculateIndices([analysis]);
+        // Save indices calculated from D(t) and RI(e,t)
         await createEmotionIndex({
-          gmi: indices.gmi,
-          cfi: indices.cfi,
-          hri: indices.hri,
-          confidence: indices.confidence,
+          gmi: dcftResult.indices.gmi,
+          cfi: dcftResult.indices.cfi,
+          hri: dcftResult.indices.hri,
+          confidence: Math.round(dcftResult.confidence * 100),
         });
 
-        return analysis;
+        // Return analysis with DCFT-specific data
+        return {
+          headline: input.headline,
+          emotions: dcftResult.emotions,
+          dominantEmotion: dcftResult.dominantEmotion,
+          confidence: Math.round(dcftResult.confidence * 100),
+          model: 'dcft' as const,
+          // DCFT-specific fields
+          dcfAmplitude: dcftResult.dcfAmplitude,
+          resonanceIndices: dcftResult.resonanceIndices,
+          emotionalPhase: dcftResult.emotionalPhase,
+          alertLevel: dcftResult.alertLevel,
+          indices: dcftResult.indices,
+        };
       }),
 
     /**
@@ -167,30 +183,53 @@ export const appRouter = router({
   // Real-time news and AI analysis
   realtime: router({
     /**
-     * Analyze a headline using AI
+     * Analyze a headline using AI + DCFT
+     * All data flows through D(t) = Σ [Ei × Wi × ΔTi] and RI(e,t) = Σ (AVi × Wi × e^(-λΔt))
      */
     analyzeWithAI: publicProcedure
       .input(z.object({ text: z.string().min(1).max(1000) }))
       .mutation(async ({ input }) => {
+        // First get AI analysis
         const { analyzeTextWithAI } = await import("./aiSentimentAnalyzer");
-        return await analyzeTextWithAI(input.text);
+        const aiResult = await analyzeTextWithAI(input.text);
+        
+        // Then process through DCFT engine for D(t) and RI(e,t) calculations
+        const { analyzeTextDCFT } = await import("./dcft");
+        const dcftResult = await analyzeTextDCFT(input.text, 'ai_analysis');
+        
+        return {
+          ...aiResult,
+          // Add DCFT calculations
+          dcft: {
+            amplitude: dcftResult.dcfAmplitude,
+            resonanceIndices: dcftResult.resonanceIndices,
+            indices: dcftResult.indices,
+            emotionalPhase: dcftResult.emotionalPhase,
+            alertLevel: dcftResult.alertLevel,
+          },
+        };
       }),
 
     /**
      * Fetch and analyze news for a country
+     * All data flows through DCFT: D(t) = Σ [Ei × Wi × ΔTi] and RI(e,t) = Σ (AVi × Wi × e^(-λΔt))
      */
     getCountryNewsAnalysis: publicProcedure
       .input(z.object({ countryCode: z.string().length(2), pageSize: z.number().min(1).max(20).default(10) }))
       .query(async ({ input }) => {
         const { getNewsWithFallback } = await import("./newsService");
         const { analyzeTextsWithAI } = await import("./aiSentimentAnalyzer");
+        const { dcftEngine } = await import("./dcft");
 
         // Fetch news
         const { articles, isReal } = await getNewsWithFallback(input.countryCode, input.pageSize);
 
-        // Analyze headlines
+        // Analyze headlines with AI
         const headlines = articles.map(a => a.title);
         const analysis = await analyzeTextsWithAI(headlines);
+
+        // Process through DCFT engine - apply D(t) and RI(e,t) formulas
+        const dcftResult = await dcftEngine.analyzeTexts(headlines, 'news');
 
         return {
           countryCode: input.countryCode,
@@ -200,17 +239,27 @@ export const appRouter = router({
           isRealNews: isReal,
           isAIAnalyzed: analysis.isAIAnalyzed,
           analyzedAt: new Date(),
+          // DCFT calculations from D(t) and RI(e,t)
+          dcft: {
+            amplitude: dcftResult.dcfAmplitude,
+            resonanceIndices: dcftResult.resonanceIndices,
+            indices: dcftResult.indices,
+            emotionalPhase: dcftResult.emotionalPhase,
+            alertLevel: dcftResult.alertLevel,
+          },
         };
       }),
 
     /**
      * Fetch global news and analyze
+     * All data flows through DCFT: D(t) = Σ [Ei × Wi × ΔTi] and RI(e,t) = Σ (AVi × Wi × e^(-λΔt))
      */
     getGlobalNewsAnalysis: publicProcedure
       .input(z.object({ pageSize: z.number().min(1).max(30).default(20) }))
       .query(async ({ input }) => {
         const { fetchGlobalNews, generateMockNews } = await import("./newsService");
         const { analyzeTextsWithAI } = await import("./aiSentimentAnalyzer");
+        const { dcftEngine } = await import("./dcft");
 
         // Fetch global news
         let articles = await fetchGlobalNews(input.pageSize);
@@ -222,9 +271,12 @@ export const appRouter = router({
           isReal = false;
         }
 
-        // Analyze headlines
+        // Analyze headlines with AI
         const headlines = articles.map(a => a.title);
         const analysis = await analyzeTextsWithAI(headlines);
+
+        // Process through DCFT engine - apply D(t) and RI(e,t) formulas
+        const dcftResult = await dcftEngine.analyzeTexts(headlines, 'news');
 
         return {
           articles,
@@ -233,6 +285,14 @@ export const appRouter = router({
           isRealNews: isReal,
           isAIAnalyzed: analysis.isAIAnalyzed,
           analyzedAt: new Date(),
+          // DCFT calculations from D(t) and RI(e,t)
+          dcft: {
+            amplitude: dcftResult.dcfAmplitude,
+            resonanceIndices: dcftResult.resonanceIndices,
+            indices: dcftResult.indices,
+            emotionalPhase: dcftResult.emotionalPhase,
+            alertLevel: dcftResult.alertLevel,
+          },
         };
       }),
 

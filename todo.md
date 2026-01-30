@@ -439,3 +439,14 @@
 - [x] Test temporal decay calculations
 - [x] Test influence weighting accuracy
 - [x] Validate output indices (GMI, CFI, HRI)
+
+
+## Phase 36: Ensure All Data Flows Through DCFT Formulas
+
+### Data Flow Updates
+- [x] Update emotion.analyzeHeadline to use DCFT engine
+- [x] Update realtime.analyzeWithAI to use DCFT engine
+- [x] Update realtime.getCountryNewsAnalysis to use DCFT engine
+- [x] Update realtime.getGlobalNewsAnalysis to use DCFT engine
+- [x] Update map calculations to use DCFT engine
+- [x] Verify all indices (GMI, CFI, HRI) are calculated from D(t) and RI(e,t)
