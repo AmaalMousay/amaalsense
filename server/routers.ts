@@ -1059,6 +1059,150 @@ ${input.message || 'No message provided'}
   }),
 
   // Payment management
+  // Meta-Learning System
+  metaLearning: router({
+    /**
+     * Submit feedback for a prediction
+     */
+    submitFeedback: publicProcedure
+      .input(z.object({
+        analysisId: z.string(),
+        text: z.string(),
+        predictedEmotion: z.enum(['joy', 'fear', 'anger', 'sadness', 'hope', 'curiosity']),
+        predictedConfidence: z.number().min(0).max(1),
+        userCorrection: z.enum(['joy', 'fear', 'anger', 'sadness', 'hope', 'curiosity']).optional(),
+        rating: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).optional(),
+        comment: z.string().max(500).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { feedbackLoopManager } = await import("./dcft");
+        return feedbackLoopManager.submitFeedback({
+          ...input,
+          userId: ctx.user?.id?.toString(),
+          region: undefined, // Could be detected from user settings
+        });
+      }),
+
+    /**
+     * Get learning statistics
+     */
+    getStats: publicProcedure.query(async () => {
+      const { metaLearningEngine, feedbackLoopManager } = await import("./dcft");
+      return {
+        learning: metaLearningEngine.getStats(),
+        feedback: feedbackLoopManager.getFeedbackStats(),
+        vocabulary: metaLearningEngine.getVocabularyBreakdown(),
+      };
+    }),
+
+    /**
+     * Get accuracy history
+     */
+    getAccuracyHistory: publicProcedure
+      .input(z.object({ days: z.number().min(1).max(90).default(30) }))
+      .query(async ({ input }) => {
+        const { feedbackLoopManager } = await import("./dcft");
+        return feedbackLoopManager.getAccuracyHistory(input.days);
+      }),
+
+    /**
+     * Get vocabulary for an emotion
+     */
+    getEmotionVocabulary: publicProcedure
+      .input(z.object({ emotion: z.enum(['joy', 'fear', 'anger', 'sadness', 'hope', 'curiosity']) }))
+      .query(async ({ input }) => {
+        const { metaLearningEngine } = await import("./dcft");
+        return metaLearningEngine.getEmotionVocabulary(input.emotion);
+      }),
+
+    /**
+     * Add custom vocabulary (admin only)
+     */
+    addVocabulary: publicProcedure
+      .input(z.object({
+        word: z.string().min(2).max(50),
+        emotion: z.enum(['joy', 'fear', 'anger', 'sadness', 'hope', 'curiosity']),
+        weight: z.number().min(0.1).max(1).default(0.7),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user || ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const { metaLearningEngine } = await import("./dcft");
+        metaLearningEngine.addUserVocabulary(input.word, input.emotion, input.weight);
+        return { success: true };
+      }),
+
+    /**
+     * Get A/B tests
+     */
+    getABTests: publicProcedure.query(async () => {
+      const { feedbackLoopManager } = await import("./dcft");
+      return {
+        active: feedbackLoopManager.getActiveABTests(),
+        all: feedbackLoopManager.getAllABTests(),
+      };
+    }),
+
+    /**
+     * Start an A/B test (admin only)
+     */
+    startABTest: publicProcedure
+      .input(z.object({
+        name: z.string().min(1).max(100),
+        description: z.string().max(500),
+        vocabularyChanges: z.array(z.object({
+          word: z.string(),
+          emotion: z.enum(['joy', 'fear', 'anger', 'sadness', 'hope', 'curiosity']),
+          weight: z.number().min(0.1).max(1),
+        })),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user || ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const { feedbackLoopManager } = await import("./dcft");
+        return feedbackLoopManager.startABTest(input.name, input.description, input.vocabularyChanges);
+      }),
+
+    /**
+     * Get emerging expressions
+     */
+    getEmergingExpressions: publicProcedure.query(async () => {
+      const { vocabularyAdapter } = await import("./dcft");
+      return {
+        expressions: vocabularyAdapter.exportEmergingExpressions(),
+        stats: vocabularyAdapter.getEmergingStats(),
+      };
+    }),
+
+    /**
+     * Analyze with context adaptation
+     */
+    analyzeWithAdaptation: publicProcedure
+      .input(z.object({
+        text: z.string().min(1).max(1000),
+        region: z.string().length(2).optional(),
+      }))
+      .query(async ({ input }) => {
+        const { vocabularyAdapter } = await import("./dcft");
+        return vocabularyAdapter.analyzeWithAdaptation(input.text, input.region);
+      }),
+
+    /**
+     * Trigger learning cycle manually (admin only)
+     */
+    triggerLearningCycle: publicProcedure
+      .mutation(async ({ ctx }) => {
+        if (!ctx.user || ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const { metaLearningEngine } = await import("./dcft");
+        metaLearningEngine.runLearningCycle();
+        return { success: true, stats: metaLearningEngine.getStats() };
+      }),
+  }),
+
   payments: router({
     /**
      * Submit a new payment record

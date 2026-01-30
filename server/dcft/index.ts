@@ -83,3 +83,31 @@ export {
   calculateCredibility,
   normalizeWeights
 } from './influenceWeight';
+
+// Meta-Learning System
+export {
+  MetaLearningEngine,
+  metaLearningEngine,
+  type LearnedVocabulary,
+  type FeedbackEntry,
+  type DiscoveredPattern,
+  type LearningStats
+} from './metaLearning';
+
+// Vocabulary Adapter
+export {
+  VocabularyAdapter,
+  vocabularyAdapter,
+  type RegionalConfig,
+  type ContextualVocabulary,
+  type EmergingExpression
+} from './vocabularyAdapter';
+
+// Feedback Loop
+export {
+  FeedbackLoopManager,
+  feedbackLoopManager,
+  type UserFeedback,
+  type AccuracyRecord,
+  type ABTest
+} from './feedbackLoop';
