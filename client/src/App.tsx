@@ -9,7 +9,7 @@ import Analyzer from "./pages/Analyzer";
 import Dashboard from "./pages/Dashboard";
 import Map from "./pages/Map";
 import LiveAnalysis from "./pages/LiveAnalysis";
-import SocialAnalysis from "./pages/SocialAnalysis";
+// Social media data is now fetched in the background, no dedicated page needed
 import Theory from "./pages/Theory";
 import Weather from "./pages/Weather";
 import About from "./pages/About";
@@ -36,7 +36,7 @@ function Router() {
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/map"} component={Map} />
       <Route path={"/live"} component={LiveAnalysis} />
-      <Route path={"/social"} component={SocialAnalysis} />
+
       <Route path={"/theory"} component={Theory} />
       <Route path={"/weather"} component={Weather} />
       <Route path={"/about"} component={About} />

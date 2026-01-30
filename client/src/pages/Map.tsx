@@ -9,6 +9,7 @@ import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Globe } from 'lucide-react';
 import { useI18n } from '@/i18n';
+import { DataSourcesFooter } from '@/components/DataSourcesFooter';
 
 interface CountryEmotionData {
   countryCode: string;
@@ -358,6 +359,9 @@ export default function Map() {
               ))}
             </div>
           </div>
+
+          {/* Data Sources */}
+          <DataSourcesFooter compact />
         </div>
       </div>
     </div>

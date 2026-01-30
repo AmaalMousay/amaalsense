@@ -10,6 +10,7 @@ import { EMOTION_COLORS, getEmotionColor } from '@shared/emotionColors';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n';
 import { FooterLegend } from '@/components/EmotionLegend';
+import { DataSourcesFooter } from '@/components/DataSourcesFooter';
 import {
   Select,
   SelectContent,
@@ -688,6 +689,7 @@ export default function Analyzer() {
       <footer className="border-t border-border/50 py-6">
         <div className="container">
           <FooterLegend />
+          <DataSourcesFooter className="mt-4" />
         </div>
       </footer>
     </div>

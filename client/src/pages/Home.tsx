@@ -12,6 +12,7 @@ import {
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { FooterLegend } from '@/components/EmotionLegend';
+import { DataSourcesFooter } from '@/components/DataSourcesFooter';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useI18n } from '@/i18n';
 
@@ -410,6 +411,9 @@ export default function Home() {
 
           {/* Emotion Color Legend */}
           <FooterLegend />
+
+          {/* Data Sources */}
+          <DataSourcesFooter />
 
           <div className="border-t border-border/50 mt-8 pt-8 text-center text-sm text-muted-foreground">
             {t.footer.copyright}

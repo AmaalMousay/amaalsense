@@ -579,3 +579,22 @@
 - [x] Ensure topic analysis uses real data sources
 - [x] Display results properly on results page
 
+
+
+## Phase 42: Remove Social Media Page & Add Data Sources Footer
+
+### Remove Social Media Page
+- [x] Remove SocialMedia.tsx from pages
+- [x] Remove social media route from App.tsx
+- [x] Remove social media link from navigation
+
+### Add Data Sources Component
+- [x] Create DataSourcesFooter.tsx component
+- [x] List all data sources (News API, Reddit, Mastodon, Bluesky, Telegram, YouTube)
+- [x] Simple horizontal layout with icons
+
+### Integration
+- [x] Add DataSourcesFooter to Home page
+- [x] Add DataSourcesFooter to Map page
+- [x] Add DataSourcesFooter to Analyzer page
+- [ ] Add DataSourcesFooter to Dashboard (optional)
