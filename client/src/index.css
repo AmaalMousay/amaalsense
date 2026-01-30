@@ -674,3 +674,67 @@ html.lang-ru * {
 .hri-gradient {
   background: linear-gradient(90deg, var(--hri-low), var(--hri-medium), var(--hri-high));
 }
+
+
+/* ============================================
+   Mobile Touch Improvements
+   ============================================ */
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+  /* Select components */
+  [data-slot="select-trigger"] {
+    min-height: 48px !important;
+    font-size: 16px !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  [data-slot="select-item"] {
+    min-height: 48px !important;
+    padding: 12px 16px !important;
+    font-size: 16px !important;
+    touch-action: manipulation;
+  }
+
+  [data-slot="select-content"] {
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Buttons */
+  button, [role="button"] {
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Inputs */
+  input, textarea, select {
+    font-size: 16px !important;
+    min-height: 48px;
+  }
+
+  /* Prevent zoom on input focus */
+  input:focus, textarea:focus, select:focus {
+    font-size: 16px !important;
+  }
+}
+
+/* Fix for Radix Select on mobile */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+/* Ensure select dropdown is above everything */
+[data-slot="select-content"] {
+  z-index: 9999 !important;
+  background-color: var(--popover) !important;
+}
+
+/* Touch-friendly scrolling */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}

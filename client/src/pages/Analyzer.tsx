@@ -378,12 +378,12 @@ export default function Analyzer() {
                         {language === 'ar' ? 'اختر الدولة' : 'Select Country'}
                       </label>
                       <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full h-12 md:h-10 text-base">
                           <SelectValue placeholder={language === 'ar' ? 'اختر دولة...' : 'Choose a country...'} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-[50vh] overflow-y-auto">
                           {COUNTRIES.map((country) => (
-                            <SelectItem key={country.code} value={country.code}>
+                            <SelectItem key={country.code} value={country.code} className="py-3 text-base">
                               {language === 'ar' ? country.nameAr : country.name}
                             </SelectItem>
                           ))}
@@ -397,13 +397,13 @@ export default function Analyzer() {
                         {language === 'ar' ? 'الفترة الزمنية' : 'Time Range'}
                       </label>
                       <Select value={timeRange} onValueChange={(v) => setTimeRange(v as any)}>
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full h-12 md:h-10 text-base">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="day">{language === 'ar' ? 'آخر يوم' : 'Last Day'}</SelectItem>
-                          <SelectItem value="week">{language === 'ar' ? 'آخر أسبوع' : 'Last Week'}</SelectItem>
-                          <SelectItem value="month">{language === 'ar' ? 'آخر شهر' : 'Last Month'}</SelectItem>
+                          <SelectItem value="day" className="py-3 text-base">{language === 'ar' ? 'آخر يوم' : 'Last Day'}</SelectItem>
+                          <SelectItem value="week" className="py-3 text-base">{language === 'ar' ? 'آخر أسبوع' : 'Last Week'}</SelectItem>
+                          <SelectItem value="month" className="py-3 text-base">{language === 'ar' ? 'آخر شهر' : 'Last Month'}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
