@@ -476,3 +476,23 @@
 - [x] Connect meta-learning to DCFT perception layer
 - [x] Update emotion analysis to use learned weights
 - [x] Add feedback API endpoints
+
+
+## Phase 38: Hybrid DCFT-AI Analysis Engine (70/30)
+
+### Core Implementation
+- [x] Create hybridAnalyzer.ts - Main hybrid analysis engine
+- [x] Implement weighted fusion: D_hybrid = 0.7×DCFT + 0.3×AI
+- [x] Add confidence-based weight adjustment
+- [x] Create fallback mechanism when AI unavailable
+
+### Integration
+- [x] Update emotion.analyzeHeadline to use hybrid engine
+- [x] Update realtime analysis to use hybrid engine
+- [x] Update news analysis to use hybrid engine
+- [x] Ensure DCFT is always the primary analyzer
+
+### Testing
+- [x] Create unit tests for hybrid analyzer
+- [x] Test fallback to DCFT-only mode
+- [x] Verify 70/30 weighting is applied correctly

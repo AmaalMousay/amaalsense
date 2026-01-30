@@ -21,53 +21,69 @@ export const appRouter = router({
   emotion: router({
     /**
      * Analyze a headline and return emotion vector
-     * Uses DCFT Engine with formulas:
-     * D(t) = Σ [Ei × Wi × ΔTi]
-     * RI(e,t) = Σ (AVi × Wi × e^(-λΔt))
+     * Uses Hybrid DCFT-AI Engine:
+     * - DCFT (70%): D(t) = Σ [Ei × Wi × ΔTi], RI(e,t) = Σ (AVi × Wi × e^(-λΔt))
+     * - AI (30%): Enhancement for context and sarcasm detection
+     * Formula: D_hybrid = 0.7 × D_DCFT + 0.3 × D_AI
      */
     analyzeHeadline: publicProcedure
       .input(z.object({ headline: z.string().min(1).max(500) }))
       .mutation(async ({ input }) => {
-        // Use DCFT Engine for analysis - all data flows through D(t) and RI(e,t) formulas
-        const { analyzeTextDCFT } = await import("./dcft");
-        const dcftResult = await analyzeTextDCFT(input.headline, 'headline');
+        // Use Hybrid Analyzer - DCFT as primary (70%), AI as enhancement (30%)
+        const { analyzeHybrid } = await import("./hybridAnalyzer");
+        const hybridResult = await analyzeHybrid(input.headline, 'user');
+
+        // Convert fused emotions to 0-100 scale for storage
+        const emotions = {
+          joy: Math.round((hybridResult.emotions.joy + 1) * 50),
+          fear: Math.round((hybridResult.emotions.fear + 1) * 50),
+          anger: Math.round((hybridResult.emotions.anger + 1) * 50),
+          sadness: Math.round((hybridResult.emotions.sadness + 1) * 50),
+          hope: Math.round((hybridResult.emotions.hope + 1) * 50),
+          curiosity: Math.round((hybridResult.emotions.curiosity + 1) * 50),
+        };
+
+        // Find dominant emotion
+        const dominantEmotion = Object.entries(emotions)
+          .reduce((a, b) => a[1] > b[1] ? a : b)[0];
 
         // Save to database
         const { createEmotionAnalysis, createEmotionIndex } = await import("./db");
         await createEmotionAnalysis({
           headline: input.headline,
-          joy: dcftResult.emotions.joy,
-          fear: dcftResult.emotions.fear,
-          anger: dcftResult.emotions.anger,
-          sadness: dcftResult.emotions.sadness,
-          hope: dcftResult.emotions.hope,
-          curiosity: dcftResult.emotions.curiosity,
-          dominantEmotion: dcftResult.dominantEmotion,
-          confidence: Math.round(dcftResult.confidence * 100),
-          model: 'dcft', // Using DCFT model
+          ...emotions,
+          dominantEmotion,
+          confidence: Math.round(hybridResult.fusion.confidence * 100),
+          model: 'hybrid', // Using Hybrid DCFT-AI model
         });
 
-        // Save indices calculated from D(t) and RI(e,t)
+        // Save indices calculated from hybrid fusion
         await createEmotionIndex({
-          gmi: dcftResult.indices.gmi,
-          cfi: dcftResult.indices.cfi,
-          hri: dcftResult.indices.hri,
-          confidence: Math.round(dcftResult.confidence * 100),
+          gmi: hybridResult.indices.gmi,
+          cfi: hybridResult.indices.cfi,
+          hri: hybridResult.indices.hri,
+          confidence: Math.round(hybridResult.fusion.confidence * 100),
         });
 
-        // Return analysis with DCFT-specific data
+        // Return analysis with hybrid data
         return {
           headline: input.headline,
-          emotions: dcftResult.emotions,
-          dominantEmotion: dcftResult.dominantEmotion,
-          confidence: Math.round(dcftResult.confidence * 100),
-          model: 'dcft' as const,
+          emotions,
+          dominantEmotion,
+          confidence: Math.round(hybridResult.fusion.confidence * 100),
+          model: 'hybrid' as const,
           // DCFT-specific fields
-          dcfAmplitude: dcftResult.dcfAmplitude,
-          resonanceIndices: dcftResult.resonanceIndices,
-          emotionalPhase: dcftResult.emotionalPhase,
-          alertLevel: dcftResult.alertLevel,
-          indices: dcftResult.indices,
+          dcfAmplitude: hybridResult.dcft.amplitude,
+          resonanceIndices: hybridResult.dcft.resonanceIndices,
+          emotionalPhase: hybridResult.dcft.emotionalPhase,
+          alertLevel: hybridResult.dcft.alertLevel,
+          indices: hybridResult.indices,
+          // Hybrid fusion info
+          fusion: {
+            method: hybridResult.fusion.method,
+            dcftContribution: hybridResult.fusion.dcftContribution,
+            aiContribution: hybridResult.fusion.aiContribution,
+          },
         };
       }),
 
