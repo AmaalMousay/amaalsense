@@ -64,7 +64,6 @@ export default function Home() {
     { href: '/analyzer', label: t.nav.analyzer },
     { href: '/map', label: t.nav.map },
     { href: '/live', label: t.nav.live },
-    { href: '/social', label: t.nav.social },
     { href: '/theory', label: t.nav.theory },
     { href: '/weather', label: t.nav.weather },
     { href: '/trends', label: 'Trends' },
