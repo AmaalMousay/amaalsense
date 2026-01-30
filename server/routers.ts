@@ -1436,6 +1436,66 @@ Please verify the payment and confirm in the admin panel.
         };
       }),
   }),
+
+  // Topic Analysis - Advanced analysis by topic, demographics, and regions
+  topic: router({
+    /**
+     * Analyze a topic in a specific country with demographic and regional breakdown
+     * Returns:
+     * - Overall support/opposition percentages
+     * - Demographic breakdown (youth, middle-age, seniors)
+     * - Regional breakdown (cities/regions within the country)
+     * - Top supporting and opposing regions
+     */
+    analyzeTopicInCountry: publicProcedure
+      .input(z.object({
+        topic: z.string().min(1).max(200),
+        countryCode: z.string().length(2),
+        countryName: z.string().min(1).max(100),
+        timeRange: z.enum(['day', 'week', 'month']).default('week'),
+        language: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { analyzeTopicInCountry } = await import("./topicAnalyzer");
+        return await analyzeTopicInCountry(
+          input.topic,
+          input.countryCode,
+          input.countryName,
+          {
+            timeRange: input.timeRange,
+            language: input.language,
+          }
+        );
+      }),
+
+    /**
+     * Get available regions for a country
+     */
+    getCountryRegions: publicProcedure
+      .input(z.object({ countryCode: z.string().length(2) }))
+      .query(async ({ input }) => {
+        const { getCountryRegions } = await import("./topicAnalyzer");
+        return getCountryRegions(input.countryCode);
+      }),
+
+    /**
+     * Get list of countries with detailed regional data
+     */
+    getCountriesWithRegionalData: publicProcedure
+      .query(async () => {
+        const { getCountriesWithRegionalData } = await import("./topicAnalyzer");
+        return getCountriesWithRegionalData();
+      }),
+
+    /**
+     * Get age group definitions
+     */
+    getAgeGroups: publicProcedure
+      .query(async () => {
+        const { AGE_GROUPS } = await import("./topicAnalyzer");
+        return AGE_GROUPS;
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

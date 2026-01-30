@@ -496,3 +496,27 @@
 - [x] Create unit tests for hybrid analyzer
 - [x] Test fallback to DCFT-only mode
 - [x] Verify 70/30 weighting is applied correctly
+
+
+## Phase 39: Advanced Topic Analysis (Analyzer Page Enhancement)
+
+### Backend Updates
+- [x] Create topicAnalysis procedure for searching topics in specific countries
+- [x] Add demographic analysis (age groups: youth, middle-age, seniors)
+- [x] Add regional analysis within countries (cities/regions)
+- [x] Add support vs opposition percentage calculation
+- [x] Create heat map data for regional sentiment
+
+### Frontend Updates (Analyzer Page)
+- [x] Add country selector dropdown
+- [x] Add topic/keyword search input
+- [x] Add time period selector
+- [x] Add demographic breakdown display (by age group)
+- [x] Add regional breakdown display (by region/city)
+- [x] Add support vs opposition visualization
+- [ ] Add regional heat map component (future enhancement)
+
+### Data Structure
+- [x] Define age group categories (18-35, 35-55, 55+)
+- [x] Define regional data structure per country
+- [x] Create sentiment distribution by demographic
