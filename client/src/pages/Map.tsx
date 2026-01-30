@@ -17,6 +17,12 @@ interface CountryEmotionData {
   cfi: number;
   hri: number;
   confidence: number;
+  mood?: string;
+  moodAr?: string;
+  moodColor?: string;
+  dominantEmotion?: string;
+  dataPoints?: number;
+  lastUpdated?: Date;
 }
 
 interface HistoricalDataPoint {
@@ -135,6 +141,30 @@ export default function Map() {
           {selectedCountryData && (
             <div className="space-y-6">
               <div>
+                {/* Country Mood Banner */}
+                {selectedCountryData.mood && (
+                  <Card className="cosmic-card p-6 mb-6" style={{ borderColor: selectedCountryData.moodColor }}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg text-muted-foreground mb-1">
+                          {isRTL ? 'المزاج الحالي' : 'Current Mood'}
+                        </h3>
+                        <p className="text-3xl font-bold" style={{ color: selectedCountryData.moodColor }}>
+                          {isRTL ? selectedCountryData.moodAr : selectedCountryData.mood}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground">
+                          {isRTL ? 'نقاط البيانات' : 'Data Points'}: {selectedCountryData.dataPoints || 0}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {isRTL ? 'الثقة' : 'Confidence'}: {Math.round((selectedCountryData.confidence || 0) * 100)}%
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+
                 <h2 className="text-2xl font-bold cosmic-text mb-4">
                   {isRTL ? `الملف العاطفي لـ ${selectedCountryData.countryName}` : `${selectedCountryData.countryName} Emotion Profile`}
                 </h2>

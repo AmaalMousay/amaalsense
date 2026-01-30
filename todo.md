@@ -544,3 +544,38 @@
 - [x] Navigate to results page with analysis data
 - [x] Add back button to return to Analyzer
 
+
+
+## Phase 41: Unified System Integration (CRITICAL)
+
+### Data Sources Integration
+- [x] Create unified data fetcher service (unifiedDataService.ts)
+- [x] Connect News API for real news data
+- [x] Create social media data aggregator
+- [x] Cache data to reduce API calls and improve speed
+
+### Unified Analysis Pipeline
+- [x] ALL analysis flows through Hybrid Engine (70% DCFT + 30% AI)
+- [x] Global mood calculation from all sources → GMI, CFI, HRI
+- [x] Country-specific mood calculation → per-country indices
+- [x] Topic-specific mood calculation → topic analysis results
+
+### Map Integration (Real Mood Display)
+- [x] Display REAL mood on world map (not simulation)
+- [x] Show country mood with dynamic color coding
+- [x] Display mood label (e.g., "Libya today: Anxious")
+- [x] Show indices (GMI, CFI, HRI) on map hover/click
+- [x] Real-time updates when new data arrives
+
+### Page Interconnection
+- [x] Home page → shows global mood → links to Map
+- [x] Map page → shows country moods → links to Topic Analysis
+- [x] Topic Analysis → detailed analysis → links back to Map
+- [x] Dashboard → aggregates all data → links to all pages
+- [x] Unified navigation flow between all pages
+
+### Fix Topic Analysis Issue
+- [x] Debug why advanced analysis shows no results
+- [x] Ensure topic analysis uses real data sources
+- [x] Display results properly on results page
+

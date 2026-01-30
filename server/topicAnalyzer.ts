@@ -9,6 +9,7 @@
  */
 
 import { analyzeHybrid } from './hybridAnalyzer';
+import { getTopicMood, MoodResult } from './unifiedDataService';
 
 // Age group definitions
 export const AGE_GROUPS = {
