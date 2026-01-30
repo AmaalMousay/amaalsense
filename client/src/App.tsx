@@ -25,6 +25,7 @@ import NotificationSettings from "./pages/NotificationSettings";
 import Checkout from "./pages/Checkout";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import TopicAnalysisResults from "./pages/TopicAnalysisResults";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -51,6 +52,7 @@ function Router() {
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/terms"} component={Terms} />
       <Route path={"/privacy"} component={Privacy} />
+      <Route path={"/analysis-results"} component={TopicAnalysisResults} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

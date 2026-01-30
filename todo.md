@@ -520,3 +520,27 @@
 - [x] Define age group categories (18-35, 35-55, 55+)
 - [x] Define regional data structure per country
 - [x] Create sentiment distribution by demographic
+
+
+## Phase 40: Interactive Heat Map with Google Maps
+
+### Heat Map Component
+- [x] Create RegionalHeatMap.tsx component using Google Maps
+- [x] Add heat map layer for sentiment visualization
+- [x] Color regions based on support/opposition (green=support, red=opposition)
+- [x] Add interactive markers for each region
+- [x] Show region details on click/hover
+
+### Analysis Results Page
+- [x] Create TopicAnalysisResults.tsx page
+- [x] Include interactive heat map at top
+- [x] Display demographic analysis (age groups)
+- [x] Display regional analysis table
+- [x] Show support vs opposition percentages
+- [x] Display DCFT indices (GMI, CFI, HRI)
+
+### Navigation Flow
+- [x] Update Analyzer page with "Start Analysis" button
+- [x] Navigate to results page with analysis data
+- [x] Add back button to return to Analyzer
+

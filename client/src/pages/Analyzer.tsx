@@ -108,13 +108,15 @@ export default function Analyzer() {
     const country = COUNTRIES.find(c => c.code === selectedCountry);
     if (!country) return;
 
-    setIsTopicLoading(true);
-    analyzeTopicInCountry.mutate({
+    // Navigate to results page with parameters
+    const countryName = language === 'ar' ? country.nameAr : country.name;
+    const params = new URLSearchParams({
       topic,
-      countryCode: selectedCountry,
-      countryName: language === 'ar' ? country.nameAr : country.name,
+      country: selectedCountry,
+      countryName,
       timeRange,
     });
+    navigate(`/analysis-results?${params.toString()}`);
   };
 
   // Use unified emotion color system
