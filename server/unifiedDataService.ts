@@ -1,20 +1,23 @@
 /**
  * Unified Data Service
  * 
- * This service aggregates data from all sources (News, Social Media)
+ * This service aggregates data from all REAL sources (News, Social Media)
  * and feeds it through the Hybrid DCFT Engine for analysis.
  * 
  * Data Flow:
- * Sources (News API, Social Media) → Unified Service → Hybrid Engine → Results
+ * Real Sources (News API, Reddit, Bluesky, Mastodon, YouTube, Telegram) 
+ *   → Unified Service → Hybrid Engine → Results
  */
 
-import { analyzeHybrid, HybridAnalysisResult } from './hybridAnalyzer';
+import { analyzeHybrid } from './hybridAnalyzer';
+import { fetchAllSocialMedia, fetchCountrySocialMedia, SocialPost, getAPIStatus } from './socialMediaService';
 
 // Types
 export interface DataSource {
-  type: 'news' | 'twitter' | 'reddit' | 'youtube' | 'telegram';
+  type: 'news' | 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram';
   name: string;
   weight: number; // Influence weight for DCFT
+  isReal: boolean;
 }
 
 export interface RawDataItem {
@@ -24,8 +27,9 @@ export interface RawDataItem {
   timestamp: Date;
   country?: string;
   topic?: string;
-  engagement?: number; // likes, shares, etc.
+  engagement?: number;
   url?: string;
+  isReal: boolean;
 }
 
 export interface UnifiedAnalysisRequest {
@@ -46,7 +50,16 @@ export interface MoodResult {
   dominantEmotion: string;
   confidence: number;
   dataPoints: number;
+  realDataPoints: number;
   lastUpdated: Date;
+  sources: {
+    news: { count: number; isReal: boolean };
+    reddit: { count: number; isReal: boolean };
+    mastodon: { count: number; isReal: boolean };
+    bluesky: { count: number; isReal: boolean };
+    youtube: { count: number; isReal: boolean };
+    telegram: { count: number; isReal: boolean };
+  };
   breakdown?: {
     bySource: Record<string, { count: number; sentiment: number }>;
     byRegion?: Record<string, { sentiment: number; support: number; opposition: number }>;
@@ -75,67 +88,63 @@ function determineMood(gmi: number, cfi: number, hri: number): { mood: string; m
     moodColor: label.color
   });
   
-  // High fear index
-  if (cfi > 70) {
-    return toResult(MOOD_LABELS.fearful);
-  }
-  // High anger (negative GMI + high CFI)
-  if (gmi < -30 && cfi > 50) {
-    return toResult(MOOD_LABELS.angry);
-  }
-  // Very positive
-  if (gmi > 50 && hri > 60) {
-    return toResult(MOOD_LABELS.veryPositive);
-  }
-  // Positive
-  if (gmi > 20 && hri > 40) {
-    return toResult(MOOD_LABELS.positive);
-  }
-  // Anxious
-  if (cfi > 50 && gmi < 0) {
-    return toResult(MOOD_LABELS.anxious);
-  }
-  // Concerned
-  if (cfi > 40 || gmi < -10) {
-    return toResult(MOOD_LABELS.concerned);
-  }
-  // Sad (low HRI, negative GMI)
-  if (hri < 30 && gmi < 0) {
-    return toResult(MOOD_LABELS.sad);
-  }
-  // Calm
-  if (cfi < 30 && Math.abs(gmi) < 20) {
-    return toResult(MOOD_LABELS.calm);
-  }
-  // Default neutral
+  if (cfi > 70) return toResult(MOOD_LABELS.fearful);
+  if (gmi < -30 && cfi > 50) return toResult(MOOD_LABELS.angry);
+  if (gmi > 50 && hri > 60) return toResult(MOOD_LABELS.veryPositive);
+  if (gmi > 20 && hri > 40) return toResult(MOOD_LABELS.positive);
+  if (cfi > 50 && gmi < 0) return toResult(MOOD_LABELS.anxious);
+  if (cfi > 40 || gmi < -10) return toResult(MOOD_LABELS.concerned);
+  if (hri < 30 && gmi < 0) return toResult(MOOD_LABELS.sad);
+  if (cfi < 30 && Math.abs(gmi) < 20) return toResult(MOOD_LABELS.calm);
   return toResult(MOOD_LABELS.neutral);
 }
+
+// Source weights for DCFT calculation
+const SOURCE_WEIGHTS: Record<string, number> = {
+  news: 0.85,      // News has highest weight (most reliable)
+  reddit: 0.65,    // Reddit has good discussions
+  bluesky: 0.60,   // Bluesky is growing
+  mastodon: 0.55,  // Mastodon federated
+  youtube: 0.50,   // YouTube comments can be noisy
+  telegram: 0.60,  // Telegram news channels
+};
 
 // News API integration
 async function fetchNewsData(country?: string, topic?: string, limit: number = 20): Promise<RawDataItem[]> {
   const NEWS_API_KEY = process.env.NEWS_API_KEY;
   
   if (!NEWS_API_KEY) {
-    console.log('[UnifiedData] No NEWS_API_KEY, using simulation');
-    return generateSimulatedNews(country, topic, limit);
+    console.log('[UnifiedData] No NEWS_API_KEY available');
+    return [];
   }
 
   try {
-    let url = 'https://newsapi.org/v2/top-headlines?';
+    let url: string;
     const params: string[] = [];
     
-    if (country) {
-      // Map country codes
-      const countryMap: Record<string, string> = {
-        'LY': 'ly', 'EG': 'eg', 'SA': 'sa', 'AE': 'ae', 'US': 'us',
-        'GB': 'gb', 'FR': 'fr', 'DE': 'de', 'TR': 'tr', 'MA': 'ma'
-      };
-      const newsCountry = countryMap[country] || country.toLowerCase();
-      params.push(`country=${newsCountry}`);
-    }
-    
-    if (topic) {
+    // Use everything endpoint for topic search, headlines for country
+    if (topic && !country) {
+      url = 'https://newsapi.org/v2/everything?';
       params.push(`q=${encodeURIComponent(topic)}`);
+      params.push('sortBy=publishedAt');
+      params.push('language=en');
+    } else {
+      url = 'https://newsapi.org/v2/top-headlines?';
+      
+      if (country) {
+        const countryMap: Record<string, string> = {
+          'LY': 'ly', 'EG': 'eg', 'SA': 'sa', 'AE': 'ae', 'US': 'us',
+          'GB': 'gb', 'FR': 'fr', 'DE': 'de', 'TR': 'tr', 'MA': 'ma',
+          'AU': 'au', 'CA': 'ca', 'JP': 'jp', 'IN': 'in', 'BR': 'br',
+          'RU': 'ru', 'CN': 'cn', 'IT': 'it', 'ES': 'es', 'MX': 'mx'
+        };
+        const newsCountry = countryMap[country] || country.toLowerCase();
+        params.push(`country=${newsCountry}`);
+      }
+      
+      if (topic) {
+        params.push(`q=${encodeURIComponent(topic)}`);
+      }
     }
     
     params.push(`pageSize=${limit}`);
@@ -146,151 +155,103 @@ async function fetchNewsData(country?: string, topic?: string, limit: number = 2
     const response = await fetch(url);
     const data = await response.json();
     
-    if (data.status === 'ok' && data.articles) {
+    if (data.status === 'ok' && data.articles && data.articles.length > 0) {
+      console.log(`[News API] Fetched ${data.articles.length} real articles`);
+      
       return data.articles.map((article: any, index: number) => ({
         id: `news-${Date.now()}-${index}`,
         text: `${article.title || ''} ${article.description || ''}`.trim(),
         source: {
           type: 'news' as const,
           name: article.source?.name || 'News',
-          weight: 0.8 // News has high weight
+          weight: SOURCE_WEIGHTS.news,
+          isReal: true
         },
         timestamp: new Date(article.publishedAt || Date.now()),
         country: country,
         topic: topic,
-        url: article.url
+        url: article.url,
+        isReal: true
       }));
+    } else {
+      console.warn('[News API] No articles returned:', data.message || 'Unknown error');
     }
   } catch (error) {
     console.error('[UnifiedData] News API error:', error);
   }
   
-  return generateSimulatedNews(country, topic, limit);
+  return [];
 }
 
-// Simulated news data
-function generateSimulatedNews(country?: string, topic?: string, limit: number = 20): RawDataItem[] {
-  const headlines = [
-    { text: 'Economic growth shows positive signs amid global uncertainty', sentiment: 0.6 },
-    { text: 'New infrastructure projects announced to boost development', sentiment: 0.7 },
-    { text: 'Citizens express concerns over rising living costs', sentiment: -0.4 },
-    { text: 'Government launches new initiative for youth employment', sentiment: 0.5 },
-    { text: 'Security forces successfully maintain stability in the region', sentiment: 0.3 },
-    { text: 'Healthcare system improvements receive public approval', sentiment: 0.6 },
-    { text: 'Environmental challenges require urgent attention', sentiment: -0.3 },
-    { text: 'Cultural festival brings communities together', sentiment: 0.8 },
-    { text: 'Technology sector shows promising growth', sentiment: 0.7 },
-    { text: 'Education reforms aim to improve quality', sentiment: 0.5 },
-    { text: 'Local businesses struggle with economic pressures', sentiment: -0.5 },
-    { text: 'International cooperation strengthens regional ties', sentiment: 0.6 },
-    { text: 'Public transportation improvements underway', sentiment: 0.4 },
-    { text: 'Housing crisis affects many families', sentiment: -0.6 },
-    { text: 'Sports achievements bring national pride', sentiment: 0.9 },
-  ];
-
-  const arabicHeadlines = [
-    { text: 'نمو اقتصادي إيجابي رغم التحديات العالمية', sentiment: 0.6 },
-    { text: 'إطلاق مشاريع بنية تحتية جديدة لتعزيز التنمية', sentiment: 0.7 },
-    { text: 'المواطنون يعبرون عن قلقهم من ارتفاع تكاليف المعيشة', sentiment: -0.4 },
-    { text: 'الحكومة تطلق مبادرة جديدة لتوظيف الشباب', sentiment: 0.5 },
-    { text: 'قوات الأمن تحافظ على الاستقرار في المنطقة', sentiment: 0.3 },
-    { text: 'تحسينات النظام الصحي تحظى بموافقة الجمهور', sentiment: 0.6 },
-    { text: 'التحديات البيئية تتطلب اهتماماً عاجلاً', sentiment: -0.3 },
-    { text: 'مهرجان ثقافي يجمع المجتمعات معاً', sentiment: 0.8 },
-    { text: 'قطاع التكنولوجيا يظهر نمواً واعداً', sentiment: 0.7 },
-    { text: 'إصلاحات التعليم تهدف لتحسين الجودة', sentiment: 0.5 },
-  ];
-
-  const useArabic = country && ['LY', 'EG', 'SA', 'AE', 'MA', 'TN', 'DZ', 'IQ', 'JO', 'KW', 'QA', 'BH', 'OM', 'LB', 'SY', 'PS', 'YE', 'SD'].includes(country);
-  const sourceHeadlines = useArabic ? arabicHeadlines : headlines;
-
-  return sourceHeadlines.slice(0, limit).map((h, index) => ({
-    id: `sim-news-${Date.now()}-${index}`,
-    text: topic ? `${topic}: ${h.text}` : h.text,
+// Convert social posts to raw data items
+function convertSocialPostsToRawData(posts: SocialPost[], country?: string, topic?: string): RawDataItem[] {
+  return posts.map(post => ({
+    id: post.id,
+    text: post.text,
     source: {
-      type: 'news' as const,
-      name: 'Simulated News',
-      weight: 0.7
+      type: post.platform as any,
+      name: post.platform.charAt(0).toUpperCase() + post.platform.slice(1),
+      weight: SOURCE_WEIGHTS[post.platform] || 0.5,
+      isReal: post.isReal
     },
-    timestamp: new Date(Date.now() - Math.random() * 86400000), // Random time in last 24h
+    timestamp: post.publishedAt,
     country: country,
     topic: topic,
-    engagement: Math.floor(Math.random() * 1000)
+    engagement: post.engagement.likes + post.engagement.comments + post.engagement.shares,
+    url: post.url,
+    isReal: post.isReal
   }));
-}
-
-// Social media data simulation
-function generateSimulatedSocialMedia(country?: string, topic?: string, limit: number = 30): RawDataItem[] {
-  const posts = [
-    { text: 'Finally some good news! Things are looking up 🎉', sentiment: 0.8 },
-    { text: 'Worried about the current situation...', sentiment: -0.5 },
-    { text: 'Great progress being made! Keep it up!', sentiment: 0.7 },
-    { text: 'This is unacceptable! We need change now!', sentiment: -0.7 },
-    { text: 'Feeling hopeful about the future', sentiment: 0.6 },
-    { text: 'The situation is getting worse every day', sentiment: -0.6 },
-    { text: 'Amazing achievement! So proud!', sentiment: 0.9 },
-    { text: 'Not sure what to think anymore...', sentiment: 0 },
-    { text: 'This gives me hope for better days', sentiment: 0.5 },
-    { text: 'Disappointed with the lack of progress', sentiment: -0.4 },
-  ];
-
-  const arabicPosts = [
-    { text: 'أخيراً أخبار جيدة! الأمور تتحسن 🎉', sentiment: 0.8 },
-    { text: 'قلق من الوضع الحالي...', sentiment: -0.5 },
-    { text: 'تقدم رائع! استمروا!', sentiment: 0.7 },
-    { text: 'هذا غير مقبول! نحتاج للتغيير الآن!', sentiment: -0.7 },
-    { text: 'متفائل بالمستقبل', sentiment: 0.6 },
-    { text: 'الوضع يزداد سوءاً كل يوم', sentiment: -0.6 },
-    { text: 'إنجاز مذهل! فخور جداً!', sentiment: 0.9 },
-    { text: 'لا أعرف ماذا أفكر بعد الآن...', sentiment: 0 },
-    { text: 'هذا يعطيني أملاً بأيام أفضل', sentiment: 0.5 },
-    { text: 'محبط من عدم التقدم', sentiment: -0.4 },
-  ];
-
-  const useArabic = country && ['LY', 'EG', 'SA', 'AE', 'MA', 'TN', 'DZ', 'IQ', 'JO', 'KW', 'QA', 'BH', 'OM', 'LB', 'SY', 'PS', 'YE', 'SD'].includes(country);
-  const sourcePosts = useArabic ? arabicPosts : posts;
-  
-  const sources: DataSource[] = [
-    { type: 'twitter', name: 'Twitter/X', weight: 0.6 },
-    { type: 'reddit', name: 'Reddit', weight: 0.5 },
-    { type: 'youtube', name: 'YouTube', weight: 0.4 },
-    { type: 'telegram', name: 'Telegram', weight: 0.5 },
-  ];
-
-  const results: RawDataItem[] = [];
-  
-  for (let i = 0; i < limit; i++) {
-    const post = sourcePosts[i % sourcePosts.length];
-    const source = sources[i % sources.length];
-    
-    results.push({
-      id: `sim-social-${Date.now()}-${i}`,
-      text: topic ? `${topic}: ${post.text}` : post.text,
-      source: source,
-      timestamp: new Date(Date.now() - Math.random() * 86400000),
-      country: country,
-      topic: topic,
-      engagement: Math.floor(Math.random() * 5000)
-    });
-  }
-  
-  return results;
 }
 
 // Main unified analysis function
 export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<MoodResult> {
-  const { scope, country, topic, timeRange = 'day', limit = 50 } = request;
+  const { scope, country, topic, limit = 50 } = request;
   
   console.log(`[UnifiedData] Analyzing: scope=${scope}, country=${country}, topic=${topic}`);
   
-  // Fetch data from all sources
-  const newsData = await fetchNewsData(country, topic, Math.floor(limit / 2));
-  const socialData = generateSimulatedSocialMedia(country, topic, Math.floor(limit / 2));
+  const allData: RawDataItem[] = [];
+  const sourceCounts = {
+    news: { count: 0, isReal: false },
+    reddit: { count: 0, isReal: false },
+    mastodon: { count: 0, isReal: false },
+    bluesky: { count: 0, isReal: false },
+    youtube: { count: 0, isReal: false },
+    telegram: { count: 0, isReal: false },
+  };
   
-  const allData = [...newsData, ...socialData];
+  // Fetch news data
+  const newsLimit = Math.ceil(limit * 0.4); // 40% from news
+  const newsData = await fetchNewsData(country, topic, newsLimit);
+  allData.push(...newsData);
+  sourceCounts.news = { count: newsData.length, isReal: newsData.length > 0 };
+  
+  // Fetch social media data
+  const socialLimit = Math.ceil(limit * 0.6); // 60% from social media
+  const query = topic || (country ? `${country} news` : 'world news');
+  
+  let socialResult;
+  if (country) {
+    socialResult = await fetchCountrySocialMedia(country, socialLimit);
+  } else {
+    socialResult = await fetchAllSocialMedia({ query, limit: socialLimit, country });
+  }
+  
+  // Convert and add social posts
+  const socialData = convertSocialPostsToRawData(socialResult.posts, country, topic);
+  allData.push(...socialData);
+  
+  // Update source counts
+  sourceCounts.reddit = { count: socialResult.sources.reddit.count, isReal: socialResult.sources.reddit.isReal };
+  sourceCounts.mastodon = { count: socialResult.sources.mastodon.count, isReal: socialResult.sources.mastodon.isReal };
+  sourceCounts.bluesky = { count: socialResult.sources.bluesky.count, isReal: socialResult.sources.bluesky.isReal };
+  sourceCounts.youtube = { count: socialResult.sources.youtube.count, isReal: socialResult.sources.youtube.isReal };
+  sourceCounts.telegram = { count: socialResult.sources.telegram.count, isReal: socialResult.sources.telegram.isReal };
+  
+  const realDataCount = allData.filter(d => d.isReal).length;
+  
+  console.log(`[UnifiedData] Total: ${allData.length} items (${realDataCount} real)`);
   
   if (allData.length === 0) {
-    // Return neutral mood if no data
     return {
       mood: 'Neutral',
       moodAr: 'محايد',
@@ -301,12 +262,21 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
       dominantEmotion: 'calm',
       confidence: 0,
       dataPoints: 0,
-      lastUpdated: new Date()
+      realDataPoints: 0,
+      lastUpdated: new Date(),
+      sources: sourceCounts
     };
   }
   
-  // Combine all texts for analysis
-  const combinedText = allData.map(d => d.text).join('\n');
+  // Combine all texts for analysis (weighted by source)
+  const weightedTexts = allData.map(d => {
+    const weight = d.source.weight;
+    // Repeat text based on weight for weighted analysis
+    const repeatCount = Math.max(1, Math.round(weight * 2));
+    return Array(repeatCount).fill(d.text).join(' ');
+  });
+  
+  const combinedText = weightedTexts.join('\n');
   
   // Analyze through Hybrid Engine
   const sourceType = scope === 'global' ? 'news' : 'social';
@@ -339,7 +309,9 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
     dominantEmotion: hybridResult.dcft.emotionalPhase,
     confidence: hybridResult.fusion.confidence,
     dataPoints: allData.length,
+    realDataPoints: realDataCount,
     lastUpdated: new Date(),
+    sources: sourceCounts,
     breakdown: {
       bySource
     }
@@ -371,12 +343,32 @@ export async function getAllCountriesMood(): Promise<Record<string, MoodResult>>
   const countries = ['LY', 'EG', 'SA', 'AE', 'US', 'GB', 'FR', 'DE', 'TR', 'MA', 'TN', 'DZ', 'IQ', 'JO'];
   const results: Record<string, MoodResult> = {};
   
-  // Process in parallel for speed
-  await Promise.all(
-    countries.map(async (code) => {
-      results[code] = await getCountryMood(code);
-    })
-  );
+  // Process in parallel for speed (but limit concurrency)
+  const batchSize = 5;
+  for (let i = 0; i < countries.length; i += batchSize) {
+    const batch = countries.slice(i, i + batchSize);
+    await Promise.all(
+      batch.map(async (code) => {
+        results[code] = await getCountryMood(code);
+      })
+    );
+  }
   
   return results;
 }
+
+// Get API status for all data sources
+export async function getDataSourcesStatus(): Promise<Record<string, { available: boolean; message: string }>> {
+  const socialStatus = await getAPIStatus();
+  
+  return {
+    newsApi: { 
+      available: !!process.env.NEWS_API_KEY, 
+      message: process.env.NEWS_API_KEY ? 'API key configured' : 'No API key' 
+    },
+    ...socialStatus
+  };
+}
+
+// Export for testing
+export { fetchNewsData, convertSocialPostsToRawData };

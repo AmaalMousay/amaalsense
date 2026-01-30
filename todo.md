@@ -598,3 +598,38 @@
 - [x] Add DataSourcesFooter to Map page
 - [x] Add DataSourcesFooter to Analyzer page
 - [ ] Add DataSourcesFooter to Dashboard (optional)
+
+
+## Phase 43: Real Social Media APIs Enhancement (NEW)
+
+### Reddit API Enhancement
+- [x] Implement topic-based subreddit targeting
+- [x] Add country-specific subreddits
+- [x] Search in multiple subreddits simultaneously
+- [x] Add global search fallback
+
+### Bluesky API (AT Protocol)
+- [x] Implement Bluesky AT Protocol client
+- [x] Add search posts by keyword
+- [x] Handle API errors gracefully
+
+### Mastodon API Enhancement
+- [x] Connect to multiple Mastodon instances (6 instances)
+- [x] Implement federated search
+- [x] Remove duplicate posts across instances
+
+### YouTube API Enhancement
+- [x] Use official YouTube API when key available
+- [x] Fetch video details and comments
+- [x] Implement Invidious fallback for no-key scenarios
+
+### Telegram Integration
+- [x] Fetch from public news channels
+- [x] Support multiple language channels (Arabic, English)
+- [x] Web scraping fallback for public channels
+
+### Unified Data Service
+- [x] Integrate all social media sources
+- [x] Add source weighting for DCFT calculations
+- [x] Track real vs simulated data
+- [x] Add API status reporting
