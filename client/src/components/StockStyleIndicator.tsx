@@ -192,7 +192,7 @@ export function StockStyleIndicator({
       : Minus;
 
   return (
-    <Card className="cosmic-card p-4 md:p-6 relative overflow-hidden group hover:border-accent/50 transition-all duration-300">
+    <Card className="cosmic-card p-4 md:p-6 relative overflow-hidden group hover:border-accent/50 transition-all duration-300 dark:bg-card/95">
       {/* Background pulse effect when animating */}
       {isAnimating && (
         <div 

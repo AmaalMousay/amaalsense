@@ -369,9 +369,10 @@
     font-weight: 600;
   }
 
-  /* Dark mode cosmic text */
+  /* Dark mode cosmic text - bright white for visibility */
   .dark .cosmic-text {
-    color: oklch(0.92 0.01 240);
+    color: oklch(0.98 0.01 240);
+    text-shadow: 0 0 15px oklch(0.65 0.22 280 / 0.6);
   }
 
   /* Light mode cosmic text */
@@ -389,9 +390,9 @@
     animation: gradient-shift 3s ease infinite;
   }
 
-  /* Dark mode gradient text - brighter */
+  /* Dark mode gradient text - much brighter for visibility */
   .dark .gradient-text {
-    background: linear-gradient(135deg, oklch(0.65 0.2 280), oklch(0.7 0.25 260), oklch(0.6 0.2 300));
+    background: linear-gradient(135deg, oklch(0.75 0.25 280), oklch(0.8 0.28 260), oklch(0.7 0.25 300));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
