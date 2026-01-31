@@ -32,6 +32,8 @@ import CustomAlerts from "./pages/CustomAlerts";
 import ApiDocs from "./pages/ApiDocs";
 import EnterpriseDashboard from "./pages/EnterpriseDashboard";
 import TopicTimeline from "./pages/TopicTimeline";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -65,6 +67,8 @@ function Router() {
       <Route path={"/api-docs"} component={ApiDocs} />
       <Route path={"/enterprise"} component={EnterpriseDashboard} />
       <Route path={"/topic-timeline"} component={TopicTimeline} />
+      <Route path={"/register"} component={Register} />
+      <Route path={"/login"} component={Login} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

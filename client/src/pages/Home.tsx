@@ -7,7 +7,8 @@ import { Link, useLocation } from 'wouter';
 import { 
   TrendingUp, Zap, Heart, Menu, X, 
   BookOpen, Building2, HelpCircle, FileText,
-  ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2
+  ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
+  LogIn, UserPlus
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -421,12 +422,18 @@ export default function Home() {
             </div>
             <ThemeToggle />
             <LanguageSwitcher />
-            <Button
-              onClick={() => navigate('/contact')}
-              className="glow-button text-white"
-            >
-              {t.nav.contactSales}
-            </Button>
+            <Link href="/login">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <LogIn className="w-4 h-4" />
+                {isRTL ? 'دخول' : 'Login'}
+              </Button>
+            </Link>
+            <Link href="/register">
+              <Button className="glow-button text-white gap-2">
+                <UserPlus className="w-4 h-4" />
+                {isRTL ? 'تسجيل' : 'Sign Up'}
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -468,12 +475,27 @@ export default function Home() {
                 <ThemeToggle />
                 <LanguageSwitcher />
               </div>
-              <Button
-                onClick={() => { navigate('/contact'); setMobileMenuOpen(false); }}
-                className="glow-button text-white w-full mt-4"
-              >
-                {t.nav.contactSales}
-              </Button>
+              <div className="flex gap-2 mt-4">
+                <Link href="/login" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    className="w-full gap-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LogIn className="w-4 h-4" />
+                    {isRTL ? 'دخول' : 'Login'}
+                  </Button>
+                </Link>
+                <Link href="/register" className="flex-1">
+                  <Button 
+                    className="glow-button text-white w-full gap-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    {isRTL ? 'تسجيل' : 'Sign Up'}
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         )}
