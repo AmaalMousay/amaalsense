@@ -85,7 +85,7 @@ export default function Checkout() {
           <div className="container py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
               <LogoIcon size="md" />
-              <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+              <h1 className="text-2xl font-bold gradient-text">Amaalsense</h1>
             </div>
           </div>
         </nav>
@@ -122,7 +122,7 @@ export default function Checkout() {
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
             <LogoIcon size="md" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <h1 className="text-2xl font-bold gradient-text">Amaalsense</h1>
           </div>
           <Button variant="ghost" onClick={() => navigate('/pricing')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -264,7 +264,7 @@ export default function Checkout() {
       {/* Footer */}
       <footer className="border-t border-border/50 py-8 mt-auto">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>AmalSense Engine © 2025 | Secure Payment Processing</p>
+          <p>Amaalsense Engine © 2025 | Secure Payment Processing</p>
         </div>
       </footer>
     </div>

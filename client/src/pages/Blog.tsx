@@ -38,7 +38,7 @@ const blogPosts = [
   {
     id: 2,
     title: "How AI is Revolutionizing Emotion Analysis",
-    excerpt: "Explore the cutting-edge AI models behind AmalSense and how they extract nuanced emotional signals from text.",
+    excerpt: "Explore the cutting-edge AI models behind Amaalsense and how they extract nuanced emotional signals from text.",
     author: "Tech Team",
     date: "January 20, 2026",
     readTime: "6 min read",
@@ -74,7 +74,7 @@ const blogPosts = [
   {
     id: 5,
     title: "Emotional Weather Forecasting: The Next Frontier",
-    excerpt: "How AmalSense uses historical patterns and AI to predict emotional trends before they happen.",
+    excerpt: "How Amaalsense uses historical patterns and AI to predict emotional trends before they happen.",
     author: "Data Science Team",
     date: "January 5, 2026",
     readTime: "5 min read",
@@ -85,7 +85,7 @@ const blogPosts = [
   },
   {
     id: 6,
-    title: "Integrating AmalSense API: A Developer's Guide",
+    title: "Integrating Amaalsense API: A Developer's Guide",
     excerpt: "Step-by-step tutorial on integrating emotion analysis into your applications using our RESTful API.",
     author: "Developer Relations",
     date: "December 28, 2025",
@@ -172,7 +172,7 @@ export default function Blog() {
             Insights & Research
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 bg-clip-text text-transparent">
-            AmalSense Blog
+            Amaalsense Blog
           </h1>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
             Explore the latest research, tutorials, and insights on collective emotion analysis and digital consciousness.

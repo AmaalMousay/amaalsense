@@ -613,7 +613,7 @@ export const appRouter = router({
         await notifyOwner({
           title: `New Enterprise Inquiry: ${input.organizationName}`,
           content: `
-**New Lead from AmalSense!**
+**New Lead from Amaalsense!**
 
 **Contact:** ${input.contactName}
 **Email:** ${input.contactEmail}
@@ -1514,7 +1514,7 @@ Please verify the payment and confirm in the admin panel.
         const { sendTelegramMessage } = await import("./telegramNotificationService");
         const success = await sendTelegramMessage({
           chatId: input.chatId,
-          text: `🧠 <b>AmalSense Test Notification</b>\n\nThis is a test message from AmalSense.\nYour notifications are working correctly!\n\n🕐 ${new Date().toLocaleString()}`,
+          text: `🧠 <b>Amaalsense Test Notification</b>\n\nThis is a test message from Amaalsense.\nYour notifications are working correctly!\n\n🕐 ${new Date().toLocaleString()}`,
         });
         return { success };
       }),

@@ -1,6 +1,6 @@
 /**
  * Use Cases Page
- * Showcases how different organizations can benefit from AmalSense
+ * Showcases how different organizations can benefit from Amaalsense
  */
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -177,7 +177,7 @@ export default function UseCases() {
           حالات الاستخدام
         </Badge>
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          كيف يمكن لـ <span className="text-primary">AmalSense</span> مساعدتك؟
+          كيف يمكن لـ <span className="text-primary">Amaalsense</span> مساعدتك؟
         </h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
           اكتشف كيف تستفيد المؤسسات المختلفة من تحليل المشاعر الجماعية لاتخاذ قرارات أفضل
@@ -217,7 +217,7 @@ export default function UseCases() {
 
       {/* Use Cases Grid */}
       <section className="container py-12">
-        <h2 className="text-2xl font-bold text-center mb-8">من يستفيد من AmalSense؟</h2>
+        <h2 className="text-2xl font-bold text-center mb-8">من يستفيد من Amaalsense؟</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {useCases.map((useCase, index) => (
             <UseCaseCard key={index} {...useCase} />
@@ -266,7 +266,7 @@ export default function UseCases() {
           <CardContent className="py-12 text-center">
             <h2 className="text-3xl font-bold mb-4">جاهز للبدء؟</h2>
             <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              انضم إلى المؤسسات التي تستخدم AmalSense لفهم المشاعر الجماعية واتخاذ قرارات أفضل
+              انضم إلى المؤسسات التي تستخدم Amaalsense لفهم المشاعر الجماعية واتخاذ قرارات أفضل
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button size="lg" onClick={() => navigate("/pricing")}>

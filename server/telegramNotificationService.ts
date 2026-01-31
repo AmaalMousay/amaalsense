@@ -1,5 +1,5 @@
 /**
- * Telegram Notification Service for AmalSense
+ * Telegram Notification Service for Amaalsense
  * Sends automatic alerts when mood changes significantly
  */
 
@@ -138,7 +138,7 @@ ${alert.change ? `• Change: ${alert.change >= 0 ? '+' : ''}${alert.change.toFi
 
 🕐 ${timestamp}
 
-<i>Powered by AmalSense - DCFT Analysis</i>
+<i>Powered by Amaalsense - DCFT Analysis</i>
       `;
       break;
   }
@@ -306,7 +306,7 @@ export async function subscribeToNotifications(
 ): Promise<boolean> {
   // Send welcome message
   const welcomeMessage = `
-🧠 <b>Welcome to AmalSense Notifications!</b>
+🧠 <b>Welcome to Amaalsense Notifications!</b>
 
 You are now subscribed to receive:
 ${options.alertTypes?.includes('mood_change') !== false ? '✅ Mood change alerts' : ''}

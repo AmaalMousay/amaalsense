@@ -384,7 +384,7 @@ export default function Home() {
         <div className="container py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <LogoIcon size="md" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <h1 className="text-2xl font-bold gradient-text">Amaalsense</h1>
           </Link>
           
           {/* Desktop Navigation */}
@@ -629,7 +629,7 @@ export default function Home() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <LogoIcon size="sm" />
-                <span className="font-bold gradient-text">AmalSense</span>
+                <span className="font-bold gradient-text">Amaalsense</span>
               </div>
               <p className="text-xs text-muted-foreground">
                 {t.home.subtitle}

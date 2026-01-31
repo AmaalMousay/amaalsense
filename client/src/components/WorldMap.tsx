@@ -54,7 +54,7 @@ const COUNTRY_POSITIONS: Record<string, { x: number; y: number; size: number }> 
 
 /**
  * Get emotion color based on GMI, CFI, and HRI values
- * Using the unified AmalSense color system
+ * Using the unified Amaalsense color system
  */
 function getEmotionColor(gmi: number, cfi: number, hri: number): string {
   // High fear takes priority (Orange → Red gradient)

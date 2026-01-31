@@ -289,7 +289,7 @@ export default function ApiDocs() {
             API Documentation
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            AmalSense API
+            Amaalsense API
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             دمج تحليل المشاعر الجماعية في تطبيقاتك باستخدام واجهة برمجة التطبيقات RESTful

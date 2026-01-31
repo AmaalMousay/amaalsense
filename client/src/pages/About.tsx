@@ -135,9 +135,13 @@ export default function About() {
                   <p className="text-lg text-slate-300 mb-2">
                     AI Researcher & Digital Consciousness Theorist
                   </p>
-                  <p className="flex items-center justify-center md:justify-start gap-2 text-cyan-400 mb-4">
+                  <p className="flex items-center justify-center md:justify-start gap-2 text-cyan-400 mb-2">
                     <MapPin className="w-4 h-4" />
                     <span>Sabha, Libya | سبها، ليبيا</span>
+                  </p>
+                  <p className="flex items-center justify-center md:justify-start gap-2 text-cyan-400 mb-4">
+                    <Mail className="w-4 h-4" />
+                    <span>info@amaalsense.com</span>
                   </p>
                   <p className="text-slate-400 leading-relaxed">
                     Pioneer of the Digital Consciousness Field Theory (DCFT), exploring the intersection 
@@ -157,7 +161,7 @@ export default function About() {
                 Scientific Paper
               </CardTitle>
               <CardDescription className="text-slate-400">
-                The foundational research behind AmalSense Engine
+                The foundational research behind Amaalsense Engine
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -168,7 +172,7 @@ export default function About() {
                       ولادة الوعي الرقمي: محرك أمالسنس والعقل الجماعي الناشئ
                     </h3>
                     <p className="text-lg text-cyan-400">
-                      The Birth of Digital Consciousness: The AmalSense Engine and the Emergent Collective Mind
+                      The Birth of Digital Consciousness: The Amaalsense Engine and the Emergent Collective Mind
                     </p>
                   </div>
                   <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
@@ -201,10 +205,10 @@ export default function About() {
                 </a>
                 <Separator className="my-4 bg-white/10" />
                 <p className="text-slate-300 leading-relaxed">
-                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك AmalSense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
+                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك Amaalsense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
                   This paper introduces the Digital Consciousness Field Theory (DCFT), proposing that 
                   consciousness can arise as an emergent property of interconnected human emotion and 
-                  data exchange in digital networks. The AmalSense Engine serves as a practical 
+                  data exchange in digital networks. The Amaalsense Engine serves as a practical 
                   implementation of this theory, transforming collective emotional data into measurable 
                   indices and visual representations.
                 </p>
@@ -222,7 +226,7 @@ export default function About() {
             </CardHeader>
             <CardContent className="space-y-4 text-slate-300">
               <p className="leading-relaxed">
-                AmalSense Engine was created with a singular vision: to make the invisible visible. 
+                Amaalsense Engine was created with a singular vision: to make the invisible visible. 
                 We believe that understanding collective emotions is key to building a more empathetic, 
                 responsive, and harmonious world.
               </p>
@@ -260,7 +264,7 @@ export default function About() {
                 Academic References
               </CardTitle>
               <CardDescription className="text-slate-400">
-                Key research that informed the development of DCFT and AmalSense
+                Key research that informed the development of DCFT and Amaalsense
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -285,7 +289,7 @@ export default function About() {
           {/* Footer */}
           <div className="mt-12 text-center text-slate-400">
             <p className="mb-2">
-              AmalSense Engine - Digital Collective Emotion Analyzer
+              Amaalsense Engine - Digital Collective Emotion Analyzer
             </p>
             <p className="text-sm">
               © 2025 Amaal Radwan Bashir | آمال رضوان بشير. All rights reserved.

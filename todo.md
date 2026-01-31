@@ -1,4 +1,4 @@
-# AmalSense Engine - Project TODO
+# Amaalsense Engine - Project TODO
 
 ## Phase 1: Database & Backend Setup
 - [x] Define database schema for emotion indices (GMI, CFI, HRI)
@@ -370,7 +370,7 @@
 ## Phase 32: Rebranding (NEW)
 
 ### Name Changes
-- [x] Change AmalSense to AmalSense in all files
+- [x] Change Amaalsense to Amaalsense in all files
 - [x] Change أمل رضوان to أمال رضوان in all files
 - [x] Update footer copyright text
 
@@ -811,3 +811,10 @@
 - [x] تحديث الخريطة تلقائياً كل 30 ثانية (refetchInterval: 30000)
 - [x] عرض GMI, CFI, HRI عند التمرير فوق الدولة
 - [x] الضغط على دولة ينقل لصفحة الخريطة مع التفاصيل
+
+
+## Phase 63: Rebrand to Amaalsense & Add Emails (User Request)
+- [x] تغيير AmalSense إلى Amaalsense في جميع الملفات (30+ ملف)
+- [x] إضافة contact@amaalsense.com في صفحة Contact
+- [x] إضافة info@amaalsense.com في صفحة About
+- [x] إضافة privacy@amaalsense.com في صفحة Privacy

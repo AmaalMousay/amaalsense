@@ -351,7 +351,7 @@ export default function Analyzer() {
           </button>
           <div className="flex items-center gap-2">
             <LogoIcon size="md" />
-            <h1 className="text-2xl font-bold gradient-text">AmalSense</h1>
+            <h1 className="text-2xl font-bold gradient-text">Amaalsense</h1>
           </div>
           <div className="w-20" />
         </div>

@@ -50,7 +50,7 @@ export function PayPalButton({ tier, billingCycle = "monthly", className }: PayP
     const params = new URLSearchParams({
       cmd: "_xclick",
       business: PAYPAL_EMAIL,
-      item_name: `AmalSense ${tierName} - ${cycleLabel} Subscription`,
+      item_name: `Amaalsense ${tierName} - ${cycleLabel} Subscription`,
       amount: price.toString(),
       currency_code: "USD",
       return: window.location.origin + "/pricing?success=true",
@@ -89,7 +89,7 @@ export function PayPalButton({ tier, billingCycle = "monthly", className }: PayP
         <DialogContent className="sm:max-w-md bg-slate-900 border-slate-700">
           <DialogHeader>
             <DialogTitle className="text-white">
-              Subscribe to AmalSense {tierName}
+              Subscribe to Amaalsense {tierName}
             </DialogTitle>
             <DialogDescription className="text-slate-400">
               You're about to subscribe to the {tierName} plan ({cycleLabel})

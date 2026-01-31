@@ -175,7 +175,7 @@ async function fetchRssFeed(feedConfig: { url: string; source: string; language:
     const response = await axios.get(feedConfig.url, {
       timeout: 15000,
       headers: {
-        'User-Agent': 'AmalSense/1.0 (News Aggregator)',
+        'User-Agent': 'Amaalsense/1.0 (News Aggregator)',
         'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml'
       }
     });

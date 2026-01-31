@@ -284,7 +284,7 @@ export default function Theory() {
                         Proprietary Methodology
                       </h3>
                       <p className="text-slate-400 mt-1">
-                        The detailed mathematical formulas and algorithms used in AmalSense are proprietary intellectual property. 
+                        The detailed mathematical formulas and algorithms used in Amaalsense are proprietary intellectual property. 
                         The system uses a unique hybrid approach combining DCFT-based equations (70%) with advanced AI analysis (30%) 
                         to achieve unprecedented accuracy in collective emotion detection.
                       </p>

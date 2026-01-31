@@ -7,7 +7,7 @@ interface LogoProps {
 }
 
 /**
- * AmalSense Logo Component
+ * Amaalsense Logo Component
  * A unique brain-wave logo representing emotional intelligence and data analysis
  */
 export function Logo({ size = 'md', showText = true, className = '' }: LogoProps) {
@@ -22,12 +22,12 @@ export function Logo({ size = 'md', showText = true, className = '' }: LogoProps
     <div className={`flex items-center gap-2 ${className}`}>
       <img 
         src="/logo-icon.png" 
-        alt="AmalSense Logo" 
+        alt="Amaalsense Logo" 
         className={`${sizes[size].icon} object-contain`}
       />
       {showText && (
         <span className={`font-bold gradient-text ${sizes[size].text}`}>
-          AmalSense
+          Amaalsense
         </span>
       )}
     </div>
@@ -48,7 +48,7 @@ export function LogoIcon({ size = 'md', className = '' }: Omit<LogoProps, 'showT
   return (
     <img 
       src="/logo-icon.png" 
-      alt="AmalSense" 
+      alt="Amaalsense" 
       className={`${sizes[size]} object-contain ${className}`}
     />
   );

@@ -100,7 +100,7 @@ export async function fetchRedditPosts(params: SocialSearchParams): Promise<Soci
           `https://www.reddit.com/r/${subreddit}/search.json?q=${query}&limit=${Math.ceil(limit / 3)}&sort=relevance&t=week&restrict_sr=1`,
           {
             headers: {
-              'User-Agent': 'AmalSense/1.0 (Emotion Analysis Platform; https://amalsense.com)',
+              'User-Agent': 'Amaalsense/1.0 (Emotion Analysis Platform; https://amalsense.com)',
             },
             timeout: 8000,
           }
@@ -141,7 +141,7 @@ export async function fetchRedditPosts(params: SocialSearchParams): Promise<Soci
           `https://www.reddit.com/search.json?q=${query}&limit=${limit - allPosts.length}&sort=relevance&t=week`,
           {
             headers: {
-              'User-Agent': 'AmalSense/1.0 (Emotion Analysis Platform)',
+              'User-Agent': 'Amaalsense/1.0 (Emotion Analysis Platform)',
             },
             timeout: 8000,
           }
@@ -530,7 +530,7 @@ async function fetchTelegramViaWeb(params: SocialSearchParams): Promise<SocialPo
         { 
           timeout: 5000,
           headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; AmalSense/1.0)',
+            'User-Agent': 'Mozilla/5.0 (compatible; Amaalsense/1.0)',
             'Accept': 'text/html',
           }
         }

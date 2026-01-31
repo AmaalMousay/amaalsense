@@ -25,7 +25,7 @@ const caseStudies = [
     organization: "Global Humanitarian Watch",
     type: "NGO",
     challenge: "Needed real-time emotional monitoring across 15 conflict zones to prioritize resource allocation and anticipate humanitarian needs.",
-    solution: "Deployed AmalSense with custom CFI thresholds for each region, enabling 24/7 automated monitoring with instant alerts.",
+    solution: "Deployed Amaalsense with custom CFI thresholds for each region, enabling 24/7 automated monitoring with instant alerts.",
     results: [
       "72% faster response to emerging crises",
       "40% improvement in resource allocation efficiency",
@@ -40,7 +40,7 @@ const caseStudies = [
     organization: "Ministry of Digital Affairs",
     type: "Government",
     challenge: "Required understanding of public emotional response to new policies before and after implementation.",
-    solution: "Integrated AmalSense API with existing analytics dashboard, tracking GMI and HRI changes around policy announcements.",
+    solution: "Integrated Amaalsense API with existing analytics dashboard, tracking GMI and HRI changes around policy announcements.",
     results: [
       "Real-time feedback on 12 major policies",
       "Identified 5 areas needing better communication",
@@ -55,7 +55,7 @@ const caseStudies = [
     organization: "Global News Network",
     type: "Media",
     challenge: "Wanted to understand emotional impact of their coverage and optimize content strategy.",
-    solution: "Used AmalSense to analyze reader emotional responses and compare with competitor coverage.",
+    solution: "Used Amaalsense to analyze reader emotional responses and compare with competitor coverage.",
     results: [
       "35% increase in reader engagement",
       "Balanced emotional coverage across topics",
@@ -68,7 +68,7 @@ const caseStudies = [
 
 const testimonials = [
   {
-    quote: "AmalSense has transformed how we understand public sentiment. The early warning system alone has saved countless hours of manual monitoring.",
+    quote: "Amaalsense has transformed how we understand public sentiment. The early warning system alone has saved countless hours of manual monitoring.",
     author: "Dr. Sarah Chen",
     role: "Director of Research",
     organization: "Global Policy Institute",
@@ -84,7 +84,7 @@ const testimonials = [
     rating: 5,
   },
   {
-    quote: "We integrated AmalSense API in just 2 days. The documentation is excellent and the support team is incredibly responsive.",
+    quote: "We integrated Amaalsense API in just 2 days. The documentation is excellent and the support team is incredibly responsive.",
     author: "Maria González",
     role: "Lead Developer",
     organization: "DataViz Solutions",
@@ -100,7 +100,7 @@ const testimonials = [
     rating: 5,
   },
   {
-    quote: "AmalSense helped us identify emotional trends we would have completely missed. The Hope & Resilience Index is particularly valuable.",
+    quote: "Amaalsense helped us identify emotional trends we would have completely missed. The Hope & Resilience Index is particularly valuable.",
     author: "Dr. Lisa Park",
     role: "Crisis Response Coordinator",
     organization: "International Relief Agency",
@@ -167,7 +167,7 @@ export default function CaseStudies() {
             Real-World Impact
           </h1>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-            See how organizations worldwide are using AmalSense to understand collective emotions and make better decisions.
+            See how organizations worldwide are using Amaalsense to understand collective emotions and make better decisions.
           </p>
         </div>
 

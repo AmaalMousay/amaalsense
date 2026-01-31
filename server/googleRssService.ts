@@ -69,7 +69,7 @@ async function fetchGoogleRss(feedUrl: string, language: 'ar' | 'en'): Promise<N
     const response = await axios.get(feedUrl, {
       timeout: 10000,
       headers: {
-        'User-Agent': 'AmalSense/1.0 (News Aggregator)',
+        'User-Agent': 'Amaalsense/1.0 (News Aggregator)',
         'Accept': 'application/rss+xml, application/xml, text/xml'
       }
     });

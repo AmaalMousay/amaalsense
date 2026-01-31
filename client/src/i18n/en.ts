@@ -1,5 +1,5 @@
 /**
- * English translations for AmalSense
+ * English translations for Amaalsense
  */
 
 export const en = {
@@ -58,7 +58,7 @@ export const en = {
     useCases: "Use Cases",
     useCasesDesc: "Trusted by organizations worldwide",
     resources: "Resources",
-    resourcesDesc: "Learn more about AmalSense and emotion analysis",
+    resourcesDesc: "Learn more about Amaalsense and emotion analysis",
     readyToStart: "Ready to understand collective emotions?",
     launchAnalyzer: "Launch Analyzer Now",
   },
@@ -182,7 +182,7 @@ export const en = {
 
   // About
   about: {
-    title: "About AmalSense",
+    title: "About Amaalsense",
     subtitle: "Understanding collective emotions through AI",
     author: "Author",
     publication: "Scientific Publication",
@@ -195,7 +195,7 @@ export const en = {
   // Theory
   theory: {
     title: "Digital Consciousness Field Theory",
-    subtitle: "The scientific foundation behind AmalSense",
+    subtitle: "The scientific foundation behind Amaalsense",
     dcft: "DCFT",
     dcftFull: "Digital Consciousness Field Theory",
     formula: "Formula",
@@ -245,7 +245,7 @@ export const en = {
     legal: "Legal",
     terms: "Terms of Service",
     privacy: "Privacy Policy",
-    copyright: "© 2025 AmalSense Engine | By Amaal Radwan",
+    copyright: "© 2025 Amaalsense Engine | By Amaal Radwan",
   },
 };
 

@@ -219,7 +219,7 @@ export function generateMockNews(countryCode: string, count: number = 5): NewsAr
   return mockHeadlines.slice(0, count).map((title, index) => ({
     title,
     description: `Latest news and updates from ${countryName}`,
-    source: 'AmalSense News',
+    source: 'Amaalsense News',
     url: '#',
     publishedAt: new Date(Date.now() - index * 3600000),
     country: countryCode,
