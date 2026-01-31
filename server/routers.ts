@@ -2233,6 +2233,54 @@ Please verify the payment and confirm in the admin panel.
       return { success: true };
     }),
   }),
+
+  // User Statistics API
+  userStats: router({
+    /**
+     * Get user's real statistics from database
+     */
+    getStats: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) {
+        return {
+          totalAnalyses: 0,
+          activeAlerts: 0,
+          followedTopics: 0,
+          countriesAnalyzed: 0,
+          recentAnalyses: [],
+          recentAlerts: [],
+          memberSince: null,
+          lastActive: null,
+        };
+      }
+
+      const { getUserStats } = await import('./db');
+      return await getUserStats(ctx.user.id);
+    }),
+
+    /**
+     * Get user's recent analyses
+     */
+    getRecentAnalyses: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).default(10) }))
+      .query(async ({ input, ctx }) => {
+        if (!ctx.user) return [];
+        
+        const { getUserRecentAnalyses } = await import('./db');
+        return await getUserRecentAnalyses(ctx.user.id, input.limit);
+      }),
+
+    /**
+     * Get user's active alerts
+     */
+    getActiveAlerts: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).default(10) }))
+      .query(async ({ input, ctx }) => {
+        if (!ctx.user) return [];
+        
+        const { getUserActiveAlerts } = await import('./db');
+        return await getUserActiveAlerts(ctx.user.id, input.limit);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

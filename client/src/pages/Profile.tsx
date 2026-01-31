@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,7 +29,10 @@ import {
   CreditCard,
   Trash2,
   Globe,
-  Brain
+  Brain,
+  BarChart3,
+  Target,
+  Eye
 } from 'lucide-react';
 
 export default function Profile() {
@@ -39,6 +43,11 @@ export default function Profile() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   const [isSaving, setIsSaving] = useState(false);
+
+  // Fetch real user statistics
+  const { data: stats, isLoading: statsLoading } = trpc.userStats.getStats.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
 
   // Form state
   const [formData, setFormData] = useState({
@@ -87,9 +96,19 @@ export default function Profile() {
     setIsSaving(false);
   };
 
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleDateString(isRTL ? 'ar-LY' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   const tabs = [
     { id: 'profile', label: isRTL ? 'الملف الشخصي' : 'Profile', icon: User },
-    { id: 'security', label: isRTL ? 'الأمان' : 'Security', icon: Shield },
+    { id: 'activity', label: isRTL ? 'النشاط' : 'Activity', icon: BarChart3 },
     { id: 'notifications', label: isRTL ? 'الإشعارات' : 'Notifications', icon: Bell },
     { id: 'subscription', label: isRTL ? 'الاشتراك' : 'Subscription', icon: CreditCard },
   ];
@@ -215,33 +234,17 @@ export default function Profile() {
                     {isRTL ? 'المعلومات الشخصية' : 'Personal Information'}
                   </CardTitle>
                   <CardDescription>
-                    {isRTL ? 'تحديث معلومات ملفك الشخصي' : 'Update your profile information'}
+                    {isRTL ? 'معلومات حسابك الأساسية' : 'Your basic account information'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">{isRTL ? 'الاسم الكامل' : 'Full Name'}</Label>
+                      <Label>{isRTL ? 'الاسم الكامل' : 'Full Name'}</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input 
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="email">{isRTL ? 'البريد الإلكتروني' : 'Email'}</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input 
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          value={user.name || ''}
                           className="pl-10"
                           disabled
                         />
@@ -249,116 +252,134 @@ export default function Profile() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="organization">{isRTL ? 'المؤسسة' : 'Organization'}</Label>
+                      <Label>{isRTL ? 'معرف الحساب' : 'Account ID'}</Label>
                       <div className="relative">
-                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input 
-                          id="organization"
-                          value={formData.organization}
-                          onChange={(e) => setFormData({...formData, organization: e.target.value})}
+                          value={user.openId || ''}
                           className="pl-10"
-                          placeholder={isRTL ? 'اختياري' : 'Optional'}
+                          disabled
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="location">{isRTL ? 'الموقع' : 'Location'}</Label>
+                      <Label>{isRTL ? 'نوع الحساب' : 'Account Type'}</Label>
                       <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input 
-                          id="location"
-                          value={formData.location}
-                          onChange={(e) => setFormData({...formData, location: e.target.value})}
+                          value={user.role === 'admin' ? (isRTL ? 'مسؤول' : 'Administrator') : (isRTL ? 'مستخدم عادي' : 'Regular User')}
                           className="pl-10"
-                          placeholder={isRTL ? 'اختياري' : 'Optional'}
+                          disabled
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="jobTitle">{isRTL ? 'المسمى الوظيفي' : 'Job Title'}</Label>
-                      <Input 
-                        id="jobTitle"
-                        value={formData.jobTitle}
-                        onChange={(e) => setFormData({...formData, jobTitle: e.target.value})}
-                        placeholder={isRTL ? 'اختياري' : 'Optional'}
-                      />
+                    <div className="space-y-2">
+                      <Label>{isRTL ? 'تاريخ الانضمام' : 'Member Since'}</Label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input 
+                          value={formatDate(stats?.memberSince || null)}
+                          className="pl-10"
+                          disabled
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end">
-                    <Button 
-                      onClick={handleSave} 
-                      disabled={isSaving}
-                      className="glow-button text-white gap-2"
-                    >
-                      <Save className="w-4 h-4" />
-                      {isSaving 
-                        ? (isRTL ? 'جاري الحفظ...' : 'Saving...') 
-                        : (isRTL ? 'حفظ التغييرات' : 'Save Changes')}
-                    </Button>
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-sm text-muted-foreground">
+                      {isRTL 
+                        ? 'يتم إدارة معلومات حسابك من خلال نظام المصادقة. للتعديل، يرجى التواصل مع الدعم.'
+                        : 'Your account information is managed through the authentication system. To make changes, please contact support.'}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {activeTab === 'security' && (
+            {activeTab === 'activity' && (
               <Card className="cosmic-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5" />
-                    {isRTL ? 'الأمان' : 'Security'}
+                    <BarChart3 className="w-5 h-5" />
+                    {isRTL ? 'إحصائيات النشاط' : 'Activity Statistics'}
                   </CardTitle>
                   <CardDescription>
-                    {isRTL ? 'إدارة إعدادات الأمان الخاصة بك' : 'Manage your security settings'}
+                    {isRTL ? 'نظرة عامة على نشاطك في المنصة' : 'Overview of your platform activity'}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="p-4 rounded-lg bg-muted/50 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Key className="w-5 h-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">{isRTL ? 'كلمة المرور' : 'Password'}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {isRTL ? 'آخر تغيير: منذ 30 يوم' : 'Last changed: 30 days ago'}
+                <CardContent>
+                  {statsLoading ? (
+                    <div className="animate-pulse space-y-4">
+                      <div className="h-20 bg-muted rounded" />
+                      <div className="h-20 bg-muted rounded" />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <div className="flex items-center gap-3 mb-2">
+                          <BarChart3 className="w-5 h-5 text-primary" />
+                          <span className="font-medium">{isRTL ? 'إجمالي التحليلات' : 'Total Analyses'}</span>
+                        </div>
+                        <p className="text-3xl font-bold">{stats?.totalAnalyses || 0}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {stats?.totalAnalyses === 0 
+                            ? (isRTL ? 'لم تقم بأي تحليل بعد' : 'No analyses yet')
+                            : (isRTL ? 'تحليل مكتمل' : 'completed analyses')}
                         </p>
                       </div>
-                    </div>
-                    <Button variant="outline">
-                      {isRTL ? 'تغيير' : 'Change'}
-                    </Button>
-                  </div>
 
-                  <div className="p-4 rounded-lg bg-muted/50 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Shield className="w-5 h-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">{isRTL ? 'المصادقة الثنائية' : 'Two-Factor Authentication'}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {isRTL ? 'غير مفعل' : 'Not enabled'}
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Bell className="w-5 h-5 text-yellow-500" />
+                          <span className="font-medium">{isRTL ? 'التنبيهات النشطة' : 'Active Alerts'}</span>
+                        </div>
+                        <p className="text-3xl font-bold">{stats?.activeAlerts || 0}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {stats?.activeAlerts === 0 
+                            ? (isRTL ? 'لا توجد تنبيهات مفعلة' : 'No active alerts')
+                            : (isRTL ? 'تنبيه نشط' : 'active alerts')}
                         </p>
                       </div>
-                    </div>
-                    <Button variant="outline">
-                      {isRTL ? 'تفعيل' : 'Enable'}
-                    </Button>
-                  </div>
 
-                  <div className="p-4 rounded-lg border border-destructive/50 bg-destructive/10">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Trash2 className="w-5 h-5 text-destructive" />
-                      <div>
-                        <p className="font-medium text-destructive">{isRTL ? 'حذف الحساب' : 'Delete Account'}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {isRTL ? 'سيتم حذف جميع بياناتك نهائياً' : 'All your data will be permanently deleted'}
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Eye className="w-5 h-5 text-blue-500" />
+                          <span className="font-medium">{isRTL ? 'المواضيع المتابعة' : 'Followed Topics'}</span>
+                        </div>
+                        <p className="text-3xl font-bold">{stats?.followedTopics || 0}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {stats?.followedTopics === 0 
+                            ? (isRTL ? 'لا تتابع أي موضوع' : 'Not following any topics')
+                            : (isRTL ? 'موضوع متابع' : 'followed topics')}
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Target className="w-5 h-5 text-purple-500" />
+                          <span className="font-medium">{isRTL ? 'التصنيفات المستخدمة' : 'Domains Used'}</span>
+                        </div>
+                        <p className="text-3xl font-bold">{stats?.countriesAnalyzed || 0}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {stats?.countriesAnalyzed === 0 
+                            ? (isRTL ? 'لم تستخدم أي تصنيف بعد' : 'No domains used yet')
+                            : (isRTL ? 'تصنيف مختلف' : 'different domains')}
                         </p>
                       </div>
                     </div>
-                    <Button variant="destructive" size="sm">
-                      {isRTL ? 'حذف الحساب' : 'Delete Account'}
-                    </Button>
-                  </div>
+                  )}
+
+                  {stats?.lastActive && (
+                    <div className="mt-6 pt-4 border-t border-border">
+                      <p className="text-sm text-muted-foreground">
+                        {isRTL ? 'آخر نشاط: ' : 'Last active: '}
+                        <span className="font-medium">{formatDate(stats?.lastActive || null)}</span>
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -368,30 +389,22 @@ export default function Profile() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Bell className="w-5 h-5" />
-                    {isRTL ? 'الإشعارات' : 'Notifications'}
+                    {isRTL ? 'إعدادات الإشعارات' : 'Notification Settings'}
                   </CardTitle>
                   <CardDescription>
-                    {isRTL ? 'إدارة تفضيلات الإشعارات' : 'Manage your notification preferences'}
+                    {isRTL ? 'تخصيص تفضيلات الإشعارات' : 'Customize your notification preferences'}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { label: isRTL ? 'تنبيهات المشاعر' : 'Emotion Alerts', desc: isRTL ? 'عند تغير المؤشرات بشكل كبير' : 'When indices change significantly' },
-                    { label: isRTL ? 'تقارير أسبوعية' : 'Weekly Reports', desc: isRTL ? 'ملخص أسبوعي للتحليلات' : 'Weekly analysis summary' },
-                    { label: isRTL ? 'أخبار المنصة' : 'Platform News', desc: isRTL ? 'تحديثات وميزات جديدة' : 'Updates and new features' },
-                    { label: isRTL ? 'نصائح وإرشادات' : 'Tips & Guides', desc: isRTL ? 'كيفية الاستفادة من المنصة' : 'How to use the platform' },
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
-                      <div>
-                        <p className="font-medium">{item.label}</p>
-                        <p className="text-sm text-muted-foreground">{item.desc}</p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" defaultChecked={index < 2} className="sr-only peer" />
-                        <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                      </label>
-                    </div>
-                  ))}
+                <CardContent>
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>{isRTL ? 'إعدادات الإشعارات قادمة قريباً' : 'Notification settings coming soon'}</p>
+                    <Link href="/followed-topics">
+                      <Button variant="outline" className="mt-4">
+                        {isRTL ? 'إدارة المواضيع المتابعة' : 'Manage Followed Topics'}
+                      </Button>
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -408,44 +421,26 @@ export default function Profile() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 mb-6">
+                  <div className="p-6 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">{isRTL ? 'الخطة الحالية' : 'Current Plan'}</p>
-                        <p className="text-2xl font-bold">{isRTL ? 'مجانية' : 'Free'}</p>
+                        <h3 className="font-semibold text-lg">
+                          {isRTL ? 'الخطة المجانية' : 'Free Plan'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {isRTL ? 'الوصول الأساسي للمنصة' : 'Basic platform access'}
+                        </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground">{isRTL ? 'نقاط API المتبقية' : 'API Credits Left'}</p>
-                        <p className="text-2xl font-bold">850 / 1000</p>
-                      </div>
+                      <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-500 text-sm">
+                        {isRTL ? 'نشط' : 'Active'}
+                      </span>
                     </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div className="bg-primary h-2 rounded-full" style={{ width: '85%' }}></div>
-                    </div>
+                    <Link href="/subscription">
+                      <Button className="w-full">
+                        {isRTL ? 'ترقية الاشتراك' : 'Upgrade Plan'}
+                      </Button>
+                    </Link>
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="font-semibold">{isRTL ? 'ميزات خطتك' : 'Your Plan Features'}</h3>
-                    <ul className="space-y-2">
-                      {[
-                        isRTL ? '1000 نقطة API شهرياً' : '1000 API credits/month',
-                        isRTL ? 'تحليل 100 نص يومياً' : '100 text analyses/day',
-                        isRTL ? 'الوصول للخريطة العالمية' : 'Global map access',
-                        isRTL ? '3 تنبيهات مخصصة' : '3 custom alerts',
-                      ].map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2 text-sm">
-                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <Link href="/pricing">
-                    <Button className="w-full mt-6 glow-button text-white">
-                      {isRTL ? 'ترقية الخطة' : 'Upgrade Plan'}
-                    </Button>
-                  </Link>
                 </CardContent>
               </Card>
             )}

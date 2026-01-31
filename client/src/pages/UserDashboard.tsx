@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogoIcon } from '@/components/Logo';
@@ -27,22 +28,22 @@ import {
   Zap,
   Home,
   Menu,
-  X
+  X,
+  Eye,
+  Target
 } from 'lucide-react';
 
-// Mock data for user activity
-const recentAnalyses = [
-  { id: 1, topic: 'Climate Change News', date: '2026-01-31', sentiment: 'neutral', score: 62 },
-  { id: 2, topic: 'Tech Industry Updates', date: '2026-01-30', sentiment: 'positive', score: 78 },
-  { id: 3, topic: 'Economic Outlook', date: '2026-01-29', sentiment: 'negative', score: 35 },
-  { id: 4, topic: 'Sports Headlines', date: '2026-01-28', sentiment: 'positive', score: 85 },
-];
-
-const savedAlerts = [
-  { id: 1, name: 'Fear Index Alert', condition: 'CFI > 70', status: 'active' },
-  { id: 2, name: 'Hope Surge', condition: 'HRI > 80', status: 'active' },
-  { id: 3, name: 'Market Sentiment', condition: 'GMI < 30', status: 'paused' },
-];
+// Domain labels
+const DOMAIN_LABELS: Record<string, { ar: string; en: string }> = {
+  politics: { ar: 'سياسة', en: 'Politics' },
+  economy: { ar: 'اقتصاد', en: 'Economy' },
+  mental_health: { ar: 'صحة نفسية', en: 'Mental Health' },
+  medical: { ar: 'طب', en: 'Medical' },
+  education: { ar: 'تعليم', en: 'Education' },
+  society: { ar: 'مجتمع', en: 'Society' },
+  entertainment: { ar: 'ترفيه', en: 'Entertainment' },
+  general: { ar: 'عام', en: 'General' },
+};
 
 export default function UserDashboard() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -51,13 +52,18 @@ export default function UserDashboard() {
   const isRTL = language === 'ar';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Fetch real user statistics
+  const { data: stats, isLoading: statsLoading } = trpc.userStats.getStats.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       setLocation('/login');
     }
   }, [loading, isAuthenticated, setLocation]);
 
-  if (loading) {
+  if (loading || statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse flex flex-col items-center gap-4">
@@ -72,20 +78,41 @@ export default function UserDashboard() {
     return null;
   }
 
-  const getSentimentColor = (sentiment: string) => {
-    switch (sentiment) {
-      case 'positive': return 'text-green-500';
-      case 'negative': return 'text-red-500';
+  const getSentimentColor = (emotion: string) => {
+    switch (emotion) {
+      case 'joy':
+      case 'hope': return 'text-green-500';
+      case 'fear':
+      case 'anger':
+      case 'sadness': return 'text-red-500';
       default: return 'text-yellow-500';
     }
   };
 
-  const getSentimentIcon = (sentiment: string) => {
-    switch (sentiment) {
-      case 'positive': return <Heart className="w-4 h-4 text-green-500" />;
-      case 'negative': return <AlertTriangle className="w-4 h-4 text-red-500" />;
+  const getSentimentIcon = (emotion: string) => {
+    switch (emotion) {
+      case 'joy':
+      case 'hope': return <Heart className="w-4 h-4 text-green-500" />;
+      case 'fear':
+      case 'anger':
+      case 'sadness': return <AlertTriangle className="w-4 h-4 text-red-500" />;
       default: return <Activity className="w-4 h-4 text-yellow-500" />;
     }
+  };
+
+  const getDomainLabel = (domain: string) => {
+    const label = DOMAIN_LABELS[domain];
+    return label ? (isRTL ? label.ar : label.en) : domain;
+  };
+
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleDateString(isRTL ? 'ar-LY' : 'en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   return (
@@ -172,8 +199,8 @@ export default function UserDashboard() {
           </h1>
           <p className="text-muted-foreground">
             {isRTL 
-              ? 'إليك نظرة عامة على نشاطك وتحليلاتك الأخيرة'
-              : 'Here\'s an overview of your activity and recent analyses'}
+              ? 'إليك نظرة عامة على نشاطك وتحليلاتك'
+              : 'Here\'s an overview of your activity and analyses'}
           </p>
         </div>
 
@@ -186,13 +213,17 @@ export default function UserDashboard() {
                   <p className="text-sm text-muted-foreground">
                     {isRTL ? 'التحليلات' : 'Analyses'}
                   </p>
-                  <p className="text-2xl font-bold">24</p>
+                  <p className="text-2xl font-bold">{stats?.totalAnalyses || 0}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                   <BarChart3 className="w-6 h-6 text-primary" />
                 </div>
               </div>
-              <p className="text-xs text-green-500 mt-2">+12% {isRTL ? 'هذا الشهر' : 'this month'}</p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {stats?.totalAnalyses === 0 
+                  ? (isRTL ? 'ابدأ بتحليل أول عنوان' : 'Start by analyzing your first headline')
+                  : (isRTL ? 'إجمالي تحليلاتك' : 'Your total analyses')}
+              </p>
             </CardContent>
           </Card>
 
@@ -203,13 +234,17 @@ export default function UserDashboard() {
                   <p className="text-sm text-muted-foreground">
                     {isRTL ? 'التنبيهات النشطة' : 'Active Alerts'}
                   </p>
-                  <p className="text-2xl font-bold">3</p>
+                  <p className="text-2xl font-bold">{stats?.activeAlerts || 0}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center">
                   <Bell className="w-6 h-6 text-yellow-500" />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">2 {isRTL ? 'تم تشغيلها اليوم' : 'triggered today'}</p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {stats?.activeAlerts === 0 
+                  ? (isRTL ? 'أنشئ تنبيهاً مخصصاً' : 'Create a custom alert')
+                  : (isRTL ? 'تنبيهات مفعلة' : 'Active alerts')}
+              </p>
             </CardContent>
           </Card>
 
@@ -218,15 +253,19 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'الدول المتابعة' : 'Tracked Countries'}
+                    {isRTL ? 'المواضيع المتابعة' : 'Followed Topics'}
                   </p>
-                  <p className="text-2xl font-bold">8</p>
+                  <p className="text-2xl font-bold">{stats?.followedTopics || 0}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-blue-500" />
+                  <Eye className="w-6 h-6 text-blue-500" />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">{isRTL ? 'تحديث مباشر' : 'Live updates'}</p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {stats?.followedTopics === 0 
+                  ? (isRTL ? 'تابع موضوعاً للحصول على تنبيهات' : 'Follow a topic for alerts')
+                  : (isRTL ? 'مواضيع تتابعها' : 'Topics you follow')}
+              </p>
             </CardContent>
           </Card>
 
@@ -235,15 +274,19 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'نقاط API' : 'API Credits'}
+                    {isRTL ? 'التصنيفات المحللة' : 'Domains Analyzed'}
                   </p>
-                  <p className="text-2xl font-bold">850</p>
+                  <p className="text-2xl font-bold">{stats?.countriesAnalyzed || 0}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-purple-500" />
+                  <Target className="w-6 h-6 text-purple-500" />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">{isRTL ? 'من 1000' : 'of 1000'}</p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {stats?.countriesAnalyzed === 0 
+                  ? (isRTL ? 'جرب تصنيفات مختلفة' : 'Try different domains')
+                  : (isRTL ? 'تصنيفات مختلفة' : 'Different domains')}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -284,14 +327,14 @@ export default function UserDashboard() {
             </Card>
           </Link>
 
-          <Link href="/alerts">
+          <Link href="/followed-topics">
             <Card className="cosmic-card hover:border-primary/50 transition-colors cursor-pointer h-full">
               <CardContent className="p-6 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
                   <Bell className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">{isRTL ? 'إنشاء تنبيه' : 'Create Alert'}</h3>
+                  <h3 className="font-semibold">{isRTL ? 'متابعة موضوع' : 'Follow Topic'}</h3>
                   <p className="text-sm text-muted-foreground">
                     {isRTL ? 'تنبيهات مخصصة' : 'Custom notifications'}
                   </p>
@@ -316,31 +359,47 @@ export default function UserDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {recentAnalyses.map((analysis) => (
-                  <div 
-                    key={analysis.id} 
-                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      {getSentimentIcon(analysis.sentiment)}
-                      <div>
-                        <p className="font-medium text-sm">{analysis.topic}</p>
-                        <p className="text-xs text-muted-foreground">{analysis.date}</p>
+              {stats?.recentAnalyses && stats.recentAnalyses.length > 0 ? (
+                <div className="space-y-4">
+                  {stats.recentAnalyses.map((analysis: any) => (
+                    <div 
+                      key={analysis.id} 
+                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        {getSentimentIcon(analysis.dominantEmotion)}
+                        <div>
+                          <p className="font-medium text-sm line-clamp-1">{analysis.headline}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {getDomainLabel(analysis.domain)} • {formatDate(analysis.createdAt)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`font-semibold ${getSentimentColor(analysis.dominantEmotion)}`}>
+                        {analysis.confidence}%
                       </div>
                     </div>
-                    <div className={`font-semibold ${getSentimentColor(analysis.sentiment)}`}>
-                      {analysis.score}%
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Link href="/trends">
-                <Button variant="ghost" className="w-full mt-4 gap-2">
-                  {isRTL ? 'عرض الكل' : 'View All'}
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Brain className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>{isRTL ? 'لا توجد تحليلات بعد' : 'No analyses yet'}</p>
+                  <Link href="/analyzer">
+                    <Button variant="outline" className="mt-4">
+                      {isRTL ? 'ابدأ التحليل' : 'Start Analyzing'}
+                    </Button>
+                  </Link>
+                </div>
+              )}
+              {stats?.recentAnalyses && stats.recentAnalyses.length > 0 && (
+                <Link href="/reports">
+                  <Button variant="ghost" className="w-full mt-4 gap-2">
+                    {isRTL ? 'عرض الكل' : 'View All'}
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              )}
             </CardContent>
           </Card>
 
@@ -356,67 +415,85 @@ export default function UserDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {savedAlerts.map((alert) => (
-                  <div 
-                    key={alert.id} 
-                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-full ${alert.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                      <div>
-                        <p className="font-medium text-sm">{alert.name}</p>
-                        <p className="text-xs text-muted-foreground">{alert.condition}</p>
+              {stats?.recentAlerts && stats.recentAlerts.length > 0 ? (
+                <div className="space-y-4">
+                  {stats.recentAlerts.map((alert: any) => (
+                    <div 
+                      key={alert.id} 
+                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${alert.isActive ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                        <div>
+                          <p className="font-medium text-sm">{alert.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {alert.metric.toUpperCase()} {alert.condition} {alert.threshold}
+                          </p>
+                        </div>
                       </div>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        alert.isActive 
+                          ? 'bg-green-500/20 text-green-500' 
+                          : 'bg-yellow-500/20 text-yellow-500'
+                      }`}>
+                        {alert.isActive 
+                          ? (isRTL ? 'نشط' : 'Active') 
+                          : (isRTL ? 'متوقف' : 'Paused')}
+                      </span>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      alert.status === 'active' 
-                        ? 'bg-green-500/20 text-green-500' 
-                        : 'bg-yellow-500/20 text-yellow-500'
-                    }`}>
-                      {alert.status === 'active' 
-                        ? (isRTL ? 'نشط' : 'Active') 
-                        : (isRTL ? 'متوقف' : 'Paused')}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <Link href="/alerts">
-                <Button variant="ghost" className="w-full mt-4 gap-2">
-                  {isRTL ? 'إدارة التنبيهات' : 'Manage Alerts'}
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>{isRTL ? 'لا توجد تنبيهات بعد' : 'No alerts yet'}</p>
+                  <Link href="/alerts">
+                    <Button variant="outline" className="mt-4">
+                      {isRTL ? 'إنشاء تنبيه' : 'Create Alert'}
+                    </Button>
+                  </Link>
+                </div>
+              )}
+              {stats?.recentAlerts && stats.recentAlerts.length > 0 && (
+                <Link href="/alerts">
+                  <Button variant="ghost" className="w-full mt-4 gap-2">
+                    {isRTL ? 'إدارة التنبيهات' : 'Manage Alerts'}
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Subscription Info */}
-        <Card className="cosmic-card mt-6">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
+        {/* Member Info */}
+        {stats?.memberSince && (
+          <Card className="cosmic-card mt-6">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">
+                      {isRTL ? 'عضو منذ' : 'Member Since'}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {formatDate(stats.memberSince)}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold">{isRTL ? 'الخطة الحالية: مجانية' : 'Current Plan: Free'}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {isRTL 
-                      ? 'قم بالترقية للحصول على ميزات متقدمة وتحليلات غير محدودة'
-                      : 'Upgrade for advanced features and unlimited analyses'}
-                  </p>
-                </div>
+                <Link href="/subscription">
+                  <Button className="gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    {isRTL ? 'ترقية الاشتراك' : 'Upgrade Plan'}
+                  </Button>
+                </Link>
               </div>
-              <Link href="/pricing">
-                <Button className="glow-button text-white gap-2">
-                  <TrendingUp className="w-4 h-4" />
-                  {isRTL ? 'ترقية الآن' : 'Upgrade Now'}
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );

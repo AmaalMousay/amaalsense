@@ -1,6 +1,6 @@
 import { eq, desc, asc, gte, and, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert } from "../drizzle/schema";
+import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert, classifiedAnalyses, followedTopics, topicAlerts, InsertClassifiedAnalysis, InsertFollowedTopic, InsertTopicAlert } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -743,8 +743,6 @@ export async function markPasswordResetTokenUsed(token: string) {
 // Classified Analyses Functions
 // ============================================
 
-import { classifiedAnalyses, InsertClassifiedAnalysis, followedTopics, InsertFollowedTopic, topicAlerts, InsertTopicAlert } from "../drizzle/schema";
-
 /**
  * Create a classified analysis record
  */
@@ -1068,4 +1066,187 @@ export async function deleteOldAlerts(daysOld: number = 30) {
       eq(topicAlerts.isRead, 1),
       sql`${topicAlerts.createdAt} < ${cutoffDate}`
     ));
+}
+
+
+// ============================================
+// User Statistics Functions
+// ============================================
+
+/**
+ * Get user's comprehensive statistics
+ */
+export async function getUserStats(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    return {
+      totalAnalyses: 0,
+      activeAlerts: 0,
+      followedTopics: 0,
+      countriesAnalyzed: 0,
+      recentAnalyses: [],
+      recentAlerts: [],
+      memberSince: null,
+      lastActive: null,
+    };
+  }
+
+  try {
+    // Get total analyses count
+    const analysesCount = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId));
+    
+    // Get active alerts count
+    const alertsCount = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(customAlerts)
+      .where(and(
+        eq(customAlerts.userId, userId),
+        eq(customAlerts.isActive, 1)
+      ));
+    
+    // Get followed topics count
+    const topicsCount = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(followedTopics)
+      .where(and(
+        eq(followedTopics.userId, userId),
+        eq(followedTopics.isActive, 1)
+      ));
+    
+    // Get unique countries analyzed (from classified analyses)
+    // For now, we'll count unique domains as a proxy
+    const domainsAnalyzed = await db
+      .select({ domain: classifiedAnalyses.domain })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId))
+      .groupBy(classifiedAnalyses.domain);
+    
+    // Get recent analyses
+    const recentAnalyses = await db
+      .select({
+        id: classifiedAnalyses.id,
+        headline: classifiedAnalyses.headline,
+        domain: classifiedAnalyses.domain,
+        dominantEmotion: classifiedAnalyses.dominantEmotion,
+        confidence: classifiedAnalyses.confidence,
+        emotionalRiskScore: classifiedAnalyses.emotionalRiskScore,
+        createdAt: classifiedAnalyses.createdAt,
+      })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId))
+      .orderBy(desc(classifiedAnalyses.createdAt))
+      .limit(5);
+    
+    // Get recent alerts
+    const recentAlerts = await db
+      .select({
+        id: customAlerts.id,
+        name: customAlerts.name,
+        metric: customAlerts.metric,
+        condition: customAlerts.condition,
+        threshold: customAlerts.threshold,
+        isActive: customAlerts.isActive,
+        createdAt: customAlerts.createdAt,
+      })
+      .from(customAlerts)
+      .where(eq(customAlerts.userId, userId))
+      .orderBy(desc(customAlerts.createdAt))
+      .limit(5);
+    
+    // Get user info for member since
+    const userInfo = await db
+      .select({
+        createdAt: users.createdAt,
+        lastSignedIn: users.lastSignedIn,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    return {
+      totalAnalyses: Number(analysesCount[0]?.count || 0),
+      activeAlerts: Number(alertsCount[0]?.count || 0),
+      followedTopics: Number(topicsCount[0]?.count || 0),
+      countriesAnalyzed: domainsAnalyzed.length,
+      recentAnalyses,
+      recentAlerts,
+      memberSince: userInfo[0]?.createdAt || null,
+      lastActive: userInfo[0]?.lastSignedIn || null,
+    };
+  } catch (error) {
+    console.error("[Database] Failed to get user stats:", error);
+    return {
+      totalAnalyses: 0,
+      activeAlerts: 0,
+      followedTopics: 0,
+      countriesAnalyzed: 0,
+      recentAnalyses: [],
+      recentAlerts: [],
+      memberSince: null,
+      lastActive: null,
+    };
+  }
+}
+
+/**
+ * Get user's recent analyses
+ */
+export async function getUserRecentAnalyses(userId: number, limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select({
+        id: classifiedAnalyses.id,
+        headline: classifiedAnalyses.headline,
+        domain: classifiedAnalyses.domain,
+        sensitivity: classifiedAnalyses.sensitivity,
+        dominantEmotion: classifiedAnalyses.dominantEmotion,
+        confidence: classifiedAnalyses.confidence,
+        emotionalRiskScore: classifiedAnalyses.emotionalRiskScore,
+        createdAt: classifiedAnalyses.createdAt,
+      })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId))
+      .orderBy(desc(classifiedAnalyses.createdAt))
+      .limit(limit);
+  } catch (error) {
+    console.error("[Database] Failed to get user recent analyses:", error);
+    return [];
+  }
+}
+
+/**
+ * Get user's active alerts
+ */
+export async function getUserActiveAlerts(userId: number, limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select({
+        id: customAlerts.id,
+        name: customAlerts.name,
+        metric: customAlerts.metric,
+        condition: customAlerts.condition,
+        threshold: customAlerts.threshold,
+        isActive: customAlerts.isActive,
+        createdAt: customAlerts.createdAt,
+      })
+      .from(customAlerts)
+      .where(and(
+        eq(customAlerts.userId, userId),
+        eq(customAlerts.isActive, 1)
+      ))
+      .orderBy(desc(customAlerts.createdAt))
+      .limit(limit);
+  } catch (error) {
+    console.error("[Database] Failed to get user active alerts:", error);
+    return [];
+  }
 }
