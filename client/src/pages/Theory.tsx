@@ -6,15 +6,17 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "wouter";
 import { 
   Brain, 
-  Lightbulb, 
   Layers, 
-  Calculator, 
   Palette, 
   ArrowLeft,
   BookOpen,
   Atom,
   Network,
-  Zap
+  Zap,
+  Cpu,
+  Sparkles,
+  Lock,
+  Shield
 } from "lucide-react";
 
 export default function Theory() {
@@ -86,7 +88,7 @@ export default function Theory() {
                 Live Digital Consciousness Field
               </CardTitle>
               <CardDescription className="text-slate-400">
-                Real-time calculation of D(t) amplitude
+                Real-time calculation of collective emotional amplitude
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -95,7 +97,7 @@ export default function Theory() {
                   <div className="text-3xl font-bold text-cyan-400">
                     {dcfData.dcfAmplitude.toFixed(2)}
                   </div>
-                  <div className="text-sm text-slate-400">D(t) Amplitude</div>
+                  <div className="text-sm text-slate-400">Field Amplitude</div>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30">
                   <div className="text-3xl font-bold text-green-400">
@@ -121,16 +123,77 @@ export default function Theory() {
           </Card>
         )}
 
+        {/* Hybrid Engine Highlight */}
+        <Card className="mb-12 bg-gradient-to-r from-purple-500/10 via-black/40 to-cyan-500/10 border-purple-500/30 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="text-center pb-2">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <Cpu className="w-8 h-8 text-purple-400" />
+              <CardTitle className="text-2xl bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                The Hybrid Analysis Engine
+              </CardTitle>
+              <Brain className="w-8 h-8 text-cyan-400" />
+            </div>
+            <CardDescription className="text-slate-400">
+              Our unique approach combines proprietary formulas with AI for maximum accuracy
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="relative">
+                <div className="absolute -top-3 -left-3 w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  70%
+                </div>
+                <Card className="bg-black/30 border-white/10 pt-8 h-full">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+                        <Sparkles className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-bold text-white">Proprietary DCFT Formula</h3>
+                    </div>
+                    <p className="text-sm text-slate-400">
+                      Based on Digital Collective Field Theory - a unique methodology developed specifically for collective emotion analysis. The exact mathematical formulas are proprietary.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="relative">
+                <div className="absolute -top-3 -left-3 w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  30%
+                </div>
+                <Card className="bg-black/30 border-white/10 pt-8 h-full">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 text-white">
+                        <Brain className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-bold text-white">Advanced AI Analysis</h3>
+                    </div>
+                    <p className="text-sm text-slate-400">
+                      Leverages state-of-the-art language models for nuanced sentiment understanding across Arabic and English content with contextual awareness.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+            
+            {/* Fusion Indicator */}
+            <div className="mt-6 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span className="text-sm text-white">Hybrid Fusion = Maximum Accuracy</span>
+                <Brain className="w-4 h-4 text-cyan-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Main Tabs */}
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid grid-cols-5 bg-black/40 border border-white/10">
+          <TabsList className="grid grid-cols-4 bg-black/40 border border-white/10">
             <TabsTrigger value="overview" className="data-[state=active]:bg-purple-500/30">
               <BookOpen className="w-4 h-4 mr-2" />
               Overview
-            </TabsTrigger>
-            <TabsTrigger value="formulas" className="data-[state=active]:bg-purple-500/30">
-              <Calculator className="w-4 h-4 mr-2" />
-              Formulas
             </TabsTrigger>
             <TabsTrigger value="architecture" className="data-[state=active]:bg-purple-500/30">
               <Layers className="w-4 h-4 mr-2" />
@@ -207,36 +270,28 @@ export default function Theory() {
                   </p>
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
 
-          {/* Formulas Tab */}
-          <TabsContent value="formulas">
-            <div className="grid gap-8">
-              {theoryInfo?.formulas && Object.entries(theoryInfo.formulas).map(([key, formula]) => (
-                <Card key={key} className="bg-black/40 border-white/10 backdrop-blur-xl">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-cyan-400">{formula.name}</CardTitle>
-                    <CardDescription className="text-slate-400">{formula.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="p-6 rounded-lg bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 mb-6">
-                      <code className="text-2xl md:text-3xl font-mono text-white">
-                        {formula.formula}
-                      </code>
+              {/* Proprietary Notice */}
+              <Card className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-500/30 backdrop-blur-xl">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-full bg-amber-500/20">
+                      <Shield className="w-8 h-8 text-amber-400" />
                     </div>
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-slate-200">Variables:</h4>
-                      {formula.variables.map((v, i) => (
-                        <div key={i} className="flex items-start gap-3 p-3 rounded bg-black/30">
-                          <code className="text-cyan-400 font-mono font-bold">{v.symbol}</code>
-                          <span className="text-slate-300">{v.meaning}</span>
-                        </div>
-                      ))}
+                    <div>
+                      <h3 className="text-lg font-bold text-amber-300 flex items-center gap-2">
+                        <Lock className="w-4 h-4" />
+                        Proprietary Methodology
+                      </h3>
+                      <p className="text-slate-400 mt-1">
+                        The detailed mathematical formulas and algorithms used in AmalSense are proprietary intellectual property. 
+                        The system uses a unique hybrid approach combining DCFT-based equations (70%) with advanced AI analysis (30%) 
+                        to achieve unprecedented accuracy in collective emotion detection.
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 

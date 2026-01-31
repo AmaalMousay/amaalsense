@@ -702,3 +702,10 @@
 - [x] إضافة مفتاح GNews API للمشروع (تم - GNEWS_API_KEY)
 - [x] إنشاء خدمة GNews API (تم - gnewsService.ts)
 - [x] دمج GNews في خدمة البيانات الموحدة (تم - وزن 0.88)
+
+
+## Phase 55: Update How It Works Page (User Request)
+- [x] إخفاء تفاصيل المعادلات لحماية الملكية الفكرية
+- [x] إظهار المحرك الهجين (70% معادلة + 30% AI)
+- [x] تحديث المحتوى ليعكس التغييرات الجديدة
+- [x] تحديث صفحة Theory لإزالة تبويب Formulas وإضافة قسم Proprietary Methodology
