@@ -818,3 +818,11 @@
 - [x] إضافة contact@amaalsense.com في صفحة Contact
 - [x] إضافة info@amaalsense.com في صفحة About
 - [x] إضافة privacy@amaalsense.com في صفحة Privacy
+
+
+## Phase 64: Replace Home Map with Google Maps (User Request)
+- [x] إنشاء مكون EmotionGoogleMap مع دوائر المشاعر (60+ دولة)
+- [x] عرض دائرة ملونة فوق كل دولة حسب المزاج السائد (أخضر/أزرق/أصفر/برتقالي/أحمر)
+- [x] إضافة التفاعلية (الضغط على دولة ينقل للتفاصيل + tooltip عند التمرير)
+- [x] دمج الخريطة في الصفحة الرئيسية مع بيانات حية
+- [x] إضافة مفتاح الألوان (Legend) ومؤشر "بيانات حية"

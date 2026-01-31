@@ -14,6 +14,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { FooterLegend } from '@/components/EmotionLegend';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useI18n } from '@/i18n';
+import { EmotionGoogleMap } from '@/components/EmotionGoogleMap';
 
 // Country positions for the map
 const COUNTRY_POSITIONS: Record<string, { x: number; y: number; name: string; nameEn: string }> = {
@@ -553,7 +554,8 @@ export default function Home() {
             <p className="text-muted-foreground text-sm">اضغط على أي دولة لعرض تفاصيل المزاج العام • يتم التحديث كل 30 ثانية</p>
           </div>
           
-          <InteractiveWorldMap 
+          <EmotionGoogleMap 
+            className="h-[500px]"
             onCountryClick={handleCountryClick}
             countriesData={countriesData || []}
             isLoading={countriesLoading}
