@@ -865,3 +865,9 @@
 - [x] أحمر للغضب، أخضر للهدوء، أصفر للمحايد، برتقالي للخوف
 - [x] تحديث دالة getMoodFromIndices لتوزيع أفضل للألوان
 - [x] زيادة fillOpacity من 0.35 إلى 0.6 و strokeWeight من 2 إلى 3
+
+
+## Phase 68: Fix Social Share Image (User Request)
+- [x] تحديث صورة og:image لتعكس الاسم الصحيح Amaalsense
+- [x] إنشاء صورة جديدة للمشاركة الاجتماعية
+- [x] تحديث meta tags في index.html
