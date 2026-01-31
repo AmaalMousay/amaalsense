@@ -14,6 +14,7 @@ export interface CountryEmotionData {
 
 // List of major countries with their codes
 export const COUNTRIES = [
+  { code: 'LY', name: 'Libya' },
   { code: 'SA', name: 'Saudi Arabia' },
   { code: 'AE', name: 'United Arab Emirates' },
   { code: 'EG', name: 'Egypt' },
@@ -93,8 +94,8 @@ export function generateCountryEmotionData(
   const cfi = Math.max(0, Math.min(100, globalCFI + variation.cfiShift + randomCFI));
   const hri = Math.max(0, Math.min(100, globalHRI + variation.hriShift + randomHRI));
 
-  // Calculate confidence based on data consistency
-  const confidence = Math.round(70 + Math.random() * 25);
+  // Calculate confidence based on data consistency (0-1 range)
+  const confidence = (70 + Math.random() * 25) / 100;
 
   return {
     countryCode,

@@ -173,8 +173,10 @@ export function EmotionGoogleMap({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
   const circles = useRef<google.maps.Circle[]>([]);
+  const pulseCircles = useRef<google.maps.Circle[]>([]);
   const infoWindow = useRef<google.maps.InfoWindow | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Create a map of country data for quick lookup
   const countryDataMap = new Map<string, CountryData>();
@@ -224,9 +226,14 @@ export function EmotionGoogleMap({
   useEffect(() => {
     if (!mapReady || !map.current || !window.google) return;
 
-    // Clear existing circles
+    // Clear existing circles and pulse circles
     circles.current.forEach(circle => circle.setMap(null));
     circles.current = [];
+    pulseCircles.current.forEach(circle => circle.setMap(null));
+    pulseCircles.current = [];
+    if (pulseIntervalRef.current) {
+      clearInterval(pulseIntervalRef.current);
+    }
 
     // Add circles for each country
     Object.entries(COUNTRY_COORDS).forEach(([code, coords]) => {
@@ -291,7 +298,45 @@ export function EmotionGoogleMap({
       });
 
       circles.current.push(circle);
+
+      // Create pulse circle for animation effect
+      const pulseCircle = new window.google.maps.Circle({
+        strokeColor: color,
+        strokeOpacity: 0,
+        strokeWeight: 0,
+        fillColor: color,
+        fillOpacity: 0.2,
+        map: map.current,
+        center: { lat: coords.lat, lng: coords.lng },
+        radius: data ? 300000 + (Math.abs(data.gmi) * 5000) : 200000,
+        clickable: false,
+      });
+      pulseCircles.current.push(pulseCircle);
     });
+
+    // Animate pulse effect
+    let pulsePhase = 0;
+    pulseIntervalRef.current = setInterval(() => {
+      pulsePhase = (pulsePhase + 1) % 60;
+      const scale = 1 + Math.sin(pulsePhase * Math.PI / 30) * 0.3;
+      const opacity = 0.15 + Math.sin(pulsePhase * Math.PI / 30) * 0.1;
+      
+      pulseCircles.current.forEach((pulseCircle, index) => {
+        const baseCircle = circles.current[index];
+        if (baseCircle && pulseCircle) {
+          const baseRadius = baseCircle.getRadius();
+          pulseCircle.setRadius(baseRadius * scale);
+          pulseCircle.setOptions({ fillOpacity: opacity });
+        }
+      });
+    }, 50);
+
+    // Cleanup on unmount
+    return () => {
+      if (pulseIntervalRef.current) {
+        clearInterval(pulseIntervalRef.current);
+      }
+    };
   }, [mapReady, countriesData, onCountryClick]);
 
   return (
