@@ -8,7 +8,7 @@ import {
   TrendingUp, Zap, Heart, Menu, X, 
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
-  LogIn, UserPlus
+  LogIn, UserPlus, LayoutDashboard, User
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -16,6 +16,8 @@ import { FooterLegend } from '@/components/EmotionLegend';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useI18n } from '@/i18n';
 import { EmotionGoogleMap } from '@/components/EmotionGoogleMap';
+import { UserMenu } from '@/components/UserMenu';
+import { useAuth } from '@/_core/hooks/useAuth';
 
 // Country positions for the map
 const COUNTRY_POSITIONS: Record<string, { x: number; y: number; name: string; nameEn: string }> = {
@@ -313,6 +315,7 @@ export default function Home() {
   const [previousIndices, setPreviousIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t, isRTL } = useI18n();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
 
   // Fetch latest indices with auto-refresh every 30 seconds
   const { data: latestIndices, isLoading: indicesLoading } = trpc.emotion.getLatestIndices.useQuery(
@@ -422,18 +425,24 @@ export default function Home() {
             </div>
             <ThemeToggle />
             <LanguageSwitcher />
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <LogIn className="w-4 h-4" />
-                {isRTL ? 'دخول' : 'Login'}
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button className="glow-button text-white gap-2">
-                <UserPlus className="w-4 h-4" />
-                {isRTL ? 'تسجيل' : 'Sign Up'}
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <UserMenu isRTL={isRTL} />
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <LogIn className="w-4 h-4" />
+                    {isRTL ? 'دخول' : 'Login'}
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="glow-button text-white gap-2">
+                    <UserPlus className="w-4 h-4" />
+                    {isRTL ? 'تسجيل' : 'Sign Up'}
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -475,27 +484,63 @@ export default function Home() {
                 <ThemeToggle />
                 <LanguageSwitcher />
               </div>
-              <div className="flex gap-2 mt-4">
-                <Link href="/login" className="flex-1">
-                  <Button 
-                    variant="outline" 
-                    className="w-full gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <LogIn className="w-4 h-4" />
-                    {isRTL ? 'دخول' : 'Login'}
-                  </Button>
-                </Link>
-                <Link href="/register" className="flex-1">
-                  <Button 
-                    className="glow-button text-white w-full gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    {isRTL ? 'تسجيل' : 'Sign Up'}
-                  </Button>
-                </Link>
-              </div>
+              {isAuthenticated ? (
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
+                      {user?.name?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <div>
+                      <p className="font-medium">{user?.name}</p>
+                      <p className="text-xs text-muted-foreground">{isRTL ? 'مستخدم مسجل' : 'Logged in'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Link href="/user-dashboard">
+                      <Button variant="outline" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
+                        <LayoutDashboard className="w-4 h-4" />
+                        {isRTL ? 'لوحة التحكم' : 'Dashboard'}
+                      </Button>
+                    </Link>
+                    <Link href="/profile">
+                      <Button variant="outline" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
+                        <User className="w-4 h-4" />
+                        {isRTL ? 'الملف الشخصي' : 'Profile'}
+                      </Button>
+                    </Link>
+                    {user?.role === 'admin' && (
+                      <Link href="/admin">
+                        <Button variant="outline" className="w-full justify-start gap-2 text-primary" onClick={() => setMobileMenuOpen(false)}>
+                          <Shield className="w-4 h-4" />
+                          {isRTL ? 'لوحة الإدارة' : 'Admin Panel'}
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-2 mt-4">
+                  <Link href="/login" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      className="w-full gap-2"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <LogIn className="w-4 h-4" />
+                      {isRTL ? 'دخول' : 'Login'}
+                    </Button>
+                  </Link>
+                  <Link href="/register" className="flex-1">
+                    <Button 
+                      className="glow-button text-white w-full gap-2"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      {isRTL ? 'تسجيل' : 'Sign Up'}
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         )}

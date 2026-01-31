@@ -36,6 +36,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import UserDashboard from "./pages/UserDashboard";
+import Profile from "./pages/Profile";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -73,6 +75,8 @@ function Router() {
       <Route path={"/login"} component={Login} />
       <Route path={"/forgot-password"} component={ForgotPassword} />
       <Route path={"/reset-password"} component={ResetPassword} />
+      <Route path={"/user-dashboard"} component={UserDashboard} />
+      <Route path={"/profile"} component={Profile} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
