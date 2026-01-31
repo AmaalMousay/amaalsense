@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc';
 import { useLocation, useRoute } from 'wouter';
-import { ArrowLeft, ArrowRight, Search, Users, MapPin, TrendingUp, TrendingDown, Minus, Globe } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Search, Users, MapPin, TrendingUp, TrendingDown, Minus, Globe, ChevronDown } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { EMOTION_COLORS, getEmotionColor } from '@shared/emotionColors';
 import { toast } from 'sonner';
@@ -377,18 +377,21 @@ export default function Analyzer() {
                       <label className="text-sm font-medium text-white/80 block">
                         {language === 'ar' ? 'اختر الدولة' : 'Select Country'}
                       </label>
-                      <select
-                        value={selectedCountry}
-                        onChange={(e) => setSelectedCountry(e.target.value)}
-                        className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none cursor-pointer transition-all appearance-auto"
-                      >
-                        <option value="" className="bg-slate-800 text-white">{language === 'ar' ? 'اختر دولة...' : 'Choose a country...'}</option>
-                        {COUNTRIES.map((country) => (
-                          <option key={country.code} value={country.code} className="bg-slate-800 text-white">
-                            {language === 'ar' ? country.nameAr : country.name}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <select
+                          value={selectedCountry}
+                          onChange={(e) => setSelectedCountry(e.target.value)}
+                          className="w-full h-14 px-4 pr-10 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none cursor-pointer transition-all appearance-none"
+                        >
+                          <option value="" className="bg-slate-800 text-white">{language === 'ar' ? 'اختر دولة...' : 'Choose a country...'}</option>
+                          {COUNTRIES.map((country) => (
+                            <option key={country.code} value={country.code} className="bg-slate-800 text-white">
+                              {language === 'ar' ? country.nameAr : country.name}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
 
                     {/* Time Range - Native HTML Select for better mobile support */}
@@ -396,15 +399,18 @@ export default function Analyzer() {
                       <label className="text-sm font-medium text-white/80 block">
                         {language === 'ar' ? 'الفترة الزمنية' : 'Time Range'}
                       </label>
-                      <select
-                        value={timeRange}
-                        onChange={(e) => setTimeRange(e.target.value as any)}
-                        className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none cursor-pointer transition-all appearance-auto"
-                      >
-                        <option value="day" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر يوم' : 'Last Day'}</option>
-                        <option value="week" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر أسبوع' : 'Last Week'}</option>
-                        <option value="month" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر شهر' : 'Last Month'}</option>
-                      </select>
+                      <div className="relative">
+                        <select
+                          value={timeRange}
+                          onChange={(e) => setTimeRange(e.target.value as any)}
+                          className="w-full h-14 px-4 pr-10 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none cursor-pointer transition-all appearance-none"
+                        >
+                          <option value="day" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر يوم' : 'Last Day'}</option>
+                          <option value="week" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر أسبوع' : 'Last Week'}</option>
+                          <option value="month" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر شهر' : 'Last Month'}</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
                   </div>
 
@@ -413,13 +419,13 @@ export default function Analyzer() {
                     <label className="text-sm font-medium cosmic-text mb-2 block">
                       {language === 'ar' ? 'الموضوع أو الكلمة المفتاحية' : 'Topic or Keyword'}
                     </label>
-                    <input
+                    <Input
                       type="text"
                       value={topic}
                       onChange={(e) => setTopic(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleTopicAnalysis()}
                       placeholder={language === 'ar' ? 'مثال: أسعار الوقود، الانتخابات، كأس العالم...' : 'e.g., Fuel prices, Elections, World Cup...'}
-                      className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all placeholder:text-gray-400"
+                      className="w-full h-14 px-4 text-base bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500"
                       disabled={isTopicLoading}
                       dir={isRTL ? 'rtl' : 'ltr'}
                     />

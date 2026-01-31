@@ -656,3 +656,8 @@
 ## Phase 47: Analyzer UI Fixes (User Report)
 - [x] إزالة السهم المكرر في قوائم Select Country و Time Range (تم - appearance-auto)
 - [x] إصلاح حقل إدخال الموضوع (Topic) ليكون قابل للكتابة (تم - native input)
+
+
+## Phase 48: Revert Select Arrow Fix (User Report)
+- [x] إرجاع السهم السابق الذي يعمل (تم - appearance-none + ChevronDown icon)
+- [x] إصلاح حقل كتابة الموضوع ليكون مفعل (تم - Input component)
