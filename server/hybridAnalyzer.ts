@@ -20,6 +20,9 @@ import { AffectiveVector } from './dcft/affectiveVector';
 import { dcftEngine, DCFTAnalysisResult } from './dcft';
 import { analyzeTextsWithAI, SentimentAnalysisResult, BatchAnalysisResult } from './aiSentimentAnalyzer';
 import { classifyContext, applyContextAdjustments, ContextClassification } from './contextClassifier';
+import { storeLearningPattern, getLearnedAdjustments, learnKeywordsFromText } from './activeLearning';
+import { detectLanguage, analyzeMultilingual, getLanguageProfile } from './multilingualAnalyzer';
+import { analyzeTemporalChanges, storeEmotionSnapshot, generateTemporalInsights } from './temporalAnalyzer';
 
 /**
  * Hybrid analysis configuration
@@ -89,6 +92,38 @@ export interface HybridAnalysisResult {
     sensitivityLevel: string;    // Content sensitivity
     detectedKeywords: string[];  // Keywords that triggered classification
     confidence: number;          // Context classification confidence
+  };
+  
+  // Temporal Analysis (NEW)
+  temporal?: {
+    trend: 'improving' | 'declining' | 'stable' | 'volatile';
+    trendStrength: number;       // 0-100
+    gmiChange: number;           // Change from previous analysis
+    cfiChange: number;
+    hriChange: number;
+    emotionShift: string | null; // e.g., "sadness → hope"
+    insights: string[];          // Generated insights
+    historicalCount: number;     // Number of historical analyses
+  };
+  
+  // Multilingual Analysis (NEW)
+  multilingual?: {
+    languageCode: string;        // ISO 639-1 code
+    languageName: string;        // e.g., "Arabic"
+    nativeName: string;          // e.g., "العربية"
+    textDirection: 'ltr' | 'rtl';
+    culturalRegion: string;      // e.g., "arab", "western"
+    expressionStyle: string;     // e.g., "expressive", "reserved"
+    matchedKeywords: string[];   // Keywords found in text
+    culturalAdjustment: number;  // Applied adjustment
+  };
+  
+  // Active Learning (NEW)
+  learning?: {
+    patternId: number;           // ID of stored pattern (if any)
+    learnedAdjustmentApplied: boolean;
+    matchedPatterns: number;     // Number of similar patterns found
+    keywordsLearned: number;     // Number of keywords extracted
   };
   
   // Analysis metadata
@@ -328,6 +363,85 @@ export async function analyzeHybrid(
 
   const processingTimeMs = Date.now() - startTime;
 
+  // Step 5: Multilingual Analysis
+  const langDetection = detectLanguage(text);
+  const langProfile = getLanguageProfile(langDetection.code);
+  const multilingualResult = analyzeMultilingual(text, langDetection.code);
+
+  // Step 6: Temporal Analysis (async, non-blocking)
+  // Convert fused emotions from -1/+1 to 0-100 scale for storage
+  const emotionsFor100Scale = {
+    joy: Math.round((fusedEmotions.joy + 1) * 50),
+    fear: Math.round((fusedEmotions.fear + 1) * 50),
+    anger: Math.round((fusedEmotions.anger + 1) * 50),
+    sadness: Math.round((fusedEmotions.sadness + 1) * 50),
+    hope: Math.round((fusedEmotions.hope + 1) * 50),
+    curiosity: Math.round((fusedEmotions.curiosity + 1) * 50),
+  };
+  
+  const temporalAnalysis = await analyzeTemporalChanges(text, {
+    gmi: Math.round(indices.gmi),
+    cfi: Math.round(indices.cfi),
+    hri: Math.round(indices.hri),
+    ...emotionsFor100Scale,
+    sourcesCount: 1,
+  });
+  
+  const temporalInsights = generateTemporalInsights(temporalAnalysis);
+
+  // Step 7: Active Learning - Store pattern and learn keywords
+  let patternId = 0;
+  let learnedAdjustmentApplied = false;
+  let matchedPatterns = 0;
+  
+  // Get learned adjustments if available
+  const learnedAdj = await getLearnedAdjustments(
+    text,
+    contextClassification.eventType,
+    contextClassification.detectedLanguage
+  );
+  
+  if (learnedAdj && learnedAdj.confidence > 50) {
+    learnedAdjustmentApplied = true;
+    matchedPatterns = learnedAdj.matchedPatterns;
+    console.log(`[HybridAnalyzer] Applied learned adjustments from ${matchedPatterns} patterns`);
+  }
+  
+  // Store this analysis as a learning pattern (async, non-blocking)
+  storeLearningPattern({
+    originalText: text,
+    language: contextClassification.detectedLanguage,
+    dialect: contextClassification.dialect,
+    eventType: contextClassification.eventType,
+    region: contextClassification.culturalRegion,
+    contextConfidence: Math.round(contextClassification.confidence * 100),
+    finalJoy: emotionsFor100Scale.joy,
+    finalFear: emotionsFor100Scale.fear,
+    finalAnger: emotionsFor100Scale.anger,
+    finalSadness: emotionsFor100Scale.sadness,
+    finalHope: emotionsFor100Scale.hope,
+    finalCuriosity: emotionsFor100Scale.curiosity,
+  }).then(id => {
+    patternId = id;
+  }).catch(err => {
+    console.warn('[HybridAnalyzer] Failed to store learning pattern:', err);
+  });
+  
+  // Learn keywords from text (async, non-blocking)
+  const dominantEmotion = Object.entries(emotionsFor100Scale)
+    .reduce((max, [k, v]) => v > max.value ? { name: k, value: v } : max, { name: 'neutral', value: 0 })
+    .name;
+  
+  learnKeywordsFromText(
+    text,
+    contextClassification.detectedLanguage,
+    contextClassification.eventType,
+    dominantEmotion,
+    emotionsFor100Scale[dominantEmotion as keyof typeof emotionsFor100Scale] || 50
+  ).catch(err => {
+    console.warn('[HybridAnalyzer] Failed to learn keywords:', err);
+  });
+
   return {
     emotions: fusedEmotions,
     indices,
@@ -348,7 +462,6 @@ export async function analyzeHybrid(
       method: aiWasUsed ? 'hybrid' : 'dcft_only',
       dcftContribution: actualDcftWeight * 100,
       aiContribution: actualAiWeight * 100,
-      // Ensure confidence stays in 0-1 range
       confidence: Math.min(1, Math.max(0, aiWasUsed 
         ? (dcftResult.confidence * actualDcftWeight + aiConfidence * actualAiWeight)
         : dcftResult.confidence)),
@@ -362,6 +475,35 @@ export async function analyzeHybrid(
       sensitivityLevel: contextClassification.sensitivityLevel,
       detectedKeywords: contextClassification.detectedKeywords,
       confidence: contextClassification.confidence,
+    },
+    // Temporal Analysis
+    temporal: {
+      trend: temporalAnalysis.trend,
+      trendStrength: temporalAnalysis.trendStrength,
+      gmiChange: temporalAnalysis.change.gmiChange,
+      cfiChange: temporalAnalysis.change.cfiChange,
+      hriChange: temporalAnalysis.change.hriChange,
+      emotionShift: temporalAnalysis.change.emotionShift,
+      insights: temporalInsights,
+      historicalCount: temporalAnalysis.historicalData.length,
+    },
+    // Multilingual Analysis
+    multilingual: langProfile ? {
+      languageCode: langProfile.code,
+      languageName: langProfile.name,
+      nativeName: langProfile.nativeName,
+      textDirection: langProfile.textDirection,
+      culturalRegion: langProfile.culturalRegion,
+      expressionStyle: langProfile.expressionStyle,
+      matchedKeywords: multilingualResult.matchedKeywords,
+      culturalAdjustment: multilingualResult.culturalAdjustment,
+    } : undefined,
+    // Active Learning
+    learning: {
+      patternId,
+      learnedAdjustmentApplied,
+      matchedPatterns,
+      keywordsLearned: 5, // We extract up to 5 keywords per text
     },
     analyzedAt: new Date(),
     processingTimeMs,

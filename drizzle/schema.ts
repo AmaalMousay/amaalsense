@@ -564,3 +564,228 @@ export const topicAlerts = mysqlTable("topic_alerts", {
 
 export type TopicAlert = typeof topicAlerts.$inferSelect;
 export type InsertTopicAlert = typeof topicAlerts.$inferInsert;
+
+
+/**
+ * ============================================
+ * ACTIVE LEARNING SYSTEM TABLES
+ * ============================================
+ */
+
+/**
+ * Learning Patterns - stores successful analysis patterns for active learning
+ * The system learns from these patterns to improve future analyses
+ */
+export const learningPatterns = mysqlTable("learning_patterns", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Original text that was analyzed */
+  originalText: text("originalText").notNull(),
+  /** Detected language */
+  language: varchar("language", { length: 32 }).notNull(),
+  /** Detected dialect (if applicable) */
+  dialect: varchar("dialect", { length: 32 }),
+  /** Detected event type: death, disaster, celebration, politics, economy, sports, entertainment */
+  eventType: varchar("eventType", { length: 32 }).notNull(),
+  /** Detected region: arab_maghreb, arab_gulf, arab_levant, western, asian, african, latin */
+  region: varchar("region", { length: 32 }).notNull(),
+  /** Context classification confidence (0-100) */
+  contextConfidence: int("contextConfidence").notNull(),
+  /** Final joy score after adjustment */
+  finalJoy: int("finalJoy").notNull(),
+  /** Final fear score after adjustment */
+  finalFear: int("finalFear").notNull(),
+  /** Final anger score after adjustment */
+  finalAnger: int("finalAnger").notNull(),
+  /** Final sadness score after adjustment */
+  finalSadness: int("finalSadness").notNull(),
+  /** Final hope score after adjustment */
+  finalHope: int("finalHope").notNull(),
+  /** Final curiosity score after adjustment */
+  finalCuriosity: int("finalCuriosity").notNull(),
+  /** User feedback: accurate, inaccurate, partially_accurate */
+  userFeedback: mysqlEnum("userFeedback", ["accurate", "inaccurate", "partially_accurate"]),
+  /** Feedback timestamp */
+  feedbackAt: timestamp("feedbackAt"),
+  /** Number of times this pattern was used for learning */
+  usageCount: int("usageCount").default(0).notNull(),
+  /** Whether this pattern is verified and trusted */
+  isVerified: int("isVerified").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LearningPattern = typeof learningPatterns.$inferSelect;
+export type InsertLearningPattern = typeof learningPatterns.$inferInsert;
+
+/**
+ * Keyword Learning - stores learned keywords and their emotional associations
+ */
+export const keywordLearning = mysqlTable("keyword_learning", {
+  id: int("id").autoincrement().primaryKey(),
+  /** The keyword or phrase */
+  keyword: varchar("keyword", { length: 255 }).notNull(),
+  /** Language of the keyword */
+  language: varchar("language", { length: 32 }).notNull(),
+  /** Associated event type */
+  eventType: varchar("eventType", { length: 32 }).notNull(),
+  /** Emotional weight: -100 (very negative) to +100 (very positive) */
+  emotionalWeight: int("emotionalWeight").notNull(),
+  /** Primary emotion associated: joy, fear, anger, sadness, hope, curiosity */
+  primaryEmotion: varchar("primaryEmotion", { length: 32 }).notNull(),
+  /** Confidence in this association (0-100) */
+  confidence: int("confidence").notNull().default(50),
+  /** Number of times this keyword was encountered */
+  occurrenceCount: int("occurrenceCount").default(1).notNull(),
+  /** Source: manual, learned, imported */
+  source: varchar("source", { length: 32 }).default("learned").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type KeywordLearning = typeof keywordLearning.$inferSelect;
+export type InsertKeywordLearning = typeof keywordLearning.$inferInsert;
+
+/**
+ * ============================================
+ * TEMPORAL ANALYSIS TABLES
+ * ============================================
+ */
+
+/**
+ * Topic Emotion History - tracks emotion changes for topics over time
+ */
+export const topicEmotionHistory = mysqlTable("topic_emotion_history", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Topic or headline being tracked */
+  topic: varchar("topic", { length: 500 }).notNull(),
+  /** Normalized topic for grouping similar topics */
+  normalizedTopic: varchar("normalizedTopic", { length: 500 }).notNull(),
+  /** GMI at this point */
+  gmi: int("gmi").notNull(),
+  /** CFI at this point */
+  cfi: int("cfi").notNull(),
+  /** HRI at this point */
+  hri: int("hri").notNull(),
+  /** Joy score */
+  joy: int("joy").notNull(),
+  /** Fear score */
+  fear: int("fear").notNull(),
+  /** Anger score */
+  anger: int("anger").notNull(),
+  /** Sadness score */
+  sadness: int("sadness").notNull(),
+  /** Hope score */
+  hope: int("hope").notNull(),
+  /** Curiosity score */
+  curiosity: int("curiosity").notNull(),
+  /** Dominant emotion at this point */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }).notNull(),
+  /** Number of sources analyzed */
+  sourcesCount: int("sourcesCount").default(0).notNull(),
+  /** Analysis timestamp */
+  analyzedAt: timestamp("analyzedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TopicEmotionHistory = typeof topicEmotionHistory.$inferSelect;
+export type InsertTopicEmotionHistory = typeof topicEmotionHistory.$inferInsert;
+
+/**
+ * Emotion Trends - aggregated emotion trends over time periods
+ */
+export const emotionTrends = mysqlTable("emotion_trends", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Topic or 'global' for overall trends */
+  topic: varchar("topic", { length: 500 }).default("global").notNull(),
+  /** Time period: hourly, daily, weekly, monthly */
+  period: mysqlEnum("period", ["hourly", "daily", "weekly", "monthly"]).notNull(),
+  /** Period start timestamp */
+  periodStart: timestamp("periodStart").notNull(),
+  /** Period end timestamp */
+  periodEnd: timestamp("periodEnd").notNull(),
+  /** Average GMI for the period */
+  avgGmi: int("avgGmi").notNull(),
+  /** Average CFI for the period */
+  avgCfi: int("avgCfi").notNull(),
+  /** Average HRI for the period */
+  avgHri: int("avgHri").notNull(),
+  /** GMI change from previous period */
+  gmiChange: int("gmiChange").default(0),
+  /** CFI change from previous period */
+  cfiChange: int("cfiChange").default(0),
+  /** HRI change from previous period */
+  hriChange: int("hriChange").default(0),
+  /** Number of analyses in this period */
+  analysisCount: int("analysisCount").default(0).notNull(),
+  /** Most frequent dominant emotion */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmotionTrend = typeof emotionTrends.$inferSelect;
+export type InsertEmotionTrend = typeof emotionTrends.$inferInsert;
+
+/**
+ * ============================================
+ * MULTILINGUAL SUPPORT TABLES
+ * ============================================
+ */
+
+/**
+ * Language Profiles - stores language-specific analysis configurations
+ */
+export const languageProfiles = mysqlTable("language_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ISO 639-1 language code (e.g., 'ar', 'en', 'fr', 'es', 'zh', 'ja') */
+  languageCode: varchar("languageCode", { length: 5 }).notNull().unique(),
+  /** Language name in English */
+  languageName: varchar("languageName", { length: 100 }).notNull(),
+  /** Language name in native script */
+  nativeName: varchar("nativeName", { length: 100 }),
+  /** Text direction: ltr (left-to-right) or rtl (right-to-left) */
+  textDirection: mysqlEnum("textDirection", ["ltr", "rtl"]).default("ltr").notNull(),
+  /** Associated cultural region */
+  culturalRegion: varchar("culturalRegion", { length: 32 }).notNull(),
+  /** Emotional expression style: direct, indirect, reserved, expressive */
+  expressionStyle: mysqlEnum("expressionStyle", ["direct", "indirect", "reserved", "expressive"]).default("direct").notNull(),
+  /** Default sentiment adjustment factor (-50 to +50) */
+  sentimentAdjustment: int("sentimentAdjustment").default(0).notNull(),
+  /** Whether this language is fully supported */
+  isFullySupported: int("isFullySupported").default(0).notNull(),
+  /** Number of keywords in dictionary */
+  keywordCount: int("keywordCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LanguageProfile = typeof languageProfiles.$inferSelect;
+export type InsertLanguageProfile = typeof languageProfiles.$inferInsert;
+
+/**
+ * Multilingual Keywords - emotion keywords in multiple languages
+ */
+export const multilingualKeywords = mysqlTable("multilingual_keywords", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ISO 639-1 language code */
+  languageCode: varchar("languageCode", { length: 5 }).notNull(),
+  /** The keyword in the target language */
+  keyword: varchar("keyword", { length: 255 }).notNull(),
+  /** English translation for reference */
+  englishTranslation: varchar("englishTranslation", { length: 255 }),
+  /** Category: death, disaster, celebration, politics, economy, etc. */
+  category: varchar("category", { length: 32 }).notNull(),
+  /** Primary emotion: joy, fear, anger, sadness, hope, curiosity */
+  primaryEmotion: varchar("primaryEmotion", { length: 32 }).notNull(),
+  /** Emotional intensity: low, medium, high, extreme */
+  intensity: mysqlEnum("intensity", ["low", "medium", "high", "extreme"]).default("medium").notNull(),
+  /** Emotional weight: -100 to +100 */
+  emotionalWeight: int("emotionalWeight").notNull(),
+  /** Usage context notes */
+  contextNotes: text("contextNotes"),
+  /** Source: manual, imported, learned */
+  source: varchar("source", { length: 32 }).default("manual").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type MultilingualKeyword = typeof multilingualKeywords.$inferSelect;
+export type InsertMultilingualKeyword = typeof multilingualKeywords.$inferInsert;
