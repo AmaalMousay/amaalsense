@@ -929,3 +929,9 @@
 - [x] إصلاح العنوان الرئيسي "محلل المشاعر" ليظهر بالكامل في الوضع الداكن
 - [x] تحديث ألوان cosmic-text و gradient-text للوضع الداكن
 - [x] اختبار جميع النصوص في الوضع الداكن
+
+
+## Phase 75: Fix Database Error in Registration (User Report)
+- [x] إصلاح خطأ جدول user_registrations
+- [x] التحقق من وجود الجدول في قاعدة البيانات
+- [x] إضافة عمود verifiedAt المفقود إلى الجدول
