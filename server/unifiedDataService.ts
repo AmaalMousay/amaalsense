@@ -13,10 +13,11 @@ import { analyzeHybrid } from './hybridAnalyzer';
 import { fetchAllSocialMedia, fetchCountrySocialMedia, SocialPost, getAPIStatus } from './socialMediaService';
 import { fetchGoogleNews, fetchGoogleNewsByTopic, fetchGoogleNewsByCountry, convertToUnifiedFormat } from './googleRssService';
 import { fetchGNewsMultilingual, convertToUnifiedFormat as convertGNewsToUnified } from './gnewsService';
+import { fetchAllMajorNews, convertToUnifiedFormat as convertMajorNewsToUnified } from './majorNewsRssService';
 
 // Types
 export interface DataSource {
-  type: 'news' | 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram' | 'google_rss' | 'gnews';
+  type: 'news' | 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram' | 'google_rss' | 'gnews' | 'major_news';
   name: string;
   weight: number; // Influence weight for DCFT
   isReal: boolean;
@@ -58,6 +59,7 @@ export interface MoodResult {
     news: { count: number; isReal: boolean };
     google_rss: { count: number; isReal: boolean };
     gnews: { count: number; isReal: boolean };
+    major_news: { count: number; isReal: boolean };
     reddit: { count: number; isReal: boolean };
     mastodon: { count: number; isReal: boolean };
     bluesky: { count: number; isReal: boolean };
@@ -108,6 +110,7 @@ const SOURCE_WEIGHTS: Record<string, number> = {
   news: 0.85,        // News has highest weight (most reliable)
   google_rss: 0.90,  // Google RSS aggregates top news sources
   gnews: 0.88,       // GNews API - reliable news aggregator
+  major_news: 0.95,  // BBC, Reuters, Al Jazeera, CNN - highest reliability
   reddit: 0.65,      // Reddit has good discussions
   bluesky: 0.60,     // Bluesky is growing
   mastodon: 0.55,    // Mastodon federated
@@ -220,6 +223,7 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
     news: { count: 0, isReal: false },
     google_rss: { count: 0, isReal: false },
     gnews: { count: 0, isReal: false },
+    major_news: { count: 0, isReal: false },
     reddit: { count: 0, isReal: false },
     mastodon: { count: 0, isReal: false },
     bluesky: { count: 0, isReal: false },
@@ -227,8 +231,36 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
     telegram: { count: 0, isReal: false },
   };
   
+  // Fetch news from Major Sources (BBC, Reuters, Al Jazeera, CNN)
+  const majorNewsLimit = Math.ceil(limit * 0.25); // 25% from major news sources
+  try {
+    const majorNews = await fetchAllMajorNews(majorNewsLimit);
+    
+    const majorNewsData = convertMajorNewsToUnified(majorNews).map((item, index) => ({
+      id: `major-news-${Date.now()}-${index}`,
+      text: item.text,
+      source: {
+        type: 'major_news' as const,
+        name: item.source,
+        weight: SOURCE_WEIGHTS.major_news,
+        isReal: true
+      },
+      timestamp: item.timestamp,
+      country: country,
+      topic: topic,
+      url: item.url,
+      isReal: true
+    }));
+    
+    allData.push(...majorNewsData);
+    sourceCounts.major_news = { count: majorNewsData.length, isReal: majorNewsData.length > 0 };
+    console.log(`[UnifiedData] Major News (BBC/Reuters/AlJazeera/CNN): ${majorNewsData.length} items`);
+  } catch (error) {
+    console.error('[UnifiedData] Major News RSS error:', error);
+  }
+  
   // Fetch news data from News API
-  const newsLimit = Math.ceil(limit * 0.25); // 25% from News API
+  const newsLimit = Math.ceil(limit * 0.15); // 15% from News API (reduced since we have major news)
   const newsData = await fetchNewsData(country, topic, newsLimit);
   allData.push(...newsData);
   sourceCounts.news = { count: newsData.length, isReal: newsData.length > 0 };
