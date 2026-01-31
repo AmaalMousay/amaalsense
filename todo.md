@@ -674,3 +674,13 @@
 - [x] إضافة خدمة pdfExportService.ts
 - [x] إضافة خدمة telegramNotificationService.ts
 - [x] تحديث صفحة NotificationSettings مع قسم Telegram
+
+
+## Phase 50: Fix Topic Input Fields (User Report)
+- [ ] إصلاح حقل كتابة الموضوع في التحليل البسيط
+- [ ] إصلاح حقل كتابة الموضوع في التحليل المتقدم
+
+
+## Phase 51: Fix Input Fields Not Working (User Report - No cursor, cannot type)
+- [x] إصلاح حقل الكتابة في التحليل البسيط (تم - native HTML input)
+- [x] إصلاح حقل الكتابة في التحليل المتقدم (تم - native HTML input)

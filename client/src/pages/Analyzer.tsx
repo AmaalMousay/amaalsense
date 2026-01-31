@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+// Input replaced with native HTML input for better mobile compatibility
 import { trpc } from '@/lib/trpc';
 import { useLocation, useRoute } from 'wouter';
 import { ArrowLeft, ArrowRight, Search, Users, MapPin, TrendingUp, TrendingDown, Minus, Globe, ChevronDown } from 'lucide-react';
@@ -220,14 +220,19 @@ export default function Analyzer() {
                     <span className="text-sm font-medium cosmic-text mb-2 block">
                       {language === 'ar' ? 'العنوان الإخباري' : 'News Headline'}
                     </span>
-                    <Input
+                    <input
+                      type="text"
                       value={headline}
                       onChange={(e) => setHeadline(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAnalyze()}
                       placeholder={t.analyzer.placeholder}
-                      className="w-full text-base"
+                      className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all placeholder:text-gray-400"
                       disabled={isLoading}
                       dir={isRTL ? 'rtl' : 'ltr'}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck="false"
                     />
                   </label>
 
@@ -419,15 +424,19 @@ export default function Analyzer() {
                     <label className="text-sm font-medium cosmic-text mb-2 block">
                       {language === 'ar' ? 'الموضوع أو الكلمة المفتاحية' : 'Topic or Keyword'}
                     </label>
-                    <Input
+                    <input
                       type="text"
                       value={topic}
                       onChange={(e) => setTopic(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleTopicAnalysis()}
                       placeholder={language === 'ar' ? 'مثال: أسعار الوقود، الانتخابات، كأس العالم...' : 'e.g., Fuel prices, Elections, World Cup...'}
-                      className="w-full h-14 px-4 text-base bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500"
+                      className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all placeholder:text-gray-400"
                       disabled={isTopicLoading}
                       dir={isRTL ? 'rtl' : 'ltr'}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck="false"
                     />
                   </div>
 
