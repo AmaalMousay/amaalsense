@@ -137,15 +137,32 @@ const MOOD_COLORS: Record<string, string> = {
 };
 
 // Function to determine mood from GMI, CFI, HRI
+// Uses a scoring system for better color distribution
 function getMoodFromIndices(gmi: number, cfi: number, hri: number): string {
-  if (cfi > 60) return 'fear';
-  if (cfi > 45) return 'neutral';
-  if (hri > 60) return 'hope';
+  // Calculate dominant emotion based on multiple factors
+  
+  // Very high CFI = Anger (red)
+  if (cfi > 72) return 'anger';
+  
+  // High GMI with good HRI = Hope (green)
+  if (gmi > 15 && hri > 45) return 'hope';
   if (gmi > 20) return 'hope';
-  if (gmi > 0) return 'calm';
-  if (gmi > -20) return 'neutral';
-  if (gmi > -40) return 'fear';
-  return 'anger';
+  
+  // High HRI with moderate CFI = Calm (blue)
+  if (hri > 50 && cfi < 65) return 'calm';
+  if (gmi > 10 && cfi < 60) return 'calm';
+  
+  // Moderate-high CFI = Fear (orange)
+  if (cfi > 62) return 'fear';
+  
+  // Negative GMI = Fear (orange)
+  if (gmi < -5) return 'fear';
+  
+  // Very negative = Anger (red)
+  if (gmi < -15) return 'anger';
+  
+  // Default = Neutral (yellow)
+  return 'neutral';
 }
 
 interface CountryData {
@@ -226,6 +243,10 @@ export function EmotionGoogleMap({
   useEffect(() => {
     if (!mapReady || !map.current || !window.google) return;
 
+    // Debug: Log countries data
+    console.log('EmotionGoogleMap - countriesData:', countriesData.length, 'countries');
+    console.log('EmotionGoogleMap - countryDataMap size:', countryDataMap.size);
+    
     // Clear existing circles and pulse circles
     circles.current.forEach(circle => circle.setMap(null));
     circles.current = [];
@@ -236,18 +257,26 @@ export function EmotionGoogleMap({
     }
 
     // Add circles for each country
+    console.log('Creating circles for', Object.keys(COUNTRY_COORDS).length, 'countries');
+    console.log('CountryDataMap has', countryDataMap.size, 'entries');
+    
     Object.entries(COUNTRY_COORDS).forEach(([code, coords]) => {
       const data = countryDataMap.get(code);
       const mood = data ? getMoodFromIndices(data.gmi, data.cfi, data.hri) : 'neutral';
       const color = MOOD_COLORS[mood] || MOOD_COLORS.neutral;
       
+      // Debug first few countries
+      if (['LY', 'EG', 'US', 'JP', 'BR'].includes(code)) {
+        console.log(`Country ${code}: data=${JSON.stringify(data)}, mood=${mood}, color=${color}`);
+      }
+      
       // Create circle
       const circle = new window.google.maps.Circle({
         strokeColor: color,
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
+        strokeOpacity: 1.0,
+        strokeWeight: 3,
         fillColor: color,
-        fillOpacity: 0.35,
+        fillOpacity: 0.6,
         map: map.current,
         center: { lat: coords.lat, lng: coords.lng },
         radius: data ? 300000 + (Math.abs(data.gmi) * 5000) : 200000, // Size based on GMI intensity
