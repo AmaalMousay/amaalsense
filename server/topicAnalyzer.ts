@@ -212,7 +212,8 @@ export async function analyzeTopicInCountry(
     topOpposingRegions: sortedByOpposition.slice(0, 3),
     
     sampleSize: Math.floor(Math.random() * 5000) + 1000, // Simulated sample size
-    confidence: Math.round(baseAnalysis.fusion.confidence * 100),
+    // Ensure confidence is between 0-100 (fusion.confidence is already 0-1 scale)
+    confidence: Math.min(100, Math.max(0, Math.round(baseAnalysis.fusion.confidence * 100))),
     sources: ['news', 'social_media', 'forums'],
   };
 }

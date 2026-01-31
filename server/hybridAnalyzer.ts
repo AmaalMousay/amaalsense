@@ -278,9 +278,10 @@ export async function analyzeHybrid(
       method: aiWasUsed ? 'hybrid' : 'dcft_only',
       dcftContribution: actualDcftWeight * 100,
       aiContribution: actualAiWeight * 100,
-      confidence: aiWasUsed 
+      // Ensure confidence stays in 0-1 range
+      confidence: Math.min(1, Math.max(0, aiWasUsed 
         ? (dcftResult.confidence * actualDcftWeight + aiConfidence * actualAiWeight)
-        : dcftResult.confidence,
+        : dcftResult.confidence)),
     },
     analyzedAt: new Date(),
     processingTimeMs,
