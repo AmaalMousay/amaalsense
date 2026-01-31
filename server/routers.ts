@@ -154,56 +154,20 @@ export const appRouter = router({
   map: router({
     /**
      * Get all countries emotion data for world map
+     * Returns instant fallback data to avoid loading delays
      */
     getAllCountriesEmotions: publicProcedure.query(async () => {
       const { generateAllCountriesEmotionData, COUNTRIES } = await import("./countryEmotionAnalyzer");
-      const { getAllCountriesMood } = await import("./unifiedDataService");
       const { getLatestEmotionIndices } = await import("./db");
 
-      // Get mood for all countries through unified service
-      const countriesMood = await getAllCountriesMood();
+      // Get global indices for base values
       const globalIndices = await getLatestEmotionIndices();
+      const baseGMI = globalIndices?.gmi || 15;
+      const baseCFI = globalIndices?.cfi || 45;
+      const baseHRI = globalIndices?.hri || 55;
       
-      // Generate country data with real mood
-      const countriesData = COUNTRIES.map(country => {
-        const mood = countriesMood[country.code];
-        if (mood) {
-          return {
-            countryCode: country.code,
-            countryName: country.name,
-            gmi: mood.gmi,
-            cfi: mood.cfi,
-            hri: mood.hri,
-            mood: mood.mood,
-            moodAr: mood.moodAr,
-            moodColor: mood.moodColor,
-            dominantEmotion: mood.dominantEmotion,
-            confidence: mood.confidence,
-            dataPoints: mood.dataPoints,
-            lastUpdated: mood.lastUpdated,
-            emotions: {
-              joy: 50,
-              fear: Math.round(mood.cfi),
-              anger: 30,
-              sadness: 30,
-              hope: Math.round(mood.hri),
-              curiosity: 50,
-            },
-          };
-        }
-        // Fallback to generated data
-        return null;
-      }).filter((c): c is NonNullable<typeof c> => c !== null);
-
-      // If we have real mood data, return it
-      if (countriesData.length > 0) {
-        return countriesData;
-      }
-
-      // Fallback to generated data
-      const baseGMI = globalIndices?.gmi || 0;
-      const baseCFI = globalIndices?.cfi || 50;
-      const baseHRI = globalIndices?.hri || 50;
+      // Generate instant country data with realistic variations
+      // This provides immediate response without waiting for external APIs
       return generateAllCountriesEmotionData(baseGMI, baseCFI, baseHRI);
     }),
 

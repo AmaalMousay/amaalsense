@@ -372,40 +372,45 @@ export default function Analyzer() {
                   </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Country Selection */}
-                    <div>
-                      <label className="text-sm font-medium cosmic-text mb-2 block">
+                    {/* Country Selection - Native HTML Select for better mobile support */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-white/80 block">
                         {language === 'ar' ? 'اختر الدولة' : 'Select Country'}
                       </label>
-                      <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                        <SelectTrigger className="w-full h-12 md:h-10 text-base">
-                          <SelectValue placeholder={language === 'ar' ? 'اختر دولة...' : 'Choose a country...'} />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-[50vh] overflow-y-auto">
+                      <div className="relative">
+                        <select
+                          value={selectedCountry}
+                          onChange={(e) => setSelectedCountry(e.target.value)}
+                          className="w-full h-14 px-4 pr-12 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none cursor-pointer transition-all"
+                        >
+                          <option value="" className="bg-slate-800 text-white">{language === 'ar' ? 'اختر دولة...' : 'Choose a country...'}</option>
                           {COUNTRIES.map((country) => (
-                            <SelectItem key={country.code} value={country.code} className="py-3 text-base">
+                            <option key={country.code} value={country.code} className="bg-slate-800 text-white">
                               {language === 'ar' ? country.nameAr : country.name}
-                            </SelectItem>
+                            </option>
                           ))}
-                        </SelectContent>
-                      </Select>
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
 
-                    {/* Time Range */}
-                    <div>
-                      <label className="text-sm font-medium cosmic-text mb-2 block">
+                    {/* Time Range - Native HTML Select for better mobile support */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-white/80 block">
                         {language === 'ar' ? 'الفترة الزمنية' : 'Time Range'}
                       </label>
-                      <Select value={timeRange} onValueChange={(v) => setTimeRange(v as any)}>
-                        <SelectTrigger className="w-full h-12 md:h-10 text-base">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="day" className="py-3 text-base">{language === 'ar' ? 'آخر يوم' : 'Last Day'}</SelectItem>
-                          <SelectItem value="week" className="py-3 text-base">{language === 'ar' ? 'آخر أسبوع' : 'Last Week'}</SelectItem>
-                          <SelectItem value="month" className="py-3 text-base">{language === 'ar' ? 'آخر شهر' : 'Last Month'}</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="relative">
+                        <select
+                          value={timeRange}
+                          onChange={(e) => setTimeRange(e.target.value as any)}
+                          className="w-full h-14 px-4 pr-12 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none cursor-pointer transition-all"
+                        >
+                          <option value="day" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر يوم' : 'Last Day'}</option>
+                          <option value="week" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر أسبوع' : 'Last Week'}</option>
+                          <option value="month" className="bg-slate-800 text-white">{language === 'ar' ? 'آخر شهر' : 'Last Month'}</option>
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
                   </div>
 

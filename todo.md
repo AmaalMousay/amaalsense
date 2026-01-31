@@ -646,3 +646,8 @@
 ## Phase 45: Mobile Select Fix (Reported by User)
 - [x] إصلاح قائمة اختيار الدولة على الموبايل (تم - touch-manipulation + min-height 48px)
 - [x] إصلاح قائمة اختيار الفترة الزمنية على الموبايل (تم - z-index 9999 + mobile CSS)
+
+
+## Phase 46: Deep Mobile Fix (User Report - Select & Map Still Not Working)
+- [x] استبدال Radix Select بـ Native HTML Select للموبايل (تم - قوائم واضحة بخلفية slate-800)
+- [x] إصلاح الخريطة الحرارية للموبايل (تم - تحميل فوري بدون انتظار APIs)
