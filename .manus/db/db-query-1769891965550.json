@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `topic_alerts` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `followedTopicId` int NOT NULL,\n  `alertType` enum('risk_increase','risk_decrease','threshold_exceeded','new_analysis') NOT NULL,\n  `topic` varchar(500) NOT NULL,\n  `previousRiskScore` int,\n  `currentRiskScore` int NOT NULL,\n  `changeAmount` int,\n  `message` text,\n  `isRead` int NOT NULL DEFAULT 0,\n  `readAt` timestamp,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2VsckAsnDsWNG4a.root --database nNCcKwNgPEwkr4saUFSFW2 --execute CREATE TABLE IF NOT EXISTS `topic_alerts` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `followedTopicId` int NOT NULL,\n  `alertType` enum('risk_increase','risk_decrease','threshold_exceeded','new_analysis') NOT NULL,\n  `topic` varchar(500) NOT NULL,\n  `previousRiskScore` int,\n  `currentRiskScore` int NOT NULL,\n  `changeAmount` int,\n  `message` text,\n  `isRead` int NOT NULL DEFAULT 0,\n  `readAt` timestamp,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 305
+}

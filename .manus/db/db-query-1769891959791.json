@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `followed_topics` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `topic` varchar(500) NOT NULL,\n  `domain` enum('politics','economy','mental_health','medical','education','society','entertainment','general'),\n  `riskThreshold` int,\n  `alertDirection` enum('increase','decrease','both') NOT NULL DEFAULT 'both',\n  `isActive` int NOT NULL DEFAULT 1,\n  `lastRiskScore` int,\n  `lastAnalyzedAt` timestamp,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2VsckAsnDsWNG4a.root --database nNCcKwNgPEwkr4saUFSFW2 --execute CREATE TABLE IF NOT EXISTS `followed_topics` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `topic` varchar(500) NOT NULL,\n  `domain` enum('politics','economy','mental_health','medical','education','society','entertainment','general'),\n  `riskThreshold` int,\n  `alertDirection` enum('increase','decrease','both') NOT NULL DEFAULT 'both',\n  `isActive` int NOT NULL DEFAULT 1,\n  `lastRiskScore` int,\n  `lastAnalyzedAt` timestamp,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 601
+}

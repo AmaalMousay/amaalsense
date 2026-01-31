@@ -461,3 +461,106 @@ export const passwordResetTokens = mysqlTable("password_reset_tokens", {
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;
+
+
+/**
+ * Classified Analyses - stores analyses with content classification and sensitivity
+ */
+export const classifiedAnalyses = mysqlTable("classified_analyses", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID who performed the analysis */
+  userId: int("userId"),
+  /** The analyzed headline/text */
+  headline: text("headline").notNull(),
+  /** Content domain: politics, economy, mental_health, medical, education, society, entertainment, general */
+  domain: mysqlEnum("domain", ["politics", "economy", "mental_health", "medical", "education", "society", "entertainment", "general"]).notNull(),
+  /** Sensitivity level: low, medium, high, critical */
+  sensitivity: mysqlEnum("sensitivity", ["low", "medium", "high", "critical"]).notNull(),
+  /** Emotional risk score (0-100) */
+  emotionalRiskScore: int("emotionalRiskScore").notNull().default(50),
+  /** Emotion vector: joy (0-100) */
+  joy: int("joy").notNull().default(0),
+  /** Emotion vector: fear (0-100) */
+  fear: int("fear").notNull().default(0),
+  /** Emotion vector: anger (0-100) */
+  anger: int("anger").notNull().default(0),
+  /** Emotion vector: sadness (0-100) */
+  sadness: int("sadness").notNull().default(0),
+  /** Emotion vector: hope (0-100) */
+  hope: int("hope").notNull().default(0),
+  /** Emotion vector: curiosity (0-100) */
+  curiosity: int("curiosity").notNull().default(0),
+  /** Dominant emotion detected */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }).notNull(),
+  /** Confidence score of the analysis */
+  confidence: int("confidence").notNull().default(75),
+  /** Analysis model used */
+  model: varchar("model", { length: 32 }).default("hybrid"),
+  /** DCFT weight percentage */
+  dcftWeight: int("dcftWeight").default(70),
+  /** AI weight percentage */
+  aiWeight: int("aiWeight").default(30),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ClassifiedAnalysis = typeof classifiedAnalyses.$inferSelect;
+export type InsertClassifiedAnalysis = typeof classifiedAnalyses.$inferInsert;
+
+/**
+ * Followed Topics - topics that users want to track for alerts
+ */
+export const followedTopics = mysqlTable("followed_topics", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID who is following */
+  userId: int("userId").notNull(),
+  /** Topic keyword or phrase */
+  topic: varchar("topic", { length: 500 }).notNull(),
+  /** Content domain filter (null for all domains) */
+  domain: mysqlEnum("domain", ["politics", "economy", "mental_health", "medical", "education", "society", "entertainment", "general"]),
+  /** Alert threshold for emotional risk (0-100, null for any change) */
+  riskThreshold: int("riskThreshold"),
+  /** Alert on risk increase, decrease, or both */
+  alertDirection: mysqlEnum("alertDirection", ["increase", "decrease", "both"]).default("both").notNull(),
+  /** Whether following is active */
+  isActive: int("isActive").default(1).notNull(),
+  /** Last known emotional risk score */
+  lastRiskScore: int("lastRiskScore"),
+  /** Last analysis timestamp */
+  lastAnalyzedAt: timestamp("lastAnalyzedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FollowedTopic = typeof followedTopics.$inferSelect;
+export type InsertFollowedTopic = typeof followedTopics.$inferInsert;
+
+/**
+ * Topic Alerts - notifications sent to users about followed topics
+ */
+export const topicAlerts = mysqlTable("topic_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID to notify */
+  userId: int("userId").notNull(),
+  /** Reference to followed topic */
+  followedTopicId: int("followedTopicId").notNull(),
+  /** Alert type: risk_increase, risk_decrease, threshold_exceeded, new_analysis */
+  alertType: mysqlEnum("alertType", ["risk_increase", "risk_decrease", "threshold_exceeded", "new_analysis"]).notNull(),
+  /** Topic text */
+  topic: varchar("topic", { length: 500 }).notNull(),
+  /** Previous risk score */
+  previousRiskScore: int("previousRiskScore"),
+  /** Current risk score */
+  currentRiskScore: int("currentRiskScore").notNull(),
+  /** Change amount */
+  changeAmount: int("changeAmount"),
+  /** Alert message */
+  message: text("message"),
+  /** Whether alert has been read */
+  isRead: int("isRead").default(0).notNull(),
+  /** Read timestamp */
+  readAt: timestamp("readAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TopicAlert = typeof topicAlerts.$inferSelect;
+export type InsertTopicAlert = typeof topicAlerts.$inferInsert;

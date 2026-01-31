@@ -38,6 +38,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import UserDashboard from "./pages/UserDashboard";
 import Profile from "./pages/Profile";
+import Reports from "./pages/Reports";
+import FollowedTopics from "./pages/FollowedTopics";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -77,6 +79,8 @@ function Router() {
       <Route path={"/reset-password"} component={ResetPassword} />
       <Route path={"/user-dashboard"} component={UserDashboard} />
       <Route path={"/profile"} component={Profile} />
+      <Route path={"/reports"} component={Reports} />
+      <Route path={"/followed-topics"} component={FollowedTopics} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

@@ -737,3 +737,335 @@ export async function markPasswordResetTokenUsed(token: string) {
 
   return { success: true };
 }
+
+
+// ============================================
+// Classified Analyses Functions
+// ============================================
+
+import { classifiedAnalyses, InsertClassifiedAnalysis, followedTopics, InsertFollowedTopic, topicAlerts, InsertTopicAlert } from "../drizzle/schema";
+
+/**
+ * Create a classified analysis record
+ */
+export async function createClassifiedAnalysis(data: InsertClassifiedAnalysis) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(classifiedAnalyses).values(data);
+  return result;
+}
+
+/**
+ * Get user's classified analyses
+ */
+export async function getUserClassifiedAnalyses(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(classifiedAnalyses)
+    .where(eq(classifiedAnalyses.userId, userId))
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get all classified analyses (for reports)
+ */
+export async function getAllClassifiedAnalyses(limit: number = 1000) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(classifiedAnalyses)
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get classified analyses by domain
+ */
+export async function getClassifiedAnalysesByDomain(domain: string, limit: number = 100) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(classifiedAnalyses)
+    .where(eq(classifiedAnalyses.domain, domain as any))
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get classification statistics
+ */
+export async function getClassificationStats() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const stats = await db
+    .select({
+      domain: classifiedAnalyses.domain,
+      sensitivity: classifiedAnalyses.sensitivity,
+      count: sql<number>`COUNT(*)`,
+      avgRisk: sql<number>`AVG(${classifiedAnalyses.emotionalRiskScore})`,
+    })
+    .from(classifiedAnalyses)
+    .groupBy(classifiedAnalyses.domain, classifiedAnalyses.sensitivity);
+
+  return stats;
+}
+
+/**
+ * Get domain distribution
+ */
+export async function getDomainDistribution() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      domain: classifiedAnalyses.domain,
+      count: sql<number>`COUNT(*)`,
+      avgRisk: sql<number>`AVG(${classifiedAnalyses.emotionalRiskScore})`,
+    })
+    .from(classifiedAnalyses)
+    .groupBy(classifiedAnalyses.domain);
+}
+
+/**
+ * Get sensitivity distribution
+ */
+export async function getSensitivityDistribution() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      sensitivity: classifiedAnalyses.sensitivity,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(classifiedAnalyses)
+    .groupBy(classifiedAnalyses.sensitivity);
+}
+
+/**
+ * Get analyses over time (for trend chart)
+ */
+export async function getAnalysesOverTime(days: number = 30) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  return await db
+    .select({
+      date: sql<string>`DATE(${classifiedAnalyses.createdAt})`,
+      domain: classifiedAnalyses.domain,
+      count: sql<number>`COUNT(*)`,
+      avgRisk: sql<number>`AVG(${classifiedAnalyses.emotionalRiskScore})`,
+    })
+    .from(classifiedAnalyses)
+    .where(gte(classifiedAnalyses.createdAt, startDate))
+    .groupBy(sql`DATE(${classifiedAnalyses.createdAt})`, classifiedAnalyses.domain)
+    .orderBy(sql`DATE(${classifiedAnalyses.createdAt})`);
+}
+
+// ============================================
+// Followed Topics Functions
+// ============================================
+
+/**
+ * Create a followed topic
+ */
+export async function createFollowedTopic(data: InsertFollowedTopic) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(followedTopics).values(data);
+  return result;
+}
+
+/**
+ * Get user's followed topics
+ */
+export async function getUserFollowedTopics(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(followedTopics)
+    .where(eq(followedTopics.userId, userId))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get active followed topics for a user
+ */
+export async function getActiveFollowedTopics(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(followedTopics)
+    .where(and(
+      eq(followedTopics.userId, userId),
+      eq(followedTopics.isActive, 1)
+    ))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Update followed topic
+ */
+export async function updateFollowedTopic(id: number, data: Partial<InsertFollowedTopic>) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(followedTopics)
+    .set(data)
+    .where(eq(followedTopics.id, id));
+}
+
+/**
+ * Delete followed topic
+ */
+export async function deleteFollowedTopic(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .delete(followedTopics)
+    .where(eq(followedTopics.id, id));
+}
+
+/**
+ * Toggle followed topic active status
+ */
+export async function toggleFollowedTopicActive(id: number, isActive: boolean) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(followedTopics)
+    .set({ isActive: isActive ? 1 : 0 })
+    .where(eq(followedTopics.id, id));
+}
+
+// ============================================
+// Topic Alerts Functions
+// ============================================
+
+/**
+ * Create a topic alert
+ */
+export async function createTopicAlert(data: InsertTopicAlert) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(topicAlerts).values(data);
+  return result;
+}
+
+/**
+ * Get user's topic alerts
+ */
+export async function getUserTopicAlerts(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(topicAlerts)
+    .where(eq(topicAlerts.userId, userId))
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get user's unread topic alerts
+ */
+export async function getUnreadTopicAlerts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(topicAlerts)
+    .where(and(
+      eq(topicAlerts.userId, userId),
+      eq(topicAlerts.isRead, 0)
+    ))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get unread alerts count
+ */
+export async function getUnreadAlertsCount(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const result = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(topicAlerts)
+    .where(and(
+      eq(topicAlerts.userId, userId),
+      eq(topicAlerts.isRead, 0)
+    ));
+
+  return result[0]?.count || 0;
+}
+
+/**
+ * Mark alert as read
+ */
+export async function markAlertAsRead(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(topicAlerts)
+    .set({ isRead: 1, readAt: new Date() })
+    .where(eq(topicAlerts.id, id));
+}
+
+/**
+ * Mark all alerts as read for a user
+ */
+export async function markAllAlertsAsRead(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(topicAlerts)
+    .set({ isRead: 1, readAt: new Date() })
+    .where(and(
+      eq(topicAlerts.userId, userId),
+      eq(topicAlerts.isRead, 0)
+    ));
+}
+
+/**
+ * Delete old alerts (cleanup)
+ */
+export async function deleteOldAlerts(daysOld: number = 30) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const cutoffDate = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000);
+
+  return await db
+    .delete(topicAlerts)
+    .where(and(
+      eq(topicAlerts.isRead, 1),
+      sql`${topicAlerts.createdAt} < ${cutoffDate}`
+    ));
+}

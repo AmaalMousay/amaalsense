@@ -1982,6 +1982,257 @@ Please verify the payment and confirm in the admin panel.
         };
       }),
   }),
+
+  // Classification and Analytics API
+  classification: router({
+    /**
+     * Save a classified analysis
+     */
+    saveAnalysis: publicProcedure
+      .input(z.object({
+        headline: z.string().min(1).max(500),
+        domain: z.enum(['politics', 'economy', 'mental_health', 'medical', 'education', 'society', 'entertainment', 'general']),
+        sensitivity: z.enum(['low', 'medium', 'high', 'critical']),
+        emotionalRiskScore: z.number().min(0).max(100),
+        joy: z.number().min(0).max(100),
+        fear: z.number().min(0).max(100),
+        anger: z.number().min(0).max(100),
+        sadness: z.number().min(0).max(100),
+        hope: z.number().min(0).max(100),
+        curiosity: z.number().min(0).max(100),
+        dominantEmotion: z.string(),
+        confidence: z.number().min(0).max(100),
+        dcftWeight: z.number().optional(),
+        aiWeight: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { createClassifiedAnalysis } = await import('./db');
+        
+        await createClassifiedAnalysis({
+          userId: ctx.user?.id || null,
+          headline: input.headline,
+          domain: input.domain,
+          sensitivity: input.sensitivity,
+          emotionalRiskScore: input.emotionalRiskScore,
+          joy: input.joy,
+          fear: input.fear,
+          anger: input.anger,
+          sadness: input.sadness,
+          hope: input.hope,
+          curiosity: input.curiosity,
+          dominantEmotion: input.dominantEmotion,
+          confidence: input.confidence,
+          dcftWeight: input.dcftWeight || 70,
+          aiWeight: input.aiWeight || 30,
+        });
+
+        return { success: true };
+      }),
+
+    /**
+     * Get user's classified analyses
+     */
+    getUserAnalyses: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).default(50) }))
+      .query(async ({ input, ctx }) => {
+        if (!ctx.user) return [];
+        
+        const { getUserClassifiedAnalyses } = await import('./db');
+        return await getUserClassifiedAnalyses(ctx.user.id, input.limit);
+      }),
+
+    /**
+     * Get all analyses (for reports)
+     */
+    getAllAnalyses: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(1000).default(500) }))
+      .query(async ({ input }) => {
+        const { getAllClassifiedAnalyses } = await import('./db');
+        return await getAllClassifiedAnalyses(input.limit);
+      }),
+
+    /**
+     * Get domain distribution statistics
+     */
+    getDomainStats: publicProcedure.query(async () => {
+      const { getDomainDistribution } = await import('./db');
+      return await getDomainDistribution();
+    }),
+
+    /**
+     * Get sensitivity distribution statistics
+     */
+    getSensitivityStats: publicProcedure.query(async () => {
+      const { getSensitivityDistribution } = await import('./db');
+      return await getSensitivityDistribution();
+    }),
+
+    /**
+     * Get analyses over time
+     */
+    getAnalysesOverTime: publicProcedure
+      .input(z.object({ days: z.number().min(1).max(90).default(30) }))
+      .query(async ({ input }) => {
+        const { getAnalysesOverTime } = await import('./db');
+        return await getAnalysesOverTime(input.days);
+      }),
+
+    /**
+     * Get classification statistics
+     */
+    getStats: publicProcedure.query(async () => {
+      const { getClassificationStats } = await import('./db');
+      return await getClassificationStats();
+    }),
+  }),
+
+  // Followed Topics API
+  topics: router({
+    /**
+     * Follow a topic
+     */
+    follow: publicProcedure
+      .input(z.object({
+        topic: z.string().min(1).max(500),
+        domain: z.enum(['politics', 'economy', 'mental_health', 'medical', 'education', 'society', 'entertainment', 'general']).optional(),
+        riskThreshold: z.number().min(0).max(100).optional(),
+        alertDirection: z.enum(['increase', 'decrease', 'both']).default('both'),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) {
+          throw new Error('You must be logged in to follow topics');
+        }
+
+        const { createFollowedTopic } = await import('./db');
+        
+        await createFollowedTopic({
+          userId: ctx.user.id,
+          topic: input.topic,
+          domain: input.domain || null,
+          riskThreshold: input.riskThreshold || null,
+          alertDirection: input.alertDirection,
+        });
+
+        return { success: true };
+      }),
+
+    /**
+     * Get user's followed topics
+     */
+    getFollowed: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) return [];
+      
+      const { getUserFollowedTopics } = await import('./db');
+      return await getUserFollowedTopics(ctx.user.id);
+    }),
+
+    /**
+     * Get active followed topics
+     */
+    getActive: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) return [];
+      
+      const { getActiveFollowedTopics } = await import('./db');
+      return await getActiveFollowedTopics(ctx.user.id);
+    }),
+
+    /**
+     * Unfollow a topic
+     */
+    unfollow: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) {
+          throw new Error('You must be logged in');
+        }
+
+        const { deleteFollowedTopic } = await import('./db');
+        await deleteFollowedTopic(input.id);
+
+        return { success: true };
+      }),
+
+    /**
+     * Toggle topic active status
+     */
+    toggleActive: publicProcedure
+      .input(z.object({ id: z.number(), isActive: z.boolean() }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) {
+          throw new Error('You must be logged in');
+        }
+
+        const { toggleFollowedTopicActive } = await import('./db');
+        await toggleFollowedTopicActive(input.id, input.isActive);
+
+        return { success: true };
+      }),
+  }),
+
+  // Topic Alerts API (for followed topics notifications)
+  topicAlerts: router({
+    /**
+     * Get user's topic alerts
+     */
+    getAll: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).default(50) }))
+      .query(async ({ input, ctx }) => {
+        if (!ctx.user) return [];
+        
+        const { getUserTopicAlerts } = await import('./db');
+        return await getUserTopicAlerts(ctx.user.id, input.limit);
+      }),
+
+    /**
+     * Get unread alerts
+     */
+    getUnread: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) return [];
+      
+      const { getUnreadTopicAlerts } = await import('./db');
+      return await getUnreadTopicAlerts(ctx.user.id);
+    }),
+
+    /**
+     * Get unread count
+     */
+    getUnreadCount: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) return 0;
+      
+      const { getUnreadAlertsCount } = await import('./db');
+      return await getUnreadAlertsCount(ctx.user.id);
+    }),
+
+    /**
+     * Mark alert as read
+     */
+    markRead: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) {
+          throw new Error('You must be logged in');
+        }
+
+        const { markAlertAsRead } = await import('./db');
+        await markAlertAsRead(input.id);
+
+        return { success: true };
+      }),
+
+    /**
+     * Mark all alerts as read
+     */
+    markAllRead: publicProcedure.mutation(async ({ ctx }) => {
+      if (!ctx.user) {
+        throw new Error('You must be logged in');
+      }
+
+      const { markAllAlertsAsRead } = await import('./db');
+      await markAllAlertsAsRead(ctx.user.id);
+
+      return { success: true };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

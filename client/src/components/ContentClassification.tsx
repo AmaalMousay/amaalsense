@@ -24,7 +24,7 @@ export type ContentDomain =
   | 'education' 
   | 'society' 
   | 'entertainment' 
-  | 'general_news';
+  | 'general';
 
 // Sensitivity Levels
 export type SensitivityLevel = 'low' | 'medium' | 'high' | 'critical';
@@ -117,7 +117,7 @@ export const CONTENT_DOMAINS: {
     ]
   },
   {
-    id: 'general_news',
+    id: 'general',
     icon: Newspaper,
     labelEn: 'General News',
     labelAr: 'أخبار عامة',

@@ -244,11 +244,42 @@ export default function Analyzer() {
   const [topicResult, setTopicResult] = useState<any>(null);
   const [isTopicLoading, setIsTopicLoading] = useState(false);
 
+  // Mutation to save classified analysis
+  const saveClassifiedAnalysis = trpc.classification.saveAnalysis.useMutation();
+
   const analyzeHeadline = trpc.emotion.analyzeHeadline.useMutation({
     onSuccess: (data) => {
       setResult(data);
       setIsLoading(false);
       toast.success(language === 'ar' ? 'اكتمل تحليل المشاعر!' : 'Emotion analysis complete!');
+      
+      // Save to classified analyses if domain is selected
+      if (contentDomain) {
+        const domainConfig = getDomainConfig(contentDomain);
+        if (!domainConfig) return;
+        
+        // Calculate emotional risk score based on negative emotions
+        const emotionalRiskScore = Math.round(
+          (data.emotions.fear + data.emotions.anger + data.emotions.sadness) / 3
+        );
+        
+        saveClassifiedAnalysis.mutate({
+          headline: headline,
+          domain: contentDomain,
+          sensitivity: domainConfig.sensitivity,
+          emotionalRiskScore,
+          joy: data.emotions.joy,
+          fear: data.emotions.fear,
+          anger: data.emotions.anger,
+          sadness: data.emotions.sadness,
+          hope: data.emotions.hope,
+          curiosity: data.emotions.curiosity,
+          dominantEmotion: data.dominantEmotion,
+          confidence: data.confidence,
+          dcftWeight: data.fusion?.dcftContribution ? Math.round(data.fusion.dcftContribution * 100) : 70,
+          aiWeight: data.fusion?.aiContribution ? Math.round(data.fusion.aiContribution * 100) : 30,
+        });
+      }
     },
     onError: (error) => {
       setIsLoading(false);
