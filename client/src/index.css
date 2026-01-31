@@ -369,10 +369,10 @@
     font-weight: 600;
   }
 
-  /* Dark mode cosmic text - bright white for visibility */
+  /* Dark mode cosmic text - VERY bright white for maximum visibility */
   .dark .cosmic-text {
-    color: oklch(0.98 0.01 240);
-    text-shadow: 0 0 15px oklch(0.65 0.22 280 / 0.6);
+    color: #ffffff !important;
+    text-shadow: 0 0 20px oklch(0.65 0.22 280 / 0.8), 0 0 40px oklch(0.65 0.22 280 / 0.4);
   }
 
   /* Light mode cosmic text */
@@ -390,12 +390,13 @@
     animation: gradient-shift 3s ease infinite;
   }
 
-  /* Dark mode gradient text - much brighter for visibility */
+  /* Dark mode gradient text - VERY bright for maximum visibility */
   .dark .gradient-text {
-    background: linear-gradient(135deg, oklch(0.75 0.25 280), oklch(0.8 0.28 260), oklch(0.7 0.25 300));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    filter: brightness(1.3);
   }
 
   @keyframes gradient-shift {
