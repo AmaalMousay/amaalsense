@@ -11,10 +11,11 @@
 
 import { analyzeHybrid } from './hybridAnalyzer';
 import { fetchAllSocialMedia, fetchCountrySocialMedia, SocialPost, getAPIStatus } from './socialMediaService';
+import { fetchGoogleNews, fetchGoogleNewsByTopic, fetchGoogleNewsByCountry, convertToUnifiedFormat } from './googleRssService';
 
 // Types
 export interface DataSource {
-  type: 'news' | 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram';
+  type: 'news' | 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram' | 'google_rss';
   name: string;
   weight: number; // Influence weight for DCFT
   isReal: boolean;
@@ -54,6 +55,7 @@ export interface MoodResult {
   lastUpdated: Date;
   sources: {
     news: { count: number; isReal: boolean };
+    google_rss: { count: number; isReal: boolean };
     reddit: { count: number; isReal: boolean };
     mastodon: { count: number; isReal: boolean };
     bluesky: { count: number; isReal: boolean };
@@ -101,12 +103,13 @@ function determineMood(gmi: number, cfi: number, hri: number): { mood: string; m
 
 // Source weights for DCFT calculation
 const SOURCE_WEIGHTS: Record<string, number> = {
-  news: 0.85,      // News has highest weight (most reliable)
-  reddit: 0.65,    // Reddit has good discussions
-  bluesky: 0.60,   // Bluesky is growing
-  mastodon: 0.55,  // Mastodon federated
-  youtube: 0.50,   // YouTube comments can be noisy
-  telegram: 0.60,  // Telegram news channels
+  news: 0.85,        // News has highest weight (most reliable)
+  google_rss: 0.90,  // Google RSS aggregates top news sources
+  reddit: 0.65,      // Reddit has good discussions
+  bluesky: 0.60,     // Bluesky is growing
+  mastodon: 0.55,    // Mastodon federated
+  youtube: 0.50,     // YouTube comments can be noisy
+  telegram: 0.60,    // Telegram news channels
 };
 
 // News API integration
@@ -212,6 +215,7 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
   const allData: RawDataItem[] = [];
   const sourceCounts = {
     news: { count: 0, isReal: false },
+    google_rss: { count: 0, isReal: false },
     reddit: { count: 0, isReal: false },
     mastodon: { count: 0, isReal: false },
     bluesky: { count: 0, isReal: false },
@@ -219,11 +223,46 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
     telegram: { count: 0, isReal: false },
   };
   
-  // Fetch news data
-  const newsLimit = Math.ceil(limit * 0.4); // 40% from news
+  // Fetch news data from News API
+  const newsLimit = Math.ceil(limit * 0.3); // 30% from News API
   const newsData = await fetchNewsData(country, topic, newsLimit);
   allData.push(...newsData);
   sourceCounts.news = { count: newsData.length, isReal: newsData.length > 0 };
+  
+  // Fetch news from Google RSS (Arabic + English)
+  const googleRssLimit = Math.ceil(limit * 0.2); // 20% from Google RSS
+  try {
+    let googleNews;
+    if (topic) {
+      googleNews = await fetchGoogleNewsByTopic(topic, googleRssLimit);
+    } else if (country) {
+      googleNews = await fetchGoogleNewsByCountry(country, googleRssLimit);
+    } else {
+      googleNews = await fetchGoogleNews(googleRssLimit);
+    }
+    
+    const googleRssData = convertToUnifiedFormat(googleNews).map((item, index) => ({
+      id: `google-rss-${Date.now()}-${index}`,
+      text: item.text,
+      source: {
+        type: 'google_rss' as const,
+        name: `Google News (${item.language === 'ar' ? 'Arabic' : 'English'})`,
+        weight: SOURCE_WEIGHTS.google_rss,
+        isReal: true
+      },
+      timestamp: item.timestamp,
+      country: country,
+      topic: topic,
+      url: item.url,
+      isReal: true
+    }));
+    
+    allData.push(...googleRssData);
+    sourceCounts.google_rss = { count: googleRssData.length, isReal: googleRssData.length > 0 };
+    console.log(`[UnifiedData] Google RSS: ${googleRssData.length} items`);
+  } catch (error) {
+    console.error('[UnifiedData] Google RSS error:', error);
+  }
   
   // Fetch social media data
   const socialLimit = Math.ceil(limit * 0.6); // 60% from social media
