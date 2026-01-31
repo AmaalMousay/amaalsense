@@ -1028,3 +1028,12 @@
 - [x] إضافة حالة المزاج بالألوان
 - [x] تحسين تجربة المستخدم الاحترافية
 
+
+
+## Phase 81: Fix Dark Mode Text Visibility (User Request)
+
+### فحص وإصلاح الصفحات
+- [x] فحص جميع الصفحات في الوضع الداكن (Home, Theory, Terms, Analyzer, Reports, Profile, UserDashboard)
+- [x] إصلاح ألوان بطاقات التصنيف في ContentClassification.tsx
+- [x] إصلاح لون Disclaimer في Terms.tsx (text-orange-800 dark:text-orange-300)
+- [x] اختبار جميع الصفحات في الوضعين (فاتح/داكن) - جميعها تعمل بشكل صحيح

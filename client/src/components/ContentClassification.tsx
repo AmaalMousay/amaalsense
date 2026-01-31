@@ -225,14 +225,14 @@ export function ContentDomainSelector({ value, onChange, disabled }: ContentDoma
                 p-3 rounded-lg border-2 transition-all text-left
                 ${isSelected 
                   ? 'border-accent bg-accent/20' 
-                  : 'border-border/50 hover:border-accent/50 bg-muted/30'
+                  : 'border-border hover:border-accent/50 bg-card dark:bg-card/80'
                 }
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
               <div className="flex items-center gap-2 mb-1">
                 <Icon className="w-4 h-4" style={{ color: domain.color }} />
-                <span className="text-sm font-medium cosmic-text">
+                <span className="text-sm font-medium text-foreground">
                   {language === 'ar' ? domain.labelAr : domain.labelEn}
                 </span>
               </div>
@@ -457,7 +457,7 @@ export function ClassificationBadge({ domain, sensitivity }: ClassificationBadge
   return (
     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/50">
       <Icon className="w-4 h-4" style={{ color: domainConfig.color }} />
-      <span className="text-sm font-medium cosmic-text">
+      <span className="text-sm font-medium text-foreground">
         {language === 'ar' ? domainConfig.labelAr : domainConfig.labelEn}
       </span>
       <span className="text-muted-foreground">|</span>

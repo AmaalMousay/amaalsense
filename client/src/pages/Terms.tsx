@@ -89,10 +89,10 @@ export default function Terms() {
 
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">6. إخلاء المسؤولية</h2>
-                    <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg mb-4">
+                    <div className="p-4 bg-orange-500/20 border border-orange-500/50 rounded-lg mb-4">
                       <div className="flex items-start gap-3">
-                        <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-orange-200 font-medium">
+                        <AlertTriangle className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+                        <p className="text-orange-800 dark:text-orange-300 font-semibold">
                           AmalSense لا يقدم تشخيص طبي ولا توصيات سياسية، بل تحليل إحصائي لمشاعر جماعية.
                         </p>
                       </div>
@@ -203,10 +203,10 @@ export default function Terms() {
 
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">6. Disclaimer</h2>
-                    <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg mb-4">
+                    <div className="p-4 bg-orange-500/20 border border-orange-500/50 rounded-lg mb-4">
                       <div className="flex items-start gap-3">
                         <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-orange-200 font-medium">
+                        <p className="text-orange-800 dark:text-orange-300 font-semibold">
                           AmalSense does not provide medical diagnosis or political recommendations, but statistical analysis of collective emotions.
                         </p>
                       </div>
