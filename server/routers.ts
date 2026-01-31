@@ -1475,6 +1475,170 @@ Please verify the payment and confirm in the admin panel.
   }),
 
   // Topic Analysis - Advanced analysis by topic, demographics, and regions
+  // Telegram Notifications
+  telegram: router({
+    /**
+     * Get bot info to verify token
+     */
+    getBotInfo: publicProcedure.query(async () => {
+      const { getBotInfo } = await import("./telegramNotificationService");
+      return await getBotInfo();
+    }),
+
+    /**
+     * Subscribe to Telegram notifications
+     */
+    subscribe: publicProcedure
+      .input(z.object({
+        chatId: z.string().min(1),
+        country: z.string().length(2).optional(),
+        topics: z.array(z.string()).optional(),
+        alertTypes: z.array(z.enum(['mood_change', 'fear_spike', 'hope_surge', 'daily_summary'])).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { subscribeToNotifications } = await import("./telegramNotificationService");
+        const success = await subscribeToNotifications(input.chatId, {
+          country: input.country,
+          topics: input.topics,
+          alertTypes: input.alertTypes,
+        });
+        return { success };
+      }),
+
+    /**
+     * Send a test notification
+     */
+    sendTestNotification: publicProcedure
+      .input(z.object({ chatId: z.string().min(1) }))
+      .mutation(async ({ input }) => {
+        const { sendTelegramMessage } = await import("./telegramNotificationService");
+        const success = await sendTelegramMessage({
+          chatId: input.chatId,
+          text: `🧠 <b>AmalSense Test Notification</b>\n\nThis is a test message from AmalSense.\nYour notifications are working correctly!\n\n🕐 ${new Date().toLocaleString()}`,
+        });
+        return { success };
+      }),
+
+    /**
+     * Send mood alert manually
+     */
+    sendMoodAlert: publicProcedure
+      .input(z.object({
+        chatId: z.string().min(1),
+        country: z.string().length(2).optional(),
+        countryName: z.string().optional(),
+        topic: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { checkAndSendMoodAlert } = await import("./telegramNotificationService");
+        const { getLatestEmotionIndices } = await import("./db");
+        
+        const indices = await getLatestEmotionIndices();
+        const currentMood = {
+          gmi: indices?.gmi || 50,
+          cfi: indices?.cfi || 50,
+          hri: indices?.hri || 50,
+        };
+        
+        return await checkAndSendMoodAlert(input.chatId, currentMood, undefined, {
+          country: input.country,
+          countryName: input.countryName,
+          topic: input.topic,
+        });
+      }),
+
+    /**
+     * Send daily summary
+     */
+    sendDailySummary: publicProcedure
+      .input(z.object({
+        chatId: z.string().min(1),
+        country: z.string().length(2).optional(),
+        countryName: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { sendDailySummary } = await import("./telegramNotificationService");
+        const { getLatestEmotionIndices } = await import("./db");
+        
+        const indices = await getLatestEmotionIndices();
+        const mood = {
+          gmi: indices?.gmi || 50,
+          cfi: indices?.cfi || 50,
+          hri: indices?.hri || 50,
+        };
+        
+        const success = await sendDailySummary(input.chatId, mood, {
+          country: input.country,
+          countryName: input.countryName,
+        });
+        return { success };
+      }),
+  }),
+
+  // PDF Export - Enhanced
+  pdfExport: router({
+    /**
+     * Generate PDF report for analysis results
+     */
+    generateAnalysisReport: publicProcedure
+      .input(z.object({
+        topic: z.string().optional(),
+        country: z.string().length(2).optional(),
+        countryName: z.string().optional(),
+        timeRange: z.enum(['day', 'week', 'month']).optional(),
+        analysisData: z.object({
+          gmi: z.number(),
+          cfi: z.number(),
+          hri: z.number(),
+          supporters: z.number().optional(),
+          opponents: z.number().optional(),
+          neutral: z.number().optional(),
+          cities: z.array(z.object({
+            name: z.string(),
+            sentiment: z.number(),
+            change: z.number(),
+          })).optional(),
+        }).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { generateReportHTML, createReportData } = await import("./pdfExportService");
+        const { getLatestEmotionIndices } = await import("./db");
+        
+        // Get latest indices if not provided
+        let analysisData = input.analysisData;
+        if (!analysisData) {
+          const indices = await getLatestEmotionIndices();
+          analysisData = {
+            gmi: indices?.gmi || 50,
+            cfi: indices?.cfi || 50,
+            hri: indices?.hri || 50,
+          };
+        }
+        
+        const reportData = createReportData({
+          ...analysisData,
+          sentiment: {
+            positive: analysisData.supporters || 45,
+            negative: analysisData.opponents || 35,
+            neutral: analysisData.neutral || 20,
+          },
+          cities: analysisData.cities,
+        }, {
+          topic: input.topic,
+          country: input.country,
+          countryName: input.countryName,
+          timeRange: input.timeRange,
+        });
+        
+        const html = generateReportHTML(reportData);
+        const filename = input.topic 
+          ? `amalsense-${input.topic.replace(/\s+/g, '-').toLowerCase()}-report.html`
+          : `amalsense-report-${new Date().toISOString().split('T')[0]}.html`;
+        
+        return { html, filename };
+      }),
+  }),
+
   topic: router({
     /**
      * Analyze a topic in a specific country with demographic and regional breakdown

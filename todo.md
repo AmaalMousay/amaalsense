@@ -661,3 +661,16 @@
 ## Phase 48: Revert Select Arrow Fix (User Report)
 - [x] إرجاع السهم السابق الذي يعمل (تم - appearance-none + ChevronDown icon)
 - [x] إصلاح حقل كتابة الموضوع ليكون مفعل (تم - Input component)
+
+
+## Phase 49: New Features (User Request)
+- [ ] إضافة تصدير التقارير كـ PDF
+- [ ] تفعيل الإشعارات التلقائية عبر Telegram Bot
+
+
+## Phase 49: PDF Export & Telegram Notifications (User Request)
+- [x] إضافة تصدير التقارير كـ PDF (تم - زر تصدير في صفحة نتائج التحليل)
+- [x] تفعيل الإشعارات التلقائية عبر Telegram Bot (تم - صفحة إعدادات الإشعارات)
+- [x] إضافة خدمة pdfExportService.ts
+- [x] إضافة خدمة telegramNotificationService.ts
+- [x] تحديث صفحة NotificationSettings مع قسم Telegram

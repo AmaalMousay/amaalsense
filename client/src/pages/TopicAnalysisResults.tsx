@@ -108,9 +108,54 @@ export default function TopicAnalysisResults() {
 
   // Fetch analysis data using mutation
   const analyzeTopicMutation = trpc.topic.analyzeTopicInCountry.useMutation();
+  const generatePdfMutation = trpc.pdfExport.generateAnalysisReport.useMutation();
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<any>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Export PDF function
+  const handleExportPDF = async () => {
+    if (!analysisData) return;
+    
+    setIsExporting(true);
+    try {
+      const result = await generatePdfMutation.mutateAsync({
+        topic,
+        country: countryCode,
+        countryName,
+        timeRange,
+        analysisData: {
+          gmi: analysisData.gmi,
+          cfi: analysisData.cfi,
+          hri: analysisData.hri,
+          supporters: analysisData.overallSupport,
+          opponents: analysisData.overallOpposition,
+          neutral: analysisData.overallNeutral,
+          cities: analysisData.regions?.map((r: any) => ({
+            name: r.regionNameAr,
+            sentiment: r.support - r.opposition,
+            change: r.change || 0,
+          })),
+        },
+      });
+      
+      // Create and download HTML file
+      const blob = new Blob([result.html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export failed:', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   useEffect(() => {
     if (topic && countryCode) {
@@ -203,9 +248,9 @@ export default function TopicAnalysisResults() {
             <Share2 className="ml-2 h-4 w-4" />
             مشاركة
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={isExporting}>
             <Download className="ml-2 h-4 w-4" />
-            تصدير PDF
+            {isExporting ? 'جاري التصدير...' : 'تصدير PDF'}
           </Button>
         </div>
       </div>
