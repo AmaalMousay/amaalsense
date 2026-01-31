@@ -525,13 +525,13 @@ export default function Analyzer() {
                     <h3 className="text-xl font-bold cosmic-text mb-6">{t.analyzer.emotionVector}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {Object.entries(result.emotions).map(([emotion, score]: [string, any]) => (
-                        <Card key={emotion} className="cosmic-card p-4">
+                        <Card key={emotion} className="p-4 bg-slate-800/90 border border-purple-500/30">
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
-                              <span className="font-semibold cosmic-text">
+                              <span className="font-semibold text-white">
                                 {getEmotionName(emotion)}
                               </span>
-                              <span className="text-2xl font-bold gradient-text">
+                              <span className="text-2xl font-bold text-purple-300">
                                 {score.toFixed(0)}
                               </span>
                             </div>
@@ -780,9 +780,9 @@ export default function Analyzer() {
                           { key: 'sadness', label: language === 'ar' ? 'حزن' : 'Sadness', icon: '😢', color: '#8D5CF6' },
                           { key: 'curiosity', label: language === 'ar' ? 'فضول' : 'Curiosity', icon: '🤔', color: '#E9C46A' },
                         ].map((emotion) => (
-                          <div key={emotion.key} className="text-center p-3 rounded-lg" style={{ backgroundColor: `${emotion.color}20` }}>
+                          <div key={emotion.key} className="text-center p-3 rounded-lg dark:bg-slate-800/80" style={{ backgroundColor: `${emotion.color}15` }}>
                             <span className="text-2xl">{emotion.icon}</span>
-                            <p className="text-xs text-muted-foreground mt-1">{emotion.label}</p>
+                            <p className="text-xs font-medium text-slate-800 dark:text-white mt-1">{emotion.label}</p>
                             <p className="text-lg font-bold" style={{ color: emotion.color }}>
                               {((topicResult.emotions?.[emotion.key] || Math.random() * 30)).toFixed(1)}%
                             </p>
