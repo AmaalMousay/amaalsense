@@ -12,10 +12,11 @@
 import { analyzeHybrid } from './hybridAnalyzer';
 import { fetchAllSocialMedia, fetchCountrySocialMedia, SocialPost, getAPIStatus } from './socialMediaService';
 import { fetchGoogleNews, fetchGoogleNewsByTopic, fetchGoogleNewsByCountry, convertToUnifiedFormat } from './googleRssService';
+import { fetchGNewsMultilingual, convertToUnifiedFormat as convertGNewsToUnified } from './gnewsService';
 
 // Types
 export interface DataSource {
-  type: 'news' | 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram' | 'google_rss';
+  type: 'news' | 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram' | 'google_rss' | 'gnews';
   name: string;
   weight: number; // Influence weight for DCFT
   isReal: boolean;
@@ -56,6 +57,7 @@ export interface MoodResult {
   sources: {
     news: { count: number; isReal: boolean };
     google_rss: { count: number; isReal: boolean };
+    gnews: { count: number; isReal: boolean };
     reddit: { count: number; isReal: boolean };
     mastodon: { count: number; isReal: boolean };
     bluesky: { count: number; isReal: boolean };
@@ -105,6 +107,7 @@ function determineMood(gmi: number, cfi: number, hri: number): { mood: string; m
 const SOURCE_WEIGHTS: Record<string, number> = {
   news: 0.85,        // News has highest weight (most reliable)
   google_rss: 0.90,  // Google RSS aggregates top news sources
+  gnews: 0.88,       // GNews API - reliable news aggregator
   reddit: 0.65,      // Reddit has good discussions
   bluesky: 0.60,     // Bluesky is growing
   mastodon: 0.55,    // Mastodon federated
@@ -216,6 +219,7 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
   const sourceCounts = {
     news: { count: 0, isReal: false },
     google_rss: { count: 0, isReal: false },
+    gnews: { count: 0, isReal: false },
     reddit: { count: 0, isReal: false },
     mastodon: { count: 0, isReal: false },
     bluesky: { count: 0, isReal: false },
@@ -224,13 +228,13 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
   };
   
   // Fetch news data from News API
-  const newsLimit = Math.ceil(limit * 0.3); // 30% from News API
+  const newsLimit = Math.ceil(limit * 0.25); // 25% from News API
   const newsData = await fetchNewsData(country, topic, newsLimit);
   allData.push(...newsData);
   sourceCounts.news = { count: newsData.length, isReal: newsData.length > 0 };
   
   // Fetch news from Google RSS (Arabic + English)
-  const googleRssLimit = Math.ceil(limit * 0.2); // 20% from Google RSS
+  const googleRssLimit = Math.ceil(limit * 0.15); // 15% from Google RSS
   try {
     let googleNews;
     if (topic) {
@@ -264,8 +268,40 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
     console.error('[UnifiedData] Google RSS error:', error);
   }
   
+  // Fetch news from GNews API (Arabic + English)
+  const gnewsLimit = Math.ceil(limit * 0.1); // 10% from GNews
+  try {
+    const gnewsNews = await fetchGNewsMultilingual({
+      query: topic,
+      country: country,
+      max: gnewsLimit
+    });
+    
+    const gnewsData = convertGNewsToUnified(gnewsNews).map((item, index) => ({
+      id: `gnews-${Date.now()}-${index}`,
+      text: item.text,
+      source: {
+        type: 'gnews' as const,
+        name: `GNews (${item.language === 'ar' ? 'Arabic' : 'English'})`,
+        weight: SOURCE_WEIGHTS.gnews,
+        isReal: true
+      },
+      timestamp: item.timestamp,
+      country: country,
+      topic: topic,
+      url: item.url,
+      isReal: true
+    }));
+    
+    allData.push(...gnewsData);
+    sourceCounts.gnews = { count: gnewsData.length, isReal: gnewsData.length > 0 };
+    console.log(`[UnifiedData] GNews: ${gnewsData.length} items`);
+  } catch (error) {
+    console.error('[UnifiedData] GNews error:', error);
+  }
+  
   // Fetch social media data
-  const socialLimit = Math.ceil(limit * 0.6); // 60% from social media
+  const socialLimit = Math.ceil(limit * 0.5); // 50% from social media
   const query = topic || (country ? `${country} news` : 'world news');
   
   let socialResult;

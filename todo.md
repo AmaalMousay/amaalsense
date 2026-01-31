@@ -696,3 +696,9 @@
 - [x] إنشاء خدمة Google RSS للأخبار (عربي + إنجليزي) - googleRssService.ts
 - [x] دمج Google RSS في خدمة البيانات الموحدة - unifiedDataService.ts
 - [x] اختبار جلب الأخبار من Google RSS - يعمل بنجاح
+
+
+## Phase 54: Add GNews API (User Request)
+- [x] إضافة مفتاح GNews API للمشروع (تم - GNEWS_API_KEY)
+- [x] إنشاء خدمة GNews API (تم - gnewsService.ts)
+- [x] دمج GNews في خدمة البيانات الموحدة (تم - وزن 0.88)
