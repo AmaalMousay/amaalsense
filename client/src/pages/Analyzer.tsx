@@ -19,6 +19,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  ContentDomainSelector, 
+  EmotionalRiskMeter, 
+  Disclaimer, 
+  ClassificationBadge,
+  SensitivityIndicator,
+  type ContentDomain,
+  getDomainConfig
+} from '@/components/ContentClassification';
 
 // Country list for selection - organized by region (150+ countries)
 const COUNTRIES = [
@@ -224,6 +233,9 @@ export default function Analyzer() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   
+  // Content Classification state
+  const [contentDomain, setContentDomain] = useState<ContentDomain | ''>('');
+  
   // Advanced analysis state
   const [analysisMode, setAnalysisMode] = useState<'simple' | 'advanced'>('simple');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
@@ -261,6 +273,11 @@ export default function Analyzer() {
       toast.error(language === 'ar' ? 'يرجى إدخال عنوان' : 'Please enter a headline');
       return;
     }
+    
+    if (!contentDomain) {
+      toast.error(language === 'ar' ? 'يرجى اختيار نوع الموضوع' : 'Please select a topic type');
+      return;
+    }
 
     setIsLoading(true);
     analyzeHeadline.mutate({ headline });
@@ -275,6 +292,11 @@ export default function Analyzer() {
       toast.error(language === 'ar' ? 'يرجى اختيار دولة' : 'Please select a country');
       return;
     }
+    
+    if (!contentDomain) {
+      toast.error(language === 'ar' ? 'يرجى اختيار نوع الموضوع' : 'Please select a topic type');
+      return;
+    }
 
     const country = COUNTRIES.find(c => c.code === selectedCountry);
     if (!country) return;
@@ -286,6 +308,7 @@ export default function Analyzer() {
       country: selectedCountry,
       countryName,
       timeRange,
+      domain: contentDomain,
     });
     navigate(`/analysis-results?${params.toString()}`);
   };
@@ -337,6 +360,14 @@ export default function Analyzer() {
     'World Cup',
   ];
 
+  // Calculate emotion intensity from result
+  const getEmotionIntensity = () => {
+    if (!result) return 50;
+    const emotions = result.emotions;
+    const maxEmotion = Math.max(...Object.values(emotions) as number[]);
+    return Math.round(maxEmotion);
+  };
+
   return (
     <div className={`min-h-screen flex flex-col relative z-10 ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Navigation */}
@@ -385,7 +416,14 @@ export default function Analyzer() {
             <TabsContent value="simple" className="mt-8">
               {/* Input Section */}
               <Card className="cosmic-card p-8 mb-8">
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Content Domain Selector */}
+                  <ContentDomainSelector
+                    value={contentDomain}
+                    onChange={setContentDomain}
+                    disabled={isLoading}
+                  />
+                  
                   <label className="block">
                     <span className="text-sm font-medium cosmic-text mb-2 block">
                       {language === 'ar' ? 'العنوان الإخباري' : 'News Headline'}
@@ -406,9 +444,14 @@ export default function Analyzer() {
                     />
                   </label>
 
+                  {/* Disclaimer for sensitive topics */}
+                  {contentDomain && (
+                    <Disclaimer domain={contentDomain} compact />
+                  )}
+
                   <Button
                     onClick={handleAnalyze}
-                    disabled={isLoading || !headline.trim()}
+                    disabled={isLoading || !headline.trim() || !contentDomain}
                     className="glow-button text-white w-full py-6 text-lg"
                   >
                     {isLoading ? t.analyzer.analyzing : t.analyzer.analyze}
@@ -419,6 +462,25 @@ export default function Analyzer() {
               {/* Simple Results Section */}
               {result && (
                 <div className="space-y-8 animate-in fade-in duration-500">
+                  {/* Classification Badge & Risk Meter */}
+                  {contentDomain && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Card className="cosmic-card p-4">
+                        <h4 className="text-sm font-medium text-muted-foreground mb-3">
+                          {language === 'ar' ? 'تصنيف المحتوى' : 'Content Classification'}
+                        </h4>
+                        <ClassificationBadge 
+                          domain={contentDomain} 
+                          sensitivity={getDomainConfig(contentDomain)?.sensitivity || 'medium'} 
+                        />
+                      </Card>
+                      <EmotionalRiskMeter 
+                        domain={contentDomain} 
+                        emotionIntensity={getEmotionIntensity()}
+                      />
+                    </div>
+                  )}
+                  
                   {/* Analyzed Headline */}
                   <Card className="cosmic-card p-6">
                     <h3 className="text-sm font-medium text-muted-foreground mb-2">
@@ -500,11 +562,17 @@ export default function Analyzer() {
                     </Card>
                   )}
 
+                  {/* Full Disclaimer */}
+                  {contentDomain && (
+                    <Disclaimer domain={contentDomain} />
+                  )}
+
                   {/* New Analysis Button */}
                   <Button
                     onClick={() => {
                       setHeadline('');
                       setResult(null);
+                      setContentDomain('');
                     }}
                     variant="outline"
                     className="w-full py-6"
@@ -545,6 +613,13 @@ export default function Analyzer() {
                     <Globe className="w-5 h-5" />
                     {language === 'ar' ? 'تحليل موضوع في دولة محددة' : 'Analyze Topic in Specific Country'}
                   </h3>
+                  
+                  {/* Content Domain Selector */}
+                  <ContentDomainSelector
+                    value={contentDomain}
+                    onChange={setContentDomain}
+                    disabled={isTopicLoading}
+                  />
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Country Selection - Native HTML Select for better mobile support */}
@@ -623,9 +698,14 @@ export default function Analyzer() {
                     ))}
                   </div>
 
+                  {/* Disclaimer for sensitive topics */}
+                  {contentDomain && (
+                    <Disclaimer domain={contentDomain} compact />
+                  )}
+
                   <Button
                     onClick={handleTopicAnalysis}
-                    disabled={isTopicLoading || !topic.trim() || !selectedCountry}
+                    disabled={isTopicLoading || !topic.trim() || !selectedCountry || !contentDomain}
                     className="glow-button text-white w-full py-6 text-lg"
                   >
                     {isTopicLoading 
@@ -857,6 +937,7 @@ export default function Analyzer() {
                     onClick={() => {
                       setTopic('');
                       setTopicResult(null);
+                      setContentDomain('');
                     }}
                     variant="outline"
                     className="w-full py-6"

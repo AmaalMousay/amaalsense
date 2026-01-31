@@ -1,8 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
-import { ArrowLeft, FileText } from "lucide-react";
+import { ArrowLeft, FileText, Shield, AlertTriangle, Scale, Globe, Lock } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { LogoIcon } from "@/components/Logo";
+import { 
+  CONTENT_DOMAINS, 
+  SENSITIVITY_LEVELS,
+  SensitivityIndicator 
+} from '@/components/ContentClassification';
 
 export default function Terms() {
   const { t, isRTL } = useI18n();
@@ -84,9 +89,58 @@ export default function Terms() {
 
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">6. إخلاء المسؤولية</h2>
+                    <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg mb-4">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                        <p className="text-orange-200 font-medium">
+                          AmalSense لا يقدم تشخيص طبي ولا توصيات سياسية، بل تحليل إحصائي لمشاعر جماعية.
+                        </p>
+                      </div>
+                    </div>
                     <p className="text-muted-foreground leading-relaxed">
                       تُقدم الخدمة "كما هي" دون أي ضمانات. لا نضمن دقة أو اكتمال أو موثوقية أي تحليل أو توقع. لا ينبغي استخدام نتائجنا كأساس وحيد لاتخاذ القرارات المالية أو الاستثمارية.
                     </p>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-bold text-accent mb-3">نظام تصنيف المحتوى</h2>
+                    <p className="text-muted-foreground leading-relaxed mb-4">
+                      يستخدم AmalSense نظام تصنيف متقدم لتحديد نوع المحتوى ومستوى حساسيته:
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      {CONTENT_DOMAINS.map((domain) => {
+                        const Icon = domain.icon;
+                        return (
+                          <div key={domain.id} className="p-3 bg-muted/30 rounded-lg">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Icon className="w-4 h-4" style={{ color: domain.color }} />
+                              <span className="font-medium text-sm">{domain.labelAr}</span>
+                            </div>
+                            <SensitivityIndicator level={domain.sensitivity} size="sm" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-bold text-accent mb-3">مستويات الحساسية</h2>
+                    <div className="space-y-2">
+                      {SENSITIVITY_LEVELS.map((level) => (
+                        <div 
+                          key={level.level} 
+                          className="p-3 rounded-lg"
+                          style={{ backgroundColor: level.bgColor }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium" style={{ color: level.color }}>
+                              {level.labelAr}
+                            </span>
+                            <span className="text-sm text-muted-foreground">{level.description.ar}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </section>
 
                   <section>
@@ -149,9 +203,58 @@ export default function Terms() {
 
                   <section>
                     <h2 className="text-xl font-bold text-accent mb-3">6. Disclaimer</h2>
+                    <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg mb-4">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
+                        <p className="text-orange-200 font-medium">
+                          AmalSense does not provide medical diagnosis or political recommendations, but statistical analysis of collective emotions.
+                        </p>
+                      </div>
+                    </div>
                     <p className="text-muted-foreground leading-relaxed">
                       The service is provided "as is" without any warranties. We do not guarantee the accuracy, completeness, or reliability of any analysis or forecast. Our results should not be used as the sole basis for financial or investment decisions.
                     </p>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-bold text-accent mb-3">Content Classification System</h2>
+                    <p className="text-muted-foreground leading-relaxed mb-4">
+                      AmalSense uses an advanced classification system to determine content type and sensitivity level:
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      {CONTENT_DOMAINS.map((domain) => {
+                        const Icon = domain.icon;
+                        return (
+                          <div key={domain.id} className="p-3 bg-muted/30 rounded-lg">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Icon className="w-4 h-4" style={{ color: domain.color }} />
+                              <span className="font-medium text-sm">{domain.labelEn}</span>
+                            </div>
+                            <SensitivityIndicator level={domain.sensitivity} size="sm" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+
+                  <section>
+                    <h2 className="text-xl font-bold text-accent mb-3">Sensitivity Levels</h2>
+                    <div className="space-y-2">
+                      {SENSITIVITY_LEVELS.map((level) => (
+                        <div 
+                          key={level.level} 
+                          className="p-3 rounded-lg"
+                          style={{ backgroundColor: level.bgColor }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium" style={{ color: level.color }}>
+                              {level.labelEn}
+                            </span>
+                            <span className="text-sm text-muted-foreground">{level.description.en}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </section>
 
                   <section>
