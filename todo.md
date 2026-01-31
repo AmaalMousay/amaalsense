@@ -651,3 +651,8 @@
 ## Phase 46: Deep Mobile Fix (User Report - Select & Map Still Not Working)
 - [x] استبدال Radix Select بـ Native HTML Select للموبايل (تم - قوائم واضحة بخلفية slate-800)
 - [x] إصلاح الخريطة الحرارية للموبايل (تم - تحميل فوري بدون انتظار APIs)
+
+
+## Phase 47: Analyzer UI Fixes (User Report)
+- [x] إزالة السهم المكرر في قوائم Select Country و Time Range (تم - appearance-auto)
+- [x] إصلاح حقل إدخال الموضوع (Topic) ليكون قابل للكتابة (تم - native input)
