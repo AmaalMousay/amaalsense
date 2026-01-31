@@ -19,6 +19,7 @@
 import { AffectiveVector } from './dcft/affectiveVector';
 import { dcftEngine, DCFTAnalysisResult } from './dcft';
 import { analyzeTextsWithAI, SentimentAnalysisResult, BatchAnalysisResult } from './aiSentimentAnalyzer';
+import { classifyContext, applyContextAdjustments, ContextClassification } from './contextClassifier';
 
 /**
  * Hybrid analysis configuration
@@ -77,6 +78,17 @@ export interface HybridAnalysisResult {
     dcftContribution: number;    // Percentage
     aiContribution: number;      // Percentage
     confidence: number;
+  };
+  
+  // Meta-Learning Context (NEW)
+  context?: {
+    eventType: string;           // Type of event (death, celebration, etc.)
+    culturalRegion: string;      // Cultural/geographical region
+    detectedLanguage: string;    // Detected language
+    dialect?: string;            // Detected dialect (for Arabic)
+    sensitivityLevel: string;    // Content sensitivity
+    detectedKeywords: string[];  // Keywords that triggered classification
+    confidence: number;          // Context classification confidence
   };
   
   // Analysis metadata
@@ -170,6 +182,7 @@ function fuseEmotions(
 /**
  * Main hybrid analysis function
  * Analyzes text using DCFT as primary (70%) and AI as enhancement (30%)
+ * NOW WITH META-LEARNING: Context is classified BEFORE emotional analysis
  */
 export async function analyzeHybrid(
   text: string,
@@ -178,6 +191,11 @@ export async function analyzeHybrid(
 ): Promise<HybridAnalysisResult> {
   const startTime = Date.now();
   const config = { ...HYBRID_CONFIG, ...options };
+
+  // Step 0: META-LEARNING - Classify context BEFORE analysis
+  // This is the key innovation: understand WHAT we're analyzing before HOW to analyze it
+  const contextClassification = await classifyContext(text);
+  console.log(`[HybridAnalyzer] Meta-Learning Context: ${contextClassification.eventType} (${(contextClassification.confidence * 100).toFixed(1)}%) | Region: ${contextClassification.culturalRegion}`);
 
   // Step 1: DCFT Analysis (PRIMARY - always runs)
   const dcftResult = await dcftEngine.analyzeText(text, source);
@@ -217,12 +235,64 @@ export async function analyzeHybrid(
   const actualDcftWeight = aiWasUsed ? config.dcftWeight : 1.0;
   const actualAiWeight = aiWasUsed ? config.aiWeight : 0.0;
 
-  const fusedEmotions = fuseEmotions(
+  let fusedEmotions = fuseEmotions(
     dcftAV,
     aiEmotions,
     actualDcftWeight,
     actualAiWeight
   );
+
+  // Step 3.5: META-LEARNING CONTEXT ADJUSTMENT
+  // Apply context-aware adjustments based on the classified event type and cultural region
+  // This replaces the old hardcoded keyword detection with intelligent context understanding
+  if (contextClassification.confidence > 0.5) {
+    console.log(`[HybridAnalyzer] Applying Meta-Learning adjustments for ${contextClassification.eventType}`);
+    
+    // Apply context-based emotional adjustments
+    const adj = contextClassification.emotionalAdjustments;
+    const blendFactor = contextClassification.confidence;
+    
+    // Adjust emotions based on context
+    fusedEmotions = {
+      joy: fusedEmotions.joy + (adj.joy * blendFactor),
+      fear: fusedEmotions.fear + (adj.fear * blendFactor),
+      anger: fusedEmotions.anger + (adj.anger * blendFactor),
+      sadness: fusedEmotions.sadness + (adj.sadness * blendFactor),
+      hope: fusedEmotions.hope + (adj.hope * blendFactor),
+      curiosity: fusedEmotions.curiosity + (adj.curiosity * blendFactor),
+    };
+    
+    // Apply hard limits for critical event types
+    if (contextClassification.eventType === 'death' && contextClassification.confidence > 0.6) {
+      fusedEmotions.joy = Math.min(-0.7, fusedEmotions.joy);
+      fusedEmotions.sadness = Math.max(0.8, fusedEmotions.sadness);
+      fusedEmotions.hope = Math.min(-0.4, fusedEmotions.hope);
+    }
+    
+    if (contextClassification.eventType === 'disaster' && contextClassification.confidence > 0.6) {
+      fusedEmotions.joy = Math.min(-0.6, fusedEmotions.joy);
+      fusedEmotions.fear = Math.max(0.6, fusedEmotions.fear);
+      fusedEmotions.sadness = Math.max(0.5, fusedEmotions.sadness);
+    }
+    
+    if (contextClassification.eventType === 'celebration' && contextClassification.confidence > 0.6) {
+      fusedEmotions.joy = Math.max(0.6, fusedEmotions.joy);
+      fusedEmotions.hope = Math.max(0.5, fusedEmotions.hope);
+      fusedEmotions.sadness = Math.min(-0.4, fusedEmotions.sadness);
+    }
+    
+    if (contextClassification.eventType === 'conflict' && contextClassification.confidence > 0.6) {
+      fusedEmotions.joy = Math.min(-0.5, fusedEmotions.joy);
+      fusedEmotions.fear = Math.max(0.5, fusedEmotions.fear);
+      fusedEmotions.anger = Math.max(0.4, fusedEmotions.anger);
+    }
+    
+    // Clamp all values to -1 to +1 range
+    Object.keys(fusedEmotions).forEach(key => {
+      const k = key as keyof AffectiveVector;
+      fusedEmotions[k] = Math.max(-1, Math.min(1, fusedEmotions[k]));
+    });
+  }
 
   // Step 4: Calculate final indices using DCFT formulas
   // The indices are primarily from DCFT, enhanced by fused emotions
@@ -282,6 +352,16 @@ export async function analyzeHybrid(
       confidence: Math.min(1, Math.max(0, aiWasUsed 
         ? (dcftResult.confidence * actualDcftWeight + aiConfidence * actualAiWeight)
         : dcftResult.confidence)),
+    },
+    // Meta-Learning Context Information
+    context: {
+      eventType: contextClassification.eventType,
+      culturalRegion: contextClassification.culturalRegion,
+      detectedLanguage: contextClassification.detectedLanguage,
+      dialect: contextClassification.dialect,
+      sensitivityLevel: contextClassification.sensitivityLevel,
+      detectedKeywords: contextClassification.detectedKeywords,
+      confidence: contextClassification.confidence,
     },
     analyzedAt: new Date(),
     processingTimeMs,

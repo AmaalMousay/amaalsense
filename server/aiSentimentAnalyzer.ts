@@ -46,20 +46,27 @@ export async function analyzeTextWithAI(text: string): Promise<SentimentAnalysis
       messages: [
         {
           role: 'system',
-          content: `You are an expert emotion analyst. Analyze the given text and extract emotion scores.
-          
+          content: `You are an expert emotion analyst specializing in Arabic and Middle Eastern cultural context. Analyze the given text and extract emotion scores.
+
+IMPORTANT CONTEXT RULES:
+1. Arabic death/funeral keywords MUST trigger high sadness: موت, وفاة, توفي, رحيل, فقدان, استشهد, شهيد, مقتل, قتل, ضحية, ضحايا, جنازة, دفن, death, died, killed, funeral
+2. News about someone's death should NEVER have high joy - sadness should dominate
+3. War/conflict news should have high fear and anger, low joy
+4. Economic growth/success news can have high hope and joy
+5. Consider the ACTUAL meaning, not just individual words
+
 Return a JSON object with these exact fields:
-- joy: number (0-100) - happiness, celebration, success
+- joy: number (0-100) - happiness, celebration, success (MUST be LOW for death/tragedy news)
 - fear: number (0-100) - anxiety, worry, threat
 - anger: number (0-100) - frustration, outrage, conflict
-- sadness: number (0-100) - loss, grief, disappointment
+- sadness: number (0-100) - loss, grief, disappointment (MUST be HIGH for death/tragedy news)
 - hope: number (0-100) - optimism, future potential, solutions
 - curiosity: number (0-100) - interest, discovery, questions
-- dominantEmotion: string - the strongest emotion
-- sentiment: "positive" | "negative" | "neutral"
+- dominantEmotion: string - the strongest emotion (should be "sadness" for death news)
+- sentiment: "positive" | "negative" | "neutral" (death news = negative)
 - confidence: number (0-100) - how confident you are in this analysis
 
-Be accurate and consider cultural context. News headlines often have subtle emotional undertones.`,
+Be accurate and consider Arabic/Middle Eastern cultural context. Death and tragedy news should ALWAYS have sadness as dominant emotion.`,
         },
         {
           role: 'user',
@@ -98,13 +105,42 @@ Be accurate and consider cultural context. News headlines often have subtle emot
 
     const analysis = JSON.parse(content);
     
-    // Calculate indices
+    // Post-processing: Check for Arabic death/tragedy keywords
+    const arabicDeathKeywords = ['موت', 'وفاة', 'توفي', 'رحيل', 'فقدان', 'استشهد', 'شهيد', 'مقتل', 'قتل', 'ضحية', 'ضحايا', 'جنازة', 'دفن', 'اغتيال'];
+    const englishDeathKeywords = ['death', 'died', 'killed', 'funeral', 'murder', 'assassination'];
+    const isDeathNews = arabicDeathKeywords.some(word => text.includes(word)) || 
+                        englishDeathKeywords.some(word => text.toLowerCase().includes(word));
+    
+    // Calculate indices with post-processing for death news
+    let adjustedJoy = Math.min(100, Math.max(0, analysis.joy));
+    let adjustedSadness = Math.min(100, Math.max(0, analysis.sadness));
+    let adjustedHope = Math.min(100, Math.max(0, analysis.hope));
+    let dominantEmotion = analysis.dominantEmotion;
+    let sentiment = analysis.sentiment;
+    
+    // If death news detected, force appropriate emotions
+    if (isDeathNews) {
+      console.log('[AI Analyzer] BEFORE adjustment - Joy:', adjustedJoy, 'Hope:', adjustedHope, 'Sadness:', adjustedSadness);
+      // Cap joy at 15% for death news
+      adjustedJoy = Math.min(15, adjustedJoy);
+      // Ensure sadness is at least 70%
+      adjustedSadness = Math.max(70, adjustedSadness);
+      // Cap hope at 30% for death news
+      adjustedHope = Math.min(30, adjustedHope);
+      // Force dominant emotion to sadness
+      dominantEmotion = 'sadness';
+      // Force negative sentiment
+      sentiment = 'negative';
+      console.log('[AI Analyzer] AFTER adjustment - Joy:', adjustedJoy, 'Hope:', adjustedHope, 'Sadness:', adjustedSadness);
+      console.log('[AI Analyzer] Death news detected, adjusting emotions:', text.substring(0, 50));
+    }
+    
     const emotions: EmotionVector = {
-      joy: Math.min(100, Math.max(0, analysis.joy)),
+      joy: adjustedJoy,
       fear: Math.min(100, Math.max(0, analysis.fear)),
       anger: Math.min(100, Math.max(0, analysis.anger)),
-      sadness: Math.min(100, Math.max(0, analysis.sadness)),
-      hope: Math.min(100, Math.max(0, analysis.hope)),
+      sadness: adjustedSadness,
+      hope: adjustedHope,
       curiosity: Math.min(100, Math.max(0, analysis.curiosity)),
     };
 
@@ -115,8 +151,8 @@ Be accurate and consider cultural context. News headlines often have subtle emot
     return {
       text,
       emotions,
-      dominantEmotion: analysis.dominantEmotion,
-      sentiment: analysis.sentiment,
+      dominantEmotion,
+      sentiment,
       confidence: Math.min(100, Math.max(0, analysis.confidence)),
       gmi,
       cfi,
@@ -262,16 +298,55 @@ function aggregateResults(results: SentimentAnalysisResult[]): {
  * Create fallback analysis when AI is unavailable
  */
 function createFallbackAnalysis(text: string): SentimentAnalysisResult {
-  // Simple keyword-based fallback
+  // Simple keyword-based fallback with Arabic support
   const lowerText = text.toLowerCase();
   
+  // English keywords
   const positiveWords = ['success', 'growth', 'win', 'celebrate', 'achieve', 'improve', 'hope', 'peace', 'progress'];
   const negativeWords = ['crisis', 'war', 'death', 'fail', 'crash', 'attack', 'fear', 'threat', 'disaster'];
   const fearWords = ['fear', 'threat', 'danger', 'crisis', 'emergency', 'warning', 'risk'];
   const hopeWords = ['hope', 'future', 'plan', 'develop', 'invest', 'build', 'grow', 'improve'];
+  
+  // Arabic keywords for death/tragedy - CRITICAL for proper analysis
+  const arabicDeathWords = ['موت', 'وفاة', 'توفي', 'رحيل', 'فقدان', 'استشهد', 'شهيد', 'مقتل', 'قتل', 'ضحية', 'ضحايا', 'جنازة', 'دفن', 'اغتيال'];
+  const arabicSadWords = ['حزن', 'أسى', 'مأساة', 'كارثة', 'مصيبة', 'فاجعة', 'ألم', 'معاناة'];
+  const arabicFearWords = ['خوف', 'رعب', 'تهديد', 'خطر', 'أزمة', 'حرب', 'صراع', 'عنف'];
+  const arabicHopeWords = ['أمل', 'تفاؤل', 'نجاح', 'إنجاز', 'تطور', 'نمو', 'سلام', 'استقرار'];
+  const arabicJoyWords = ['فرح', 'سعادة', 'احتفال', 'فوز', 'انتصار', 'زفاف', 'عيد'];
 
-  let positiveScore = 0, negativeScore = 0, fearScore = 0, hopeScore = 0;
+  let positiveScore = 0, negativeScore = 0, fearScore = 0, hopeScore = 0, sadnessScore = 0, joyScore = 0;
+  let isDeathNews = false;
 
+  // Check for Arabic death keywords FIRST (highest priority)
+  for (const word of arabicDeathWords) {
+    if (text.includes(word)) {
+      sadnessScore += 40;
+      negativeScore += 30;
+      isDeathNews = true;
+    }
+  }
+  
+  // Arabic sad words
+  for (const word of arabicSadWords) {
+    if (text.includes(word)) sadnessScore += 25;
+  }
+  
+  // Arabic fear words
+  for (const word of arabicFearWords) {
+    if (text.includes(word)) fearScore += 25;
+  }
+  
+  // Arabic hope words
+  for (const word of arabicHopeWords) {
+    if (text.includes(word)) hopeScore += 20;
+  }
+  
+  // Arabic joy words
+  for (const word of arabicJoyWords) {
+    if (text.includes(word)) joyScore += 20;
+  }
+
+  // English keywords
   for (const word of positiveWords) {
     if (lowerText.includes(word)) positiveScore += 15;
   }
@@ -285,12 +360,13 @@ function createFallbackAnalysis(text: string): SentimentAnalysisResult {
     if (lowerText.includes(word)) hopeScore += 20;
   }
 
+  // If death news detected, override joy to be very low
   const emotions: EmotionVector = {
-    joy: Math.min(100, positiveScore + 20),
+    joy: isDeathNews ? Math.min(15, joyScore) : Math.min(100, positiveScore + joyScore + 20),
     fear: Math.min(100, fearScore + negativeScore * 0.5 + 15),
     anger: Math.min(100, negativeScore * 0.3 + 10),
-    sadness: Math.min(100, negativeScore * 0.4 + 10),
-    hope: Math.min(100, hopeScore + positiveScore * 0.5 + 25),
+    sadness: isDeathNews ? Math.min(100, sadnessScore + 60) : Math.min(100, sadnessScore + negativeScore * 0.4 + 10),
+    hope: isDeathNews ? Math.min(30, hopeScore) : Math.min(100, hopeScore + positiveScore * 0.5 + 25),
     curiosity: Math.min(100, 30 + Math.random() * 20),
   };
 
