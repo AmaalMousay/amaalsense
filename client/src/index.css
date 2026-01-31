@@ -342,6 +342,8 @@
     height: 200%;
     background: radial-gradient(circle, oklch(0.65 0.22 280 / 0.1) 0%, transparent 70%);
     animation: cosmic-glow 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
   }
 
   @keyframes cosmic-glow {
