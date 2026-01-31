@@ -1037,3 +1037,24 @@
 - [x] إصلاح ألوان بطاقات التصنيف في ContentClassification.tsx
 - [x] إصلاح لون Disclaimer في Terms.tsx (text-orange-800 dark:text-orange-300)
 - [x] اختبار جميع الصفحات في الوضعين (فاتح/داكن) - جميعها تعمل بشكل صحيح
+
+
+## Phase 82: Twitter Integration with Manus Data API (Zero Cost)
+
+### إنشاء خدمة Twitter
+- [x] إنشاء خدمة twitterService.ts باستخدام Manus Data API
+- [x] إضافة وظائف جلب التغريدات حسب الكلمة المفتاحية (searchTwitterPosts)
+- [x] إضافة وظيفة جلب تغريدات مستخدم معين (getUserTweets)
+- [x] إضافة وظيفة جلب ملف المستخدم (getTwitterUserProfile)
+
+### دمج Twitter مع النظام
+- [x] إضافة Twitter كمصدر في socialMediaService.ts
+- [x] تحديث fetchAllSocialMedia ليشمل Twitter
+- [x] تحديث getAPIStatus لعرض حالة Twitter
+- [x] Twitter متاح كمصدر سادس (6 مصادر اجتماعية)
+
+### تحديث الواجهة
+- [x] Twitter يظهر تلقائياً في مصادر البيانات
+- [x] عرض عدد التغريدات المحللة في النتائج
+- [x] Twitter مدمج مع المحرك الهجين DCFT
+

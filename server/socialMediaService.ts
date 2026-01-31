@@ -6,12 +6,13 @@
  */
 
 import axios from 'axios';
+import { searchTwitterPosts, TwitterPost } from './twitterService';
 
 export interface SocialPost {
   id: string;
   text: string;
   author: string;
-  platform: 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram';
+  platform: 'reddit' | 'mastodon' | 'bluesky' | 'youtube' | 'telegram' | 'twitter';
   url: string;
   publishedAt: Date;
   engagement: {
@@ -604,6 +605,7 @@ export interface MultiSourceResult {
     bluesky: { count: number; success: boolean; isReal: boolean };
     youtube: { count: number; success: boolean; isReal: boolean };
     telegram: { count: number; success: boolean; isReal: boolean };
+    twitter: { count: number; success: boolean; isReal: boolean };
   };
   totalPosts: number;
   realPosts: number;
@@ -614,20 +616,46 @@ export interface MultiSourceResult {
  * Fetch from all social media sources
  */
 export async function fetchAllSocialMedia(params: SocialSearchParams): Promise<MultiSourceResult> {
-  const limitPerSource = Math.ceil((params.limit || 50) / 5);
+  const limitPerSource = Math.ceil((params.limit || 60) / 6);
 
   console.log(`[SocialMedia] Fetching from all sources for: "${params.query}"`);
 
+  // Fetch Twitter posts and convert to SocialPost format
+  const fetchTwitter = async (): Promise<SocialPost[]> => {
+    try {
+      const tweets = await searchTwitterPosts({ ...params, limit: limitPerSource });
+      return tweets.map(t => ({
+        id: t.id,
+        text: t.text,
+        author: t.author,
+        platform: 'twitter' as const,
+        url: t.url,
+        publishedAt: t.publishedAt,
+        engagement: {
+          likes: t.engagement.likes,
+          comments: t.engagement.comments,
+          shares: t.engagement.shares,
+        },
+        metadata: t.metadata,
+        isReal: t.isReal,
+      }));
+    } catch (e) {
+      console.error('[Twitter] Error:', e);
+      return [];
+    }
+  };
+
   // Fetch from all sources in parallel
-  const [reddit, mastodon, bluesky, youtube, telegram] = await Promise.all([
+  const [reddit, mastodon, bluesky, youtube, telegram, twitter] = await Promise.all([
     fetchRedditPosts({ ...params, limit: limitPerSource }).catch((e) => { console.error('[Reddit] Error:', e); return []; }),
     fetchMastodonPosts({ ...params, limit: limitPerSource }).catch((e) => { console.error('[Mastodon] Error:', e); return []; }),
     fetchBlueskyPosts({ ...params, limit: limitPerSource }).catch((e) => { console.error('[Bluesky] Error:', e); return []; }),
     fetchYouTubeComments({ ...params, limit: limitPerSource }).catch((e) => { console.error('[YouTube] Error:', e); return []; }),
     fetchTelegramPosts({ ...params, limit: limitPerSource }).catch((e) => { console.error('[Telegram] Error:', e); return []; }),
+    fetchTwitter(),
   ]);
 
-  const allPosts = [...reddit, ...mastodon, ...bluesky, ...youtube, ...telegram];
+  const allPosts = [...reddit, ...mastodon, ...bluesky, ...youtube, ...telegram, ...twitter];
   
   // Sort by date (newest first)
   allPosts.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
@@ -637,13 +665,14 @@ export async function fetchAllSocialMedia(params: SocialSearchParams): Promise<M
   console.log(`[SocialMedia] Total: ${allPosts.length} posts (${realPosts} real)`);
 
   return {
-    posts: allPosts.slice(0, params.limit || 50),
+    posts: allPosts.slice(0, params.limit || 60),
     sources: {
       reddit: { count: reddit.length, success: reddit.length > 0, isReal: reddit.every(p => p.isReal) },
       mastodon: { count: mastodon.length, success: mastodon.length > 0, isReal: mastodon.every(p => p.isReal) },
       bluesky: { count: bluesky.length, success: bluesky.length > 0, isReal: bluesky.every(p => p.isReal) },
       youtube: { count: youtube.length, success: youtube.length > 0, isReal: youtube.every(p => p.isReal) },
       telegram: { count: telegram.length, success: telegram.length > 0, isReal: telegram.every(p => p.isReal) },
+      twitter: { count: twitter.length, success: twitter.length > 0, isReal: twitter.every(p => p.isReal) },
     },
     totalPosts: allPosts.length,
     realPosts,
@@ -740,6 +769,7 @@ export async function fetchCountrySocialMedia(
  */
 export async function getAPIStatus(): Promise<Record<string, { available: boolean; message: string }>> {
   return {
+    twitter: { available: true, message: 'Manus Data API (no key required)' },
     reddit: { available: true, message: 'Public API (no key required)' },
     mastodon: { available: true, message: 'Federated API (6 instances)' },
     bluesky: { available: true, message: 'AT Protocol public API' },
