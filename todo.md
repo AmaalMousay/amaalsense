@@ -731,3 +731,11 @@
 - [x] تصحيح الأرقام لتكون بين 0-100% للنسب (تم إضافة Math.min/max)
 - [x] تصحيح confidence في topicAnalyzer.ts و hybridAnalyzer.ts
 - [x] التحقق من أن مستوى الثقة يظهر الآن 100% بدلاً من 2742%
+
+
+## Phase 59: Fix Heat Map for All Countries (User Request)
+- [x] التحقق من عمل الخريطة الحرارية مع جميع الدول (France, Japan, Nigeria, Brazil - تم الاختبار)
+- [x] تحديد الدول التي لا تظهر فيها الخريطة - تم إصلاحها
+- [x] إضافة إحداثيات مراكز 120+ دولة في TopicAnalysisResults.tsx و RegionalHeatMap.tsx
+- [x] إضافة دالة getDefaultRegionCoordinates لحساب إحداثيات المناطق الافتراضية
+- [x] اختبار الخريطة مع عدة دول مختلفة - تعمل بنجاح
