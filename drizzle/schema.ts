@@ -403,3 +403,61 @@ export const customAlerts = mysqlTable("custom_alerts", {
 
 export type CustomAlert = typeof customAlerts.$inferSelect;
 export type InsertCustomAlert = typeof customAlerts.$inferInsert;
+
+
+/**
+ * User Registrations - stores users who registered via email/password
+ */
+export const userRegistrations = mysqlTable("user_registrations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User's full name */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** User's email address (unique) */
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  /** Hashed password (bcrypt) */
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  /** Account type: individual or organization */
+  accountType: mysqlEnum("accountType", ["individual", "organization"]).default("individual").notNull(),
+  /** Organization name (for organization accounts) */
+  organizationName: varchar("organizationName", { length: 255 }),
+  /** Organization website */
+  organizationWebsite: varchar("organizationWebsite", { length: 500 }),
+  /** Company size */
+  companySize: varchar("companySize", { length: 32 }),
+  /** Job title */
+  jobTitle: varchar("jobTitle", { length: 255 }),
+  /** Email verification token */
+  verificationToken: varchar("verificationToken", { length: 64 }),
+  /** Token expiration date */
+  tokenExpiresAt: timestamp("tokenExpiresAt"),
+  /** Whether email is verified */
+  isVerified: int("isVerified").default(0).notNull(),
+  /** Verification date */
+  verifiedAt: timestamp("verifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserRegistration = typeof userRegistrations.$inferSelect;
+export type InsertUserRegistration = typeof userRegistrations.$inferInsert;
+
+/**
+ * Password Reset Tokens - stores password reset requests
+ */
+export const passwordResetTokens = mysqlTable("password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User's email address */
+  email: varchar("email", { length: 320 }).notNull(),
+  /** Reset token (unique) */
+  token: varchar("token", { length: 64 }).notNull().unique(),
+  /** Token expiration date */
+  expiresAt: timestamp("expiresAt").notNull(),
+  /** Whether token has been used */
+  isUsed: int("isUsed").default(0).notNull(),
+  /** IP address of requester */
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;

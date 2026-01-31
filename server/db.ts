@@ -590,3 +590,150 @@ export async function updateAlertTrigger(id: number) {
     })
     .where(eq(customAlerts.id, id));
 }
+
+
+// ============================================
+// User Registration Functions
+// ============================================
+
+import { userRegistrations, passwordResetTokens, InsertUserRegistration, InsertPasswordResetToken } from "../drizzle/schema";
+
+/**
+ * Create a new user registration
+ */
+export async function createUserRegistration(data: InsertUserRegistration) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(userRegistrations).values(data);
+  return { id: result[0].insertId, ...data };
+}
+
+/**
+ * Get user registration by email
+ */
+export async function getUserRegistrationByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(userRegistrations)
+    .where(eq(userRegistrations.email, email))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Verify user email
+ */
+export async function verifyUserEmail(email: string, token: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const user = await db
+    .select()
+    .from(userRegistrations)
+    .where(and(
+      eq(userRegistrations.email, email),
+      eq(userRegistrations.verificationToken, token)
+    ))
+    .limit(1);
+
+  if (user.length === 0) return null;
+
+  // Check if token is expired
+  if (user[0].tokenExpiresAt && new Date() > user[0].tokenExpiresAt) {
+    return null;
+  }
+
+  await db
+    .update(userRegistrations)
+    .set({ 
+      isVerified: 1, 
+      verifiedAt: new Date(),
+      verificationToken: null,
+      tokenExpiresAt: null
+    })
+    .where(eq(userRegistrations.email, email));
+
+  return user[0];
+}
+
+/**
+ * Update user password
+ */
+export async function updateUserPassword(email: string, passwordHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(userRegistrations)
+    .set({ passwordHash })
+    .where(eq(userRegistrations.email, email));
+
+  return { success: true };
+}
+
+// ============================================
+// Password Reset Functions
+// ============================================
+
+/**
+ * Create a password reset token
+ */
+export async function createPasswordResetToken(data: InsertPasswordResetToken) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Invalidate any existing tokens for this email
+  await db
+    .update(passwordResetTokens)
+    .set({ isUsed: 1 })
+    .where(eq(passwordResetTokens.email, data.email));
+
+  const result = await db.insert(passwordResetTokens).values(data);
+  return { id: result[0].insertId, ...data };
+}
+
+/**
+ * Get password reset token
+ */
+export async function getPasswordResetToken(token: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(passwordResetTokens)
+    .where(and(
+      eq(passwordResetTokens.token, token),
+      eq(passwordResetTokens.isUsed, 0)
+    ))
+    .limit(1);
+
+  if (result.length === 0) return null;
+
+  // Check if token is expired
+  if (new Date() > result[0].expiresAt) {
+    return null;
+  }
+
+  return result[0];
+}
+
+/**
+ * Mark password reset token as used
+ */
+export async function markPasswordResetTokenUsed(token: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(passwordResetTokens)
+    .set({ isUsed: 1 })
+    .where(eq(passwordResetTokens.token, token));
+
+  return { success: true };
+}

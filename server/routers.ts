@@ -1789,6 +1789,199 @@ Please verify the payment and confirm in the admin panel.
         return AGE_GROUPS;
       }),
   }),
+
+  // User Registration Router
+  registration: router({
+    /**
+     * Register a new user
+     */
+    register: publicProcedure
+      .input(z.object({
+        name: z.string().min(2).max(255),
+        email: z.string().email(),
+        password: z.string().min(8).max(100),
+        accountType: z.enum(['individual', 'organization']).default('individual'),
+        organizationName: z.string().max(255).optional(),
+        organizationWebsite: z.string().url().optional(),
+        companySize: z.string().max(32).optional(),
+        jobTitle: z.string().max(255).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const bcrypt = await import('bcryptjs');
+        const crypto = await import('crypto');
+        const { createUserRegistration, getUserRegistrationByEmail } = await import('./db');
+
+        // Check if email already exists
+        const existingUser = await getUserRegistrationByEmail(input.email);
+        if (existingUser) {
+          throw new Error('Email already registered');
+        }
+
+        // Hash password
+        const passwordHash = await bcrypt.hash(input.password, 12);
+
+        // Generate verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+        // Create user registration
+        const user = await createUserRegistration({
+          name: input.name,
+          email: input.email,
+          passwordHash,
+          accountType: input.accountType,
+          organizationName: input.organizationName || null,
+          organizationWebsite: input.organizationWebsite || null,
+          companySize: input.companySize || null,
+          jobTitle: input.jobTitle || null,
+          verificationToken,
+          tokenExpiresAt,
+        });
+
+        // TODO: Send verification email
+
+        return {
+          success: true,
+          message: 'Registration successful. Please check your email to verify your account.',
+          userId: user.id,
+        };
+      }),
+
+    /**
+     * Login with email and password
+     */
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const bcrypt = await import('bcryptjs');
+        const { getUserRegistrationByEmail } = await import('./db');
+
+        const user = await getUserRegistrationByEmail(input.email);
+        if (!user) {
+          throw new Error('Invalid email or password');
+        }
+
+        const isValid = await bcrypt.compare(input.password, user.passwordHash);
+        if (!isValid) {
+          throw new Error('Invalid email or password');
+        }
+
+        if (!user.isVerified) {
+          throw new Error('Please verify your email before logging in');
+        }
+
+        return {
+          success: true,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            accountType: user.accountType,
+          },
+        };
+      }),
+
+    /**
+     * Request password reset
+     */
+    requestPasswordReset: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const crypto = await import('crypto');
+        const { getUserRegistrationByEmail, createPasswordResetToken } = await import('./db');
+
+        const user = await getUserRegistrationByEmail(input.email);
+        if (!user) {
+          // Don't reveal if email exists
+          return {
+            success: true,
+            message: 'If your email is registered, you will receive a password reset link.',
+          };
+        }
+
+        // Generate reset token
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+        // Get IP address
+        const ipAddress = ctx.req.ip || ctx.req.headers['x-forwarded-for']?.toString() || 'unknown';
+
+        await createPasswordResetToken({
+          email: input.email,
+          token,
+          expiresAt,
+          ipAddress,
+        });
+
+        // TODO: Send reset email
+
+        return {
+          success: true,
+          message: 'If your email is registered, you will receive a password reset link.',
+          // In development, return token for testing
+          ...(process.env.NODE_ENV === 'development' ? { token } : {}),
+        };
+      }),
+
+    /**
+     * Reset password with token
+     */
+    resetPassword: publicProcedure
+      .input(z.object({
+        token: z.string().min(1),
+        newPassword: z.string().min(8).max(100),
+      }))
+      .mutation(async ({ input }) => {
+        const bcrypt = await import('bcryptjs');
+        const { getPasswordResetToken, markPasswordResetTokenUsed, updateUserPassword } = await import('./db');
+
+        const resetToken = await getPasswordResetToken(input.token);
+        if (!resetToken) {
+          throw new Error('Invalid or expired reset token');
+        }
+
+        // Hash new password
+        const passwordHash = await bcrypt.hash(input.newPassword, 12);
+
+        // Update password
+        await updateUserPassword(resetToken.email, passwordHash);
+
+        // Mark token as used
+        await markPasswordResetTokenUsed(input.token);
+
+        return {
+          success: true,
+          message: 'Password has been reset successfully. You can now log in with your new password.',
+        };
+      }),
+
+    /**
+     * Verify email
+     */
+    verifyEmail: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        token: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const { verifyUserEmail } = await import('./db');
+
+        const user = await verifyUserEmail(input.email, input.token);
+        if (!user) {
+          throw new Error('Invalid or expired verification token');
+        }
+
+        return {
+          success: true,
+          message: 'Email verified successfully. You can now log in.',
+        };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

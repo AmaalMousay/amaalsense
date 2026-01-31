@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,25 +6,42 @@ import { Label } from '@/components/ui/label';
 import { Link, useLocation } from 'wouter';
 import { 
   User, Building2, Mail, Lock, Eye, EyeOff, 
-  ArrowLeft, Check, Globe, Phone
+  ArrowLeft, Check, Globe, AlertCircle, Loader2
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { useI18n } from '@/i18n';
 import { getLoginUrl } from '@/const';
+import { trpc } from '@/lib/trpc';
 
 type AccountType = 'individual' | 'organization';
+
+// Password strength calculator
+function calculatePasswordStrength(password: string): { score: number; label: string; color: string } {
+  let score = 0;
+  
+  if (password.length >= 8) score += 1;
+  if (password.length >= 12) score += 1;
+  if (/[a-z]/.test(password)) score += 1;
+  if (/[A-Z]/.test(password)) score += 1;
+  if (/[0-9]/.test(password)) score += 1;
+  if (/[^a-zA-Z0-9]/.test(password)) score += 1;
+  
+  if (score <= 2) return { score, label: 'Weak', color: 'bg-red-500' };
+  if (score <= 4) return { score, label: 'Medium', color: 'bg-yellow-500' };
+  return { score, label: 'Strong', color: 'bg-green-500' };
+}
 
 export default function Register() {
   const [, navigate] = useLocation();
   const { t, isRTL } = useI18n();
   const [accountType, setAccountType] = useState<AccountType>('individual');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
     // Organization fields
     orgName: '',
     orgWebsite: '',
@@ -32,17 +49,70 @@ export default function Register() {
     jobTitle: '',
   });
 
+  const registerMutation = trpc.registration.register.useMutation({
+    onSuccess: () => {
+      navigate('/login?registered=true');
+    },
+    onError: (err) => {
+      setError(err.message);
+    },
+  });
+
+  const passwordStrength = useMemo(() => calculatePasswordStrength(formData.password), [formData.password]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
+    setError(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = (): boolean => {
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError(isRTL ? 'البريد الإلكتروني غير صالح' : 'Invalid email address');
+      return false;
+    }
+
+    // Password validation
+    if (formData.password.length < 8) {
+      setError(isRTL ? 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' : 'Password must be at least 8 characters');
+      return false;
+    }
+
+    // Password match
+    if (formData.password !== formData.confirmPassword) {
+      setError(isRTL ? 'كلمات المرور غير متطابقة' : 'Passwords do not match');
+      return false;
+    }
+
+    // Organization validation
+    if (accountType === 'organization' && !formData.orgName) {
+      setError(isRTL ? 'اسم المؤسسة مطلوب' : 'Organization name is required');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For now, redirect to OAuth login
-    window.location.href = getLoginUrl();
+    setError(null);
+
+    if (!validateForm()) return;
+
+    registerMutation.mutate({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      accountType,
+      organizationName: accountType === 'organization' ? formData.orgName : undefined,
+      organizationWebsite: accountType === 'organization' && formData.orgWebsite ? formData.orgWebsite : undefined,
+      companySize: accountType === 'organization' ? formData.orgSize : undefined,
+      jobTitle: accountType === 'organization' ? formData.jobTitle : undefined,
+    });
   };
 
   const handleOAuthLogin = () => {
@@ -83,7 +153,7 @@ export default function Register() {
           {/* Account Type Selection */}
           <div className="grid grid-cols-2 gap-4 mb-8">
             <Card 
-              className={`p-6 cursor-pointer transition-all hover:border-accent/50 ${
+              className={`p-6 cursor-pointer transition-all hover:border-accent/50 relative ${
                 accountType === 'individual' 
                   ? 'border-accent bg-accent/10 ring-2 ring-accent/30' 
                   : 'border-border'
@@ -109,7 +179,7 @@ export default function Register() {
             </Card>
 
             <Card 
-              className={`p-6 cursor-pointer transition-all hover:border-accent/50 ${
+              className={`p-6 cursor-pointer transition-all hover:border-accent/50 relative ${
                 accountType === 'organization' 
                   ? 'border-accent bg-accent/10 ring-2 ring-accent/30' 
                   : 'border-border'
@@ -137,6 +207,14 @@ export default function Register() {
 
           {/* Registration Form */}
           <Card className="p-6 cosmic-card">
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2 text-red-500">
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                <span className="text-sm">{error}</span>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Common Fields */}
               <div className="space-y-2">
@@ -154,6 +232,7 @@ export default function Register() {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
+                    disabled={registerMutation.isPending}
                   />
                 </div>
               </div>
@@ -173,24 +252,7 @@ export default function Register() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">
-                  {isRTL ? 'رقم الهاتف (اختياري)' : 'Phone Number (optional)'}
-                </Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder={isRTL ? 'أدخل رقم هاتفك' : 'Enter your phone number'}
-                    className="pl-10"
-                    value={formData.phone}
-                    onChange={handleInputChange}
+                    disabled={registerMutation.isPending}
                   />
                 </div>
               </div>
@@ -219,6 +281,7 @@ export default function Register() {
                         value={formData.orgName}
                         onChange={handleInputChange}
                         required={accountType === 'organization'}
+                        disabled={registerMutation.isPending}
                       />
                     </div>
                   </div>
@@ -237,6 +300,7 @@ export default function Register() {
                         className="pl-10"
                         value={formData.orgWebsite}
                         onChange={handleInputChange}
+                        disabled={registerMutation.isPending}
                       />
                     </div>
                   </div>
@@ -253,6 +317,7 @@ export default function Register() {
                         value={formData.orgSize}
                         onChange={handleInputChange}
                         required={accountType === 'organization'}
+                        disabled={registerMutation.isPending}
                       >
                         <option value="">{isRTL ? 'اختر...' : 'Select...'}</option>
                         <option value="1-10">1-10</option>
@@ -274,6 +339,7 @@ export default function Register() {
                         placeholder={isRTL ? 'مثال: مدير' : 'e.g. Manager'}
                         value={formData.jobTitle}
                         onChange={handleInputChange}
+                        disabled={registerMutation.isPending}
                       />
                     </div>
                   </div>
@@ -296,6 +362,7 @@ export default function Register() {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
+                    disabled={registerMutation.isPending}
                   />
                   <button
                     type="button"
@@ -305,6 +372,31 @@ export default function Register() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+                
+                {/* Password Strength Indicator */}
+                {formData.password && (
+                  <div className="mt-2 space-y-1">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-colors ${
+                            i <= passwordStrength.score ? passwordStrength.color : 'bg-muted'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className={`text-xs ${
+                      passwordStrength.score <= 2 ? 'text-red-500' : 
+                      passwordStrength.score <= 4 ? 'text-yellow-500' : 'text-green-500'
+                    }`}>
+                      {isRTL ? (
+                        passwordStrength.score <= 2 ? 'ضعيفة' : 
+                        passwordStrength.score <= 4 ? 'متوسطة' : 'قوية'
+                      ) : passwordStrength.label}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -322,13 +414,30 @@ export default function Register() {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
+                    disabled={registerMutation.isPending}
                   />
                 </div>
+                {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                  <p className="text-xs text-red-500">
+                    {isRTL ? 'كلمات المرور غير متطابقة' : 'Passwords do not match'}
+                  </p>
+                )}
               </div>
 
               {/* Submit Button */}
-              <Button type="submit" className="w-full glow-button text-white mt-6">
-                {isRTL ? 'إنشاء الحساب' : 'Create Account'}
+              <Button 
+                type="submit" 
+                className="w-full glow-button text-white mt-6"
+                disabled={registerMutation.isPending}
+              >
+                {registerMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {isRTL ? 'جاري التسجيل...' : 'Creating Account...'}
+                  </>
+                ) : (
+                  isRTL ? 'إنشاء الحساب' : 'Create Account'
+                )}
               </Button>
 
               {/* Divider */}
@@ -349,6 +458,7 @@ export default function Register() {
                 variant="outline" 
                 className="w-full"
                 onClick={handleOAuthLogin}
+                disabled={registerMutation.isPending}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>

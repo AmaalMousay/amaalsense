@@ -1,0 +1,19 @@
+{
+  "query": "SHOW TABLES LIKE '%registration%'; SHOW TABLES LIKE '%reset%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2VsckAsnDsWNG4a.root --database nNCcKwNgPEwkr4saUFSFW2 --execute SHOW TABLES LIKE '%registration%'; SHOW TABLES LIKE '%reset%';",
+  "rows": [
+    {
+      "Tables_in_nNCcKwNgPEwkr4saUFSFW2 (%registration%)": "user_registrations"
+    },
+    {
+      "Tables_in_nNCcKwNgPEwkr4saUFSFW2 (%registration%)": "Tables_in_nNCcKwNgPEwkr4saUFSFW2 (%reset%)"
+    },
+    {
+      "Tables_in_nNCcKwNgPEwkr4saUFSFW2 (%registration%)": "password_reset_tokens"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_nNCcKwNgPEwkr4saUFSFW2 (%registration%)\nuser_registrations\nTables_in_nNCcKwNgPEwkr4saUFSFW2 (%reset%)\npassword_reset_tokens\n",
+  "stderr": "",
+  "execution_time_ms": 89
+}
