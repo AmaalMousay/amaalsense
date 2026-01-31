@@ -43,6 +43,13 @@
       "when": 1769690050658,
       "tag": "0005_bouncy_mister_fear",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1769871056297,
+      "tag": "0006_uneven_king_cobra",
+      "breakpoints": true
     }
   ]
 }

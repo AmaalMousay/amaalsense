@@ -368,3 +368,38 @@ export const paymentRecords = mysqlTable("payment_records", {
 
 export type PaymentRecord = typeof paymentRecords.$inferSelect;
 export type InsertPaymentRecord = typeof paymentRecords.$inferInsert;
+
+
+/**
+ * Custom Alerts - user-defined alert conditions
+ */
+export const customAlerts = mysqlTable("custom_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID who created the alert */
+  userId: int("userId").notNull(),
+  /** Alert name */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** Country code to monitor (null for global) */
+  countryCode: varchar("countryCode", { length: 2 }),
+  /** Country name for display */
+  countryName: varchar("countryName", { length: 100 }),
+  /** Metric to monitor: gmi, cfi, hri */
+  metric: mysqlEnum("metric", ["gmi", "cfi", "hri"]).notNull(),
+  /** Condition: above, below, change */
+  condition: mysqlEnum("condition", ["above", "below", "change"]).notNull(),
+  /** Threshold value */
+  threshold: int("threshold").notNull(),
+  /** Whether alert is active */
+  isActive: int("isActive").default(1).notNull(),
+  /** Notification method: email, telegram, both */
+  notifyMethod: mysqlEnum("notifyMethod", ["email", "telegram", "both"]).default("email").notNull(),
+  /** Last triggered timestamp */
+  lastTriggered: timestamp("lastTriggered"),
+  /** Number of times triggered */
+  triggerCount: int("triggerCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CustomAlert = typeof customAlerts.$inferSelect;
+export type InsertCustomAlert = typeof customAlerts.$inferInsert;

@@ -1,6 +1,6 @@
-import { eq, desc, asc, gte, and, inArray } from "drizzle-orm";
+import { eq, desc, asc, gte, and, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking } from "../drizzle/schema";
+import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -482,4 +482,111 @@ export async function getPaymentRecordsByEmail(email: string) {
     .from(paymentRecords)
     .where(eq(paymentRecords.email, email))
     .orderBy((t) => desc(t.createdAt));
+}
+
+
+// ============================================
+// Custom Alerts Functions
+// ============================================
+
+/**
+ * Get user's custom alerts
+ */
+export async function getUserCustomAlerts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(customAlerts)
+    .where(eq(customAlerts.userId, userId))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Create a new custom alert
+ */
+export async function createCustomAlert(data: InsertCustomAlert) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(customAlerts).values(data);
+  return { id: result[0].insertId, ...data };
+}
+
+/**
+ * Update a custom alert
+ */
+export async function updateCustomAlert(
+  id: number, 
+  userId: number, 
+  data: Partial<InsertCustomAlert>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(customAlerts)
+    .set(data)
+    .where(and(eq(customAlerts.id, id), eq(customAlerts.userId, userId)));
+
+  return { success: true };
+}
+
+/**
+ * Delete a custom alert
+ */
+export async function deleteCustomAlert(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .delete(customAlerts)
+    .where(and(eq(customAlerts.id, id), eq(customAlerts.userId, userId)));
+
+  return { success: true };
+}
+
+/**
+ * Toggle custom alert active status
+ */
+export async function toggleCustomAlert(id: number, userId: number, isActive: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(customAlerts)
+    .set({ isActive: isActive ? 1 : 0 })
+    .where(and(eq(customAlerts.id, id), eq(customAlerts.userId, userId)));
+
+  return { success: true };
+}
+
+/**
+ * Get all active alerts for checking
+ */
+export async function getActiveCustomAlerts() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(customAlerts)
+    .where(eq(customAlerts.isActive, 1));
+}
+
+/**
+ * Update alert trigger info
+ */
+export async function updateAlertTrigger(id: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(customAlerts)
+    .set({ 
+      lastTriggered: new Date(),
+      triggerCount: sql`${customAlerts.triggerCount} + 1`
+    })
+    .where(eq(customAlerts.id, id));
 }

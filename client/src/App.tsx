@@ -26,6 +26,12 @@ import Checkout from "./pages/Checkout";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import TopicAnalysisResults from "./pages/TopicAnalysisResults";
+import UseCases from "./pages/UseCases";
+import CompareCountries from "./pages/CompareCountries";
+import CustomAlerts from "./pages/CustomAlerts";
+import ApiDocs from "./pages/ApiDocs";
+import EnterpriseDashboard from "./pages/EnterpriseDashboard";
+import TopicTimeline from "./pages/TopicTimeline";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -53,6 +59,12 @@ function Router() {
       <Route path={"/terms"} component={Terms} />
       <Route path={"/privacy"} component={Privacy} />
       <Route path={"/analysis-results"} component={TopicAnalysisResults} />
+      <Route path={"/use-cases"} component={UseCases} />
+      <Route path={"/compare"} component={CompareCountries} />
+      <Route path={"/alerts"} component={CustomAlerts} />
+      <Route path={"/api-docs"} component={ApiDocs} />
+      <Route path={"/enterprise"} component={EnterpriseDashboard} />
+      <Route path={"/topic-timeline"} component={TopicTimeline} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

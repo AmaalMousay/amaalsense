@@ -1639,6 +1639,98 @@ Please verify the payment and confirm in the admin panel.
       }),
   }),
 
+  // Custom Alerts
+  alerts: router({
+    /**
+     * Get user's custom alerts
+     */
+    getUserAlerts: publicProcedure.query(async ({ ctx }) => {
+      if (!ctx.user) return [];
+      const { getUserCustomAlerts } = await import("./db");
+      return await getUserCustomAlerts(ctx.user.id);
+    }),
+
+    /**
+     * Create a new custom alert
+     */
+    createAlert: publicProcedure
+      .input(z.object({
+        name: z.string().min(1).max(255),
+        countryCode: z.string().max(2).optional(),
+        countryName: z.string().max(100).optional(),
+        metric: z.enum(["gmi", "cfi", "hri"]),
+        condition: z.enum(["above", "below", "change"]),
+        threshold: z.number().min(0).max(100),
+        notifyMethod: z.enum(["email", "telegram", "both"]).default("email"),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const { createCustomAlert } = await import("./db");
+        return await createCustomAlert({
+          userId: ctx.user.id,
+          name: input.name,
+          countryCode: input.countryCode || null,
+          countryName: input.countryName || null,
+          metric: input.metric,
+          condition: input.condition,
+          threshold: input.threshold,
+          notifyMethod: input.notifyMethod,
+          isActive: 1,
+          triggerCount: 0,
+        });
+      }),
+
+    /**
+     * Update an existing alert
+     */
+    updateAlert: publicProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).max(255),
+        countryCode: z.string().max(2).optional(),
+        countryName: z.string().max(100).optional(),
+        metric: z.enum(["gmi", "cfi", "hri"]),
+        condition: z.enum(["above", "below", "change"]),
+        threshold: z.number().min(0).max(100),
+        notifyMethod: z.enum(["email", "telegram", "both"]).default("email"),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const { updateCustomAlert } = await import("./db");
+        return await updateCustomAlert(input.id, ctx.user.id, {
+          name: input.name,
+          countryCode: input.countryCode || null,
+          countryName: input.countryName || null,
+          metric: input.metric,
+          condition: input.condition,
+          threshold: input.threshold,
+          notifyMethod: input.notifyMethod,
+        });
+      }),
+
+    /**
+     * Delete an alert
+     */
+    deleteAlert: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const { deleteCustomAlert } = await import("./db");
+        return await deleteCustomAlert(input.id, ctx.user.id);
+      }),
+
+    /**
+     * Toggle alert active status
+     */
+    toggleAlert: publicProcedure
+      .input(z.object({ id: z.number(), isActive: z.boolean() }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) throw new Error("Unauthorized");
+        const { toggleCustomAlert } = await import("./db");
+        return await toggleCustomAlert(input.id, ctx.user.id, input.isActive);
+      }),
+  }),
+
   topic: router({
     /**
      * Analyze a topic in a specific country with demographic and regional breakdown
