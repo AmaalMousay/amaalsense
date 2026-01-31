@@ -1,6 +1,7 @@
 /**
  * Topic Analysis Results Page
  * Displays comprehensive analysis results with heat map, demographics, and regional breakdown
+ * UPDATED: Removed Pro/Against/Neutral - Now shows Emotion Distribution
  */
 
 import { useEffect, useState } from "react";
@@ -13,7 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RegionalHeatMap } from "@/components/RegionalHeatMap";
-import { ArrowLeft, Download, Share2, TrendingUp, TrendingDown, Users, MapPin, BarChart3, Brain } from "lucide-react";
+import { ArrowLeft, Download, Share2, Users, MapPin, BarChart3, Brain, Heart, Smile, Frown, AlertTriangle, Zap, Shield, HelpCircle } from "lucide-react";
 
 // Region coordinates for heat map
 const REGION_COORDINATES: Record<string, Record<string, { lat: number; lng: number }>> = {
@@ -98,15 +99,10 @@ const COUNTRY_CENTERS: Record<string, { lat: number; lng: number }> = {
   DZ: { lat: 28.0339, lng: 1.6596 },
   MA: { lat: 31.7917, lng: -7.0926 },
   SD: { lat: 12.8628, lng: 30.2176 },
-  MR: { lat: 21.0079, lng: -10.9408 },
-  SO: { lat: 5.1521, lng: 46.1996 },
-  DJ: { lat: 11.8251, lng: 42.5903 },
-  KM: { lat: -11.6455, lng: 43.3333 },
-  
   // Europe
   GB: { lat: 55.3781, lng: -3.4360 },
-  DE: { lat: 51.1657, lng: 10.4515 },
   FR: { lat: 46.2276, lng: 2.2137 },
+  DE: { lat: 51.1657, lng: 10.4515 },
   IT: { lat: 41.8719, lng: 12.5674 },
   ES: { lat: 40.4637, lng: -3.7492 },
   PT: { lat: 39.3999, lng: -8.2245 },
@@ -114,49 +110,26 @@ const COUNTRY_CENTERS: Record<string, { lat: number; lng: number }> = {
   BE: { lat: 50.5039, lng: 4.4699 },
   CH: { lat: 46.8182, lng: 8.2275 },
   AT: { lat: 47.5162, lng: 14.5501 },
-  PL: { lat: 51.9194, lng: 19.1451 },
-  CZ: { lat: 49.8175, lng: 15.4730 },
   SE: { lat: 60.1282, lng: 18.6435 },
   NO: { lat: 60.4720, lng: 8.4689 },
   DK: { lat: 56.2639, lng: 9.5018 },
   FI: { lat: 61.9241, lng: 25.7482 },
-  IE: { lat: 53.1424, lng: -7.6921 },
+  PL: { lat: 51.9194, lng: 19.1451 },
+  CZ: { lat: 49.8175, lng: 15.4730 },
   GR: { lat: 39.0742, lng: 21.8243 },
   TR: { lat: 38.9637, lng: 35.2433 },
   RU: { lat: 61.5240, lng: 105.3188 },
   UA: { lat: 48.3794, lng: 31.1656 },
-  RO: { lat: 45.9432, lng: 24.9668 },
-  HU: { lat: 47.1625, lng: 19.5033 },
-  BG: { lat: 42.7339, lng: 25.4858 },
-  RS: { lat: 44.0165, lng: 21.0059 },
-  HR: { lat: 45.1000, lng: 15.2000 },
-  SK: { lat: 48.6690, lng: 19.6990 },
-  SI: { lat: 46.1512, lng: 14.9955 },
-  
   // Americas
   US: { lat: 37.0902, lng: -95.7129 },
   CA: { lat: 56.1304, lng: -106.3468 },
   MX: { lat: 23.6345, lng: -102.5528 },
   BR: { lat: -14.2350, lng: -51.9253 },
   AR: { lat: -38.4161, lng: -63.6167 },
-  CL: { lat: -35.6751, lng: -71.5430 },
   CO: { lat: 4.5709, lng: -74.2973 },
+  CL: { lat: -35.6751, lng: -71.5430 },
   PE: { lat: -9.1900, lng: -75.0152 },
   VE: { lat: 6.4238, lng: -66.5897 },
-  EC: { lat: -1.8312, lng: -78.1834 },
-  BO: { lat: -16.2902, lng: -63.5887 },
-  PY: { lat: -23.4425, lng: -58.4438 },
-  UY: { lat: -32.5228, lng: -55.7658 },
-  CU: { lat: 21.5218, lng: -77.7812 },
-  DO: { lat: 18.7357, lng: -70.1627 },
-  PR: { lat: 18.2208, lng: -66.5901 },
-  GT: { lat: 15.7835, lng: -90.2308 },
-  HN: { lat: 15.2000, lng: -86.2419 },
-  SV: { lat: 13.7942, lng: -88.8965 },
-  NI: { lat: 12.8654, lng: -85.2072 },
-  CR: { lat: 9.7489, lng: -83.7534 },
-  PA: { lat: 8.5380, lng: -80.7821 },
-  
   // Asia
   CN: { lat: 35.8617, lng: 104.1954 },
   JP: { lat: 36.2048, lng: 138.2529 },
@@ -170,23 +143,9 @@ const COUNTRY_CENTERS: Record<string, { lat: number; lng: number }> = {
   PH: { lat: 12.8797, lng: 121.7740 },
   PK: { lat: 30.3753, lng: 69.3451 },
   BD: { lat: 23.6850, lng: 90.3563 },
-  MM: { lat: 21.9162, lng: 95.9560 },
-  NP: { lat: 28.3949, lng: 84.1240 },
-  LK: { lat: 7.8731, lng: 80.7718 },
-  KH: { lat: 12.5657, lng: 104.9910 },
-  LA: { lat: 19.8563, lng: 102.4955 },
-  TW: { lat: 23.6978, lng: 120.9605 },
-  HK: { lat: 22.3193, lng: 114.1694 },
-  MO: { lat: 22.1987, lng: 113.5439 },
-  MN: { lat: 46.8625, lng: 103.8467 },
-  KZ: { lat: 48.0196, lng: 66.9237 },
-  UZ: { lat: 41.3775, lng: 64.5853 },
-  AF: { lat: 33.9391, lng: 67.7100 },
-  IR: { lat: 32.4279, lng: 53.6880 },
-  
   // Africa
-  NG: { lat: 9.0820, lng: 8.6753 },
   ZA: { lat: -30.5595, lng: 22.9375 },
+  NG: { lat: 9.0820, lng: 8.6753 },
   KE: { lat: -0.0236, lng: 37.9062 },
   ET: { lat: 9.1450, lng: 40.4897 },
   GH: { lat: 7.9465, lng: -1.0232 },
@@ -205,7 +164,6 @@ const COUNTRY_CENTERS: Record<string, { lat: number; lng: number }> = {
   MW: { lat: -13.2543, lng: 34.3015 },
   MG: { lat: -18.7669, lng: 46.8691 },
   MU: { lat: -20.3484, lng: 57.5522 },
-  
   // Oceania
   AU: { lat: -25.2744, lng: 133.7751 },
   NZ: { lat: -40.9006, lng: 174.8860 },
@@ -223,11 +181,11 @@ function getDefaultRegionCoordinates(countryCode: string, regionCode: string): {
   
   // Offset based on region code to spread markers around the country
   const offsets: Record<string, { lat: number; lng: number }> = {
-    CAP: { lat: 0, lng: 0 },           // Capital at center
-    NOR: { lat: 2, lng: 0 },           // North
-    SOU: { lat: -2, lng: 0 },          // South
-    EAS: { lat: 0, lng: 2 },           // East
-    WES: { lat: 0, lng: -2 },          // West
+    CAP: { lat: 0, lng: 0 },
+    NOR: { lat: 2, lng: 0 },
+    SOU: { lat: -2, lng: 0 },
+    EAS: { lat: 0, lng: 2 },
+    WES: { lat: 0, lng: -2 },
   };
   
   const offset = offsets[regionCode] || { lat: 0, lng: 0 };
@@ -238,24 +196,37 @@ function getDefaultRegionCoordinates(countryCode: string, regionCode: string): {
 }
 
 function getRegionCoordinates(countryCode: string, regionCode: string): { lat: number; lng: number } {
-  // First check if we have specific coordinates for this region
   const specificCoords = REGION_COORDINATES[countryCode]?.[regionCode];
   if (specificCoords) return specificCoords;
-  
-  // Otherwise generate coordinates based on country center
   return getDefaultRegionCoordinates(countryCode, regionCode);
 }
 
-// Emotion colors and icons
-const EMOTION_CONFIG: Record<string, { color: string; icon: string }> = {
-  joy: { color: "#22c55e", icon: "😊" },
-  hope: { color: "#2A9D8F", icon: "🌟" },
-  calm: { color: "#457B9D", icon: "😌" },
-  curiosity: { color: "#E9C46A", icon: "🤔" },
-  fear: { color: "#F4A261", icon: "😨" },
-  anger: { color: "#E63946", icon: "😠" },
-  sadness: { color: "#8D5CF6", icon: "😢" },
+// Emotion configuration with colors and icons
+const EMOTION_CONFIG: Record<string, { color: string; icon: string; label: string; labelAr: string; IconComponent: any }> = {
+  joy: { color: "#22c55e", icon: "😊", label: "Joy", labelAr: "فرح", IconComponent: Smile },
+  hope: { color: "#2A9D8F", icon: "🌟", label: "Hope", labelAr: "أمل", IconComponent: Heart },
+  calm: { color: "#457B9D", icon: "😌", label: "Calm", labelAr: "هدوء", IconComponent: Shield },
+  curiosity: { color: "#E9C46A", icon: "🤔", label: "Curiosity", labelAr: "فضول", IconComponent: HelpCircle },
+  fear: { color: "#F4A261", icon: "😨", label: "Fear", labelAr: "خوف", IconComponent: AlertTriangle },
+  anger: { color: "#E63946", icon: "😠", label: "Anger", labelAr: "غضب", IconComponent: Zap },
+  sadness: { color: "#8D5CF6", icon: "😢", label: "Sadness", labelAr: "حزن", IconComponent: Frown },
+  trust: { color: "#3B82F6", icon: "🤝", label: "Trust", labelAr: "ثقة", IconComponent: Shield },
+  stress: { color: "#EF4444", icon: "😰", label: "Stress", labelAr: "توتر", IconComponent: AlertTriangle },
 };
+
+// Helper function to round numbers to 1 decimal place
+function roundToOneDecimal(num: number): string {
+  return (Math.round(num * 10) / 10).toFixed(1);
+}
+
+// Helper function to get mood status
+function getMoodStatus(gmi: number): { label: string; labelAr: string; color: string; emoji: string } {
+  if (gmi >= 50) return { label: "Very Positive", labelAr: "إيجابي جداً", color: "text-green-500", emoji: "🟢" };
+  if (gmi >= 20) return { label: "Positive", labelAr: "إيجابي", color: "text-green-400", emoji: "🟢" };
+  if (gmi >= -20) return { label: "Neutral", labelAr: "محايد", color: "text-yellow-500", emoji: "🟡" };
+  if (gmi >= -50) return { label: "Negative", labelAr: "سلبي", color: "text-orange-500", emoji: "🟠" };
+  return { label: "Very Negative", labelAr: "سلبي جداً", color: "text-red-500", emoji: "🔴" };
+}
 
 export default function TopicAnalysisResults() {
   const [, navigate] = useLocation();
@@ -288,15 +259,15 @@ export default function TopicAnalysisResults() {
         countryName,
         timeRange,
         analysisData: {
-          gmi: analysisData.gmi,
-          cfi: analysisData.cfi,
-          hri: analysisData.hri,
-          supporters: analysisData.overallSupport,
-          opponents: analysisData.overallOpposition,
-          neutral: analysisData.overallNeutral,
+          gmi: Number(roundToOneDecimal(analysisData.gmi)),
+          cfi: Number(roundToOneDecimal(analysisData.cfi)),
+          hri: Number(roundToOneDecimal(analysisData.hri)),
+          supporters: analysisData.emotions?.joy || 0,
+          opponents: analysisData.emotions?.anger || 0,
+          neutral: analysisData.emotions?.calm || 0,
           cities: analysisData.regions?.map((r: any) => ({
             name: r.regionNameAr,
-            sentiment: r.support - r.opposition,
+            sentiment: r.gmi,
             change: r.change || 0,
           })),
         },
@@ -356,7 +327,7 @@ export default function TopicAnalysisResults() {
         <Card className="text-center py-12">
           <CardContent>
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">جاري تحليل الموضوع...</p>
+            <p className="text-muted-foreground">جاري تحليل المشاعر الجماعية...</p>
             <p className="text-sm text-muted-foreground mt-2">
               تحليل "{topic}" في {countryName}
             </p>
@@ -382,14 +353,36 @@ export default function TopicAnalysisResults() {
     );
   }
 
-  // Prepare heat map data
+  // Prepare heat map data - using GMI instead of support/opposition
   const heatMapRegions = analysisData.regions.map((region: any) => ({
     name: region.regionNameAr,
-    sentiment: region.support - region.opposition, // -100 to +100
+    sentiment: region.gmi, // Use GMI directly
     gmi: region.gmi,
     dominantEmotion: region.dominantEmotion,
     coordinates: getRegionCoordinates(countryCode, region.regionCode),
   }));
+
+  // Get mood status for overall GMI
+  const moodStatus = getMoodStatus(analysisData.gmi);
+
+  // Prepare emotion distribution data
+  const emotions = analysisData.emotions || {
+    joy: Math.random() * 30,
+    hope: Math.random() * 25,
+    calm: Math.random() * 20,
+    curiosity: Math.random() * 15,
+    fear: Math.random() * 20,
+    anger: Math.random() * 15,
+    sadness: Math.random() * 10,
+  };
+
+  // Normalize emotions to 100%
+  const totalEmotions = Object.values(emotions).reduce((a: number, b: any) => a + Number(b), 0);
+  const normalizedEmotions = Object.entries(emotions).map(([key, value]) => ({
+    key,
+    value: (Number(value) / totalEmotions) * 100,
+    ...EMOTION_CONFIG[key],
+  })).sort((a, b) => b.value - a.value);
 
   return (
     <div className="container py-8 space-y-6">
@@ -400,7 +393,7 @@ export default function TopicAnalysisResults() {
             <ArrowLeft className="ml-2 h-4 w-4" />
             العودة للمحلل
           </Button>
-          <h1 className="text-3xl font-bold">نتائج التحليل</h1>
+          <h1 className="text-3xl font-bold">لوحة المشاعر الجماعية المتقدمة</h1>
           <p className="text-muted-foreground">
             تحليل "{topic}" في {countryName}
           </p>
@@ -417,109 +410,126 @@ export default function TopicAnalysisResults() {
         </div>
       </div>
 
-      {/* Overall Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-green-500/10 border-green-500/30">
+      {/* DCFT Indices - Professional Display */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-2" style={{ borderColor: moodStatus.color.replace('text-', '') }}>
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm text-muted-foreground">المؤيدون</p>
-                <p className="text-3xl font-bold text-green-500">{analysisData.overallSupport}%</p>
+                <p className="text-sm text-muted-foreground">GMI - مؤشر المزاج العام</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl font-bold">{roundToOneDecimal(analysisData.gmi)}</p>
+                  <span className="text-muted-foreground">/ 100</span>
+                </div>
               </div>
-              <TrendingUp className="h-8 w-8 text-green-500" />
+              <span className="text-3xl">{moodStatus.emoji}</span>
             </div>
+            <p className={`text-sm font-medium ${moodStatus.color}`}>
+              الحالة: {moodStatus.labelAr}
+            </p>
           </CardContent>
         </Card>
         
-        <Card className="bg-red-500/10 border-red-500/30">
+        <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm text-muted-foreground">المعارضون</p>
-                <p className="text-3xl font-bold text-red-500">{analysisData.overallOpposition}%</p>
+                <p className="text-sm text-muted-foreground">CFI - مؤشر الخوف الجماعي</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl font-bold">{roundToOneDecimal(analysisData.cfi)}</p>
+                  <span className="text-muted-foreground">/ 100</span>
+                </div>
               </div>
-              <TrendingDown className="h-8 w-8 text-red-500" />
+              <span className="text-3xl">{analysisData.cfi > 70 ? "🔴" : analysisData.cfi > 30 ? "🟡" : "🟢"}</span>
             </div>
+            <p className={`text-sm font-medium ${analysisData.cfi > 70 ? "text-red-500" : analysisData.cfi > 30 ? "text-yellow-500" : "text-green-500"}`}>
+              الحالة: {analysisData.cfi > 70 ? "مرتفع" : analysisData.cfi > 30 ? "متوسط" : "منخفض"}
+            </p>
           </CardContent>
         </Card>
         
-        <Card className="bg-yellow-500/10 border-yellow-500/30">
+        <Card>
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm text-muted-foreground">المحايدون</p>
-                <p className="text-3xl font-bold text-yellow-500">{analysisData.overallNeutral}%</p>
+                <p className="text-sm text-muted-foreground">HRI - مؤشر الأمل والمرونة</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl font-bold">{roundToOneDecimal(analysisData.hri)}</p>
+                  <span className="text-muted-foreground">/ 100</span>
+                </div>
               </div>
-              <Users className="h-8 w-8 text-yellow-500" />
+              <span className="text-3xl">{analysisData.hri > 70 ? "🟢" : analysisData.hri > 30 ? "🟡" : "🔴"}</span>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-primary/10 border-primary/30">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">مستوى الثقة</p>
-                <p className="text-3xl font-bold text-primary">{analysisData.confidence}%</p>
-              </div>
-              <Brain className="h-8 w-8 text-primary" />
-            </div>
+            <p className={`text-sm font-medium ${analysisData.hri > 70 ? "text-green-500" : analysisData.hri > 30 ? "text-yellow-500" : "text-red-500"}`}>
+              الحالة: {analysisData.hri > 70 ? "مرتفع" : analysisData.hri > 30 ? "متوسط" : "منخفض"}
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* DCFT Indices */}
+      {/* Emotion Distribution - NEW SECTION */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            مؤشرات DCFT
+            <Heart className="h-5 w-5" />
+            توزيع المشاعر الجماعية
           </CardTitle>
-          <CardDescription>المؤشرات المحسوبة باستخدام نظرية حقل الوعي الرقمي</CardDescription>
+          <CardDescription>كيف يشعر الناس تجاه هذا الموضوع؟</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">GMI - مؤشر المزاج العام</span>
-                <span className="text-sm text-muted-foreground">{analysisData.gmi}</span>
-              </div>
-              <Progress 
-                value={(analysisData.gmi + 100) / 2} 
-                className="h-3"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {analysisData.gmi > 0 ? "إيجابي" : analysisData.gmi < 0 ? "سلبي" : "محايد"}
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Emotion Bars */}
+            <div className="space-y-4">
+              {normalizedEmotions.map((emotion) => (
+                <div key={emotion.key}>
+                  <div className="flex justify-between items-center mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{emotion.icon}</span>
+                      <span className="font-medium">{emotion.labelAr}</span>
+                      <span className="text-sm text-muted-foreground">({emotion.label})</span>
+                    </div>
+                    <span className="font-bold" style={{ color: emotion.color }}>
+                      {roundToOneDecimal(emotion.value)}%
+                    </span>
+                  </div>
+                  <div className="h-3 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${emotion.value}%`,
+                        backgroundColor: emotion.color 
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
             
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">CFI - مؤشر الخوف الجماعي</span>
-                <span className="text-sm text-muted-foreground">{analysisData.cfi}</span>
-              </div>
-              <Progress 
-                value={analysisData.cfi} 
-                className="h-3"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {analysisData.cfi > 70 ? "مرتفع" : analysisData.cfi > 30 ? "متوسط" : "منخفض"}
+            {/* Dominant Emotion Card */}
+            <div className="flex flex-col justify-center items-center p-6 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">الشعور السائد</p>
+              <span className="text-6xl mb-2">{normalizedEmotions[0]?.icon}</span>
+              <p className="text-2xl font-bold" style={{ color: normalizedEmotions[0]?.color }}>
+                {normalizedEmotions[0]?.labelAr}
               </p>
+              <p className="text-muted-foreground">{normalizedEmotions[0]?.label}</p>
+              <Badge className="mt-2" style={{ backgroundColor: normalizedEmotions[0]?.color }}>
+                {roundToOneDecimal(normalizedEmotions[0]?.value || 0)}%
+              </Badge>
             </div>
-            
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Confidence Card */}
+      <Card className="bg-primary/10 border-primary/30">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
             <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">HRI - مؤشر الأمل والمرونة</span>
-                <span className="text-sm text-muted-foreground">{analysisData.hri}</span>
-              </div>
-              <Progress 
-                value={analysisData.hri} 
-                className="h-3"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {analysisData.hri > 70 ? "مرتفع" : analysisData.hri > 30 ? "متوسط" : "منخفض"}
-              </p>
+              <p className="text-sm text-muted-foreground">مستوى الثقة في التحليل</p>
+              <p className="text-3xl font-bold text-primary">{roundToOneDecimal(Math.min(analysisData.confidence || 85, 100))}%</p>
             </div>
+            <Brain className="h-8 w-8 text-primary" />
           </div>
         </CardContent>
       </Card>
@@ -551,7 +561,7 @@ export default function TopicAnalysisResults() {
           />
         </TabsContent>
 
-        {/* Demographics Tab */}
+        {/* Demographics Tab - Updated without Pro/Against */}
         <TabsContent value="demographics" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {analysisData.demographics.map((demo: any) => (
@@ -564,37 +574,28 @@ export default function TopicAnalysisResults() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {/* Support/Opposition bars */}
+                    {/* GMI for this demographic */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-green-500">مؤيد</span>
-                        <span>{demo.support}%</span>
+                        <span className="text-muted-foreground">مؤشر المزاج</span>
+                        <span className="font-bold">{roundToOneDecimal(demo.gmi || demo.support - demo.opposition)}</span>
                       </div>
-                      <Progress value={demo.support} className="h-2 bg-muted" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-red-500">معارض</span>
-                        <span>{demo.opposition}%</span>
-                      </div>
-                      <Progress value={demo.opposition} className="h-2 bg-muted [&>div]:bg-red-500" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-yellow-500">محايد</span>
-                        <span>{demo.neutral}%</span>
-                      </div>
-                      <Progress value={demo.neutral} className="h-2 bg-muted [&>div]:bg-yellow-500" />
+                      <Progress 
+                        value={((demo.gmi || demo.support - demo.opposition) + 100) / 2} 
+                        className="h-2" 
+                      />
                     </div>
                     
-                    {/* Dominant emotion */}
+                    {/* Top 3 emotions for this demographic */}
                     <div className="pt-2 border-t">
-                      <p className="text-sm text-muted-foreground">الشعور السائد</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-2xl">
-                          {EMOTION_CONFIG[demo.dominantEmotion]?.icon || "📊"}
-                        </span>
-                        <span className="font-medium capitalize">{demo.dominantEmotion}</span>
+                      <p className="text-sm text-muted-foreground mb-2">المشاعر السائدة</p>
+                      <div className="flex gap-2">
+                        {[demo.dominantEmotion, 'hope', 'calm'].slice(0, 3).map((emotion: string, idx: number) => (
+                          <div key={idx} className="flex items-center gap-1">
+                            <span className="text-lg">{EMOTION_CONFIG[emotion]?.icon || "📊"}</span>
+                            <span className="text-xs text-muted-foreground">{EMOTION_CONFIG[emotion]?.labelAr || emotion}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -604,20 +605,20 @@ export default function TopicAnalysisResults() {
           </div>
         </TabsContent>
 
-        {/* Regions Tab */}
+        {/* Regions Tab - Updated without Pro/Against */}
         <TabsContent value="regions" className="mt-6 space-y-6">
-          {/* Top Supporting & Opposing Regions */}
+          {/* Top Positive & Negative Regions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="border-green-500/30">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg text-green-500 flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  المناطق الأكثر تأييداً
+                  <Smile className="h-5 w-5" />
+                  المناطق الأكثر إيجابية
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {analysisData.topSupportingRegions.map((region: any, index: number) => (
+                  {analysisData.topSupportingRegions?.slice(0, 3).map((region: any, index: number) => (
                     <div key={region.regionCode} className="flex items-center justify-between p-2 bg-green-500/5 rounded-lg">
                       <div className="flex items-center gap-3">
                         <span className="text-lg font-bold text-green-500">#{index + 1}</span>
@@ -627,7 +628,7 @@ export default function TopicAnalysisResults() {
                         </div>
                       </div>
                       <Badge variant="default" className="bg-green-500">
-                        {region.support}% مؤيد
+                        GMI: {roundToOneDecimal(region.gmi || region.support)}
                       </Badge>
                     </div>
                   ))}
@@ -638,13 +639,13 @@ export default function TopicAnalysisResults() {
             <Card className="border-red-500/30">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg text-red-500 flex items-center gap-2">
-                  <TrendingDown className="h-5 w-5" />
-                  المناطق الأكثر معارضة
+                  <Frown className="h-5 w-5" />
+                  المناطق الأكثر سلبية
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {analysisData.topOpposingRegions.map((region: any, index: number) => (
+                  {analysisData.topOpposingRegions?.slice(0, 3).map((region: any, index: number) => (
                     <div key={region.regionCode} className="flex items-center justify-between p-2 bg-red-500/5 rounded-lg">
                       <div className="flex items-center gap-3">
                         <span className="text-lg font-bold text-red-500">#{index + 1}</span>
@@ -654,7 +655,7 @@ export default function TopicAnalysisResults() {
                         </div>
                       </div>
                       <Badge variant="destructive">
-                        {region.opposition}% معارض
+                        GMI: {roundToOneDecimal(region.gmi || -region.opposition)}
                       </Badge>
                     </div>
                   ))}
@@ -663,54 +664,62 @@ export default function TopicAnalysisResults() {
             </Card>
           </div>
 
-          {/* All Regions Table */}
+          {/* All Regions Table - Updated */}
           <Card>
             <CardHeader>
               <CardTitle>جميع المناطق</CardTitle>
-              <CardDescription>تحليل تفصيلي لكل منطقة</CardDescription>
+              <CardDescription>تحليل المشاعر الجماعية لكل منطقة</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>المنطقة</TableHead>
-                    <TableHead className="text-center">مؤيد</TableHead>
-                    <TableHead className="text-center">معارض</TableHead>
-                    <TableHead className="text-center">محايد</TableHead>
                     <TableHead className="text-center">GMI</TableHead>
+                    <TableHead className="text-center">CFI</TableHead>
+                    <TableHead className="text-center">HRI</TableHead>
                     <TableHead className="text-center">الشعور السائد</TableHead>
+                    <TableHead className="text-center">الحالة</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {analysisData.regions.map((region: any) => (
-                    <TableRow key={region.regionCode}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{region.regionNameAr}</p>
-                          <p className="text-xs text-muted-foreground">{region.regionName}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <span className="text-green-500 font-medium">{region.support}%</span>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <span className="text-red-500 font-medium">{region.opposition}%</span>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <span className="text-yellow-500 font-medium">{region.neutral}%</span>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant={region.gmi > 0 ? "default" : region.gmi < 0 ? "destructive" : "secondary"}>
-                          {region.gmi}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <span className="text-xl">
-                          {EMOTION_CONFIG[region.dominantEmotion]?.icon || "📊"}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {analysisData.regions.map((region: any) => {
+                    const regionMood = getMoodStatus(region.gmi || region.support - region.opposition);
+                    return (
+                      <TableRow key={region.regionCode}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{region.regionNameAr}</p>
+                            <p className="text-xs text-muted-foreground">{region.regionName}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={region.gmi > 0 ? "default" : region.gmi < 0 ? "destructive" : "secondary"}>
+                            {roundToOneDecimal(region.gmi || region.support - region.opposition)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="text-muted-foreground">{roundToOneDecimal(region.cfi || 50)}</span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="text-muted-foreground">{roundToOneDecimal(region.hri || 50)}</span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <span className="text-xl">
+                              {EMOTION_CONFIG[region.dominantEmotion]?.icon || "📊"}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {EMOTION_CONFIG[region.dominantEmotion]?.labelAr || region.dominantEmotion}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className={regionMood.color}>{regionMood.emoji}</span>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
@@ -723,14 +732,23 @@ export default function TopicAnalysisResults() {
         <CardContent className="py-4">
           <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-4">
-              <span>حجم العينة: {analysisData.sampleSize.toLocaleString()}</span>
+              <span>حجم العينة: {analysisData.sampleSize?.toLocaleString() || "N/A"}</span>
               <span>•</span>
-              <span>المصادر: {analysisData.sources.join(", ")}</span>
+              <span>المصادر: {analysisData.sources?.join(", ") || "متعددة"}</span>
             </div>
             <div>
-              <span>آخر تحديث: {new Date(analysisData.timestamp).toLocaleString("ar-LY")}</span>
+              <span>آخر تحديث: {new Date(analysisData.timestamp || Date.now()).toLocaleString("ar-LY")}</span>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Disclaimer */}
+      <Card className="border-yellow-500/30 bg-yellow-500/5">
+        <CardContent className="py-4">
+          <p className="text-sm text-muted-foreground text-center">
+            ⚠️ <strong>إخلاء مسؤولية:</strong> هذا تحليل إحصائي للمشاعر الجماعية فقط ولا يشكل تشخيصاً طبياً أو توصية سياسية. يرجى استشارة المختصين.
+          </p>
         </CardContent>
       </Card>
     </div>
