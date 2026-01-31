@@ -172,7 +172,7 @@ function InteractiveWorldMap({
   const hoveredInfo = hoveredCountry ? getCountryInfo(hoveredCountry) : null;
 
   return (
-    <div className="relative w-full aspect-[2/1] bg-gradient-to-b from-slate-900/50 to-slate-800/50 rounded-2xl overflow-hidden border border-border/30">
+    <div className="relative w-full aspect-[2/1] bg-gradient-to-b from-slate-900/50 to-slate-800/50 dark:from-slate-900/50 dark:to-slate-800/50 rounded-2xl overflow-hidden border border-border/30">
       {/* Loading overlay */}
       {isLoading && (
         <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10">
