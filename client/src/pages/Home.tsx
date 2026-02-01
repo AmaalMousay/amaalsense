@@ -381,8 +381,6 @@ export default function Home() {
     { href: '/dashboard', label: t.nav.dashboard },
     { href: '/analyzer', label: t.nav.analyzer },
     { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets' },
-    { href: '/weather', label: t.nav.weather },
-    { href: '/trends', label: 'Trends' },
     { href: '/theory', label: t.nav.theory },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
