@@ -322,26 +322,44 @@
     }
   }
 
-  /* Cosmic glow effect for cards */
+  /* Cosmic glow effect for cards - ALWAYS DARK with WHITE text */
   .cosmic-card {
-    background: var(--card);
-    border: 1px solid oklch(0.65 0.22 280 / 0.2);
+    background: linear-gradient(135deg, oklch(0.12 0.02 240), oklch(0.15 0.03 260)) !important;
+    border: 1px solid oklch(0.65 0.22 280 / 0.3);
     box-shadow: 0 0 30px oklch(0.65 0.22 280 / 0.1), inset 0 0 30px oklch(0.65 0.22 280 / 0.05);
     border-radius: 0.75rem;
     position: relative;
+    color: #ffffff !important;
     overflow: hidden;
     z-index: 1;
   }
 
-  /* Dark mode cosmic card */
+  /* Dark mode cosmic card - ALWAYS DARK */
   .dark .cosmic-card {
-    background: linear-gradient(135deg, oklch(0.12 0.02 240), oklch(0.15 0.03 260));
+    background: linear-gradient(135deg, oklch(0.12 0.02 240), oklch(0.15 0.03 260)) !important;
+    color: #ffffff !important;
   }
 
-  /* Light mode cosmic card */
+  /* Light mode cosmic card - ALSO DARK for consistency */
   :root .cosmic-card {
-    background: linear-gradient(135deg, oklch(0.98 0.01 240), oklch(0.96 0.02 260));
+    background: linear-gradient(135deg, oklch(0.12 0.02 240), oklch(0.15 0.03 260)) !important;
     border: 1px solid oklch(0.55 0.2 280 / 0.3);
+    color: #ffffff !important;
+  }
+
+  /* Ensure all text inside cosmic-card is white */
+  .cosmic-card p,
+  .cosmic-card h1,
+  .cosmic-card h2,
+  .cosmic-card h3,
+  .cosmic-card h4,
+  .cosmic-card span,
+  .cosmic-card div {
+    color: inherit;
+  }
+
+  .cosmic-card .text-muted-foreground {
+    color: rgba(255, 255, 255, 0.7) !important;
   }
 
   .cosmic-card::before {
@@ -362,9 +380,9 @@
     50% { transform: translate(10px, 10px) scale(1.1); }
   }
 
-  /* Glowing text effect */
+  /* Glowing text effect - ALWAYS WHITE for dark backgrounds */
   .cosmic-text {
-    color: var(--foreground);
+    color: #ffffff !important;
     text-shadow: 0 0 10px oklch(0.65 0.22 280 / 0.5);
     font-weight: 600;
   }
@@ -375,23 +393,33 @@
     text-shadow: 0 0 20px oklch(0.65 0.22 280 / 0.8), 0 0 40px oklch(0.65 0.22 280 / 0.4);
   }
 
-  /* Light mode cosmic text */
+  /* Light mode cosmic text - ALSO WHITE since cards are dark */
   :root .cosmic-text {
-    color: oklch(0.15 0.01 240);
+    color: #ffffff !important;
     text-shadow: 0 0 10px oklch(0.65 0.22 280 / 0.3);
   }
 
-  /* Animated gradient text */
+  /* Animated gradient text - BRIGHT for dark backgrounds */
   .gradient-text {
-    background: linear-gradient(135deg, oklch(0.55 0.25 280), oklch(0.6 0.3 260), oklch(0.5 0.25 300));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
     animation: gradient-shift 3s ease infinite;
+    filter: brightness(1.3);
   }
 
   /* Dark mode gradient text - VERY bright for maximum visibility */
   .dark .gradient-text {
+    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    filter: brightness(1.3);
+  }
+
+  /* Light mode gradient text - ALSO BRIGHT since cards are dark */
+  :root .gradient-text {
     background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
