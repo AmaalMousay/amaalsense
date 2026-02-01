@@ -322,44 +322,57 @@
     }
   }
 
-  /* Cosmic glow effect for cards - ALWAYS DARK with WHITE text */
+  /* Cosmic glow effect for cards - Theme aware */
   .cosmic-card {
-    background: linear-gradient(135deg, oklch(0.12 0.02 240), oklch(0.15 0.03 260)) !important;
     border: 1px solid oklch(0.65 0.22 280 / 0.3);
     box-shadow: 0 0 30px oklch(0.65 0.22 280 / 0.1), inset 0 0 30px oklch(0.65 0.22 280 / 0.05);
     border-radius: 0.75rem;
     position: relative;
-    color: #ffffff !important;
     overflow: hidden;
     z-index: 1;
   }
 
-  /* Dark mode cosmic card - ALWAYS DARK */
+  /* Dark mode cosmic card - Dark background with white text */
   .dark .cosmic-card {
     background: linear-gradient(135deg, oklch(0.12 0.02 240), oklch(0.15 0.03 260)) !important;
     color: #ffffff !important;
   }
 
-  /* Light mode cosmic card - ALSO DARK for consistency */
-  :root .cosmic-card {
-    background: linear-gradient(135deg, oklch(0.12 0.02 240), oklch(0.15 0.03 260)) !important;
+  /* Light mode cosmic card - Light background with dark text */
+  :root:not(.dark) .cosmic-card,
+  :root .cosmic-card:not(.dark *) {
+    background: linear-gradient(135deg, oklch(0.98 0.01 240), oklch(0.96 0.02 260)) !important;
     border: 1px solid oklch(0.55 0.2 280 / 0.3);
-    color: #ffffff !important;
+    color: #1a1a2e !important;
   }
 
-  /* Ensure all text inside cosmic-card is white */
-  .cosmic-card p,
-  .cosmic-card h1,
-  .cosmic-card h2,
-  .cosmic-card h3,
-  .cosmic-card h4,
-  .cosmic-card span,
-  .cosmic-card div {
-    color: inherit;
+  /* Ensure text inside cosmic-card follows theme */
+  .dark .cosmic-card p,
+  .dark .cosmic-card h1,
+  .dark .cosmic-card h2,
+  .dark .cosmic-card h3,
+  .dark .cosmic-card h4,
+  .dark .cosmic-card span,
+  .dark .cosmic-card div {
+    color: #ffffff;
   }
 
-  .cosmic-card .text-muted-foreground {
+  :root:not(.dark) .cosmic-card p,
+  :root:not(.dark) .cosmic-card h1,
+  :root:not(.dark) .cosmic-card h2,
+  :root:not(.dark) .cosmic-card h3,
+  :root:not(.dark) .cosmic-card h4,
+  :root:not(.dark) .cosmic-card span,
+  :root:not(.dark) .cosmic-card div {
+    color: #1a1a2e;
+  }
+
+  .dark .cosmic-card .text-muted-foreground {
     color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  :root:not(.dark) .cosmic-card .text-muted-foreground {
+    color: rgba(26, 26, 46, 0.7) !important;
   }
 
   .cosmic-card::before {
@@ -380,51 +393,41 @@
     50% { transform: translate(10px, 10px) scale(1.1); }
   }
 
-  /* Glowing text effect - ALWAYS WHITE for dark backgrounds */
+  /* Glowing text effect - Theme aware */
   .cosmic-text {
-    color: #ffffff !important;
-    text-shadow: 0 0 10px oklch(0.65 0.22 280 / 0.5);
     font-weight: 600;
   }
 
-  /* Dark mode cosmic text - VERY bright white for maximum visibility */
+  /* Dark mode cosmic text - White for dark backgrounds */
   .dark .cosmic-text {
     color: #ffffff !important;
     text-shadow: 0 0 20px oklch(0.65 0.22 280 / 0.8), 0 0 40px oklch(0.65 0.22 280 / 0.4);
   }
 
-  /* Light mode cosmic text - ALSO WHITE since cards are dark */
-  :root .cosmic-text {
-    color: #ffffff !important;
-    text-shadow: 0 0 10px oklch(0.65 0.22 280 / 0.3);
+  /* Light mode cosmic text - Dark for light backgrounds */
+  :root:not(.dark) .cosmic-text {
+    color: #1a1a2e !important;
+    text-shadow: 0 0 10px oklch(0.65 0.22 280 / 0.2);
   }
 
-  /* Animated gradient text - BRIGHT for dark backgrounds */
+  /* Animated gradient text - Theme aware */
   .gradient-text {
-    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
     animation: gradient-shift 3s ease infinite;
-    filter: brightness(1.3);
   }
 
-  /* Dark mode gradient text - VERY bright for maximum visibility */
+  /* Dark mode gradient text - Bright purple for dark backgrounds */
   .dark .gradient-text {
     background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
     filter: brightness(1.3);
   }
 
-  /* Light mode gradient text - ALSO BRIGHT since cards are dark */
-  :root .gradient-text {
-    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    filter: brightness(1.3);
+  /* Light mode gradient text - Darker purple for light backgrounds */
+  :root:not(.dark) .gradient-text {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6, #6d28d9) !important;
+    filter: brightness(1.0);
   }
 
   @keyframes gradient-shift {
