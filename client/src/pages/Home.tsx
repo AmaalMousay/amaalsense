@@ -648,88 +648,12 @@ export default function Home() {
               </div>
             </Card>
             
-            {/* Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Globe className="w-4 h-4" />
-                <span>{isRTL ? '15+ مصدر بيانات' : '15+ Data Sources'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span>{isRTL ? '50+ دولة' : '50+ Countries'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>{isRTL ? 'تحليل فوري' : 'Real-time Analysis'}</span>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Who Is This For? Section */}
-      <section className="py-12 bg-muted/30">
-        <div className="container">
-          <h3 className="text-2xl font-bold text-center cosmic-text mb-8">
-            {isRTL ? 'لمن هذا؟' : 'Who Is This For?'}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Journalist Card */}
-            <Card 
-              className="cosmic-card p-6 hover:border-foreground/30 transition-all cursor-pointer group"
-              onClick={() => navigate('/journalist')}
-            >
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-lg bg-foreground/10 group-hover:scale-110 transition-transform">
-                  <Newspaper className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-xl font-bold mb-2">
-                    {isRTL ? 'الصحفيين والإعلاميين' : 'Journalists & Media'}
-                  </h4>
-                  <p className="text-muted-foreground mb-3">
-                    {isRTL 
-                      ? 'اكتشف القصص التي يتفاعل معها الناس الآن. افهم المشاعر الجماعية قبل أن تصبح أخباراً.'
-                      : 'Discover stories people are reacting to now. Understand collective emotions before they become news.'
-                    }
-                  </p>
-                  <div className="flex items-center text-sm font-medium group-hover:gap-2 transition-all">
-                    {isRTL ? 'استكشف لوحة الصحفي' : 'Explore Journalist Dashboard'}
-                    <ChevronRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
-            </Card>
-            
-            {/* Researcher Card */}
-            <Card 
-              className="cosmic-card p-6 hover:border-foreground/30 transition-all cursor-pointer group"
-              onClick={() => navigate('/researcher')}
-            >
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-lg bg-foreground/10 group-hover:scale-110 transition-transform">
-                  <GraduationCap className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-xl font-bold mb-2">
-                    {isRTL ? 'الباحثين والأكاديميين' : 'Researchers & Academics'}
-                  </h4>
-                  <p className="text-muted-foreground mb-3">
-                    {isRTL 
-                      ? 'بيانات مشاعر حقيقية من ملايين المصادر. API قوي وبيانات جاهزة للتحليل الأكاديمي.'
-                      : 'Real emotion data from millions of sources. Powerful API and data ready for academic analysis.'
-                    }
-                  </p>
-                  <div className="flex items-center text-sm font-medium group-hover:gap-2 transition-all">
-                    {isRTL ? 'استكشف لوحة الباحث' : 'Explore Researcher Dashboard'}
-                    <ChevronRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
+
 
       {/* Live Indices Section */}
       <section className="py-8 border-t border-border/50">
