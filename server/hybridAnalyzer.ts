@@ -23,6 +23,9 @@ import { classifyContext, applyContextAdjustments, ContextClassification } from 
 import { storeLearningPattern, getLearnedAdjustments, learnKeywordsFromText } from './activeLearning';
 import { detectLanguage, analyzeMultilingual, getLanguageProfile } from './multilingualAnalyzer';
 import { analyzeTemporalChanges, storeEmotionSnapshot, generateTemporalInsights } from './temporalAnalyzer';
+import { cleanText, cleanTexts, CleaningResult } from './dataCleaningLayer';
+import { getSourceWeight, applySourceWeights, calculateWeightedEmotions, SourceType } from './sourceWeighting';
+import { generateInsights, AnalysisInsights } from './insightsEngine';
 
 /**
  * Hybrid analysis configuration
@@ -125,6 +128,27 @@ export interface HybridAnalysisResult {
     matchedPatterns: number;     // Number of similar patterns found
     keywordsLearned: number;     // Number of keywords extracted
   };
+  
+  // Data Quality (NEW)
+  dataQuality?: {
+    totalTexts: number;          // Total texts before cleaning
+    validTexts: number;          // Texts after cleaning
+    rejectedTexts: number;       // Rejected texts
+    averageQuality: number;      // Average quality score 0-100
+    spamRemoved: number;         // Spam texts removed
+    duplicatesRemoved: number;   // Duplicate texts removed
+  };
+  
+  // Source Weighting (NEW)
+  sourceWeighting?: {
+    sourcesUsed: string[];       // List of sources
+    averageCredibility: number;  // Average credibility 0-100
+    averageWeight: number;       // Average weight 0-1
+    weightedAnalysis: boolean;   // Whether weighted analysis was applied
+  };
+  
+  // Insights & Alerts (NEW)
+  insights?: AnalysisInsights;
   
   // Analysis metadata
   analyzedAt: Date;
@@ -505,6 +529,27 @@ export async function analyzeHybrid(
       matchedPatterns,
       keywordsLearned: 5, // We extract up to 5 keywords per text
     },
+    // Generate Insights & Alerts
+    insights: generateInsights({
+      emotions: {
+        joy: emotionsFor100Scale.joy,
+        fear: emotionsFor100Scale.fear,
+        anger: emotionsFor100Scale.anger,
+        sadness: emotionsFor100Scale.sadness,
+        hope: emotionsFor100Scale.hope,
+        curiosity: emotionsFor100Scale.curiosity,
+      },
+      indices: {
+        gmi: indices.gmi,
+        cfi: indices.cfi,
+        hri: indices.hri,
+      },
+      context: {
+        eventType: contextClassification.eventType,
+        region: contextClassification.culturalRegion,
+        sensitivity: contextClassification.sensitivityLevel,
+      },
+    }),
     analyzedAt: new Date(),
     processingTimeMs,
   };
