@@ -184,7 +184,7 @@ function InteractiveWorldMap({
         <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>جاري تحميل البيانات...</span>
+            <span>Loading data...</span>
           </div>
         </div>
       )}
@@ -282,19 +282,19 @@ function InteractiveWorldMap({
               </div>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-2 text-center">اضغط لعرض التفاصيل</p>
+          <p className="text-xs text-muted-foreground mt-2 text-center">Click to view details</p>
         </div>
       )}
       
       {/* Legend */}
       <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm p-3 rounded-lg border border-border/50">
-        <p className="text-xs font-medium mb-2">المزاج السائد</p>
+        <p className="text-xs font-medium mb-2">Dominant Mood</p>
         <div className="flex flex-wrap gap-2">
           {Object.entries(MOOD_COLORS).slice(0, 5).map(([mood, color]) => (
             <div key={mood} className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
               <span className="text-xs text-muted-foreground">
-                {mood === 'hope' ? 'أمل' : mood === 'calm' ? 'هدوء' : mood === 'neutral' ? 'محايد' : mood === 'fear' ? 'خوف' : 'غضب'}
+                {mood === 'hope' ? 'Hope' : mood === 'calm' ? 'Calm' : mood === 'neutral' ? 'Neutral' : mood === 'fear' ? 'Fear' : 'Anger'}
               </span>
             </div>
           ))}
@@ -305,7 +305,7 @@ function InteractiveWorldMap({
       <div className="absolute bottom-4 right-4 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          بيانات حية
+          Live Data
         </span>
       </div>
     </div>
@@ -708,8 +708,8 @@ export default function Home() {
       <section className="py-8 border-t border-border/50">
         <div className="container">
           <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold cosmic-text mb-2">خريطة المشاعر العالمية</h3>
-            <p className="text-muted-foreground text-sm">اضغط على أي دولة لعرض تفاصيل المزاج العام • يتم التحديث كل 30 ثانية</p>
+            <h3 className="text-2xl font-bold cosmic-text mb-2">Global Emotion Map</h3>
+            <p className="text-muted-foreground text-sm">Click on any country to view mood details • Updates every 30 seconds</p>
           </div>
           
           <EmotionGoogleMap 

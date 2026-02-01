@@ -1606,3 +1606,21 @@
 - [x] إصلاح مشكلة ظهور "ليبيا" دائماً في التحليل - الآن يعرض الدولة المختارة فعلياً
 - [x] إزالة جميع الـ fallbacks إلى LY واستبدالها بـ ALL (Global)
 - [x] تحديث عرض اسم الدولة في الـ header
+
+
+## Phase 117: تغيير نصوص الخريطة إلى الإنجليزية
+
+- [ ] تغيير عنوان "خريطة المشاعر العالمية" إلى "Global Emotion Map"
+- [ ] تغيير الوصف إلى "Click on any country to view mood details"
+- [ ] تغيير "بيانات حية" إلى "Live Data"
+- [ ] تغيير Legend من العربية إلى الإنجليزية (Hope, Calm, Neutral, Fear, Anger)
+
+
+## Phase 108: Fix Arabic Text in Global Emotion Map (NEW)
+- [x] Translate map title "خريطة المشاعر العالمية" → "Global Emotion Map"
+- [x] Translate map instruction "اضغط على أي دولة لعرض تفاصيل المزاج العام" → "Click on any country to view mood details"
+- [x] Translate live data badge "بيانات حية" → "Live Data"
+- [x] Translate legend labels (أمل، هدوء، محايد، خوف، غضب) → (Hope, Calm, Neutral, Fear, Anger)
+- [x] Translate loading text "جاري تحميل البيانات" → "Loading data..."
+- [x] Translate tooltip text "اضغط لعرض التفاصيل" → "Click to view details"
+- [x] Update EmotionGoogleMap.tsx legend and live data badge

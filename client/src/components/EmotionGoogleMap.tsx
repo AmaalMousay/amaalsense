@@ -388,23 +388,23 @@ export function EmotionGoogleMap({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: MOOD_COLORS.hope }} />
-            <span>أمل</span>
+            <span>Hope</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: MOOD_COLORS.calm }} />
-            <span>هدوء</span>
+            <span>Calm</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: MOOD_COLORS.neutral }} />
-            <span>محايد</span>
+            <span>Neutral</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: MOOD_COLORS.fear }} />
-            <span>خوف</span>
+            <span>Fear</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: MOOD_COLORS.anger }} />
-            <span>غضب</span>
+            <span>Anger</span>
           </div>
         </div>
       </div>
@@ -412,7 +412,7 @@ export function EmotionGoogleMap({
       {/* Live indicator */}
       <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border flex items-center gap-2 text-xs">
         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-        <span>بيانات حية</span>
+        <span>Live Data</span>
       </div>
     </div>
   );
