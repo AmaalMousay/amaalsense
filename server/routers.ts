@@ -2481,6 +2481,202 @@ Please verify the payment and confirm in the admin panel.
         };
       }),
   }),
+
+  // AI Conversations Router - ChatGPT-style conversation history
+  conversations: router({
+    /**
+     * Get all conversations for the current user
+     */
+    list: publicProcedure.query(async ({ ctx }) => {
+      const { getDb } = await import('./db');
+      const db = await getDb();
+      if (!db) return [];
+      const { aiConversations } = await import('../drizzle/schema');
+      const { desc, eq } = await import('drizzle-orm');
+      
+      // Get user's conversations or all if not logged in (for demo)
+      const userId = ctx.user?.id;
+      
+      const conversations = await db
+        .select()
+        .from(aiConversations)
+        .where(userId ? eq(aiConversations.userId, userId) : undefined)
+        .orderBy(desc(aiConversations.lastActivityAt))
+        .limit(50);
+      
+      return conversations;
+    }),
+
+    /**
+     * Get a single conversation with all messages
+     */
+    get: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const { getDb } = await import('./db');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+        const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
+        const { eq, asc } = await import('drizzle-orm');
+        
+        const [conversation] = await db
+          .select()
+          .from(aiConversations)
+          .where(eq(aiConversations.id, input.id))
+          .limit(1);
+        
+        if (!conversation) {
+          throw new Error('Conversation not found');
+        }
+        
+        const messages = await db
+          .select()
+          .from(aiConversationMessages)
+          .where(eq(aiConversationMessages.conversationId, input.id))
+          .orderBy(asc(aiConversationMessages.createdAt));
+        
+        return {
+          ...conversation,
+          messages,
+        };
+      }),
+
+    /**
+     * Create a new conversation
+     */
+    create: publicProcedure
+      .input(z.object({
+        topic: z.string().min(1).max(500),
+        countryCode: z.string().optional(),
+        initialAnalysis: z.object({
+          gmi: z.number(),
+          cfi: z.number(),
+          hri: z.number(),
+          dominantEmotion: z.string(),
+          aiResponse: z.string(),
+        }).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { getDb } = await import('./db');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+        const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
+        
+        // Generate title from topic (first 50 chars)
+        const title = input.topic.length > 50 
+          ? input.topic.substring(0, 47) + '...' 
+          : input.topic;
+        
+        // Create conversation
+        const [result] = await db.insert(aiConversations).values({
+          userId: ctx.user?.id || null,
+          title,
+          topic: input.topic,
+          countryCode: input.countryCode || null,
+          lastGmi: input.initialAnalysis?.gmi || null,
+          lastCfi: input.initialAnalysis?.cfi || null,
+          lastHri: input.initialAnalysis?.hri || null,
+          dominantEmotion: input.initialAnalysis?.dominantEmotion || null,
+          messageCount: input.initialAnalysis ? 2 : 1,
+        });
+        
+        const conversationId = result.insertId;
+        
+        // Add initial user message
+        await db.insert(aiConversationMessages).values({
+          conversationId,
+          role: 'user',
+          content: input.topic,
+        });
+        
+        // Add AI response if provided
+        if (input.initialAnalysis) {
+          await db.insert(aiConversationMessages).values({
+            conversationId,
+            role: 'assistant',
+            content: input.initialAnalysis.aiResponse,
+            analysisData: JSON.stringify({
+              gmi: input.initialAnalysis.gmi,
+              cfi: input.initialAnalysis.cfi,
+              hri: input.initialAnalysis.hri,
+              dominantEmotion: input.initialAnalysis.dominantEmotion,
+            }),
+          });
+        }
+        
+        return { id: conversationId, title };
+      }),
+
+    /**
+     * Add a message to an existing conversation
+     */
+    addMessage: publicProcedure
+      .input(z.object({
+        conversationId: z.number(),
+        role: z.enum(['user', 'assistant']),
+        content: z.string().min(1),
+        analysisData: z.object({
+          gmi: z.number(),
+          cfi: z.number(),
+          hri: z.number(),
+          dominantEmotion: z.string(),
+        }).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { getDb } = await import('./db');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+        const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
+        const { eq, sql } = await import('drizzle-orm');
+        
+        // Add message
+        await db.insert(aiConversationMessages).values({
+          conversationId: input.conversationId,
+          role: input.role,
+          content: input.content,
+          analysisData: input.analysisData ? JSON.stringify(input.analysisData) : null,
+        });
+        
+        // Update conversation
+        await db.update(aiConversations)
+          .set({
+            messageCount: sql`${aiConversations.messageCount} + 1`,
+            lastActivityAt: new Date(),
+            ...(input.analysisData ? {
+              lastGmi: input.analysisData.gmi,
+              lastCfi: input.analysisData.cfi,
+              lastHri: input.analysisData.hri,
+              dominantEmotion: input.analysisData.dominantEmotion,
+            } : {}),
+          })
+          .where(eq(aiConversations.id, input.conversationId));
+        
+        return { success: true };
+      }),
+
+    /**
+     * Delete a conversation
+     */
+    delete: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const { getDb } = await import('./db');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+        const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Delete messages first
+        await db.delete(aiConversationMessages)
+          .where(eq(aiConversationMessages.conversationId, input.id));
+        
+        // Delete conversation
+        await db.delete(aiConversations)
+          .where(eq(aiConversations.id, input.id));
+        
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useSearch } from 'wouter';
+import { ConversationSidebar } from '@/components/ConversationSidebar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -48,9 +49,18 @@ export default function SmartAnalysis() {
   
   const chatContainerRef = useRef<HTMLDivElement>(null);
   
+  // Conversation ID for saving
+  const [currentConversationId, setCurrentConversationId] = useState<number | undefined>();
+  
   // tRPC mutations
   const analyzeWithAI = trpc.conversationalAI.analyzeWithAI.useMutation();
   const askFollowUp = trpc.conversationalAI.askFollowUp.useMutation();
+  const createConversation = trpc.conversations.create.useMutation();
+  const addMessage = trpc.conversations.addMessage.useMutation();
+  const getConversation = trpc.conversations.get.useQuery(
+    { id: currentConversationId! },
+    { enabled: !!currentConversationId && !topic }
+  );
   
   // Auto-scroll chat to bottom
   useEffect(() => {
@@ -71,6 +81,7 @@ export default function SmartAnalysis() {
     
     setIsAnalyzing(true);
     setConversation([]);
+    setCurrentConversationId(undefined);
     
     try {
       const result = await analyzeWithAI.mutateAsync({ topic });
@@ -86,6 +97,24 @@ export default function SmartAnalysis() {
       }]);
       
       setAnalysisComplete(true);
+      
+      // Save conversation to database
+      try {
+        const conv = await createConversation.mutateAsync({
+          topic,
+          countryCode: result.context.detectedCountry,
+          initialAnalysis: {
+            gmi: result.context.gmi,
+            cfi: result.context.cfi,
+            hri: result.context.hri,
+            dominantEmotion: result.context.dominantEmotion,
+            aiResponse: result.aiResponse as string,
+          },
+        });
+        setCurrentConversationId(conv.id);
+      } catch (saveError) {
+        console.warn('Failed to save conversation:', saveError);
+      }
     } catch (error) {
       console.error('Analysis failed:', error);
       setConversation([{
@@ -184,7 +213,64 @@ export default function SmartAnalysis() {
     return 'text-red-400';
   };
 
+  // Handle selecting a conversation from sidebar
+  const handleSelectConversation = (id: number) => {
+    setCurrentConversationId(id);
+    // Clear current state and load the conversation
+    setAnalysisComplete(false);
+    setIsAnalyzing(false);
+    setContext(null);
+    setAnalysisData(null);
+    setConversation([]);
+    // Navigate without topic to load from conversation
+    navigate('/smart-analysis');
+  };
+
+  // Handle new conversation
+  const handleNewConversation = () => {
+    setCurrentConversationId(undefined);
+    setAnalysisComplete(false);
+    setIsAnalyzing(false);
+    setContext(null);
+    setAnalysisData(null);
+    setConversation([]);
+    navigate('/');
+  };
+
+  // Load conversation when ID changes (from sidebar)
+  useEffect(() => {
+    if (getConversation.data && !topic) {
+      const conv = getConversation.data;
+      // Restore context from conversation
+      setContext({
+        topic: conv.topic,
+        gmi: conv.lastGmi || 0,
+        cfi: conv.lastCfi || 0,
+        hri: conv.lastHri || 0,
+        dominantEmotion: conv.dominantEmotion || 'neutral',
+        confidence: 80,
+        detectedCountry: conv.countryCode || undefined,
+      });
+      // Restore messages
+      const messages: ConversationMessage[] = conv.messages.map(m => ({
+        role: m.role as 'user' | 'assistant' | 'system',
+        content: m.content,
+        timestamp: new Date(m.createdAt).getTime(),
+      }));
+      setConversation(messages);
+      setAnalysisComplete(true);
+    }
+  }, [getConversation.data, topic]);
+
   return (
+    <>
+      {/* Conversation Sidebar */}
+      <ConversationSidebar
+        currentConversationId={currentConversationId}
+        onSelectConversation={handleSelectConversation}
+        onNewConversation={handleNewConversation}
+      />
+      
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
@@ -484,5 +570,6 @@ export default function SmartAnalysis() {
         </div>
       </main>
     </div>
+    </>
   );
 }

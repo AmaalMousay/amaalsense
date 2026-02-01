@@ -1717,3 +1717,26 @@ Knowledge Layer (SQL + Vector Store + RAG)
   - [x] Flow: User → Orchestrator → Engines → LLM → Response
   
 - [x] Test complete system
+
+
+## Phase 113: Conversation History Sidebar (ChatGPT-style)
+
+### UI Design
+- [x] Add hamburger menu button (☰) in Smart Analysis header
+- [x] Create sliding sidebar panel (from left)
+- [x] Display list of previous analysis topics
+- [x] Show topic title + date for each conversation
+- [x] Click on topic to load that conversation
+- [x] Add "New Analysis" button at top
+
+### Backend
+- [x] Create conversations table in database
+- [x] Save each analysis as a conversation
+- [x] Create tRPC procedures for CRUD operations
+- [x] Link conversations to user (if logged in)
+
+### Features
+- [x] Auto-save conversations after analysis
+- [x] Load conversation history on sidebar open
+- [x] Delete conversation option
+- [ ] Search conversations (optional)

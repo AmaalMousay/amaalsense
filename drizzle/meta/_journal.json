@@ -71,6 +71,13 @@
       "when": 1769903095907,
       "tag": "0009_lowly_millenium_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1769982313123,
+      "tag": "0010_lonely_red_hulk",
+      "breakpoints": true
     }
   ]
 }

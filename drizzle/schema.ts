@@ -789,3 +789,55 @@ export const multilingualKeywords = mysqlTable("multilingual_keywords", {
 
 export type MultilingualKeyword = typeof multilingualKeywords.$inferSelect;
 export type InsertMultilingualKeyword = typeof multilingualKeywords.$inferInsert;
+
+
+/**
+ * AI Conversations - stores conversation history for Smart Analysis
+ * Similar to ChatGPT conversation history
+ */
+export const aiConversations = mysqlTable("ai_conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID (null for anonymous users) */
+  userId: int("userId"),
+  /** Conversation title (auto-generated from first topic) */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Original topic/query that started the conversation */
+  topic: text("topic").notNull(),
+  /** Country code if specified */
+  countryCode: varchar("countryCode", { length: 5 }),
+  /** Last GMI value */
+  lastGmi: int("lastGmi"),
+  /** Last CFI value */
+  lastCfi: int("lastCfi"),
+  /** Last HRI value */
+  lastHri: int("lastHri"),
+  /** Dominant emotion from last analysis */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  /** Number of messages in conversation */
+  messageCount: int("messageCount").default(1).notNull(),
+  /** Last activity timestamp */
+  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AIConversation = typeof aiConversations.$inferSelect;
+export type InsertAIConversation = typeof aiConversations.$inferInsert;
+
+/**
+ * AI Conversation Messages - stores individual messages in a conversation
+ */
+export const aiConversationMessages = mysqlTable("ai_conversation_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to parent conversation */
+  conversationId: int("conversationId").notNull(),
+  /** Message role: user, assistant, system */
+  role: mysqlEnum("role", ["user", "assistant", "system"]).notNull(),
+  /** Message content */
+  content: text("content").notNull(),
+  /** Analysis data JSON (for assistant messages with analysis results) */
+  analysisData: text("analysisData"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AIConversationMessage = typeof aiConversationMessages.$inferSelect;
+export type InsertAIConversationMessage = typeof aiConversationMessages.$inferInsert;

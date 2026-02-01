@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS ai_conversations (\n  id int AUTO_INCREMENT PRIMARY KEY,\n  userId int,\n  title varchar(255) NOT NULL,\n  topic text NOT NULL,\n  countryCode varchar(5),\n  lastGmi int,\n  lastCfi int,\n  lastHri int,\n  dominantEmotion varchar(32),\n  messageCount int DEFAULT 1 NOT NULL,\n  lastActivityAt timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  createdAt timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL\n);\n\nCREATE TABLE IF NOT EXISTS ai_conversation_messages (\n  id int AUTO_INCREMENT PRIMARY KEY,\n  conversationId int NOT NULL,\n  role enum('user', 'assistant', 'system') NOT NULL,\n  content text NOT NULL,\n  analysisData text,\n  createdAt timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2VsckAsnDsWNG4a.root --database nNCcKwNgPEwkr4saUFSFW2 --execute CREATE TABLE IF NOT EXISTS ai_conversations (\n  id int AUTO_INCREMENT PRIMARY KEY,\n  userId int,\n  title varchar(255) NOT NULL,\n  topic text NOT NULL,\n  countryCode varchar(5),\n  lastGmi int,\n  lastCfi int,\n  lastHri int,\n  dominantEmotion varchar(32),\n  messageCount int DEFAULT 1 NOT NULL,\n  lastActivityAt timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  createdAt timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL\n);\n\nCREATE TABLE IF NOT EXISTS ai_conversation_messages (\n  id int AUTO_INCREMENT PRIMARY KEY,\n  conversationId int NOT NULL,\n  role enum('user', 'assistant', 'system') NOT NULL,\n  content text NOT NULL,\n  analysisData text,\n  createdAt timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 696
+}
