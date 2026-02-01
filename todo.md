@@ -1294,3 +1294,12 @@
 ### إخلاء المسؤولية
 "AmalSense provides emotional indicators, not financial advice."
 
+
+
+## Phase 95: تطوير Journalist Dashboard - السيناريو الكامل للصحفي
+- [x] Story Discovery Panel - أهم 10 مواضيع اليوم
+- [x] فلتر الدول (أخبار عامة + أخبار خاصة بكل دولة)
+- [x] Emotion Breakdown لكل موضوع (غضب/خوف/أمل/حياد)
+- [x] Trend Indicators (صاعد/هابط) لكل قصة
+- [x] Country Comparison - مقارنة ردود الفعل بين الدول
+- [x] تحديث الرسالة التسويقية: "اكتشف القصص قبل أن تصبح ترند"
