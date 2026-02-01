@@ -777,7 +777,7 @@ export default function Home() {
               variant="outline"
               className="px-8 py-4"
             >
-              حالات الاستخدام
+              Use Cases
             </Button>
           </div>
         </div>

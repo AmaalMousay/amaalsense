@@ -1624,3 +1624,6 @@
 - [x] Translate loading text "جاري تحميل البيانات" → "Loading data..."
 - [x] Translate tooltip text "اضغط لعرض التفاصيل" → "Click to view details"
 - [x] Update EmotionGoogleMap.tsx legend and live data badge
+
+## Phase 109: Fix Arabic "حالات الاستخدام" Button (NEW)
+- [x] Change "حالات الاستخدام" → "Use Cases" in Home.tsx
