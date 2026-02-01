@@ -614,7 +614,7 @@ export default function Home() {
                       <SelectItem value="ALL">
                         <span className="flex items-center gap-2">
                           <Globe className="w-4 h-4" />
-                          {isRTL ? '🌍 كل الدول' : '🌍 All Countries'}
+                          {isRTL ? 'كل الدول' : 'All Countries'}
                         </span>
                       </SelectItem>
                       {COUNTRIES.map((country) => (
