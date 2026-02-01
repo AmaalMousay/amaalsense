@@ -1,0 +1,238 @@
+/**
+ * Complete list of 180+ countries with flags and names
+ */
+
+export interface Country {
+  code: string;
+  flag: string;
+  nameAr: string;
+  nameEn: string;
+  region: string;
+}
+
+export const COUNTRIES: Country[] = [
+  // Middle East & North Africa
+  { code: 'LY', flag: '🇱🇾', nameAr: 'ليبيا', nameEn: 'Libya', region: 'MENA' },
+  { code: 'EG', flag: '🇪🇬', nameAr: 'مصر', nameEn: 'Egypt', region: 'MENA' },
+  { code: 'SA', flag: '🇸🇦', nameAr: 'السعودية', nameEn: 'Saudi Arabia', region: 'MENA' },
+  { code: 'AE', flag: '🇦🇪', nameAr: 'الإمارات', nameEn: 'UAE', region: 'MENA' },
+  { code: 'KW', flag: '🇰🇼', nameAr: 'الكويت', nameEn: 'Kuwait', region: 'MENA' },
+  { code: 'QA', flag: '🇶🇦', nameAr: 'قطر', nameEn: 'Qatar', region: 'MENA' },
+  { code: 'BH', flag: '🇧🇭', nameAr: 'البحرين', nameEn: 'Bahrain', region: 'MENA' },
+  { code: 'OM', flag: '🇴🇲', nameAr: 'عمان', nameEn: 'Oman', region: 'MENA' },
+  { code: 'JO', flag: '🇯🇴', nameAr: 'الأردن', nameEn: 'Jordan', region: 'MENA' },
+  { code: 'LB', flag: '🇱🇧', nameAr: 'لبنان', nameEn: 'Lebanon', region: 'MENA' },
+  { code: 'SY', flag: '🇸🇾', nameAr: 'سوريا', nameEn: 'Syria', region: 'MENA' },
+  { code: 'IQ', flag: '🇮🇶', nameAr: 'العراق', nameEn: 'Iraq', region: 'MENA' },
+  { code: 'PS', flag: '🇵🇸', nameAr: 'فلسطين', nameEn: 'Palestine', region: 'MENA' },
+  { code: 'YE', flag: '🇾🇪', nameAr: 'اليمن', nameEn: 'Yemen', region: 'MENA' },
+  { code: 'MA', flag: '🇲🇦', nameAr: 'المغرب', nameEn: 'Morocco', region: 'MENA' },
+  { code: 'DZ', flag: '🇩🇿', nameAr: 'الجزائر', nameEn: 'Algeria', region: 'MENA' },
+  { code: 'TN', flag: '🇹🇳', nameAr: 'تونس', nameEn: 'Tunisia', region: 'MENA' },
+  { code: 'SD', flag: '🇸🇩', nameAr: 'السودان', nameEn: 'Sudan', region: 'MENA' },
+  { code: 'MR', flag: '🇲🇷', nameAr: 'موريتانيا', nameEn: 'Mauritania', region: 'MENA' },
+  { code: 'SO', flag: '🇸🇴', nameAr: 'الصومال', nameEn: 'Somalia', region: 'MENA' },
+  { code: 'DJ', flag: '🇩🇯', nameAr: 'جيبوتي', nameEn: 'Djibouti', region: 'MENA' },
+  { code: 'KM', flag: '🇰🇲', nameAr: 'جزر القمر', nameEn: 'Comoros', region: 'MENA' },
+  
+  // Europe
+  { code: 'GB', flag: '🇬🇧', nameAr: 'بريطانيا', nameEn: 'United Kingdom', region: 'Europe' },
+  { code: 'FR', flag: '🇫🇷', nameAr: 'فرنسا', nameEn: 'France', region: 'Europe' },
+  { code: 'DE', flag: '🇩🇪', nameAr: 'ألمانيا', nameEn: 'Germany', region: 'Europe' },
+  { code: 'IT', flag: '🇮🇹', nameAr: 'إيطاليا', nameEn: 'Italy', region: 'Europe' },
+  { code: 'ES', flag: '🇪🇸', nameAr: 'إسبانيا', nameEn: 'Spain', region: 'Europe' },
+  { code: 'PT', flag: '🇵🇹', nameAr: 'البرتغال', nameEn: 'Portugal', region: 'Europe' },
+  { code: 'NL', flag: '🇳🇱', nameAr: 'هولندا', nameEn: 'Netherlands', region: 'Europe' },
+  { code: 'BE', flag: '🇧🇪', nameAr: 'بلجيكا', nameEn: 'Belgium', region: 'Europe' },
+  { code: 'CH', flag: '🇨🇭', nameAr: 'سويسرا', nameEn: 'Switzerland', region: 'Europe' },
+  { code: 'AT', flag: '🇦🇹', nameAr: 'النمسا', nameEn: 'Austria', region: 'Europe' },
+  { code: 'SE', flag: '🇸🇪', nameAr: 'السويد', nameEn: 'Sweden', region: 'Europe' },
+  { code: 'NO', flag: '🇳🇴', nameAr: 'النرويج', nameEn: 'Norway', region: 'Europe' },
+  { code: 'DK', flag: '🇩🇰', nameAr: 'الدنمارك', nameEn: 'Denmark', region: 'Europe' },
+  { code: 'FI', flag: '🇫🇮', nameAr: 'فنلندا', nameEn: 'Finland', region: 'Europe' },
+  { code: 'IE', flag: '🇮🇪', nameAr: 'أيرلندا', nameEn: 'Ireland', region: 'Europe' },
+  { code: 'PL', flag: '🇵🇱', nameAr: 'بولندا', nameEn: 'Poland', region: 'Europe' },
+  { code: 'CZ', flag: '🇨🇿', nameAr: 'التشيك', nameEn: 'Czech Republic', region: 'Europe' },
+  { code: 'HU', flag: '🇭🇺', nameAr: 'المجر', nameEn: 'Hungary', region: 'Europe' },
+  { code: 'RO', flag: '🇷🇴', nameAr: 'رومانيا', nameEn: 'Romania', region: 'Europe' },
+  { code: 'BG', flag: '🇧🇬', nameAr: 'بلغاريا', nameEn: 'Bulgaria', region: 'Europe' },
+  { code: 'GR', flag: '🇬🇷', nameAr: 'اليونان', nameEn: 'Greece', region: 'Europe' },
+  { code: 'TR', flag: '🇹🇷', nameAr: 'تركيا', nameEn: 'Turkey', region: 'Europe' },
+  { code: 'RU', flag: '🇷🇺', nameAr: 'روسيا', nameEn: 'Russia', region: 'Europe' },
+  { code: 'UA', flag: '🇺🇦', nameAr: 'أوكرانيا', nameEn: 'Ukraine', region: 'Europe' },
+  { code: 'BY', flag: '🇧🇾', nameAr: 'بيلاروسيا', nameEn: 'Belarus', region: 'Europe' },
+  { code: 'SK', flag: '🇸🇰', nameAr: 'سلوفاكيا', nameEn: 'Slovakia', region: 'Europe' },
+  { code: 'SI', flag: '🇸🇮', nameAr: 'سلوفينيا', nameEn: 'Slovenia', region: 'Europe' },
+  { code: 'HR', flag: '🇭🇷', nameAr: 'كرواتيا', nameEn: 'Croatia', region: 'Europe' },
+  { code: 'RS', flag: '🇷🇸', nameAr: 'صربيا', nameEn: 'Serbia', region: 'Europe' },
+  { code: 'BA', flag: '🇧🇦', nameAr: 'البوسنة', nameEn: 'Bosnia', region: 'Europe' },
+  { code: 'AL', flag: '🇦🇱', nameAr: 'ألبانيا', nameEn: 'Albania', region: 'Europe' },
+  { code: 'MK', flag: '🇲🇰', nameAr: 'مقدونيا', nameEn: 'North Macedonia', region: 'Europe' },
+  { code: 'ME', flag: '🇲🇪', nameAr: 'الجبل الأسود', nameEn: 'Montenegro', region: 'Europe' },
+  { code: 'XK', flag: '🇽🇰', nameAr: 'كوسوفو', nameEn: 'Kosovo', region: 'Europe' },
+  { code: 'LT', flag: '🇱🇹', nameAr: 'ليتوانيا', nameEn: 'Lithuania', region: 'Europe' },
+  { code: 'LV', flag: '🇱🇻', nameAr: 'لاتفيا', nameEn: 'Latvia', region: 'Europe' },
+  { code: 'EE', flag: '🇪🇪', nameAr: 'إستونيا', nameEn: 'Estonia', region: 'Europe' },
+  { code: 'MD', flag: '🇲🇩', nameAr: 'مولدوفا', nameEn: 'Moldova', region: 'Europe' },
+  { code: 'LU', flag: '🇱🇺', nameAr: 'لوكسمبورغ', nameEn: 'Luxembourg', region: 'Europe' },
+  { code: 'MT', flag: '🇲🇹', nameAr: 'مالطا', nameEn: 'Malta', region: 'Europe' },
+  { code: 'CY', flag: '🇨🇾', nameAr: 'قبرص', nameEn: 'Cyprus', region: 'Europe' },
+  { code: 'IS', flag: '🇮🇸', nameAr: 'أيسلندا', nameEn: 'Iceland', region: 'Europe' },
+  
+  // Americas
+  { code: 'US', flag: '🇺🇸', nameAr: 'أمريكا', nameEn: 'United States', region: 'Americas' },
+  { code: 'CA', flag: '🇨🇦', nameAr: 'كندا', nameEn: 'Canada', region: 'Americas' },
+  { code: 'MX', flag: '🇲🇽', nameAr: 'المكسيك', nameEn: 'Mexico', region: 'Americas' },
+  { code: 'BR', flag: '🇧🇷', nameAr: 'البرازيل', nameEn: 'Brazil', region: 'Americas' },
+  { code: 'AR', flag: '🇦🇷', nameAr: 'الأرجنتين', nameEn: 'Argentina', region: 'Americas' },
+  { code: 'CO', flag: '🇨🇴', nameAr: 'كولومبيا', nameEn: 'Colombia', region: 'Americas' },
+  { code: 'CL', flag: '🇨🇱', nameAr: 'تشيلي', nameEn: 'Chile', region: 'Americas' },
+  { code: 'PE', flag: '🇵🇪', nameAr: 'بيرو', nameEn: 'Peru', region: 'Americas' },
+  { code: 'VE', flag: '🇻🇪', nameAr: 'فنزويلا', nameEn: 'Venezuela', region: 'Americas' },
+  { code: 'EC', flag: '🇪🇨', nameAr: 'الإكوادور', nameEn: 'Ecuador', region: 'Americas' },
+  { code: 'BO', flag: '🇧🇴', nameAr: 'بوليفيا', nameEn: 'Bolivia', region: 'Americas' },
+  { code: 'PY', flag: '🇵🇾', nameAr: 'باراغواي', nameEn: 'Paraguay', region: 'Americas' },
+  { code: 'UY', flag: '🇺🇾', nameAr: 'أوروغواي', nameEn: 'Uruguay', region: 'Americas' },
+  { code: 'GY', flag: '🇬🇾', nameAr: 'غيانا', nameEn: 'Guyana', region: 'Americas' },
+  { code: 'SR', flag: '🇸🇷', nameAr: 'سورينام', nameEn: 'Suriname', region: 'Americas' },
+  { code: 'PA', flag: '🇵🇦', nameAr: 'بنما', nameEn: 'Panama', region: 'Americas' },
+  { code: 'CR', flag: '🇨🇷', nameAr: 'كوستاريكا', nameEn: 'Costa Rica', region: 'Americas' },
+  { code: 'NI', flag: '🇳🇮', nameAr: 'نيكاراغوا', nameEn: 'Nicaragua', region: 'Americas' },
+  { code: 'HN', flag: '🇭🇳', nameAr: 'هندوراس', nameEn: 'Honduras', region: 'Americas' },
+  { code: 'SV', flag: '🇸🇻', nameAr: 'السلفادور', nameEn: 'El Salvador', region: 'Americas' },
+  { code: 'GT', flag: '🇬🇹', nameAr: 'غواتيمالا', nameEn: 'Guatemala', region: 'Americas' },
+  { code: 'BZ', flag: '🇧🇿', nameAr: 'بليز', nameEn: 'Belize', region: 'Americas' },
+  { code: 'CU', flag: '🇨🇺', nameAr: 'كوبا', nameEn: 'Cuba', region: 'Americas' },
+  { code: 'DO', flag: '🇩🇴', nameAr: 'الدومينيكان', nameEn: 'Dominican Republic', region: 'Americas' },
+  { code: 'HT', flag: '🇭🇹', nameAr: 'هايتي', nameEn: 'Haiti', region: 'Americas' },
+  { code: 'JM', flag: '🇯🇲', nameAr: 'جامايكا', nameEn: 'Jamaica', region: 'Americas' },
+  { code: 'TT', flag: '🇹🇹', nameAr: 'ترينيداد', nameEn: 'Trinidad and Tobago', region: 'Americas' },
+  { code: 'PR', flag: '🇵🇷', nameAr: 'بورتوريكو', nameEn: 'Puerto Rico', region: 'Americas' },
+  
+  // Asia
+  { code: 'CN', flag: '🇨🇳', nameAr: 'الصين', nameEn: 'China', region: 'Asia' },
+  { code: 'JP', flag: '🇯🇵', nameAr: 'اليابان', nameEn: 'Japan', region: 'Asia' },
+  { code: 'KR', flag: '🇰🇷', nameAr: 'كوريا الجنوبية', nameEn: 'South Korea', region: 'Asia' },
+  { code: 'KP', flag: '🇰🇵', nameAr: 'كوريا الشمالية', nameEn: 'North Korea', region: 'Asia' },
+  { code: 'IN', flag: '🇮🇳', nameAr: 'الهند', nameEn: 'India', region: 'Asia' },
+  { code: 'PK', flag: '🇵🇰', nameAr: 'باكستان', nameEn: 'Pakistan', region: 'Asia' },
+  { code: 'BD', flag: '🇧🇩', nameAr: 'بنغلاديش', nameEn: 'Bangladesh', region: 'Asia' },
+  { code: 'ID', flag: '🇮🇩', nameAr: 'إندونيسيا', nameEn: 'Indonesia', region: 'Asia' },
+  { code: 'TH', flag: '🇹🇭', nameAr: 'تايلاند', nameEn: 'Thailand', region: 'Asia' },
+  { code: 'VN', flag: '🇻🇳', nameAr: 'فيتنام', nameEn: 'Vietnam', region: 'Asia' },
+  { code: 'MY', flag: '🇲🇾', nameAr: 'ماليزيا', nameEn: 'Malaysia', region: 'Asia' },
+  { code: 'SG', flag: '🇸🇬', nameAr: 'سنغافورة', nameEn: 'Singapore', region: 'Asia' },
+  { code: 'PH', flag: '🇵🇭', nameAr: 'الفلبين', nameEn: 'Philippines', region: 'Asia' },
+  { code: 'MM', flag: '🇲🇲', nameAr: 'ميانمار', nameEn: 'Myanmar', region: 'Asia' },
+  { code: 'KH', flag: '🇰🇭', nameAr: 'كمبوديا', nameEn: 'Cambodia', region: 'Asia' },
+  { code: 'LA', flag: '🇱🇦', nameAr: 'لاوس', nameEn: 'Laos', region: 'Asia' },
+  { code: 'NP', flag: '🇳🇵', nameAr: 'نيبال', nameEn: 'Nepal', region: 'Asia' },
+  { code: 'BT', flag: '🇧🇹', nameAr: 'بوتان', nameEn: 'Bhutan', region: 'Asia' },
+  { code: 'LK', flag: '🇱🇰', nameAr: 'سريلانكا', nameEn: 'Sri Lanka', region: 'Asia' },
+  { code: 'MV', flag: '🇲🇻', nameAr: 'المالديف', nameEn: 'Maldives', region: 'Asia' },
+  { code: 'AF', flag: '🇦🇫', nameAr: 'أفغانستان', nameEn: 'Afghanistan', region: 'Asia' },
+  { code: 'IR', flag: '🇮🇷', nameAr: 'إيران', nameEn: 'Iran', region: 'Asia' },
+  { code: 'MN', flag: '🇲🇳', nameAr: 'منغوليا', nameEn: 'Mongolia', region: 'Asia' },
+  { code: 'KZ', flag: '🇰🇿', nameAr: 'كازاخستان', nameEn: 'Kazakhstan', region: 'Asia' },
+  { code: 'UZ', flag: '🇺🇿', nameAr: 'أوزبكستان', nameEn: 'Uzbekistan', region: 'Asia' },
+  { code: 'TM', flag: '🇹🇲', nameAr: 'تركمانستان', nameEn: 'Turkmenistan', region: 'Asia' },
+  { code: 'TJ', flag: '🇹🇯', nameAr: 'طاجيكستان', nameEn: 'Tajikistan', region: 'Asia' },
+  { code: 'KG', flag: '🇰🇬', nameAr: 'قيرغيزستان', nameEn: 'Kyrgyzstan', region: 'Asia' },
+  { code: 'AZ', flag: '🇦🇿', nameAr: 'أذربيجان', nameEn: 'Azerbaijan', region: 'Asia' },
+  { code: 'AM', flag: '🇦🇲', nameAr: 'أرمينيا', nameEn: 'Armenia', region: 'Asia' },
+  { code: 'GE', flag: '🇬🇪', nameAr: 'جورجيا', nameEn: 'Georgia', region: 'Asia' },
+  { code: 'TW', flag: '🇹🇼', nameAr: 'تايوان', nameEn: 'Taiwan', region: 'Asia' },
+  { code: 'HK', flag: '🇭🇰', nameAr: 'هونغ كونغ', nameEn: 'Hong Kong', region: 'Asia' },
+  { code: 'MO', flag: '🇲🇴', nameAr: 'ماكاو', nameEn: 'Macau', region: 'Asia' },
+  { code: 'BN', flag: '🇧🇳', nameAr: 'بروناي', nameEn: 'Brunei', region: 'Asia' },
+  { code: 'TL', flag: '🇹🇱', nameAr: 'تيمور الشرقية', nameEn: 'Timor-Leste', region: 'Asia' },
+  
+  // Africa
+  { code: 'NG', flag: '🇳🇬', nameAr: 'نيجيريا', nameEn: 'Nigeria', region: 'Africa' },
+  { code: 'ZA', flag: '🇿🇦', nameAr: 'جنوب أفريقيا', nameEn: 'South Africa', region: 'Africa' },
+  { code: 'KE', flag: '🇰🇪', nameAr: 'كينيا', nameEn: 'Kenya', region: 'Africa' },
+  { code: 'ET', flag: '🇪🇹', nameAr: 'إثيوبيا', nameEn: 'Ethiopia', region: 'Africa' },
+  { code: 'GH', flag: '🇬🇭', nameAr: 'غانا', nameEn: 'Ghana', region: 'Africa' },
+  { code: 'TZ', flag: '🇹🇿', nameAr: 'تنزانيا', nameEn: 'Tanzania', region: 'Africa' },
+  { code: 'UG', flag: '🇺🇬', nameAr: 'أوغندا', nameEn: 'Uganda', region: 'Africa' },
+  { code: 'RW', flag: '🇷🇼', nameAr: 'رواندا', nameEn: 'Rwanda', region: 'Africa' },
+  { code: 'SN', flag: '🇸🇳', nameAr: 'السنغال', nameEn: 'Senegal', region: 'Africa' },
+  { code: 'CI', flag: '🇨🇮', nameAr: 'ساحل العاج', nameEn: 'Ivory Coast', region: 'Africa' },
+  { code: 'CM', flag: '🇨🇲', nameAr: 'الكاميرون', nameEn: 'Cameroon', region: 'Africa' },
+  { code: 'AO', flag: '🇦🇴', nameAr: 'أنغولا', nameEn: 'Angola', region: 'Africa' },
+  { code: 'MZ', flag: '🇲🇿', nameAr: 'موزمبيق', nameEn: 'Mozambique', region: 'Africa' },
+  { code: 'ZM', flag: '🇿🇲', nameAr: 'زامبيا', nameEn: 'Zambia', region: 'Africa' },
+  { code: 'ZW', flag: '🇿🇼', nameAr: 'زيمبابوي', nameEn: 'Zimbabwe', region: 'Africa' },
+  { code: 'BW', flag: '🇧🇼', nameAr: 'بوتسوانا', nameEn: 'Botswana', region: 'Africa' },
+  { code: 'NA', flag: '🇳🇦', nameAr: 'ناميبيا', nameEn: 'Namibia', region: 'Africa' },
+  { code: 'MW', flag: '🇲🇼', nameAr: 'مالاوي', nameEn: 'Malawi', region: 'Africa' },
+  { code: 'MG', flag: '🇲🇬', nameAr: 'مدغشقر', nameEn: 'Madagascar', region: 'Africa' },
+  { code: 'MU', flag: '🇲🇺', nameAr: 'موريشيوس', nameEn: 'Mauritius', region: 'Africa' },
+  { code: 'CD', flag: '🇨🇩', nameAr: 'الكونغو الديمقراطية', nameEn: 'DR Congo', region: 'Africa' },
+  { code: 'CG', flag: '🇨🇬', nameAr: 'الكونغو', nameEn: 'Congo', region: 'Africa' },
+  { code: 'GA', flag: '🇬🇦', nameAr: 'الغابون', nameEn: 'Gabon', region: 'Africa' },
+  { code: 'GQ', flag: '🇬🇶', nameAr: 'غينيا الاستوائية', nameEn: 'Equatorial Guinea', region: 'Africa' },
+  { code: 'TD', flag: '🇹🇩', nameAr: 'تشاد', nameEn: 'Chad', region: 'Africa' },
+  { code: 'CF', flag: '🇨🇫', nameAr: 'أفريقيا الوسطى', nameEn: 'Central African Republic', region: 'Africa' },
+  { code: 'SS', flag: '🇸🇸', nameAr: 'جنوب السودان', nameEn: 'South Sudan', region: 'Africa' },
+  { code: 'ER', flag: '🇪🇷', nameAr: 'إريتريا', nameEn: 'Eritrea', region: 'Africa' },
+  { code: 'ML', flag: '🇲🇱', nameAr: 'مالي', nameEn: 'Mali', region: 'Africa' },
+  { code: 'NE', flag: '🇳🇪', nameAr: 'النيجر', nameEn: 'Niger', region: 'Africa' },
+  { code: 'BF', flag: '🇧🇫', nameAr: 'بوركينا فاسو', nameEn: 'Burkina Faso', region: 'Africa' },
+  { code: 'BJ', flag: '🇧🇯', nameAr: 'بنين', nameEn: 'Benin', region: 'Africa' },
+  { code: 'TG', flag: '🇹🇬', nameAr: 'توغو', nameEn: 'Togo', region: 'Africa' },
+  { code: 'GN', flag: '🇬🇳', nameAr: 'غينيا', nameEn: 'Guinea', region: 'Africa' },
+  { code: 'GW', flag: '🇬🇼', nameAr: 'غينيا بيساو', nameEn: 'Guinea-Bissau', region: 'Africa' },
+  { code: 'GM', flag: '🇬🇲', nameAr: 'غامبيا', nameEn: 'Gambia', region: 'Africa' },
+  { code: 'SL', flag: '🇸🇱', nameAr: 'سيراليون', nameEn: 'Sierra Leone', region: 'Africa' },
+  { code: 'LR', flag: '🇱🇷', nameAr: 'ليبيريا', nameEn: 'Liberia', region: 'Africa' },
+  { code: 'CV', flag: '🇨🇻', nameAr: 'الرأس الأخضر', nameEn: 'Cape Verde', region: 'Africa' },
+  { code: 'ST', flag: '🇸🇹', nameAr: 'ساو تومي', nameEn: 'São Tomé and Príncipe', region: 'Africa' },
+  { code: 'SC', flag: '🇸🇨', nameAr: 'سيشل', nameEn: 'Seychelles', region: 'Africa' },
+  { code: 'BI', flag: '🇧🇮', nameAr: 'بوروندي', nameEn: 'Burundi', region: 'Africa' },
+  { code: 'LS', flag: '🇱🇸', nameAr: 'ليسوتو', nameEn: 'Lesotho', region: 'Africa' },
+  { code: 'SZ', flag: '🇸🇿', nameAr: 'إسواتيني', nameEn: 'Eswatini', region: 'Africa' },
+  
+  // Oceania
+  { code: 'AU', flag: '🇦🇺', nameAr: 'أستراليا', nameEn: 'Australia', region: 'Oceania' },
+  { code: 'NZ', flag: '🇳🇿', nameAr: 'نيوزيلندا', nameEn: 'New Zealand', region: 'Oceania' },
+  { code: 'FJ', flag: '🇫🇯', nameAr: 'فيجي', nameEn: 'Fiji', region: 'Oceania' },
+  { code: 'PG', flag: '🇵🇬', nameAr: 'بابوا غينيا الجديدة', nameEn: 'Papua New Guinea', region: 'Oceania' },
+  { code: 'WS', flag: '🇼🇸', nameAr: 'ساموا', nameEn: 'Samoa', region: 'Oceania' },
+  { code: 'TO', flag: '🇹🇴', nameAr: 'تونغا', nameEn: 'Tonga', region: 'Oceania' },
+  { code: 'VU', flag: '🇻🇺', nameAr: 'فانواتو', nameEn: 'Vanuatu', region: 'Oceania' },
+  { code: 'SB', flag: '🇸🇧', nameAr: 'جزر سليمان', nameEn: 'Solomon Islands', region: 'Oceania' },
+  { code: 'KI', flag: '🇰🇮', nameAr: 'كيريباتي', nameEn: 'Kiribati', region: 'Oceania' },
+  { code: 'FM', flag: '🇫🇲', nameAr: 'ميكرونيزيا', nameEn: 'Micronesia', region: 'Oceania' },
+  { code: 'PW', flag: '🇵🇼', nameAr: 'بالاو', nameEn: 'Palau', region: 'Oceania' },
+  { code: 'MH', flag: '🇲🇭', nameAr: 'جزر مارشال', nameEn: 'Marshall Islands', region: 'Oceania' },
+  { code: 'NR', flag: '🇳🇷', nameAr: 'ناورو', nameEn: 'Nauru', region: 'Oceania' },
+  { code: 'TV', flag: '🇹🇻', nameAr: 'توفالو', nameEn: 'Tuvalu', region: 'Oceania' },
+];
+
+// Get countries grouped by region
+export const getCountriesByRegion = () => {
+  const regions: Record<string, Country[]> = {};
+  COUNTRIES.forEach(country => {
+    if (!regions[country.region]) {
+      regions[country.region] = [];
+    }
+    regions[country.region].push(country);
+  });
+  return regions;
+};
+
+// Get country by code
+export const getCountryByCode = (code: string): Country | undefined => {
+  return COUNTRIES.find(c => c.code === code);
+};
+
+// Region labels
+export const REGION_LABELS: Record<string, { ar: string; en: string }> = {
+  'MENA': { ar: 'الشرق الأوسط وشمال أفريقيا', en: 'Middle East & North Africa' },
+  'Europe': { ar: 'أوروبا', en: 'Europe' },
+  'Americas': { ar: 'الأمريكتين', en: 'Americas' },
+  'Asia': { ar: 'آسيا', en: 'Asia' },
+  'Africa': { ar: 'أفريقيا', en: 'Africa' },
+  'Oceania': { ar: 'أوقيانوسيا', en: 'Oceania' },
+};

@@ -14,6 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RegionalHeatMap } from "@/components/RegionalHeatMap";
+import { COUNTRIES, getCountryByCode } from "@/data/countries";
 import { 
   ArrowLeft, Download, Share2, Clock, Globe, Brain, 
   TrendingUp, TrendingDown, AlertTriangle, Shield, 
@@ -100,6 +101,11 @@ export default function TopicAnalysisResults() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<any>(null);
   const [isExporting, setIsExporting] = useState(false);
+  
+  // Feedback State
+  const [feedbackGiven, setFeedbackGiven] = useState<'accurate' | 'inaccurate' | 'correction' | null>(null);
+  const [showCorrectionDialog, setShowCorrectionDialog] = useState(false);
+  const [correctionEmotion, setCorrectionEmotion] = useState<string | null>(null);
 
   // Mutations
   const analyzeTopicMutation = trpc.topic.analyzeTopicInCountry.useMutation();
@@ -134,12 +140,26 @@ export default function TopicAnalysisResults() {
     }
   };
 
+  // Handle Feedback
+  const handleFeedback = (type: 'accurate' | 'inaccurate' | 'correction') => {
+    setFeedbackGiven(type);
+    if (type === 'correction' && correctionEmotion) {
+      setShowCorrectionDialog(false);
+      // TODO: Send correction to backend
+      console.log('Feedback sent:', { type, correctionEmotion, topic, countryCode });
+    } else if (type !== 'correction') {
+      // TODO: Send feedback to backend
+      console.log('Feedback sent:', { type, topic, countryCode });
+    }
+  };
+
   // Fetch analysis data
   useEffect(() => {
     if (topic) {
       setIsLoading(true);
       const effectiveCountryCode = countryCode && countryCode !== 'ALL' ? countryCode : 'LY';
-      const effectiveCountryName = countryName || (effectiveCountryCode === 'LY' ? 'ليبيا' : '');
+      const countryData = getCountryByCode(effectiveCountryCode);
+      const effectiveCountryName = countryName || countryData?.nameAr || (effectiveCountryCode === 'LY' ? 'ليبيا' : effectiveCountryCode);
       
       analyzeTopicMutation.mutateAsync({ 
         topic, 
@@ -863,6 +883,103 @@ export default function TopicAnalysisResults() {
             </CardContent>
           </Card>
         )}
+
+        {/* ========== 10. FEEDBACK SECTION ========== */}
+        <Card className="border-2 border-primary/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-center justify-center">
+              <Brain className="h-5 w-5 text-primary" />
+              هل هذا التحليل دقيق؟
+            </CardTitle>
+            <CardDescription className="text-center">
+              ساعدنا في تحسين الذكاء الاصطناعي بتقييمك
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex gap-4">
+                <Button
+                  variant={feedbackGiven === 'accurate' ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={() => handleFeedback('accurate')}
+                  className="flex items-center gap-2 min-w-[120px]"
+                >
+                  <span className="text-xl">👍</span>
+                  دقيق
+                </Button>
+                <Button
+                  variant={feedbackGiven === 'inaccurate' ? 'destructive' : 'outline'}
+                  size="lg"
+                  onClick={() => handleFeedback('inaccurate')}
+                  className="flex items-center gap-2 min-w-[120px]"
+                >
+                  <span className="text-xl">👎</span>
+                  غير دقيق
+                </Button>
+                <Button
+                  variant={feedbackGiven === 'correction' ? 'secondary' : 'outline'}
+                  size="lg"
+                  onClick={() => setShowCorrectionDialog(true)}
+                  className="flex items-center gap-2 min-w-[120px]"
+                >
+                  <span className="text-xl">✏️</span>
+                  تصحيح
+                </Button>
+              </div>
+              {feedbackGiven && feedbackGiven !== 'correction' && (
+                <p className="text-sm text-green-500 flex items-center gap-2">
+                  ✅ شكراً لتقييمك! سيساعد هذا في تحسين النظام.
+                </p>
+              )}
+            </div>
+
+            {/* Correction Dialog */}
+            {showCorrectionDialog && (
+              <div className="mt-4 p-4 bg-muted/30 rounded-lg">
+                <h4 className="font-semibold mb-3">ما هو الشعور الصحيح برأيك؟</h4>
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  {[
+                    { key: 'hope', label: 'أمل', emoji: '🌟' },
+                    { key: 'fear', label: 'خوف', emoji: '😨' },
+                    { key: 'anger', label: 'غضب', emoji: '😠' },
+                    { key: 'sadness', label: 'حزن', emoji: '😢' },
+                    { key: 'joy', label: 'فرح', emoji: '😊' },
+                    { key: 'curiosity', label: 'فضول', emoji: '🤔' },
+                    { key: 'calm', label: 'هدوء', emoji: '😌' },
+                    { key: 'neutral', label: 'حياد', emoji: '😐' },
+                  ].map((emotion) => (
+                    <Button
+                      key={emotion.key}
+                      variant={correctionEmotion === emotion.key ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCorrectionEmotion(emotion.key)}
+                      className="flex flex-col items-center gap-1 h-auto py-2"
+                    >
+                      <span className="text-lg">{emotion.emoji}</span>
+                      <span className="text-xs">{emotion.label}</span>
+                    </Button>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="default"
+                    onClick={() => handleFeedback('correction')}
+                    disabled={!correctionEmotion}
+                    className="flex-1"
+                  >
+                    إرسال التصحيح
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCorrectionDialog(false)}
+                  >
+                    إلغاء
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Footer Disclaimer */}
         <div className="text-center text-sm text-muted-foreground py-4 border-t">

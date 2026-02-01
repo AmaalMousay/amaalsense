@@ -20,6 +20,7 @@ import { useI18n } from '@/i18n';
 import { EmotionGoogleMap } from '@/components/EmotionGoogleMap';
 import { UserMenu } from '@/components/UserMenu';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { COUNTRIES } from '@/data/countries';
 
 // Country positions for the map
 const COUNTRY_POSITIONS: Record<string, { x: number; y: number; name: string; nameEn: string }> = {
@@ -609,38 +610,18 @@ export default function Home() {
                     <SelectTrigger className="h-14 text-lg bg-background/50">
                       <SelectValue placeholder={isRTL ? 'اختر الدولة' : 'Select Country'} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[400px]">
                       <SelectItem value="ALL">
                         <span className="flex items-center gap-2">
                           <Globe className="w-4 h-4" />
                           {isRTL ? '🌍 كل الدول' : '🌍 All Countries'}
                         </span>
                       </SelectItem>
-                      <SelectItem value="LY">🇱🇾 {isRTL ? 'ليبيا' : 'Libya'}</SelectItem>
-                      <SelectItem value="EG">🇪🇬 {isRTL ? 'مصر' : 'Egypt'}</SelectItem>
-                      <SelectItem value="SA">🇸🇦 {isRTL ? 'السعودية' : 'Saudi Arabia'}</SelectItem>
-                      <SelectItem value="AE">🇦🇪 {isRTL ? 'الإمارات' : 'UAE'}</SelectItem>
-                      <SelectItem value="KW">🇰🇼 {isRTL ? 'الكويت' : 'Kuwait'}</SelectItem>
-                      <SelectItem value="QA">🇶🇦 {isRTL ? 'قطر' : 'Qatar'}</SelectItem>
-                      <SelectItem value="BH">🇧🇭 {isRTL ? 'البحرين' : 'Bahrain'}</SelectItem>
-                      <SelectItem value="OM">🇴🇲 {isRTL ? 'عمان' : 'Oman'}</SelectItem>
-                      <SelectItem value="JO">🇯🇴 {isRTL ? 'الأردن' : 'Jordan'}</SelectItem>
-                      <SelectItem value="LB">🇱🇧 {isRTL ? 'لبنان' : 'Lebanon'}</SelectItem>
-                      <SelectItem value="SY">🇸🇾 {isRTL ? 'سوريا' : 'Syria'}</SelectItem>
-                      <SelectItem value="IQ">🇮🇶 {isRTL ? 'العراق' : 'Iraq'}</SelectItem>
-                      <SelectItem value="PS">🇵🇸 {isRTL ? 'فلسطين' : 'Palestine'}</SelectItem>
-                      <SelectItem value="YE">🇾🇪 {isRTL ? 'اليمن' : 'Yemen'}</SelectItem>
-                      <SelectItem value="MA">🇲🇦 {isRTL ? 'المغرب' : 'Morocco'}</SelectItem>
-                      <SelectItem value="DZ">🇩🇿 {isRTL ? 'الجزائر' : 'Algeria'}</SelectItem>
-                      <SelectItem value="TN">🇹🇳 {isRTL ? 'تونس' : 'Tunisia'}</SelectItem>
-                      <SelectItem value="SD">🇸🇩 {isRTL ? 'السودان' : 'Sudan'}</SelectItem>
-                      <SelectItem value="US">🇺🇸 {isRTL ? 'أمريكا' : 'USA'}</SelectItem>
-                      <SelectItem value="GB">🇬🇧 {isRTL ? 'بريطانيا' : 'UK'}</SelectItem>
-                      <SelectItem value="FR">🇫🇷 {isRTL ? 'فرنسا' : 'France'}</SelectItem>
-                      <SelectItem value="DE">🇩🇪 {isRTL ? 'ألمانيا' : 'Germany'}</SelectItem>
-                      <SelectItem value="TR">🇹🇷 {isRTL ? 'تركيا' : 'Turkey'}</SelectItem>
-                      <SelectItem value="RU">🇷🇺 {isRTL ? 'روسيا' : 'Russia'}</SelectItem>
-                      <SelectItem value="CN">🇨🇳 {isRTL ? 'الصين' : 'China'}</SelectItem>
+                      {COUNTRIES.map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.flag} {isRTL ? country.nameAr : country.nameEn}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
