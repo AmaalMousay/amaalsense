@@ -1322,3 +1322,9 @@
 - [x] Citation Generator - توليد الاستشهاد الأكاديمي
 - [x] API Documentation - توثيق للـ Research API
 - [x] تحديث الرسالة: "Large-scale dataset of quantified collective emotions"
+
+
+## Phase 98: تبسيط الواجهة - حذف صفحات غير ضرورية
+- [x] حذف صفحة Map من App.tsx
+- [x] حذف صفحة Live من App.tsx
+- [x] إزالة الروابط من قائمة التنقل

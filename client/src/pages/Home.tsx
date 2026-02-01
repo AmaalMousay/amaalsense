@@ -367,8 +367,6 @@ export default function Home() {
     { href: '/dashboard', label: t.nav.dashboard },
     { href: '/analyzer', label: t.nav.analyzer },
     { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets' },
-    { href: '/map', label: t.nav.map },
-    { href: '/live', label: t.nav.live },
     { href: '/weather', label: t.nav.weather },
     { href: '/trends', label: 'Trends' },
     { href: '/theory', label: t.nav.theory },

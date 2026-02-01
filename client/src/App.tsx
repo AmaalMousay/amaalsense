@@ -7,8 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Analyzer from "./pages/Analyzer";
 import Dashboard from "./pages/Dashboard";
-import Map from "./pages/Map";
-import LiveAnalysis from "./pages/LiveAnalysis";
+// Map and Live pages removed - functionality integrated elsewhere
 // Social media data is now fetched in the background, no dedicated page needed
 import Theory from "./pages/Theory";
 import Weather from "./pages/Weather";
@@ -51,8 +50,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/analyzer"} component={Analyzer} />
       <Route path={"/dashboard"} component={Dashboard} />
-      <Route path={"/map"} component={Map} />
-      <Route path={"/live"} component={LiveAnalysis} />
+      {/* Map and Live pages removed */}
 
       <Route path={"/theory"} component={Theory} />
       <Route path={"/weather"} component={Weather} />
