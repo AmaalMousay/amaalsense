@@ -214,7 +214,8 @@ export default function Blog() {
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {featuredPosts.map((post) => (
-              <Card key={post.id} className="bg-black/40 border-white/10 backdrop-blur-xl hover:border-orange-500/30 transition-all group cursor-pointer">
+              <Link key={post.id} href={`/blog/${post.id}`}>
+              <Card className="bg-black/40 border-white/10 backdrop-blur-xl hover:border-orange-500/30 transition-all group cursor-pointer h-full">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <Badge className="bg-orange-500/20 text-orange-300 border-orange-500/30">
@@ -248,6 +249,7 @@ export default function Blog() {
                   </div>
                 </CardContent>
               </Card>
+            </Link>
             ))}
           </div>
         </div>
@@ -285,7 +287,8 @@ export default function Blog() {
         {/* All Posts */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {filteredPosts.map((post) => (
-            <Card key={post.id} className="bg-black/40 border-white/10 backdrop-blur-xl hover:border-white/20 transition-all group cursor-pointer">
+            <Link key={post.id} href={`/blog/${post.id}`}>
+            <Card className="bg-black/40 border-white/10 backdrop-blur-xl hover:border-white/20 transition-all group cursor-pointer h-full">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between mb-2">
                   <Badge variant="outline" className="text-xs">
@@ -312,6 +315,7 @@ export default function Blog() {
                 </div>
               </CardContent>
             </Card>
+          </Link>
           ))}
         </div>
 

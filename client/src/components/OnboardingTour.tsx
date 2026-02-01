@@ -21,51 +21,53 @@ interface TourStep {
   highlight?: string;
 }
 
+import { MessageSquare } from "lucide-react";
+
 const tourSteps: TourStep[] = [
   {
     title: "Welcome to Amaalsense",
     titleAr: "مرحباً بك في أمالسنس",
-    description: "Amaalsense is a revolutionary platform that analyzes collective emotions from digital sources worldwide. Let's take a quick tour!",
-    descriptionAr: "أمالسنس هي منصة ثورية تحلل المشاعر الجماعية من المصادر الرقمية حول العالم. دعنا نأخذ جولة سريعة!",
+    description: "Amaalsense is a Collective Emotional Intelligence Agent that analyzes and interprets emotions from digital sources worldwide. Let's take a quick tour!",
+    descriptionAr: "أمالسنس هو عقل ذكاء عاطفي جماعي يحلل ويفسر المشاعر من المصادر الرقمية حول العالم. دعنا نأخذ جولة سريعة!",
     icon: <Brain className="w-8 h-8 text-purple-400" />,
+  },
+  {
+    title: "Smart Analysis",
+    titleAr: "التحليل الذكي",
+    description: "Just enter any topic - the AI automatically detects context, analyzes emotions, and provides insights with recommendations.",
+    descriptionAr: "فقط أدخل أي موضوع - الذكاء يكتشف السياق تلقائياً ويحلل المشاعر ويقدم رؤى وتوصيات.",
+    icon: <Zap className="w-8 h-8 text-yellow-400" />,
+    highlight: "analyzer",
+  },
+  {
+    title: "Conversational AI",
+    titleAr: "الذكاء التحاوري",
+    description: "Chat with AmalSense AI! Ask follow-up questions, get explanations, and receive personalized recommendations based on real data.",
+    descriptionAr: "تحدث مع ذكاء أمالسنس! اسأل أسئلة متابعة، واحصل على تفسيرات، وتوصيات مخصصة بناءً على بيانات حقيقية.",
+    icon: <MessageSquare className="w-8 h-8 text-cyan-400" />,
+    highlight: "smart-analysis",
   },
   {
     title: "Three Core Indices",
     titleAr: "ثلاثة مؤشرات أساسية",
     description: "GMI (General Mood Index), CFI (Collective Fear Index), and HRI (Hope & Resilience Index) - our unique emotional metrics.",
     descriptionAr: "GMI (مؤشر المزاج العام)، CFI (مؤشر الخوف الجماعي)، HRI (مؤشر الأمل والمرونة) - مقاييسنا العاطفية الفريدة.",
-    icon: <BarChart3 className="w-8 h-8 text-cyan-400" />,
+    icon: <BarChart3 className="w-8 h-8 text-green-400" />,
     highlight: "dashboard",
   },
   {
     title: "Interactive World Map",
     titleAr: "خريطة العالم التفاعلية",
-    description: "Explore emotional states across 25+ countries. Click any country to see detailed emotion analysis.",
-    descriptionAr: "استكشف الحالات العاطفية عبر أكثر من 25 دولة. انقر على أي دولة لرؤية تحليل المشاعر التفصيلي.",
-    icon: <Globe className="w-8 h-8 text-green-400" />,
+    description: "Explore emotional states across 180+ countries. Click any country to get AI-powered analysis instantly.",
+    descriptionAr: "استكشف الحالات العاطفية عبر أكثر من 180 دولة. انقر على أي دولة للحصول على تحليل ذكي فوري.",
+    icon: <Globe className="w-8 h-8 text-blue-400" />,
     highlight: "map",
-  },
-  {
-    title: "Real-Time Analysis",
-    titleAr: "التحليل في الوقت الحقيقي",
-    description: "Analyze news headlines and social media posts instantly using our AI-powered emotion engine.",
-    descriptionAr: "حلل عناوين الأخبار ومنشورات وسائل التواصل فوراً باستخدام محرك المشاعر المدعوم بالذكاء الاصطناعي.",
-    icon: <Zap className="w-8 h-8 text-yellow-400" />,
-    highlight: "analyzer",
-  },
-  {
-    title: "DCFT Theory",
-    titleAr: "نظرية DCFT",
-    description: "Learn about the Digital Consciousness Field Theory - the scientific foundation behind Amaalsense.",
-    descriptionAr: "تعرف على نظرية مجال الوعي الرقمي - الأساس العلمي وراء أمالسنس.",
-    icon: <Brain className="w-8 h-8 text-pink-400" />,
-    highlight: "theory",
   },
   {
     title: "You're Ready!",
     titleAr: "أنت جاهز!",
-    description: "Start exploring the emotional pulse of humanity. Upgrade to Pro for unlimited access and advanced features.",
-    descriptionAr: "ابدأ باستكشاف النبض العاطفي للبشرية. قم بالترقية إلى Pro للوصول غير المحدود والميزات المتقدمة.",
+    description: "Start exploring the emotional pulse of humanity. Try Smart Analysis now and chat with our AI!",
+    descriptionAr: "ابدأ باستكشاف النبض العاطفي للبشرية. جرب التحليل الذكي الآن وتحدث مع ذكائنا!",
     icon: <Target className="w-8 h-8 text-purple-400" />,
   },
 ];

@@ -1766,3 +1766,24 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Verify all features work correctly
 - [x] Identify disconnected or broken features
 - [x] Update "How AmalSense Works" step 2 to reflect new AI flow
+
+
+## Phase 115: Onboarding, Auto-Language & Blog Review (COMPLETED)
+
+### Onboarding Tour Update
+- [x] Update tour steps to reflect new Smart Analysis flow
+- [x] Remove references to country selection
+- [x] Add step for AI conversational features
+- [x] Update tour translations for all 7 languages
+
+### Browser Language Detection
+- [x] Automatic browser language detection already exists in I18nProvider
+- [x] Default language based on navigator.language (implemented)
+- [x] Fallback to English if language not supported (implemented)
+- [x] Save user preference to localStorage (implemented)
+
+### Blog Review
+- [x] Check Blog page functionality
+- [x] Created BlogPost.tsx for full article view
+- [x] Added 6 complete articles with full content
+- [x] Fixed blog navigation and links

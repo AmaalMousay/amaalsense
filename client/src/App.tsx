@@ -16,6 +16,7 @@ import HowItWorks from "./pages/HowItWorks";
 import CaseStudies from "./pages/CaseStudies";
 import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Admin from "./pages/Admin";
 import NotificationSettings from "./pages/NotificationSettings";
 import Checkout from "./pages/Checkout";
@@ -63,6 +64,7 @@ function Router() {
       <Route path={"/case-studies"} component={CaseStudies} />
       <Route path={"/faq"} component={FAQ} />
       <Route path={"/blog"} component={Blog} />
+      <Route path={"/blog/:id"} component={BlogPost} />
       
       {/* User Pages */}
       <Route path={"/admin"} component={Admin} />
