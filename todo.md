@@ -1469,3 +1469,63 @@
 - [x] تحديث زر "حلل الآن" في الصفحة الرئيسية للانتقال مباشرة لصفحة النتائج /analysis-results
 - [x] التأكد من عمل التحليل من الصفحة الرئيسية - يعمل بشكل صحيح
 - [x] تحديث زر "العودة للمحلل" ليصبح "العودة للرئيسية"
+
+
+## Phase 108: إعادة بناء صفحة النتائج (9 أقسام)
+
+### 0. Input Summary Bar
+- [x] العنوان المُدخل (Headline)
+- [x] الدولة / الموقع
+- [x] وقت التحليل
+- [x] مستوى الثقة العام (Global Confidence) - 100% ثقة
+
+### 1. Global Emotional Snapshot (Hero Section)
+- [x] GMI مؤشر رقمي كبير (-100 → +100) - يعرض +19.4
+- [x] التوصيف النصي (محايد)
+- [x] Emotional Weather (متقلب - Mixed)
+- [x] وصف قصير ذكي بالـ AI
+
+### 2. Emotion Distribution (Core Psychology Layer)
+- [x] أشرطة تقدم لكل شعور
+- [x] Joy, Fear, Anger, Sadness, Hope, Curiosity, Calm
+- [x] لكل شعور: النسبة % + emoji
+- [x] الشعور السائد مع نسبته
+
+### 3. Smart Indices Panel (DCFT Layer)
+- [x] GMI – Global Mood Index (19.4)
+- [x] CFI – Collective Fear Index (54.2)
+- [x] HRI – Hope Resilience Index (50.3)
+- [x] مؤشرات إضافية للمتداول/الباحث (Sentiment Momentum, Fear Spike, Volatility, Polarization)
+
+### 4. Explainability Engine (سبب النتيجة)
+- [x] "لماذا هذا المزاج؟" نص مولد بالذكاء الاصطناعي
+- [x] الكلمات المفتاحية المؤثرة (للصحفي/الباحث)
+- [x] لماذا الخوف مرتفع/منخفض؟
+- [x] لماذا الأمل مرتفع/منخفض؟
+
+### 5. Temporal Emotion Trend (Time Layer)
+- [x] Tabs لـ 24 ساعة / 7 أيام / 30 يوم
+- [x] يظهر للصحفي/المتداول/الباحث فقط
+- [ ] ربط ببيانات تاريخية حقيقية (لاحقاً)
+
+### 6. Global Emotion Map
+- [x] خريطة حرارية بألوان حسب GMI
+- [x] عرض المناطق مع نسبها
+- [x] Legend للألوان
+- [x] Tab لعرض المناطق كبطاقات
+
+### 7. Domain Classification (Context Layer)
+- [x] تصنيف الحدث: اقتصاد (Economy)
+- [x] مستوى الحساسية: متوسط (Medium)
+- [x] نطاق التأثير: محلي (Local)
+
+### 8. AI Meta Insights (العقل التحليلي)
+- [x] هل هو حدث محفز؟ (لا - حدث عادي)
+- [x] توقع 48 ساعة (استمرار التحسن)
+- [x] مستوى الخطورة: تنبيه (Alert)
+
+### 9. User Mode Adaptation
+- [x] 👤 مستخدم عادي: وصف بسيط + طقس عاطفي + مؤشرات مختصرة
+- [x] 📰 صحفي: تفسير سببي + ترند + خريطة + كلمات مفتاحية
+- [x] 📈 متداول: CFI + تقلب المشاعر + إنذارات
+- [x] 🔬 باحث: Raw data + Scores + Confidence + تصدير JSON
