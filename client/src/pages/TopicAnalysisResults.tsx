@@ -291,29 +291,39 @@ export default function TopicAnalysisResults() {
   };
 
   useEffect(() => {
-    if (topic && countryCode) {
+    if (topic) {
       setIsLoading(true);
-      analyzeTopicMutation.mutateAsync({ topic, countryCode, countryName, timeRange })
+      // If country is ALL or empty, use LY as default for analysis
+      const effectiveCountryCode = countryCode && countryCode !== 'ALL' ? countryCode : 'LY';
+      const effectiveCountryName = countryName || (effectiveCountryCode === 'LY' ? 'ليبيا' : '');
+      
+      analyzeTopicMutation.mutateAsync({ 
+        topic, 
+        countryCode: effectiveCountryCode, 
+        countryName: effectiveCountryName, 
+        timeRange 
+      })
         .then((data) => {
           setAnalysisData(data);
           setIsLoading(false);
         })
         .catch((err) => {
+          console.error('Analysis error:', err);
           setError(err);
           setIsLoading(false);
         });
     }
   }, [topic, countryCode, countryName, timeRange]);
 
-  if (!topic || !countryCode) {
+  if (!topic) {
     return (
       <div className="container py-8">
         <Card className="text-center py-12">
           <CardContent>
-            <p className="text-muted-foreground mb-4">لم يتم تحديد موضوع أو دولة للتحليل</p>
-            <Button onClick={() => navigate("/analyzer")}>
+            <p className="text-muted-foreground mb-4">لم يتم تحديد موضوع للتحليل</p>
+            <Button onClick={() => navigate("/")}>
               <ArrowLeft className="ml-2 h-4 w-4" />
-              العودة للمحلل
+              العودة للرئيسية
             </Button>
           </CardContent>
         </Card>
@@ -343,9 +353,9 @@ export default function TopicAnalysisResults() {
         <Card className="text-center py-12 border-destructive">
           <CardContent>
             <p className="text-destructive mb-4">حدث خطأ أثناء التحليل</p>
-            <Button onClick={() => navigate("/analyzer")} variant="outline">
+            <Button onClick={() => navigate("/")} variant="outline">
               <ArrowLeft className="ml-2 h-4 w-4" />
-              العودة للمحلل
+              العودة للرئيسية
             </Button>
           </CardContent>
         </Card>
@@ -389,9 +399,9 @@ export default function TopicAnalysisResults() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <Button variant="ghost" onClick={() => navigate("/analyzer")} className="mb-2">
+          <Button variant="ghost" onClick={() => navigate("/")} className="mb-2">
             <ArrowLeft className="ml-2 h-4 w-4" />
-            العودة للمحلل
+            العودة للرئيسية
           </Button>
           <h1 className="text-3xl font-bold">لوحة المشاعر الجماعية المتقدمة</h1>
           <p className="text-muted-foreground">

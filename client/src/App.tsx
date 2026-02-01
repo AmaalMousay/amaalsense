@@ -5,7 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import Analyzer from "./pages/Analyzer";
+// Analyzer page removed - analysis now works directly from Home page
 import Dashboard from "./pages/Dashboard";
 // Map, Live, Trends, Weather pages removed - functionality integrated into results pages
 import Theory from "./pages/Theory";
@@ -46,7 +46,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/analyzer"} component={Analyzer} />
+      {/* Analyzer route removed - analysis now works from Home page */}
       <Route path={"/dashboard"} component={Dashboard} />
       
       {/* Results Pages */}

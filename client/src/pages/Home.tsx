@@ -326,8 +326,8 @@ export default function Home() {
   const handleAnalyze = async () => {
     if (!analysisTopic.trim()) return;
     setIsAnalyzing(true);
-    // Navigate to results page with query params
-    navigate(`/analyzer?topic=${encodeURIComponent(analysisTopic)}&country=${analysisCountry}`);
+    // Navigate directly to analysis results page
+    navigate(`/analysis-results?topic=${encodeURIComponent(analysisTopic)}&country=${analysisCountry}`);
   };
 
   // Fetch latest indices with auto-refresh every 30 seconds
@@ -379,7 +379,6 @@ export default function Home() {
 
   const navLinks = [
     { href: '/dashboard', label: t.nav.dashboard },
-    { href: '/analyzer', label: t.nav.analyzer },
     { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets' },
     { href: '/theory', label: t.nav.theory },
     { href: '/about', label: t.nav.about },
@@ -558,7 +557,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section - جرب التحليل الآن */}
-      <section className="py-20 border-b border-border/50">
+      <section id="analysis-section" className="py-20 border-b border-border/50">
         <div className="container max-w-4xl">
           <div className="text-center space-y-8">
             {/* Main Headline - بارز وكبير */}
@@ -863,7 +862,7 @@ export default function Home() {
           <h3 className="text-2xl font-bold cosmic-text mb-4">{t.home.readyToStart}</h3>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              onClick={() => navigate('/analyzer')}
+              onClick={() => document.getElementById('analysis-section')?.scrollIntoView({ behavior: 'smooth' })}
               className="glow-button text-white px-8 py-4"
             >
               {t.home.launchAnalyzer}
