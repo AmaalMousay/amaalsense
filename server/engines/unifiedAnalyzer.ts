@@ -18,6 +18,7 @@ import { fuseEmotions, EmotionFusionResult, AffectiveVector } from './emotionFus
 import { analyzeEmotionalDynamics, DynamicsResult } from './emotionalDynamics';
 import { detectDrivers, DriverDetectionResult } from './driverDetection';
 import { generateInsights, ExplainableInsightResult, UserType } from './explainableInsight';
+import { generateMetaDecision, MetaDecision } from './metaDecisionEngine';
 
 // New imports for enhancements
 import { storeAnalysis, getHistoricalData, calculateHistoricalTrend, HistoricalTrend, HistoricalQuery } from './emotionalMemory';
@@ -90,6 +91,9 @@ export interface AnalyzeOutput {
     sourceCount: number;
     adjustedIntensity: number;
   };
+  
+  // NEW: Meta Decision (Executive Summary)
+  metaDecision: MetaDecision;
   
   // Meta
   meta: {
@@ -285,6 +289,26 @@ export async function analyze(input: AnalyzeInput): Promise<AnalyzeOutput> {
     userType
   });
   
+  // ============================================
+  // Meta Decision Engine (Executive Summary)
+  // ============================================
+  const gmi = calculateGMI(emotionalState);
+  const cfi = calculateCFI(emotionalState);
+  const hri = calculateHRI(emotionalState);
+  
+  const metaDecision = generateMetaDecision({
+    gmi,
+    cfi,
+    hri,
+    dominantEmotion: emotionalState.dominantEmotion,
+    dominantEmotionScore: emotionalState.vector[emotionalState.dominantEmotion as keyof typeof emotionalState.vector] || 0,
+    topic,
+    country,
+    domain: context.domain,
+    sensitivity: context.sensitivity,
+    keywords: drivers.keyDrivers.map(d => d.term)
+  });
+  
   // Calculate processing time
   const processingTime = Date.now() - startTime;
   
@@ -308,6 +332,7 @@ export async function analyze(input: AnalyzeInput): Promise<AnalyzeOutput> {
       interpretation
     },
     sourceWeighting: sourceWeightingInfo,
+    metaDecision,
     meta: {
       analysisId,
       timestamp: new Date().toISOString(),

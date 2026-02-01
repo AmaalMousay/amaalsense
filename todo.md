@@ -1565,3 +1565,25 @@
 ## Phase 112: إصلاح أيقونة كل الدول
 
 - [x] حذف الأيقونة الملونة 🌍 من "كل الدول" وإبقاء أيقونة Globe الرمادية فقط
+
+
+## Phase 113: Meta Decision Engine + Storytelling Interface
+
+### Backend - Meta Decision Engine
+- [x] إنشاء metaDecisionEngine.ts
+- [x] إرجاع final_state (إيجابي حذر، سلبي حذر، محايد، إلخ)
+- [x] إرجاع human_summary (جملة واضحة للمستخدم)
+- [x] إرجاع action_signal (فرصة / مراقبة / حذر / تحذير / خطر)
+- [x] إرجاع risk_level (منخفض / متوسط / مرتفع / حرج)
+- [x] إرجاع confidence (نسبة الثقة)
+- [x] إرجاع forecast48h (توقع 48 ساعة)
+- [x] إرجاع mainReasons (أسباب التحليل)
+- [x] دمج مع unifiedAnalyzer.ts
+
+### Frontend - Storytelling Interface
+- [x] بطاقة ضخمة في الأعلى: النتيجة النهائية + التوقع + الثقة
+- [x] 3 مؤشرات فقط (GMI, HRI, CFI) مع تفسير لكل واحد
+- [x] قسم "ممّ يتكوّن هذا المزاج؟" (توزيع المشاعر)
+- [x] قسم "لماذا هذا المزاج؟" (Explainability) كنقاط سببية
+- [x] الخريطة في الآخر كميزة استكشافية (للصحفي/المتداول/الباحث)
+- [x] زر Feedback مع خيارات التصحيح
