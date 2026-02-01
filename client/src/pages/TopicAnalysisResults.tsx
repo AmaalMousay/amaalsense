@@ -118,8 +118,8 @@ export default function TopicAnalysisResults() {
     try {
       const result = await generatePdfMutation.mutateAsync({
         topic,
-        country: countryCode || 'LY',
-        countryName: countryName || 'ليبيا',
+        country: countryCode || 'ALL',
+        countryName: countryName || 'Global',
         timeRange,
         analysisData,
       });
@@ -161,9 +161,10 @@ export default function TopicAnalysisResults() {
   useEffect(() => {
     if (topic) {
       setIsLoading(true);
-      const effectiveCountryCode = countryCode && countryCode !== 'ALL' ? countryCode : 'LY';
-      const countryData = getCountryByCode(effectiveCountryCode);
-      const effectiveCountryName = countryName || countryData?.nameAr || (effectiveCountryCode === 'LY' ? 'ليبيا' : effectiveCountryCode);
+      // Use the selected country code, or 'ALL' for global analysis
+      const effectiveCountryCode = countryCode || 'ALL';
+      const countryData = effectiveCountryCode !== 'ALL' ? getCountryByCode(effectiveCountryCode) : null;
+      const effectiveCountryName = countryName || countryData?.nameEn || (effectiveCountryCode === 'ALL' ? 'Global' : effectiveCountryCode);
       
       analyzeTopicMutation.mutateAsync({ 
         topic, 
@@ -266,8 +267,8 @@ export default function TopicAnalysisResults() {
 
   // Prepare heat map data
   const heatMapRegions = analysisData.regions?.map((region: any) => {
-    const coords = REGION_COORDINATES[countryCode || 'LY']?.[region.regionCode];
-    const countryCenter = COUNTRY_CENTERS[countryCode || 'LY'] || { lat: 26.3351, lng: 17.2283 };
+    const coords = countryCode && countryCode !== 'ALL' ? REGION_COORDINATES[countryCode]?.[region.regionCode] : null;
+    const countryCenter = countryCode && countryCode !== 'ALL' ? (COUNTRY_CENTERS[countryCode] || { lat: 20, lng: 0 }) : { lat: 20, lng: 0 };
     
     return {
       name: region.regionNameAr || region.name || 'Unknown',
@@ -298,11 +299,11 @@ export default function TopicAnalysisResults() {
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Globe className="h-3 w-3" />
-                    {countryName || 'ليبيا'}
+                    {countryName || (countryCode === 'ALL' ? 'Global' : getCountryByCode(countryCode)?.nameEn || countryCode)}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {new Date().toLocaleString('ar-LY')}
+                    {new Date().toLocaleString('en-US')}
                   </span>
                 </div>
               </div>
@@ -514,8 +515,8 @@ export default function TopicAnalysisResults() {
             <CardContent>
               <RegionalHeatMap 
                 regions={heatMapRegions} 
-                countryCode={countryCode || 'LY'}
-                countryName={countryName || 'ليبيا'}
+                countryCode={countryCode || 'ALL'}
+                countryName={countryName || 'Global'}
                 topic={topic}
               />
             </CardContent>
