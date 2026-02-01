@@ -800,9 +800,9 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-3">{t.footer.product}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li><Link href="/analyzer" className="hover:text-accent">{t.nav.analyzer}</Link></li>
-                <li><Link href="/map" className="hover:text-accent">{t.nav.map}</Link></li>
-                <li><Link href="/trends" className="hover:text-accent">Trends</Link></li>
+                <li><Link href="/dashboard" className="hover:text-accent">Dashboard</Link></li>
+                <li><Link href="/markets" className="hover:text-accent">Markets</Link></li>
+                <li><Link href="/theory" className="hover:text-accent">Theory</Link></li>
               </ul>
             </div>
 
