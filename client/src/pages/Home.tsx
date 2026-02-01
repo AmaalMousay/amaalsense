@@ -366,12 +366,12 @@ export default function Home() {
   const navLinks = [
     { href: '/dashboard', label: t.nav.dashboard },
     { href: '/analyzer', label: t.nav.analyzer },
+    { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets' },
     { href: '/map', label: t.nav.map },
     { href: '/live', label: t.nav.live },
-    { href: '/theory', label: t.nav.theory },
     { href: '/weather', label: t.nav.weather },
     { href: '/trends', label: 'Trends' },
-    { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets' },
+    { href: '/theory', label: t.nav.theory },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
   ];
