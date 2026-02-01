@@ -7,10 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Analyzer from "./pages/Analyzer";
 import Dashboard from "./pages/Dashboard";
-// Map and Live pages removed - functionality integrated elsewhere
-// Social media data is now fetched in the background, no dedicated page needed
+// Map, Live, Trends, Weather pages removed - functionality integrated into results pages
 import Theory from "./pages/Theory";
-import Weather from "./pages/Weather";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
@@ -18,13 +16,13 @@ import HowItWorks from "./pages/HowItWorks";
 import CaseStudies from "./pages/CaseStudies";
 import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
-import Trends from "./pages/Trends";
 import Admin from "./pages/Admin";
 import NotificationSettings from "./pages/NotificationSettings";
 import Checkout from "./pages/Checkout";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import TopicAnalysisResults from "./pages/TopicAnalysisResults";
+import CountryResults from "./pages/CountryResults";
 import UseCases from "./pages/UseCases";
 import CompareCountries from "./pages/CompareCountries";
 import CustomAlerts from "./pages/CustomAlerts";
@@ -50,10 +48,13 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/analyzer"} component={Analyzer} />
       <Route path={"/dashboard"} component={Dashboard} />
-      {/* Map and Live pages removed */}
-
+      
+      {/* Results Pages */}
+      <Route path={"/analysis-results"} component={TopicAnalysisResults} />
+      <Route path={"/country/:code"} component={CountryResults} />
+      
+      {/* Information Pages */}
       <Route path={"/theory"} component={Theory} />
-      <Route path={"/weather"} component={Weather} />
       <Route path={"/about"} component={About} />
       <Route path={"/pricing"} component={Pricing} />
       <Route path={"/contact"} component={Contact} />
@@ -61,41 +62,43 @@ function Router() {
       <Route path={"/case-studies"} component={CaseStudies} />
       <Route path={"/faq"} component={FAQ} />
       <Route path={"/blog"} component={Blog} />
-      <Route path={"/trends"} component={Trends} />
+      
+      {/* User Pages */}
       <Route path={"/admin"} component={Admin} />
       <Route path={"/notifications"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/terms"} component={Terms} />
       <Route path={"/privacy"} component={Privacy} />
-      <Route path={"/analysis-results"} component={TopicAnalysisResults} />
       <Route path={"/use-cases"} component={UseCases} />
       <Route path={"/compare"} component={CompareCountries} />
       <Route path={"/alerts"} component={CustomAlerts} />
       <Route path={"/api-docs"} component={ApiDocs} />
       <Route path={"/enterprise"} component={EnterpriseDashboard} />
       <Route path={"/topic-timeline"} component={TopicTimeline} />
+      
+      {/* Auth Pages */}
       <Route path={"/register"} component={Register} />
       <Route path={"/login"} component={Login} />
       <Route path={"/forgot-password"} component={ForgotPassword} />
       <Route path={"/reset-password"} component={ResetPassword} />
+      
+      {/* User Dashboard Pages */}
       <Route path={"/user-dashboard"} component={UserDashboard} />
       <Route path={"/profile"} component={Profile} />
       <Route path={"/reports"} component={Reports} />
       <Route path={"/followed-topics"} component={FollowedTopics} />
+      
+      {/* Professional Dashboards */}
       <Route path={"/journalist"} component={JournalistDashboard} />
       <Route path={"/researcher"} component={ResearcherDashboard} />
       <Route path={"/markets"} component={Markets} />
+      
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
 }
-
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
   const { showTour, setShowTour } = useOnboarding();
