@@ -26,6 +26,15 @@ import { analyzeTemporalChanges, storeEmotionSnapshot, generateTemporalInsights 
 import { cleanText, cleanTexts, CleaningResult } from './dataCleaningLayer';
 import { getSourceWeight, applySourceWeights, calculateWeightedEmotions, SourceType } from './sourceWeighting';
 import { generateInsights, AnalysisInsights } from './insightsEngine';
+import { 
+  generateTransparencyReport, 
+  TransparencyReport,
+  detectRegionFromLanguage,
+  SourceGeography,
+  TextMetadata,
+  TopicContribution,
+  getRepresentationDisclaimer
+} from './biasAndTransparency';
 
 /**
  * Hybrid analysis configuration
@@ -149,6 +158,9 @@ export interface HybridAnalysisResult {
   
   // Insights & Alerts (NEW)
   insights?: AnalysisInsights;
+  
+  // Transparency Report (NEW)
+  transparency?: TransparencyReport;
   
   // Analysis metadata
   analyzedAt: Date;
@@ -550,6 +562,32 @@ export async function analyzeHybrid(
         sensitivity: contextClassification.sensitivityLevel,
       },
     }),
+    // Generate Transparency Report
+    transparency: generateTransparencyReport(
+      // Sources with geography
+      [{
+        source: source,
+        region: detectRegionFromLanguage(contextClassification.detectedLanguage),
+        language: contextClassification.detectedLanguage,
+      }],
+      new Date(),
+      // Topics (simplified for single text)
+      [{
+        topic: contextClassification.eventType,
+        percentage: 100,
+        sourceCount: 1,
+        sentiment: indices.gmi > 0 ? 'positive' : indices.gmi < 0 ? 'negative' : 'neutral',
+      }],
+      // Text metadata
+      [{
+        text: text,
+        source: source,
+        hasSpamPatterns: false,
+      }],
+      indices.gmi,
+      indices.cfi,
+      indices.hri
+    ),
     analyzedAt: new Date(),
     processingTimeMs,
   };

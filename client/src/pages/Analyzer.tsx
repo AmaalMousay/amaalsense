@@ -593,6 +593,89 @@ export default function Analyzer() {
                     </Card>
                   )}
 
+                  {/* Transparency Report */}
+                  {result?.transparency && (
+                    <Card className="cosmic-card p-6">
+                      <h3 className="text-lg font-bold cosmic-text mb-4 flex items-center gap-2">
+                        <Globe className="w-5 h-5" />
+                        {language === 'ar' ? 'تقرير الشفافية' : 'Transparency Report'}
+                      </h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Geographical Bias */}
+                        <div className="p-4 bg-slate-800/50 rounded-lg">
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {language === 'ar' ? 'التحيز الجغرافي' : 'Geographical Bias'}
+                          </p>
+                          <p className="text-lg font-bold text-amber-400">
+                            {language === 'ar' 
+                              ? result.transparency.geographicalBias.levelAr 
+                              : result.transparency.geographicalBias.level.replace('_', ' ')}
+                          </p>
+                          {result.transparency.geographicalBias.warning && (
+                            <p className="text-xs text-amber-300/70 mt-1">
+                              {language === 'ar' 
+                                ? result.transparency.geographicalBias.warningAr 
+                                : result.transparency.geographicalBias.warning}
+                            </p>
+                          )}
+                        </div>
+                        
+                        {/* Manipulation Risk */}
+                        <div className="p-4 bg-slate-800/50 rounded-lg">
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {language === 'ar' ? 'خطر التلاعب' : 'Manipulation Risk'}
+                          </p>
+                          <p className={`text-lg font-bold ${
+                            result.transparency.manipulationRisk.riskLevel === 'low' ? 'text-green-400' :
+                            result.transparency.manipulationRisk.riskLevel === 'medium' ? 'text-yellow-400' :
+                            result.transparency.manipulationRisk.riskLevel === 'high' ? 'text-orange-400' :
+                            'text-red-400'
+                          }`}>
+                            {language === 'ar' 
+                              ? result.transparency.manipulationRisk.riskLevelAr 
+                              : result.transparency.manipulationRisk.riskLevel}
+                          </p>
+                        </div>
+                        
+                        {/* Data Freshness */}
+                        <div className="p-4 bg-slate-800/50 rounded-lg">
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {language === 'ar' ? 'آخر تحديث' : 'Last Updated'}
+                          </p>
+                          <p className="text-lg font-bold text-blue-400">
+                            {language === 'ar' 
+                              ? result.transparency.dataFreshness.lastUpdatedAgoAr 
+                              : result.transparency.dataFreshness.lastUpdatedAgo}
+                          </p>
+                        </div>
+                        
+                        {/* Overall Confidence */}
+                        <div className="p-4 bg-slate-800/50 rounded-lg">
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {language === 'ar' ? 'الثقة الكلية' : 'Overall Confidence'}
+                          </p>
+                          <p className={`text-lg font-bold ${
+                            result.transparency.overallConfidence >= 80 ? 'text-green-400' :
+                            result.transparency.overallConfidence >= 60 ? 'text-yellow-400' :
+                            'text-red-400'
+                          }`}>
+                            {result.transparency.overallConfidence}%
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Digital Representation Disclaimer */}
+                      <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                        <p className="text-xs text-blue-300">
+                          {language === 'ar' 
+                            ? result.transparency.representationDisclaimer.descriptionAr 
+                            : result.transparency.representationDisclaimer.description}
+                        </p>
+                      </div>
+                    </Card>
+                  )}
+
                   {/* Full Disclaimer */}
                   {contentDomain && (
                     <Disclaimer domain={contentDomain} />
