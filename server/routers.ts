@@ -2302,9 +2302,8 @@ Please verify the payment and confirm in the admin panel.
       .mutation(async ({ input }) => {
         const { analyze } = await import('./engines');
         return await analyze({
-          topic: input.topic,
-          countryCode: input.countryCode,
-          countryName: input.countryName,
+          text: input.topic,
+          country: input.countryCode || input.countryName || 'ALL',
           userType: input.userType,
         });
       }),
@@ -2321,7 +2320,7 @@ Please verify the payment and confirm in the admin panel.
         const { fuseEmotions } = await import('./engines/emotionFusion');
         
         const context = classifyContext(input.text);
-        const emotions = fuseEmotions(input.text, context.domain);
+        const emotions = fuseEmotions(input.text, context);
         
         return {
           context,
