@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { StockStyleIndicator } from '@/components/StockStyleIndicator';
 import { trpc } from '@/lib/trpc';
 import { Link, useLocation } from 'wouter';
@@ -8,7 +10,7 @@ import {
   TrendingUp, Zap, Heart, Menu, X, 
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
-  LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap
+  LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap, Search, ArrowRight
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -314,8 +316,19 @@ export default function Home() {
   const [indices, setIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
   const [previousIndices, setPreviousIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [analysisTopic, setAnalysisTopic] = useState('');
+  const [analysisCountry, setAnalysisCountry] = useState('ALL');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { t, isRTL } = useI18n();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+
+  // Handle analyze button click
+  const handleAnalyze = async () => {
+    if (!analysisTopic.trim()) return;
+    setIsAnalyzing(true);
+    // Navigate to results page with query params
+    navigate(`/analyzer?topic=${encodeURIComponent(analysisTopic)}&country=${analysisCountry}`);
+  };
 
   // Fetch latest indices with auto-refresh every 30 seconds
   const { data: latestIndices, isLoading: indicesLoading } = trpc.emotion.getLatestIndices.useQuery(
@@ -545,23 +558,19 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section - Clear Value Proposition */}
-      <section className="py-16 border-b border-border/50">
-        <div className="container max-w-5xl">
-          <div className="text-center space-y-6">
-            {/* Main Headline */}
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold cosmic-text leading-tight">
+      {/* Hero Section - جرب التحليل الآن */}
+      <section className="py-20 border-b border-border/50">
+        <div className="container max-w-4xl">
+          <div className="text-center space-y-8">
+            {/* Main Headline - بارز وكبير */}
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
               {isRTL ? (
                 <>
-                  افهم <span className="gradient-text">مشاعر الناس</span> تجاه أي قضية
-                  <br className="hidden md:block" />
-                  <span className="text-3xl md:text-4xl lg:text-5xl">خلال دقائق</span>
+                  <span className="gradient-text">جرب التحليل</span> الآن
                 </>
               ) : (
                 <>
-                  Understand <span className="gradient-text">How People Feel</span>
-                  <br className="hidden md:block" />
-                  <span className="text-3xl md:text-4xl lg:text-5xl">About Any Topic in Minutes</span>
+                  <span className="gradient-text">Try Analysis</span> Now
                 </>
               )}
             </h2>
@@ -569,31 +578,99 @@ export default function Home() {
             {/* Subheadline */}
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               {isRTL 
-                ? 'AmalSense يحلل ملايين المصادر الرقمية ليكشف لك المشاعر الجماعية الحقيقية - للصحفيين والباحثين والمؤسسات'
-                : 'AmalSense analyzes millions of digital sources to reveal real collective emotions - for journalists, researchers, and organizations'
+                ? 'أدخل أي موضوع واكتشف كيف يشعر الناس تجاهه'
+                : 'Enter any topic and discover how people feel about it'
               }
             </p>
             
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button
-                onClick={() => navigate('/analyzer')}
-                className="glow-button text-white px-8 py-6 text-lg"
-              >
-                <Brain className="w-5 h-5 mr-2" />
-                {isRTL ? 'جرّب التحليل مجاناً' : 'Try Analysis Free'}
-              </Button>
-              <Button
-                onClick={() => navigate('/how-it-works')}
-                variant="outline"
-                className="px-8 py-6 text-lg"
-              >
-                {isRTL ? 'كيف يعمل؟' : 'How It Works?'}
-              </Button>
-            </div>
+            {/* Analysis Input Box - بارز */}
+            <Card className="cosmic-card p-8 max-w-2xl mx-auto">
+              <div className="space-y-6">
+                {/* Topic Input */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    {isRTL ? 'الموضوع' : 'Topic'}
+                  </label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      value={analysisTopic}
+                      onChange={(e) => setAnalysisTopic(e.target.value)}
+                      placeholder={isRTL ? 'مثال: الانتخابات الأمريكية، أسعار النفط، الذكاء الاصطناعي...' : 'e.g., US Elections, Oil Prices, AI Technology...'}
+                      className="pl-10 h-14 text-lg bg-background/50"
+                    />
+                  </div>
+                </div>
+                
+                {/* Country Select */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    {isRTL ? 'الدولة' : 'Country'}
+                  </label>
+                  <Select value={analysisCountry} onValueChange={setAnalysisCountry}>
+                    <SelectTrigger className="h-14 text-lg bg-background/50">
+                      <SelectValue placeholder={isRTL ? 'اختر الدولة' : 'Select Country'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">
+                        <span className="flex items-center gap-2">
+                          <Globe className="w-4 h-4" />
+                          {isRTL ? '🌍 كل الدول' : '🌍 All Countries'}
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="LY">🇱🇾 {isRTL ? 'ليبيا' : 'Libya'}</SelectItem>
+                      <SelectItem value="EG">🇪🇬 {isRTL ? 'مصر' : 'Egypt'}</SelectItem>
+                      <SelectItem value="SA">🇸🇦 {isRTL ? 'السعودية' : 'Saudi Arabia'}</SelectItem>
+                      <SelectItem value="AE">🇦🇪 {isRTL ? 'الإمارات' : 'UAE'}</SelectItem>
+                      <SelectItem value="KW">🇰🇼 {isRTL ? 'الكويت' : 'Kuwait'}</SelectItem>
+                      <SelectItem value="QA">🇶🇦 {isRTL ? 'قطر' : 'Qatar'}</SelectItem>
+                      <SelectItem value="BH">🇧🇭 {isRTL ? 'البحرين' : 'Bahrain'}</SelectItem>
+                      <SelectItem value="OM">🇴🇲 {isRTL ? 'عمان' : 'Oman'}</SelectItem>
+                      <SelectItem value="JO">🇯🇴 {isRTL ? 'الأردن' : 'Jordan'}</SelectItem>
+                      <SelectItem value="LB">🇱🇧 {isRTL ? 'لبنان' : 'Lebanon'}</SelectItem>
+                      <SelectItem value="SY">🇸🇾 {isRTL ? 'سوريا' : 'Syria'}</SelectItem>
+                      <SelectItem value="IQ">🇮🇶 {isRTL ? 'العراق' : 'Iraq'}</SelectItem>
+                      <SelectItem value="PS">🇵🇸 {isRTL ? 'فلسطين' : 'Palestine'}</SelectItem>
+                      <SelectItem value="YE">🇾🇪 {isRTL ? 'اليمن' : 'Yemen'}</SelectItem>
+                      <SelectItem value="MA">🇲🇦 {isRTL ? 'المغرب' : 'Morocco'}</SelectItem>
+                      <SelectItem value="DZ">🇩🇿 {isRTL ? 'الجزائر' : 'Algeria'}</SelectItem>
+                      <SelectItem value="TN">🇹🇳 {isRTL ? 'تونس' : 'Tunisia'}</SelectItem>
+                      <SelectItem value="SD">🇸🇩 {isRTL ? 'السودان' : 'Sudan'}</SelectItem>
+                      <SelectItem value="US">🇺🇸 {isRTL ? 'أمريكا' : 'USA'}</SelectItem>
+                      <SelectItem value="GB">🇬🇧 {isRTL ? 'بريطانيا' : 'UK'}</SelectItem>
+                      <SelectItem value="FR">🇫🇷 {isRTL ? 'فرنسا' : 'France'}</SelectItem>
+                      <SelectItem value="DE">🇩🇪 {isRTL ? 'ألمانيا' : 'Germany'}</SelectItem>
+                      <SelectItem value="TR">🇹🇷 {isRTL ? 'تركيا' : 'Turkey'}</SelectItem>
+                      <SelectItem value="RU">🇷🇺 {isRTL ? 'روسيا' : 'Russia'}</SelectItem>
+                      <SelectItem value="CN">🇨🇳 {isRTL ? 'الصين' : 'China'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Analyze Button */}
+                <Button
+                  onClick={handleAnalyze}
+                  disabled={!analysisTopic.trim() || isAnalyzing}
+                  className="w-full h-14 text-lg glow-button text-white"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                      {isRTL ? 'جاري التحليل...' : 'Analyzing...'}
+                    </>
+                  ) : (
+                    <>
+                      <Brain className="w-5 h-5 mr-2" />
+                      {isRTL ? 'حلل الآن' : 'Analyze Now'}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Card>
             
             {/* Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
                 <span>{isRTL ? '15+ مصدر بيانات' : '15+ Data Sources'}</span>
@@ -741,41 +818,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Quick Features - Simplified */}
+      {/* How It Works - كيف يعمل */}
       <section className="py-12 border-t border-border/50">
-        <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/analyzer">
-              <Card className="cosmic-card p-4 text-center hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <Brain className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                <h4 className="text-sm font-bold cosmic-text">{t.analyzer.title}</h4>
-                <p className="text-xs text-muted-foreground mt-1">تحليل النصوص والعناوين</p>
-              </Card>
-            </Link>
-
-            <Link href="/map">
-              <Card className="cosmic-card p-4 text-center hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <Globe className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
-                <h4 className="text-sm font-bold cosmic-text">{t.map.title}</h4>
-                <p className="text-xs text-muted-foreground mt-1">خريطة المشاعر التفاعلية</p>
-              </Card>
-            </Link>
-
-            <Link href="/trends">
-              <Card className="cosmic-card p-4 text-center hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <TrendingUp className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                <h4 className="text-sm font-bold cosmic-text">البيانات التاريخية</h4>
-                <p className="text-xs text-muted-foreground mt-1">تتبع الاتجاهات عبر الزمن</p>
-              </Card>
-            </Link>
-
-            <Link href="/alerts">
-              <Card className="cosmic-card p-4 text-center hover:border-accent/50 transition-colors cursor-pointer h-full">
-                <Bell className="w-8 h-8 text-red-400 mx-auto mb-2" />
-                <h4 className="text-sm font-bold cosmic-text">التنبيهات</h4>
-                <p className="text-xs text-muted-foreground mt-1">إشعارات مخصصة</p>
-              </Card>
-            </Link>
+        <div className="container max-w-4xl">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold cosmic-text mb-2">
+              {isRTL ? 'كيف يعمل AmalSense؟' : 'How AmalSense Works?'}
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-4">
+              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                <span className="text-xl font-bold">1</span>
+              </div>
+              <h4 className="font-bold mb-2">{isRTL ? 'أدخل الموضوع' : 'Enter Topic'}</h4>
+              <p className="text-sm text-muted-foreground">
+                {isRTL ? 'اكتب أي موضوع أو قضية تريد تحليلها' : 'Type any topic or issue you want to analyze'}
+              </p>
+            </div>
+            <div className="text-center p-4">
+              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                <span className="text-xl font-bold">2</span>
+              </div>
+              <h4 className="font-bold mb-2">{isRTL ? 'اختر الدولة' : 'Select Country'}</h4>
+              <p className="text-sm text-muted-foreground">
+                {isRTL ? 'حدد دولة معينة أو كل العالم' : 'Choose a specific country or worldwide'}
+              </p>
+            </div>
+            <div className="text-center p-4">
+              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                <span className="text-xl font-bold">3</span>
+              </div>
+              <h4 className="font-bold mb-2">{isRTL ? 'احصل على النتائج' : 'Get Results'}</h4>
+              <p className="text-sm text-muted-foreground">
+                {isRTL ? 'شاهد تحليل المشاعر والأسباب والتوصيات' : 'View emotion analysis, causes, and recommendations'}
+              </p>
+            </div>
           </div>
         </div>
       </section>
