@@ -371,6 +371,7 @@ export default function Home() {
     { href: '/theory', label: t.nav.theory },
     { href: '/weather', label: t.nav.weather },
     { href: '/trends', label: 'Trends' },
+    { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets' },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
   ];

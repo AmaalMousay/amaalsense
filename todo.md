@@ -1274,3 +1274,23 @@
 ### Pricing Structure
 - [x] صفحة Pricing موجودة مسبقاً مع 4 مستويات (Free, Pro, Enterprise, Government)
 
+
+
+## Phase 93: AmalSense Markets - Emotional Market Intelligence (NEW)
+
+### المنتج الجديد: إشارات عاطفية للأسواق المالية
+- [x] إنشاء صفحة Markets الرئيسية مع رسالة تسويقية واضحة
+- [x] إضافة مؤشر Sentiment Momentum (اتجاه المشاعر)
+- [x] إضافة مؤشر Fear Spike Index (مؤشر الذعر)
+- [x] إضافة مؤشر Hype Index (مؤشر التضخيم الإعلامي)
+- [x] إنشاء بطاقات للأصول المالية (Gold, Bitcoin, Tech Stocks, Oil)
+- [x] إضافة هيكل الاشتراكات (Free, Pro Trader $29, Fund $199, API)
+- [x] إضافة إخلاء المسؤولية القانوني
+- [x] إضافة الرابط في Navigation
+
+### الرسالة التسويقية الصحيحة
+"نحن لا نقول لك ماذا تفعل، نحن نريك كيف يشعر السوق قبل أن يتحرك."
+
+### إخلاء المسؤولية
+"AmalSense provides emotional indicators, not financial advice."
+

@@ -42,6 +42,7 @@ import Reports from "./pages/Reports";
 import FollowedTopics from "./pages/FollowedTopics";
 import JournalistDashboard from "./pages/JournalistDashboard";
 import ResearcherDashboard from "./pages/ResearcherDashboard";
+import Markets from "./pages/Markets";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -85,6 +86,7 @@ function Router() {
       <Route path={"/followed-topics"} component={FollowedTopics} />
       <Route path={"/journalist"} component={JournalistDashboard} />
       <Route path={"/researcher"} component={ResearcherDashboard} />
+      <Route path={"/markets"} component={Markets} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
