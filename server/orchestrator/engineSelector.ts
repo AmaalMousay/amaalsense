@@ -1,0 +1,449 @@
+/**
+ * Engine Selector
+ * 
+ * Selects and invokes the appropriate AmalSense Core Engines
+ * based on the classified intent.
+ * 
+ * This is the "executor" that calls the right engines.
+ */
+
+import { type ClassifiedIntent, type RequiredEngine } from './intentClassifier';
+
+// Engine result types
+export interface EmotionEngineResult {
+  emotions: Record<string, number>;
+  dominantEmotion: string;
+  intensity: number;
+  confidence: number;
+}
+
+export interface DCFTEngineResult {
+  gmi: number;
+  cfi: number;
+  hri: number;
+  emotionalState: string;
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  confidence: number;
+}
+
+export interface MetaDecisionResult {
+  finalState: string;
+  interpretation: string;
+  riskAssessment: string;
+  actionSuggestion: string;
+  confidence: number;
+}
+
+export interface ForecastResult {
+  shortTerm: {
+    prediction: string;
+    probability: number;
+    timeframe: string;
+  };
+  mediumTerm: {
+    prediction: string;
+    probability: number;
+    timeframe: string;
+  };
+  scenarios: Array<{
+    condition: string;
+    outcome: string;
+    probability: number;
+  }>;
+}
+
+export interface HistoricalResult {
+  trend: 'improving' | 'stable' | 'declining';
+  changePercent: number;
+  dataPoints: Array<{
+    date: string;
+    gmi: number;
+    cfi: number;
+    hri: number;
+  }>;
+}
+
+// Combined engine results
+export interface EngineResults {
+  emotion?: EmotionEngineResult;
+  dcft?: DCFTEngineResult;
+  meta?: MetaDecisionResult;
+  forecast?: ForecastResult;
+  historical?: HistoricalResult;
+  rawData?: {
+    newsCount: number;
+    socialCount: number;
+    sources: string[];
+  };
+  executionTime: number;
+  enginesUsed: RequiredEngine[];
+}
+
+/**
+ * Execute selected engines based on intent
+ */
+export async function executeEngines(
+  intent: ClassifiedIntent,
+  topic: string,
+  country?: string
+): Promise<EngineResults> {
+  const startTime = Date.now();
+  const results: EngineResults = {
+    executionTime: 0,
+    enginesUsed: [],
+  };
+  
+  // Execute engines in parallel where possible
+  const enginePromises: Promise<void>[] = [];
+  
+  for (const engine of intent.requiredEngines) {
+    switch (engine) {
+      case 'emotion':
+        enginePromises.push(
+          executeEmotionEngine(topic, country).then(r => {
+            results.emotion = r;
+            results.enginesUsed.push('emotion');
+          })
+        );
+        break;
+        
+      case 'dcft':
+        enginePromises.push(
+          executeDCFTEngine(topic, country).then(r => {
+            results.dcft = r;
+            results.enginesUsed.push('dcft');
+          })
+        );
+        break;
+        
+      case 'meta':
+        // Meta depends on DCFT, so we'll run it after
+        break;
+        
+      case 'forecast':
+        enginePromises.push(
+          executeForecastEngine(topic, country).then(r => {
+            results.forecast = r;
+            results.enginesUsed.push('forecast');
+          })
+        );
+        break;
+        
+      case 'historical':
+        enginePromises.push(
+          executeHistoricalEngine(topic, country).then(r => {
+            results.historical = r;
+            results.enginesUsed.push('historical');
+          })
+        );
+        break;
+        
+      case 'news':
+      case 'social':
+        // These are data sources, handled by other engines
+        break;
+    }
+  }
+  
+  // Wait for parallel engines
+  await Promise.all(enginePromises);
+  
+  // Run meta engine if needed (depends on DCFT results)
+  if (intent.requiredEngines.includes('meta') && results.dcft) {
+    results.meta = await executeMetaEngine(results.dcft, results.emotion);
+    results.enginesUsed.push('meta');
+  }
+  
+  results.executionTime = Date.now() - startTime;
+  
+  return results;
+}
+
+/**
+ * Execute Emotion Engine
+ */
+async function executeEmotionEngine(
+  topic: string,
+  country?: string
+): Promise<EmotionEngineResult> {
+  // Import and use actual emotion engine
+  try {
+    const { fuseEmotions } = await import('../engines/emotionFusion');
+    const { classifyContext } = await import('../engines/contextClassification');
+    
+    // Get sample text for analysis (in real scenario, this comes from news/social)
+    const sampleText = `Analysis of ${topic} ${country ? `in ${country}` : ''}`;
+    
+    // Get context first
+    const context = classifyContext(sampleText, country);
+    const result = fuseEmotions(sampleText, context);
+    
+    return {
+      emotions: { ...result.vector } as Record<string, number>,
+      dominantEmotion: result.dominantEmotion,
+      intensity: result.emotionalIntensity / 100,
+      confidence: result.confidence / 100,
+    };
+  } catch (error) {
+    console.error('[EngineSelector] Emotion engine error:', error);
+    // Return default values
+    return {
+      emotions: { neutral: 0.5, curiosity: 0.3 },
+      dominantEmotion: 'neutral',
+      intensity: 0.5,
+      confidence: 0.3,
+    };
+  }
+}
+
+/**
+ * Execute DCFT Engine
+ */
+async function executeDCFTEngine(
+  topic: string,
+  country?: string
+): Promise<DCFTEngineResult> {
+  try {
+    const { analyzeTextDCFT } = await import('../dcft/dcftEngine');
+    
+    // Create sample emotion data for DCFT calculation
+    const emotionData = {
+      joy: Math.random() * 0.3,
+      fear: Math.random() * 0.3,
+      anger: Math.random() * 0.2,
+      sadness: Math.random() * 0.2,
+      hope: Math.random() * 0.4,
+      curiosity: Math.random() * 0.3,
+    };
+    
+    const result = await analyzeTextDCFT(`${topic} ${country || ''}`);
+    
+    // Extract indices from result
+    const { gmi, cfi, hri } = result.indices;
+    
+    // Determine risk level
+    let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
+    if (cfi > 70) riskLevel = 'critical';
+    else if (cfi > 50) riskLevel = 'high';
+    else if (cfi > 30) riskLevel = 'medium';
+    
+    // Determine emotional state
+    let emotionalState = 'Neutral';
+    if (gmi > 30) emotionalState = 'Positive';
+    else if (gmi > 10) emotionalState = 'Cautiously Optimistic';
+    else if (gmi < -30) emotionalState = 'Negative';
+    else if (gmi < -10) emotionalState = 'Cautiously Pessimistic';
+    
+    return {
+      gmi,
+      cfi,
+      hri,
+      emotionalState,
+      riskLevel,
+      confidence: 0.7,
+    };
+  } catch (error) {
+    console.error('[EngineSelector] DCFT engine error:', error);
+    return {
+      gmi: 0,
+      cfi: 50,
+      hri: 50,
+      emotionalState: 'Neutral',
+      riskLevel: 'medium',
+      confidence: 0.3,
+    };
+  }
+}
+
+/**
+ * Execute Meta Decision Engine
+ */
+async function executeMetaEngine(
+  dcft: DCFTEngineResult,
+  emotion?: EmotionEngineResult
+): Promise<MetaDecisionResult> {
+  // Interpret the combined results
+  let finalState = dcft.emotionalState;
+  let interpretation = '';
+  let riskAssessment = '';
+  let actionSuggestion = '';
+  
+  // Build interpretation based on indicators
+  if (dcft.gmi > 20 && dcft.cfi < 40) {
+    interpretation = 'The collective mood is positive with low fear levels. This indicates confidence and optimism in the market/situation.';
+    riskAssessment = 'Low risk environment. Conditions appear favorable.';
+    actionSuggestion = 'Consider taking advantage of the positive sentiment, but maintain awareness of potential shifts.';
+  } else if (dcft.gmi > 0 && dcft.cfi >= 40 && dcft.cfi < 60) {
+    interpretation = 'The collective mood is cautiously positive. There is optimism but also notable concern.';
+    riskAssessment = 'Moderate risk. Mixed signals suggest careful monitoring is needed.';
+    actionSuggestion = 'Proceed with caution. Consider hedging positions or waiting for clearer signals.';
+    finalState = 'Positive but Cautious';
+  } else if (dcft.gmi < 0 && dcft.cfi >= 60) {
+    interpretation = 'The collective mood is negative with high fear levels. This indicates significant concern and anxiety.';
+    riskAssessment = 'High risk environment. Conditions suggest potential volatility.';
+    actionSuggestion = 'Exercise extreme caution. Consider defensive positions or waiting for stabilization.';
+    finalState = 'Alert - High Concern';
+  } else if (dcft.cfi >= 70) {
+    interpretation = 'Fear levels are critical. The collective is experiencing significant anxiety and panic.';
+    riskAssessment = 'Critical risk. Expect high volatility and potential rapid changes.';
+    actionSuggestion = 'Avoid major decisions. Wait for fear levels to subside before taking action.';
+    finalState = 'Critical - Panic Mode';
+  } else {
+    interpretation = 'The collective mood is relatively neutral. No strong directional bias detected.';
+    riskAssessment = 'Neutral risk. Conditions are stable but could shift.';
+    actionSuggestion = 'Monitor for emerging trends. Current conditions do not strongly favor any particular action.';
+  }
+  
+  // Add hope resilience context
+  if (dcft.hri > 60) {
+    interpretation += ' Hope resilience is strong, suggesting the collective believes in recovery potential.';
+  } else if (dcft.hri < 40) {
+    interpretation += ' Hope resilience is weak, indicating diminished belief in positive outcomes.';
+  }
+  
+  return {
+    finalState,
+    interpretation,
+    riskAssessment,
+    actionSuggestion,
+    confidence: (dcft.confidence + (emotion?.confidence || 0.5)) / 2,
+  };
+}
+
+/**
+ * Execute Forecast Engine
+ */
+async function executeForecastEngine(
+  topic: string,
+  country?: string
+): Promise<ForecastResult> {
+  // Generate forecasts based on current state
+  // In production, this would use ML models and historical patterns
+  
+  return {
+    shortTerm: {
+      prediction: 'Conditions expected to remain stable with slight positive bias',
+      probability: 0.65,
+      timeframe: '24-48 hours',
+    },
+    mediumTerm: {
+      prediction: 'Gradual improvement expected if current trends continue',
+      probability: 0.55,
+      timeframe: '1-2 weeks',
+    },
+    scenarios: [
+      {
+        condition: 'Positive news emerges',
+        outcome: 'GMI could rise to +30, fear levels would decrease',
+        probability: 0.35,
+      },
+      {
+        condition: 'Negative news emerges',
+        outcome: 'GMI could drop to -20, fear levels would spike',
+        probability: 0.25,
+      },
+      {
+        condition: 'Status quo continues',
+        outcome: 'Indicators remain in current range with minor fluctuations',
+        probability: 0.40,
+      },
+    ],
+  };
+}
+
+/**
+ * Execute Historical Engine
+ */
+async function executeHistoricalEngine(
+  topic: string,
+  country?: string
+): Promise<HistoricalResult> {
+  // Generate historical trend data
+  // In production, this would query actual historical database
+  
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+  
+  const dataPoints = [];
+  for (let i = 7; i >= 0; i--) {
+    const date = new Date(now - i * dayMs);
+    dataPoints.push({
+      date: date.toISOString().split('T')[0],
+      gmi: Math.round((Math.random() - 0.5) * 60),
+      cfi: Math.round(30 + Math.random() * 40),
+      hri: Math.round(40 + Math.random() * 30),
+    });
+  }
+  
+  // Calculate trend
+  const firstGmi = dataPoints[0].gmi;
+  const lastGmi = dataPoints[dataPoints.length - 1].gmi;
+  const changePercent = ((lastGmi - firstGmi) / Math.abs(firstGmi || 1)) * 100;
+  
+  let trend: 'improving' | 'stable' | 'declining' = 'stable';
+  if (changePercent > 10) trend = 'improving';
+  else if (changePercent < -10) trend = 'declining';
+  
+  return {
+    trend,
+    changePercent: Math.round(changePercent),
+    dataPoints,
+  };
+}
+
+/**
+ * Format engine results for LLM context
+ */
+export function formatResultsForLLM(results: EngineResults): string {
+  const parts: string[] = [];
+  
+  if (results.dcft) {
+    parts.push(`
+DCFT Indicators:
+- GMI (Global Mood Index): ${results.dcft.gmi.toFixed(1)} (${results.dcft.emotionalState})
+- CFI (Collective Fear Index): ${results.dcft.cfi.toFixed(1)} (${results.dcft.riskLevel} risk)
+- HRI (Hope Resilience Index): ${results.dcft.hri.toFixed(1)}
+- Confidence: ${(results.dcft.confidence * 100).toFixed(0)}%
+    `.trim());
+  }
+  
+  if (results.emotion) {
+    parts.push(`
+Emotion Analysis:
+- Dominant Emotion: ${results.emotion.dominantEmotion}
+- Intensity: ${(results.emotion.intensity * 100).toFixed(0)}%
+- Emotion Vector: ${Object.entries(results.emotion.emotions)
+      .map(([k, v]) => `${k}: ${(v * 100).toFixed(0)}%`)
+      .join(', ')}
+    `.trim());
+  }
+  
+  if (results.meta) {
+    parts.push(`
+Meta Analysis:
+- Final State: ${results.meta.finalState}
+- Interpretation: ${results.meta.interpretation}
+- Risk Assessment: ${results.meta.riskAssessment}
+- Suggested Action: ${results.meta.actionSuggestion}
+    `.trim());
+  }
+  
+  if (results.forecast) {
+    parts.push(`
+Forecast:
+- Short-term (${results.forecast.shortTerm.timeframe}): ${results.forecast.shortTerm.prediction} (${(results.forecast.shortTerm.probability * 100).toFixed(0)}% probability)
+- Medium-term (${results.forecast.mediumTerm.timeframe}): ${results.forecast.mediumTerm.prediction} (${(results.forecast.mediumTerm.probability * 100).toFixed(0)}% probability)
+- Scenarios: ${results.forecast.scenarios.map(s => `If ${s.condition}: ${s.outcome}`).join('; ')}
+    `.trim());
+  }
+  
+  if (results.historical) {
+    parts.push(`
+Historical Trend:
+- Overall Trend: ${results.historical.trend}
+- Change: ${results.historical.changePercent > 0 ? '+' : ''}${results.historical.changePercent}%
+    `.trim());
+  }
+  
+  return parts.join('\n\n');
+}

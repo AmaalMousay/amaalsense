@@ -81,7 +81,7 @@ export default function SmartAnalysis() {
       // Add AI's initial response to conversation
       setConversation([{
         role: 'assistant',
-        content: result.aiResponse.message,
+        content: result.aiResponse as string,
         timestamp: Date.now(),
       }]);
       
@@ -124,7 +124,7 @@ export default function SmartAnalysis() {
       // Add AI response to conversation
       setConversation(prev => [...prev, {
         role: 'assistant',
-        content: result.aiResponse.message,
+        content: result.aiResponse as string,
         timestamp: result.timestamp,
       }]);
     } catch (error) {

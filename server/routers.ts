@@ -2342,56 +2342,55 @@ Please verify the payment and confirm in the admin panel.
         topic: z.string().min(1).max(500),
       }))
       .mutation(async ({ input }) => {
-        const { detectCountryFromTopic, generateAIResponse } = await import('./conversationalAI');
+        // Use the new AI Orchestrator for intelligent routing
+        const { orchestrate } = await import('./orchestrator');
+        const { detectCountryFromTopic } = await import('./conversationalAI');
         const { analyze } = await import('./engines');
         
         // Detect country from topic
         const detectedCountry = detectCountryFromTopic(input.topic);
         
-        // Run unified analysis
+        // Run unified analysis (for backward compatibility)
         const analysisResult = await analyze({
           text: input.topic,
           country: detectedCountry || 'ALL',
           userType: 'general',
         });
         
-        // Build context for AI
-        const emotionVector: Record<string, number> = {};
-        if (analysisResult.emotionalState?.vector) {
-          const vec = analysisResult.emotionalState.vector;
-          emotionVector.joy = vec.joy;
-          emotionVector.fear = vec.fear;
-          emotionVector.anger = vec.anger;
-          emotionVector.sadness = vec.sadness;
-          emotionVector.hope = vec.hope;
-          emotionVector.curiosity = vec.curiosity;
-        }
+        // Use Orchestrator for intelligent AI response
+        const orchestrationResult = await orchestrate({
+          question: `Analyze the collective emotional state for: ${input.topic}`,
+          topic: input.topic,
+          country: detectedCountry || undefined,
+        });
         
-        // Calculate indices from emotion vector
-        const valence = analysisResult.emotionalState?.valence || 0;
-        const gmi = Math.round(valence); // GMI is based on valence (-100 to +100)
-        const cfi = Math.round(emotionVector.fear || 50); // CFI based on fear
-        const hri = Math.round(emotionVector.hope || 50); // HRI based on hope
-        
+        // Build context from orchestration results
         const context = {
           topic: input.topic,
-          gmi,
-          cfi,
-          hri,
-          dominantEmotion: analysisResult.emotionalState?.dominantEmotion || 'neutral',
-          emotionVector,
-          confidence: analysisResult.emotionalState?.confidence || 70,
+          gmi: orchestrationResult.engineResults.dcft?.gmi || 0,
+          cfi: orchestrationResult.engineResults.dcft?.cfi || 50,
+          hri: orchestrationResult.engineResults.dcft?.hri || 50,
+          dominantEmotion: orchestrationResult.engineResults.emotion?.dominantEmotion || 'neutral',
+          emotionVector: orchestrationResult.engineResults.emotion?.emotions || {},
+          confidence: orchestrationResult.metadata.confidence * 100,
           detectedCountry,
+          // New orchestrator metadata
+          intent: orchestrationResult.intent.primary,
+          enginesUsed: orchestrationResult.metadata.enginesUsed,
+          provider: orchestrationResult.metadata.provider,
         };
-        
-        // Generate AI response (initial explanation)
-        const aiResponse = await generateAIResponse(context as any, []);
         
         return {
           analysis: analysisResult,
           context,
-          aiResponse,
+          aiResponse: orchestrationResult.answer,
           conversationId: Date.now().toString(),
+          // New metadata from orchestrator
+          orchestration: {
+            intent: orchestrationResult.intent,
+            processingTimeMs: orchestrationResult.metadata.processingTimeMs,
+            enginesUsed: orchestrationResult.metadata.enginesUsed,
+          },
         };
       }),
 
@@ -2418,20 +2417,34 @@ Please verify the payment and confirm in the admin panel.
         })),
       }))
       .mutation(async ({ input }) => {
-        const { generateAIResponse } = await import('./conversationalAI');
+        // Use the new AI Orchestrator for intelligent follow-up
+        const { orchestrate } = await import('./orchestrator');
         
-        const aiResponse = await generateAIResponse(
-          {
-            ...input.context,
-            emotionVector: (input.context.emotionVector || {}) as Record<string, number>,
-          },
-          input.conversationHistory as any,
-          input.question
-        );
+        // Convert conversation history to orchestrator format
+        const history = input.conversationHistory
+          .filter(m => m.role === 'user' || m.role === 'assistant')
+          .map(m => ({
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+          }));
+        
+        const orchestrationResult = await orchestrate({
+          question: input.question,
+          topic: input.context.topic,
+          country: input.context.detectedCountry,
+          conversationHistory: history,
+        });
         
         return {
-          aiResponse,
+          aiResponse: orchestrationResult.answer,
           timestamp: Date.now(),
+          // New metadata from orchestrator
+          orchestration: {
+            intent: orchestrationResult.intent.primary,
+            subIntent: orchestrationResult.intent.sub,
+            enginesUsed: orchestrationResult.metadata.enginesUsed,
+            processingTimeMs: orchestrationResult.metadata.processingTimeMs,
+          },
         };
       }),
 
