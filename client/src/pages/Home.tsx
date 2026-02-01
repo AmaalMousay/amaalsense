@@ -318,7 +318,7 @@ export default function Home() {
   const [previousIndices, setPreviousIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [analysisTopic, setAnalysisTopic] = useState('');
-  const [analysisCountry, setAnalysisCountry] = useState('ALL');
+  // Country will be auto-detected by AI from topic context
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { t, isRTL } = useI18n();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -327,8 +327,8 @@ export default function Home() {
   const handleAnalyze = async () => {
     if (!analysisTopic.trim()) return;
     setIsAnalyzing(true);
-    // Navigate directly to analysis results page
-    navigate(`/analysis-results?topic=${encodeURIComponent(analysisTopic)}&country=${analysisCountry}`);
+    // Navigate to new AI-powered analysis page (country auto-detected)
+    navigate(`/smart-analysis?topic=${encodeURIComponent(analysisTopic)}`);
   };
 
   // Fetch latest indices with auto-refresh every 30 seconds
@@ -601,30 +601,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {/* Country Select */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    {isRTL ? 'الدولة' : 'Country'}
-                  </label>
-                  <Select value={analysisCountry} onValueChange={setAnalysisCountry}>
-                    <SelectTrigger className="h-14 text-lg bg-background/50">
-                      <SelectValue placeholder={isRTL ? 'اختر الدولة' : 'Select Country'} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[400px]">
-                      <SelectItem value="ALL">
-                        <span className="flex items-center gap-2">
-                          <Globe className="w-4 h-4" />
-                          {isRTL ? 'كل الدول' : 'All Countries'}
-                        </span>
-                      </SelectItem>
-                      {COUNTRIES.map((country) => (
-                        <SelectItem key={country.code} value={country.code}>
-                          {country.flag} {country.nameEn}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* AI will auto-detect country from topic context */}
                 
                 {/* Analyze Button */}
                 <Button

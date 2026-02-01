@@ -40,6 +40,7 @@ import FollowedTopics from "./pages/FollowedTopics";
 import JournalistDashboard from "./pages/JournalistDashboard";
 import ResearcherDashboard from "./pages/ResearcherDashboard";
 import Markets from "./pages/Markets";
+import SmartAnalysis from "./pages/SmartAnalysis";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -92,6 +93,9 @@ function Router() {
       <Route path={"/journalist"} component={JournalistDashboard} />
       <Route path={"/researcher"} component={ResearcherDashboard} />
       <Route path={"/markets"} component={Markets} />
+      
+      {/* AI-Powered Smart Analysis */}
+      <Route path={"/smart-analysis"} component={SmartAnalysis} />
       
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

@@ -11,4 +11,5 @@ export const ENV = {
   newsApiKey: process.env.NEWS_API_KEY ?? "",
   youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",
   gnewsApiKey: process.env.GNEWS_API_KEY ?? "",
+  groqApiKey: process.env.GROQ_API_KEY ?? "",
 };

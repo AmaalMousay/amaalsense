@@ -1627,3 +1627,53 @@
 
 ## Phase 109: Fix Arabic "حالات الاستخدام" Button (NEW)
 - [x] Change "حالات الاستخدام" → "Use Cases" in Home.tsx
+
+
+## Phase 110: Conversational Intelligence Agent (NEW - MAJOR FEATURE)
+
+### Core Concept: Collective Emotional Intelligence Agent
+Transform AmalSense from a dashboard display to a conversational analytical mind.
+
+### UI Changes
+- [ ] Redesign analyzer input (topic only, no country selector)
+- [ ] Create split-screen results page (left: metrics | right: AI chat)
+- [ ] AI automatically explains results without user asking
+- [ ] Add follow-up question input field
+
+### Backend - Four Intelligence Layers
+- [ ] Layer 1: Analytical Intelligence (existing - GMI/CFI/HRI calculation)
+- [ ] Layer 2: Emotional Reasoning AI (connects indicators, infers collective psychological states)
+- [ ] Layer 3: Conversational Intelligence (understands questions, responds in human language)
+- [ ] Layer 4: Meta-Decision AI (converts analysis to recommendations/warnings/scenarios)
+
+### AI Features
+- [ ] Auto-detect country from topic context
+- [ ] Interpreter: explains current results (GMI, HRI, CFI, Trends)
+- [ ] Reasoner: connects indicators (high fear + low hope = tension)
+- [ ] Forecaster: simulates "what if" scenarios
+- [ ] Provides recommendations, warnings, and strategic advice
+
+### Example Conversation Flow
+```
+🤖 AmalSense AI: Based on current data, the overall mood is cautiously positive.
+   Main reason: rise in words like "improvement" and "opportunity" with absence of strong negative indicators.
+
+👤 User: Should I buy silver?
+
+🤖 AmalSense AI: Emotionally: yes, there's psychological readiness for buying.
+   But no strong rush, so recommendation is to monitor or buy gradually.
+
+👤 User: What if negative news appears?
+
+🤖 AmalSense AI: In that case, CFI is expected to rise above 60
+   and mood will shift to tense within hours.
+```
+
+
+## Phase 111: Groq + Qwen Integration (Open Source LLM)
+- [x] Create Groq API service with Qwen model support
+- [x] Create LLM provider abstraction layer (switch between Manus/Groq)
+- [x] Update conversationalAI to use configurable LLM provider
+- [x] Request GROQ_API_KEY from user
+- [x] Test Smart Analysis page with Groq
+- [x] Verify Arabic language support with Qwen

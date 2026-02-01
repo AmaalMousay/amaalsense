@@ -2328,6 +2328,146 @@ Please verify the payment and confirm in the admin panel.
         };
       }),
   }),
+
+  // ========================================
+  // CONVERSATIONAL INTELLIGENCE AGENT
+  // ========================================
+  conversationalAI: router({
+    /**
+     * Smart Analysis with AI Conversation
+     * Analyzes topic and returns both metrics and AI explanation
+     */
+    analyzeWithAI: publicProcedure
+      .input(z.object({
+        topic: z.string().min(1).max(500),
+      }))
+      .mutation(async ({ input }) => {
+        const { detectCountryFromTopic, generateAIResponse } = await import('./conversationalAI');
+        const { analyze } = await import('./engines');
+        
+        // Detect country from topic
+        const detectedCountry = detectCountryFromTopic(input.topic);
+        
+        // Run unified analysis
+        const analysisResult = await analyze({
+          text: input.topic,
+          country: detectedCountry || 'ALL',
+          userType: 'general',
+        });
+        
+        // Build context for AI
+        const emotionVector: Record<string, number> = {};
+        if (analysisResult.emotionalState?.vector) {
+          const vec = analysisResult.emotionalState.vector;
+          emotionVector.joy = vec.joy;
+          emotionVector.fear = vec.fear;
+          emotionVector.anger = vec.anger;
+          emotionVector.sadness = vec.sadness;
+          emotionVector.hope = vec.hope;
+          emotionVector.curiosity = vec.curiosity;
+        }
+        
+        // Calculate indices from emotion vector
+        const valence = analysisResult.emotionalState?.valence || 0;
+        const gmi = Math.round(valence); // GMI is based on valence (-100 to +100)
+        const cfi = Math.round(emotionVector.fear || 50); // CFI based on fear
+        const hri = Math.round(emotionVector.hope || 50); // HRI based on hope
+        
+        const context = {
+          topic: input.topic,
+          gmi,
+          cfi,
+          hri,
+          dominantEmotion: analysisResult.emotionalState?.dominantEmotion || 'neutral',
+          emotionVector,
+          confidence: analysisResult.emotionalState?.confidence || 70,
+          detectedCountry,
+        };
+        
+        // Generate AI response (initial explanation)
+        const aiResponse = await generateAIResponse(context as any, []);
+        
+        return {
+          analysis: analysisResult,
+          context,
+          aiResponse,
+          conversationId: Date.now().toString(),
+        };
+      }),
+
+    /**
+     * Continue conversation with follow-up question
+     */
+    askFollowUp: publicProcedure
+      .input(z.object({
+        question: z.string().min(1).max(1000),
+        context: z.object({
+          topic: z.string(),
+          gmi: z.number(),
+          cfi: z.number(),
+          hri: z.number(),
+          dominantEmotion: z.string(),
+          emotionVector: z.record(z.string(), z.number()).optional(),
+          confidence: z.number(),
+          detectedCountry: z.string().optional(),
+        }),
+        conversationHistory: z.array(z.object({
+          role: z.enum(['user', 'assistant', 'system']),
+          content: z.string(),
+          timestamp: z.number(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        const { generateAIResponse } = await import('./conversationalAI');
+        
+        const aiResponse = await generateAIResponse(
+          {
+            ...input.context,
+            emotionVector: (input.context.emotionVector || {}) as Record<string, number>,
+          },
+          input.conversationHistory as any,
+          input.question
+        );
+        
+        return {
+          aiResponse,
+          timestamp: Date.now(),
+        };
+      }),
+
+    /**
+     * Get emotional state interpretation
+     */
+    interpretState: publicProcedure
+      .input(z.object({
+        gmi: z.number(),
+        cfi: z.number(),
+        hri: z.number(),
+      }))
+      .query(async ({ input }) => {
+        const { analyzeEmotionalState, generateRecommendations } = await import('./conversationalAI');
+        
+        const context = {
+          topic: 'general',
+          gmi: input.gmi,
+          cfi: input.cfi,
+          hri: input.hri,
+          dominantEmotion: 'neutral',
+          emotionVector: {},
+          confidence: 80,
+        };
+        
+        const state = analyzeEmotionalState(context);
+        const { recommendations, warnings, scenarios } = generateRecommendations(context);
+        
+        return {
+          state,
+          recommendations,
+          warnings,
+          scenarios,
+        };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
