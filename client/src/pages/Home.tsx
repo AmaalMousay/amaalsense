@@ -619,7 +619,7 @@ export default function Home() {
                       </SelectItem>
                       {COUNTRIES.map((country) => (
                         <SelectItem key={country.code} value={country.code}>
-                          {country.flag} {isRTL ? country.nameAr : country.nameEn}
+                          {country.flag} {country.nameEn}
                         </SelectItem>
                       ))}
                     </SelectContent>
