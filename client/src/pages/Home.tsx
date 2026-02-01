@@ -8,7 +8,7 @@ import {
   TrendingUp, Zap, Heart, Menu, X, 
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
-  LogIn, UserPlus, LayoutDashboard, User
+  LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -546,20 +546,132 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section - Compact */}
-      <section className="py-12">
-        <div className="container max-w-4xl">
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold cosmic-text">
-              {t.home.title.split(' ').map((word, i) => 
-                word === 'Emotion' || word === 'المشاعر' || word === 'Émotion' || word === 'Emotion' || word === 'Эмоций' || word === 'Emociones' || word === '情感' ? 
-                  <span key={i} className="gradient-text">{word} </span> : 
-                  <span key={i}>{word} </span>
+      {/* Hero Section - Clear Value Proposition */}
+      <section className="py-16 border-b border-border/50">
+        <div className="container max-w-5xl">
+          <div className="text-center space-y-6">
+            {/* Main Headline */}
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold cosmic-text leading-tight">
+              {isRTL ? (
+                <>
+                  افهم <span className="gradient-text">مشاعر الناس</span> تجاه أي قضية
+                  <br className="hidden md:block" />
+                  <span className="text-3xl md:text-4xl lg:text-5xl">خلال دقائق</span>
+                </>
+              ) : (
+                <>
+                  Understand <span className="gradient-text">How People Feel</span>
+                  <br className="hidden md:block" />
+                  <span className="text-3xl md:text-4xl lg:text-5xl">About Any Topic in Minutes</span>
+                </>
               )}
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t.home.subtitle}
+            
+            {/* Subheadline */}
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {isRTL 
+                ? 'AmalSense يحلل ملايين المصادر الرقمية ليكشف لك المشاعر الجماعية الحقيقية - للصحفيين والباحثين والمؤسسات'
+                : 'AmalSense analyzes millions of digital sources to reveal real collective emotions - for journalists, researchers, and organizations'
+              }
             </p>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Button
+                onClick={() => navigate('/analyzer')}
+                className="glow-button text-white px-8 py-6 text-lg"
+              >
+                <Brain className="w-5 h-5 mr-2" />
+                {isRTL ? 'جرّب التحليل مجاناً' : 'Try Analysis Free'}
+              </Button>
+              <Button
+                onClick={() => navigate('/how-it-works')}
+                variant="outline"
+                className="px-8 py-6 text-lg"
+              >
+                {isRTL ? 'كيف يعمل؟' : 'How It Works?'}
+              </Button>
+            </div>
+            
+            {/* Trust Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-cyan-400" />
+                <span>{isRTL ? '15+ مصدر بيانات' : '15+ Data Sources'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-purple-400" />
+                <span>{isRTL ? '50+ دولة' : '50+ Countries'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-green-400" />
+                <span>{isRTL ? 'تحليل فوري' : 'Real-time Analysis'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Who Is This For? Section */}
+      <section className="py-12 bg-muted/30">
+        <div className="container">
+          <h3 className="text-2xl font-bold text-center cosmic-text mb-8">
+            {isRTL ? 'لمن هذا؟' : 'Who Is This For?'}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Journalist Card */}
+            <Card 
+              className="cosmic-card p-6 hover:border-purple-500/50 transition-all cursor-pointer group"
+              onClick={() => navigate('/journalist')}
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-lg bg-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
+                  <Newspaper className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold mb-2">
+                    {isRTL ? 'الصحفيين والإعلاميين' : 'Journalists & Media'}
+                  </h4>
+                  <p className="text-muted-foreground mb-3">
+                    {isRTL 
+                      ? 'اكتشف القصص التي يتفاعل معها الناس الآن. افهم المشاعر الجماعية قبل أن تصبح أخباراً.'
+                      : 'Discover stories people are reacting to now. Understand collective emotions before they become news.'
+                    }
+                  </p>
+                  <div className="flex items-center text-purple-400 text-sm font-medium group-hover:gap-2 transition-all">
+                    {isRTL ? 'استكشف لوحة الصحفي' : 'Explore Journalist Dashboard'}
+                    <ChevronRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Card>
+            
+            {/* Researcher Card */}
+            <Card 
+              className="cosmic-card p-6 hover:border-cyan-500/50 transition-all cursor-pointer group"
+              onClick={() => navigate('/researcher')}
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-lg bg-cyan-500/20 text-cyan-400 group-hover:scale-110 transition-transform">
+                  <GraduationCap className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold mb-2">
+                    {isRTL ? 'الباحثين والأكاديميين' : 'Researchers & Academics'}
+                  </h4>
+                  <p className="text-muted-foreground mb-3">
+                    {isRTL 
+                      ? 'بيانات مشاعر حقيقية من ملايين المصادر. API قوي وبيانات جاهزة للتحليل الأكاديمي.'
+                      : 'Real emotion data from millions of sources. Powerful API and data ready for academic analysis.'
+                    }
+                  </p>
+                  <div className="flex items-center text-cyan-400 text-sm font-medium group-hover:gap-2 transition-all">
+                    {isRTL ? 'استكشف لوحة الباحث' : 'Explore Researcher Dashboard'}
+                    <ChevronRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </section>

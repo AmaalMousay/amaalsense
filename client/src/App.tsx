@@ -40,6 +40,8 @@ import UserDashboard from "./pages/UserDashboard";
 import Profile from "./pages/Profile";
 import Reports from "./pages/Reports";
 import FollowedTopics from "./pages/FollowedTopics";
+import JournalistDashboard from "./pages/JournalistDashboard";
+import ResearcherDashboard from "./pages/ResearcherDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -81,6 +83,8 @@ function Router() {
       <Route path={"/profile"} component={Profile} />
       <Route path={"/reports"} component={Reports} />
       <Route path={"/followed-topics"} component={FollowedTopics} />
+      <Route path={"/journalist"} component={JournalistDashboard} />
+      <Route path={"/researcher"} component={ResearcherDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
