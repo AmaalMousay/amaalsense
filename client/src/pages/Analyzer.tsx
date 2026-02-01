@@ -329,11 +329,17 @@ export default function Analyzer() {
       return;
     }
 
-    const country = COUNTRIES.find(c => c.code === selectedCountry);
-    if (!country) return;
+    // Handle "All Countries" option
+    let countryName: string;
+    if (selectedCountry === 'ALL') {
+      countryName = language === 'ar' ? 'كل الدول' : 'All Countries';
+    } else {
+      const country = COUNTRIES.find(c => c.code === selectedCountry);
+      if (!country) return;
+      countryName = language === 'ar' ? country.nameAr : country.name;
+    }
 
     // Navigate to results page with parameters
-    const countryName = language === 'ar' ? country.nameAr : country.name;
     const params = new URLSearchParams({
       topic,
       country: selectedCountry,
@@ -748,6 +754,7 @@ export default function Analyzer() {
                           className="w-full h-14 px-4 pr-10 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none cursor-pointer transition-all appearance-none"
                         >
                           <option value="" className="bg-slate-800 text-white">{language === 'ar' ? 'اختر دولة...' : 'Choose a country...'}</option>
+                          <option value="ALL" className="bg-slate-800 text-white font-bold">{language === 'ar' ? '🌍 كل الدول' : '🌍 All Countries'}</option>
                           {COUNTRIES.map((country) => (
                             <option key={country.code} value={country.code} className="bg-slate-800 text-white">
                               {language === 'ar' ? country.nameAr : country.name}
