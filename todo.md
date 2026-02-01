@@ -1446,3 +1446,10 @@
 - [x] تنبؤ باتجاه المشاعر (predictEmotionTrend)
 - [x] جميع الاختبارات نجحت (15 tests passed)
 
+
+
+## Phase 105: ربط الخريطة بصفحة نتائج الدولة
+
+- [x] تحديث handleCountryClick للانتقال إلى /country/:code عند الضغط على دولة
+- [x] الخريطة تستخدم EmotionGoogleMap مع click listener
+- [x] زر "العودة للخريطة" يعمل بشكل صحيح

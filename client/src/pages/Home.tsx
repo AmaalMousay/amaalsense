@@ -373,7 +373,8 @@ export default function Home() {
   }, [latestIndices]);
 
   const handleCountryClick = (code: string, name: string) => {
-    navigate(`/map?country=${code}&name=${encodeURIComponent(name)}`);
+    // Navigate to the new Country Results page
+    navigate(`/country/${code}`);
   };
 
   const navLinks = [
