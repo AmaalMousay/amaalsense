@@ -1312,3 +1312,13 @@
 - [x] Asset Comparison - مقارنة المشاعر بين الأصول
 - [x] Signal Cards - إشارات واضحة للسوق
 - [x] تحديث الرسالة: "نقيس مزاج السوق قبل أن يتحرك"
+
+
+## Phase 97: تطوير Researcher Dashboard - السيناريو الكامل للأكاديمي
+- [x] Data Explorer - استعراض البيانات الضخمة مع فلاتر متقدمة
+- [x] Research Variables - متغيرات جاهزة (Fear, Hope, Anger, Polarization)
+- [x] Cross-Cultural Comparison - جدول مقارنة بين الدول
+- [x] Data Export - تحميل بصيغ CSV, JSON, Excel
+- [x] Citation Generator - توليد الاستشهاد الأكاديمي
+- [x] API Documentation - توثيق للـ Research API
+- [x] تحديث الرسالة: "Large-scale dataset of quantified collective emotions"
