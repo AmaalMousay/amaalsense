@@ -2281,6 +2281,54 @@ Please verify the payment and confirm in the admin panel.
         return await getUserActiveAlerts(ctx.user.id, input.limit);
       }),
   }),
+
+  // ========================================
+  // UNIFIED EMOTIONAL INTELLIGENCE ENGINE
+  // ========================================
+  unifiedEngine: router({
+    /**
+     * Main Unified Analysis Endpoint
+     * Single smart engine that auto-detects domain and adapts output
+     * Input: topic + country (optional)
+     * Output: context + emotionalState + dynamics + drivers + insights
+     */
+    analyze: publicProcedure
+      .input(z.object({
+        topic: z.string().min(1).max(500),
+        countryCode: z.string().length(2).optional(),
+        countryName: z.string().optional(),
+        userType: z.enum(['journalist', 'researcher', 'trader', 'general']).default('general'),
+      }))
+      .mutation(async ({ input }) => {
+        const { analyze } = await import('./engines');
+        return await analyze({
+          topic: input.topic,
+          countryCode: input.countryCode,
+          countryName: input.countryName,
+          userType: input.userType,
+        });
+      }),
+
+    /**
+     * Quick analysis for real-time use
+     */
+    quickAnalyze: publicProcedure
+      .input(z.object({
+        text: z.string().min(1).max(1000),
+      }))
+      .query(async ({ input }) => {
+        const { classifyContext } = await import('./engines/contextClassification');
+        const { fuseEmotions } = await import('./engines/emotionFusion');
+        
+        const context = classifyContext(input.text);
+        const emotions = fuseEmotions(input.text, context.domain);
+        
+        return {
+          context,
+          emotions,
+        };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

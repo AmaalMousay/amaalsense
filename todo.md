@@ -1334,3 +1334,23 @@
 - [x] إضافة فلتر اختيار الدولة (دولة محددة أو كل الدول)
 - [x] إضافة خانة إدخال العنوان/الموضوع
 - [x] تحسين واجهة الإدخال
+
+
+## Phase 100: إعادة هيكلة Backend - Emotional Intelligence OS
+
+### 5 Core Engines
+- [x] Engine 1: Context Classification (domain, eventType, region, sensitivity)
+- [x] Engine 2: Emotion Fusion Model (AI + DCFT + rules → Affective Vector)
+- [x] Engine 3: Emotional Dynamics (momentum, volatility, trend, spikes)
+- [x] Engine 4: Driver Detection (keywords, causes, narratives, events)
+- [x] Engine 5: Explainable Insight (human-readable interpretation per userType)
+
+### Unified API
+- [x] إنشاء POST /analyze endpoint واحد (unifiedEngine.analyze)
+- [x] Input: topic + countryCode + countryName + userType
+- [ ] Output: context + emotionalState + dynamics + drivers + insights
+
+### واجهة مبسطة
+- [ ] تبسيط صفحة الإدخال: مربع عنوان + مربع دولة فقط
+- [ ] إزالة Basic/Advanced tabs
+- [ ] لوحة نتائج موحدة تتكيف حسب userType
