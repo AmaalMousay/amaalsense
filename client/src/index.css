@@ -267,17 +267,15 @@
   h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     letter-spacing: -0.5px;
-    text-shadow: 0 0 20px oklch(0.65 0.22 280 / 0.3);
+    text-shadow: none;
   }
 
   button {
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px oklch(0.65 0.22 280 / 0);
   }
 
   button:hover {
-    box-shadow: 0 0 20px oklch(0.65 0.22 280 / 0.5);
-    border-color: oklch(0.65 0.22 280);
+    opacity: 0.9;
   }
 
   input, textarea, select {
@@ -286,8 +284,8 @@
   }
 
   input:focus, textarea:focus, select:focus {
-    border-color: oklch(0.65 0.22 280);
-    box-shadow: 0 0 15px oklch(0.65 0.22 280 / 0.3);
+    border-color: oklch(0.5 0.02 240);
+    box-shadow: none;
   }
 }
 
@@ -322,10 +320,10 @@
     }
   }
 
-  /* Cosmic glow effect for cards - Theme aware */
+  /* Clean card style - No purple glow */
   .cosmic-card {
-    border: 1px solid oklch(0.65 0.22 280 / 0.3);
-    box-shadow: 0 0 30px oklch(0.65 0.22 280 / 0.1), inset 0 0 30px oklch(0.65 0.22 280 / 0.05);
+    border: 1px solid oklch(0.3 0.01 240);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border-radius: 0.75rem;
     position: relative;
     overflow: hidden;
@@ -376,75 +374,59 @@
   }
 
   .cosmic-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, oklch(0.65 0.22 280 / 0.1) 0%, transparent 70%);
-    animation: cosmic-glow 3s ease-in-out infinite;
-    pointer-events: none;
-    z-index: -1;
+    display: none;
   }
 
-  @keyframes cosmic-glow {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(10px, 10px) scale(1.1); }
-  }
-
-  /* Glowing text effect - Theme aware */
+  /* Clean text effect - No glow */
   .cosmic-text {
     font-weight: 600;
   }
 
-  /* Dark mode cosmic text - White for dark backgrounds */
+  /* Dark mode - White text, no glow */
   .dark .cosmic-text {
     color: #ffffff !important;
-    text-shadow: 0 0 20px oklch(0.65 0.22 280 / 0.8), 0 0 40px oklch(0.65 0.22 280 / 0.4);
+    text-shadow: none;
   }
 
-  /* Light mode cosmic text - Dark for light backgrounds */
+  /* Light mode - Black text, no glow */
   :root:not(.dark) .cosmic-text {
     color: #1a1a2e !important;
-    text-shadow: 0 0 10px oklch(0.65 0.22 280 / 0.2);
+    text-shadow: none;
   }
 
-  /* Animated gradient text - Theme aware */
+  /* Clean text - No gradient, just white/black */
   .gradient-text {
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-    animation: gradient-shift 3s ease infinite;
+    -webkit-text-fill-color: inherit !important;
+    background: none !important;
+    animation: none;
   }
 
-  /* Dark mode gradient text - Bright purple for dark backgrounds */
+  /* Dark mode - White text */
   .dark .gradient-text {
-    background: linear-gradient(135deg, #a78bfa, #c4b5fd, #8b5cf6) !important;
-    filter: brightness(1.3);
+    color: #ffffff !important;
   }
 
-  /* Light mode gradient text - Darker purple for light backgrounds */
+  /* Light mode - Black text */
   :root:not(.dark) .gradient-text {
-    background: linear-gradient(135deg, #7c3aed, #8b5cf6, #6d28d9) !important;
-    filter: brightness(1.0);
+    color: #1a1a2e !important;
   }
 
-  @keyframes gradient-shift {
-    0%, 100% { filter: hue-rotate(0deg); }
-    50% { filter: hue-rotate(30deg); }
-  }
-
-  /* Glowing button */
+  /* Clean button - No glow */
   .glow-button {
-    background: linear-gradient(135deg, oklch(0.6 0.2 280), oklch(0.55 0.18 300));
-    border: 1px solid oklch(0.65 0.22 280 / 0.5);
-    box-shadow: 0 0 20px oklch(0.65 0.22 280 / 0.3);
+    background: #ffffff;
+    color: #1a1a2e;
+    border: 1px solid #333;
     transition: all 0.3s ease;
   }
 
+  .dark .glow-button {
+    background: #1a1a2e;
+    color: #ffffff;
+    border: 1px solid #555;
+  }
+
   .glow-button:hover {
-    box-shadow: 0 0 40px oklch(0.65 0.22 280 / 0.6);
+    opacity: 0.9;
     transform: translateY(-2px);
   }
 

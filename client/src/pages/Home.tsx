@@ -597,15 +597,15 @@ export default function Home() {
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-cyan-400" />
+                <Globe className="w-4 h-4" />
                 <span>{isRTL ? '15+ مصدر بيانات' : '15+ Data Sources'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-purple-400" />
+                <Users className="w-4 h-4" />
                 <span>{isRTL ? '50+ دولة' : '50+ Countries'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-green-400" />
+                <Clock className="w-4 h-4" />
                 <span>{isRTL ? 'تحليل فوري' : 'Real-time Analysis'}</span>
               </div>
             </div>
@@ -622,11 +622,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {/* Journalist Card */}
             <Card 
-              className="cosmic-card p-6 hover:border-purple-500/50 transition-all cursor-pointer group"
+              className="cosmic-card p-6 hover:border-foreground/30 transition-all cursor-pointer group"
               onClick={() => navigate('/journalist')}
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-lg bg-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
+                <div className="p-3 rounded-lg bg-foreground/10 group-hover:scale-110 transition-transform">
                   <Newspaper className="w-8 h-8" />
                 </div>
                 <div className="flex-1">
@@ -639,7 +639,7 @@ export default function Home() {
                       : 'Discover stories people are reacting to now. Understand collective emotions before they become news.'
                     }
                   </p>
-                  <div className="flex items-center text-purple-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <div className="flex items-center text-sm font-medium group-hover:gap-2 transition-all">
                     {isRTL ? 'استكشف لوحة الصحفي' : 'Explore Journalist Dashboard'}
                     <ChevronRight className="w-4 h-4" />
                   </div>
@@ -649,11 +649,11 @@ export default function Home() {
             
             {/* Researcher Card */}
             <Card 
-              className="cosmic-card p-6 hover:border-cyan-500/50 transition-all cursor-pointer group"
+              className="cosmic-card p-6 hover:border-foreground/30 transition-all cursor-pointer group"
               onClick={() => navigate('/researcher')}
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-lg bg-cyan-500/20 text-cyan-400 group-hover:scale-110 transition-transform">
+                <div className="p-3 rounded-lg bg-foreground/10 group-hover:scale-110 transition-transform">
                   <GraduationCap className="w-8 h-8" />
                 </div>
                 <div className="flex-1">
@@ -666,7 +666,7 @@ export default function Home() {
                       : 'Real emotion data from millions of sources. Powerful API and data ready for academic analysis.'
                     }
                   </p>
-                  <div className="flex items-center text-cyan-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <div className="flex items-center text-sm font-medium group-hover:gap-2 transition-all">
                     {isRTL ? 'استكشف لوحة الباحث' : 'Explore Researcher Dashboard'}
                     <ChevronRight className="w-4 h-4" />
                   </div>
