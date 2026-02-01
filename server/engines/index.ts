@@ -1,12 +1,18 @@
 /**
  * AmalSense Emotional Intelligence Engine
  * 
- * 5 Core Engines:
+ * Core Engines:
+ * 0. Emotional Memory - يخزن التحليلات عبر الزمن
  * 1. Context Classification - يفهم السياق قبل التحليل
  * 2. Emotion Fusion - يدمج التحليل العاطفي من مصادر متعددة
  * 3. Emotional Dynamics - يحسب الزخم والتقلب والاتجاه
  * 4. Driver Detection - يكتشف أسباب المشاعر
  * 5. Explainable Insight - يولد تفسيرات بشرية
+ * 
+ * Support Systems:
+ * - Source Weighting - أوزان المصادر
+ * - Confidence Propagation - توريث الثقة
+ * - Feedback Store - تخزين التغذية الراجعة
  * 
  * Unified API: analyze({ text, country, userType })
  */
@@ -65,3 +71,59 @@ export {
   type AnalyzeInput,
   type AnalyzeOutput
 } from './unifiedAnalyzer';
+
+// Engine 0: Emotional Memory Layer
+export {
+  storeAnalysis,
+  getHistoricalData,
+  calculateHistoricalTrend,
+  getLastAnalysis,
+  getMemoryStats,
+  type EmotionalMemoryEntry,
+  type HistoricalQuery,
+  type HistoricalTrend
+} from './emotionalMemory';
+
+// Source Weighting System
+export {
+  getSourceWeight,
+  getSourceInfo,
+  calculateCompositeWeight,
+  calculateAggregateWeight,
+  applySourceWeighting,
+  knownSources,
+  defaultWeightsByType,
+  type Source,
+  type SourceType
+} from './sourceWeighting';
+
+// Confidence Propagation System
+export {
+  calculateContextConfidence,
+  calculateFusionConfidence,
+  calculateDynamicsConfidence,
+  calculateDriverConfidence,
+  calculateInsightConfidence,
+  calculateOverallConfidence,
+  quickConfidenceScore,
+  type EngineConfidence,
+  type ConfidenceFactor,
+  type OverallConfidence
+} from './confidencePropagation';
+
+// Feedback Store
+export {
+  addFeedback,
+  submitEmotionCorrection,
+  submitAccuracyRating,
+  submitRelevanceRating,
+  submitGeneralComment,
+  getFeedbackForAnalysis,
+  getFeedbackForTopic,
+  getFeedbackStats,
+  analyzeFeedbackPatterns,
+  type FeedbackEntry,
+  type FeedbackType,
+  type FeedbackSentiment,
+  type FeedbackStats
+} from './feedbackStore';
