@@ -374,13 +374,13 @@ export default function Home() {
   }, [latestIndices]);
 
   const handleCountryClick = (code: string, name: string) => {
-    // Navigate to the new Country Results page
-    navigate(`/country/${code}`);
+    // Navigate to Smart Analysis with country context
+    navigate(`/smart-analysis?topic=${encodeURIComponent(name + ' economy and politics')}`);
   };
 
   const navLinks = [
     { href: '/dashboard', label: t.nav.dashboard },
-    { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets' },
+    { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis' },
     { href: '/theory', label: t.nav.theory },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
@@ -720,9 +720,9 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
                 <span className="text-xl font-bold">2</span>
               </div>
-              <h4 className="font-bold mb-2">{isRTL ? 'اختر الدولة' : 'Select Country'}</h4>
+              <h4 className="font-bold mb-2">{isRTL ? 'الذكاء يحلل' : 'AI Analyzes'}</h4>
               <p className="text-sm text-muted-foreground">
-                {isRTL ? 'حدد دولة معينة أو كل العالم' : 'Choose a specific country or worldwide'}
+                {isRTL ? 'الذكاء يكتشف السياق ويحلل المشاعر' : 'AI detects context and analyzes emotions'}
               </p>
             </div>
             <div className="text-center p-4">
@@ -778,7 +778,7 @@ export default function Home() {
               <h4 className="font-semibold mb-3">{t.footer.product}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
                 <li><Link href="/dashboard" className="hover:text-accent">Dashboard</Link></li>
-                <li><Link href="/markets" className="hover:text-accent">Markets</Link></li>
+                <li><Link href="/smart-analysis" className="hover:text-accent">Smart Analysis</Link></li>
                 <li><Link href="/theory" className="hover:text-accent">Theory</Link></li>
               </ul>
             </div>

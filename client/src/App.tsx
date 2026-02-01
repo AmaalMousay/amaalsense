@@ -39,7 +39,7 @@ import Reports from "./pages/Reports";
 import FollowedTopics from "./pages/FollowedTopics";
 import JournalistDashboard from "./pages/JournalistDashboard";
 import ResearcherDashboard from "./pages/ResearcherDashboard";
-import Markets from "./pages/Markets";
+// Markets page removed - functionality integrated into Smart Analysis
 import SmartAnalysis from "./pages/SmartAnalysis";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
@@ -92,7 +92,7 @@ function Router() {
       {/* Professional Dashboards */}
       <Route path={"/journalist"} component={JournalistDashboard} />
       <Route path={"/researcher"} component={ResearcherDashboard} />
-      <Route path={"/markets"} component={Markets} />
+      {/* Markets route removed - use Smart Analysis instead */}
       
       {/* AI-Powered Smart Analysis */}
       <Route path={"/smart-analysis"} component={SmartAnalysis} />
