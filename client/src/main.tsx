@@ -56,7 +56,7 @@ const trpcClient = trpc.createClient({
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
+      <I18nProvider defaultLanguage="en">
         <App />
       </I18nProvider>
     </QueryClientProvider>
