@@ -378,8 +378,8 @@ export default function Home() {
     navigate(`/smart-analysis?topic=${encodeURIComponent(name + ' economy and politics')}`);
   };
 
+  // Navigation links - Dashboard only for logged-in users via UserMenu
   const navLinks = [
-    { href: '/dashboard', label: t.nav.dashboard },
     { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis' },
     { href: '/theory', label: t.nav.theory },
     { href: '/about', label: t.nav.about },

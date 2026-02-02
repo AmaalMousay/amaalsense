@@ -1842,3 +1842,8 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] End responses with thoughtful questions (not "Ask about predictions")
 - [x] Improve chat interface - expand/collapse functionality
 - [x] Add visual formatting for response sections
+
+
+## Phase 50: Remove Public Dashboard
+- [x] Remove Dashboard link from main navigation for non-logged users
+- [x] Keep Dashboard only for logged-in users
