@@ -307,22 +307,24 @@ export default function SmartAnalysis() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container py-4">
+        <div className="container py-3 md:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <Button 
                 variant="ghost" 
                 size="icon"
+                className="w-8 h-8 md:w-10 md:h-10"
                 onClick={() => navigate('/')}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
               </Button>
               <div className="flex items-center gap-2">
-                <LogoIcon className="w-8 h-8" />
-                <span className="font-bold text-xl">AmalSense AI</span>
+                <LogoIcon className="w-6 h-6 md:w-8 md:h-8" />
+                <span className="font-bold text-base md:text-xl">AmalSense</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            {/* Hide subtitle on mobile */}
+            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
               <Sparkles className="w-4 h-4 text-primary" />
               <span>Conversational Intelligence Agent</span>
             </div>
@@ -332,14 +334,17 @@ export default function SmartAnalysis() {
       
       {/* Topic Banner */}
       {topic && (
-        <div className="bg-primary/10 border-b border-primary/20 py-3">
+        <div className="bg-primary/10 border-b border-primary/20 py-2 md:py-3">
           <div className="container">
-            <div className="flex items-center gap-3">
-              <Brain className="w-5 h-5 text-primary" />
-              <span className="text-lg font-medium">Analyzing: <span className="text-primary">{topic}</span></span>
+            <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+              <Brain className="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
+              <span className="text-sm md:text-lg font-medium">
+                <span className="hidden md:inline">Analyzing: </span>
+                <span className="text-primary break-all">{topic}</span>
+              </span>
               {context?.detectedCountry && (
-                <span className="text-sm text-muted-foreground flex items-center gap-1">
-                  <Globe className="w-4 h-4" />
+                <span className="text-xs md:text-sm text-muted-foreground flex items-center gap-1">
+                  <Globe className="w-3 h-3 md:w-4 md:h-4" />
                   {context.detectedCountry}
                 </span>
               )}
@@ -349,14 +354,14 @@ export default function SmartAnalysis() {
       )}
       
       {/* Main Content - Split Layout */}
-      <main className="container py-6">
-        <div className={`flex ${isChatExpanded ? 'flex-col' : 'flex-row'} gap-0 h-[calc(100vh-200px)]`}>
+      <main className="container py-4 md:py-6">
+        <div className={`flex ${isChatExpanded ? 'flex-col' : 'flex-col md:flex-row'} gap-4 md:gap-0 min-h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]`}>
           
           {/* Left Panel - Metrics & Indicators (hidden when chat expanded) */}
           {!isChatExpanded && (
-            <ContextMenu className="flex-1 space-y-4 overflow-y-auto pr-4 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-card/80 to-card/40 p-4 shadow-lg shadow-accent/5">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-primary" />
+            <ContextMenu className="flex-1 space-y-3 md:space-y-4 overflow-y-auto p-3 md:p-4 md:pr-4 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-card/80 to-card/40 shadow-lg shadow-accent/5 max-h-[40vh] md:max-h-none">
+              <h2 className="text-base md:text-xl font-bold flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                 Analysis Results
               </h2>
               
@@ -487,30 +492,31 @@ export default function SmartAnalysis() {
             </ContextMenu>
           )}
           
-          {/* Vertical Divider - Visible separator between panels */}
+          {/* Vertical Divider - Visible separator between panels (hidden on mobile) */}
           {!isChatExpanded && (
-            <div className="flex flex-col items-center justify-center px-2">
+            <div className="hidden md:flex flex-col items-center justify-center px-2">
               <div className="w-1 h-full bg-gradient-to-b from-primary/30 via-primary/60 to-primary/30 rounded-full" />
             </div>
           )}
           
           {/* Right Panel - AI Chat */}
           <div 
-            className={`flex flex-col rounded-xl border-2 border-primary/30 bg-gradient-to-br from-card/80 to-card/40 p-4 shadow-lg shadow-primary/5 transition-all duration-300 ${isChatExpanded ? 'w-full' : 'flex-1'}`}
+            className={`flex flex-col rounded-xl border-2 border-primary/30 bg-gradient-to-br from-card/80 to-card/40 p-3 md:p-4 shadow-lg shadow-primary/5 transition-all duration-300 ${isChatExpanded ? 'w-full' : 'flex-1'}`}
             style={{ 
-              minHeight: '350px'
+              minHeight: '300px'
             }}
           >
           <ContextMenu className="flex flex-col h-full">
             {/* Chat Header with Controls */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-primary" />
-                AmalSense AI
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <h2 className="text-base md:text-xl font-bold flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                <span className="hidden sm:inline">AmalSense AI</span>
+                <span className="sm:hidden">AI</span>
               </h2>
-              <div className="flex items-center gap-2">
-                {/* Height adjustment buttons - More visible */}
-                <div className="flex items-center gap-1 bg-primary/10 border border-primary/30 rounded-lg p-1">
+              <div className="flex items-center gap-1 md:gap-2">
+                {/* Height adjustment buttons - Hidden on mobile */}
+                <div className="hidden md:flex items-center gap-1 bg-primary/10 border border-primary/30 rounded-lg p-1">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -538,12 +544,12 @@ export default function SmartAnalysis() {
                 <Button
                   variant={isChatExpanded ? "default" : "outline"}
                   size="sm"
-                  className="h-8 gap-1"
+                  className="h-7 md:h-8 gap-1 text-xs"
                   onClick={toggleChatExpansion}
                   title={isChatExpanded ? "إظهار المؤشرات" : "ملء الشاشة"}
                 >
-                  {isChatExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                  <span className="text-xs">{isChatExpanded ? 'إظهار المؤشرات' : 'ملء الشاشة'}</span>
+                  {isChatExpanded ? <Minimize2 className="w-3 h-3 md:w-4 md:h-4" /> : <Maximize2 className="w-3 h-3 md:w-4 md:h-4" />}
+                  <span className="hidden sm:inline text-xs">{isChatExpanded ? 'إظهار المؤشرات' : 'ملء الشاشة'}</span>
                 </Button>
               </div>
             </div>

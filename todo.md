@@ -1869,3 +1869,11 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Update response structure: Summary → Why → Prediction → Decision Signal → Human Question
 - [x] Implement real Decision Compression in conversationFramer
 - [x] Add human-style closing questions instead of "Ask about predictions..."
+
+
+## Phase 53: Fix Mobile Layout for Smart Analysis Page
+- [x] Fix Header overlap on mobile (Conversational Intelligence Agent + AmalSense AI)
+- [x] Stack the two panels vertically on mobile instead of side by side
+- [x] Fix/hide resize controls on mobile
+- [x] Fix Arabic text overlap with "Analyzing:" label
+- [x] Improve spacing and borders for mobile view
