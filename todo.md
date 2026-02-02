@@ -1909,3 +1909,12 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Reduce repetition in response (same info repeated 3+ times)
 - [x] Add human closing question instead of "اسأل عن التوقعات..."
 - [x] Enforce correct structure: خلاصة → لماذا → توقع زمني → إشارة قرار → سؤال
+
+
+## Phase 58: Transform AmalSense from Analyzer to Advisory Mind (ChatGPT Feedback)
+- [x] Create Decision Compression Layer - compress responses and extract judgments
+- [x] Create Response Restructurer - enforce correct structure
+- [x] Create Judgment Extractor - extract and place judgment at start
+- [x] Remove robotic intro via post-processing (not just regex)
+- [x] Enforce structure: خلاصة → إشارة القرار → لماذا → التوقع → سؤال ختامي
+- [x] Add "الجرأة المعرفية" - bold judgments instead of descriptions

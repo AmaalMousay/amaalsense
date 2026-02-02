@@ -19,6 +19,7 @@ import {
 } from './semanticUnderstanding';
 import { LearningLayer, type IntentType } from './learningLayer';
 import { MultiTurnContext } from './multiTurnContext';
+import { restructureAIResponse, compressResponse, type CompressedResponse } from './decisionCompressor';
 
 // Types for the conversational AI
 export interface AnalysisContext {
@@ -497,6 +498,16 @@ ${framedTemplate.closingQuestion}`
       confidence: context.confidence,
       detectedCountry: context.detectedCountry,
     }, 'calm_advisor');
+    
+    // تطبيق Decision Compression Layer - إعادة هيكلة الرد ليبدأ بالحكم
+    aiMessage = restructureAIResponse(aiMessage, {
+      topic: context.topic,
+      gmi: context.gmi,
+      cfi: context.cfi,
+      hri: context.hri,
+      dominantEmotion: context.dominantEmotion,
+      confidence: context.confidence,
+    });
     
     // Record assistant turn in multi-turn context
     if (userQuestion) {
