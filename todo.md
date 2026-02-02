@@ -1825,3 +1825,10 @@ Knowledge Layer (SQL + Vector Store + RAG)
 ## UI Fixes - Smart Analysis Page
 - [x] Make divider between metrics and chat more visible (clear separation)
 - [x] Fix chat expand/collapse functionality to work properly
+
+## Semantic Understanding Layer (Completed)
+- [x] Create Intent Classifier - keyword-based classification
+- [x] Create Semantic Parser - extract entity, domain, direction
+- [x] Create Context Builder - add indicators, trend, reasoning rules
+- [x] Integrate Semantic Understanding with ConversationalAI
+- [x] Write and pass unit tests (19 tests passing)

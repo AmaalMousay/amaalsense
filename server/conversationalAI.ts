@@ -10,6 +10,13 @@
 
 import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from './llmProvider';
 import { frameResponse, enhanceAIResponse, quickQuestionTemplates, whatIfScenarios, type ToneType } from './conversationFramer';
+import { 
+  parseQuestion, 
+  buildContext, 
+  classifyIntent,
+  type SemanticFrame,
+  type InjectedContext 
+} from './semanticUnderstanding';
 
 // Types for the conversational AI
 export interface AnalysisContext {
@@ -39,6 +46,9 @@ export interface AIResponse {
     condition: string;
     prediction: string;
   }>;
+  // Semantic Understanding Layer outputs
+  semanticFrame?: SemanticFrame;
+  injectedContext?: InjectedContext;
 }
 
 // Country detection from topic context
@@ -230,6 +240,9 @@ export function generateRecommendations(context: AnalysisContext): {
 /**
  * Layer 3: Conversational Intelligence
  * Main function to generate AI response using LLM
+ * 
+ * NEW: Integrated with Semantic Understanding Layer
+ * Flow: User → Semantic Parser → Context Builder → LLM → Response
  */
 export async function generateAIResponse(
   context: AnalysisContext,
@@ -239,8 +252,40 @@ export async function generateAIResponse(
   const emotionalState = analyzeEmotionalState(context);
   const { recommendations, warnings, scenarios } = generateRecommendations(context);
   
+  // NEW: Semantic Understanding Layer
+  let semanticFrame: SemanticFrame | undefined;
+  let injectedContext: InjectedContext | undefined;
+  
+  if (userQuestion) {
+    // Parse the question to understand intent and meaning
+    semanticFrame = parseQuestion(userQuestion);
+    console.log(`[ConversationalAI] Semantic Frame:`, {
+      intent: semanticFrame.intent,
+      entity: semanticFrame.entity,
+      userNeed: semanticFrame.userNeed,
+      expectedResponseType: semanticFrame.expectedResponseType
+    });
+    
+    // Build context with DCFT data
+    injectedContext = buildContext(semanticFrame, {
+      gmi: context.gmi,
+      cfi: context.cfi,
+      hri: context.hri,
+      dominantEmotion: context.dominantEmotion,
+      confidence: context.confidence
+    });
+    console.log(`[ConversationalAI] Injected Context:`, {
+      trend: injectedContext.trend.direction,
+      reasoningRules: injectedContext.reasoningRules.length,
+      recommendation: injectedContext.preliminaryRecommendation
+    });
+  }
+  
   // Build system prompt with AmalSense context
-  const systemPrompt = `You are AmalSense AI, a Collective Emotional Intelligence Agent that analyzes and explains collective emotions from digital sources.
+  // Enhanced with Semantic Understanding when available
+  const systemPrompt = buildEnhancedSystemPrompt(context, emotionalState, semanticFrame, injectedContext);
+  
+  const legacySystemPrompt = `You are AmalSense AI, a Collective Emotional Intelligence Agent that analyzes and explains collective emotions from digital sources.
 
 Your knowledge includes:
 - DCFT (Digital Collective Feeling Theory) methodology
@@ -371,7 +416,9 @@ DO NOT deviate from this structure. DO NOT start with "As AmalSense AI" or simil
       detectedCountry: context.detectedCountry,
       recommendations,
       warnings,
-      scenarios
+      scenarios,
+      semanticFrame,
+      injectedContext
     };
   } catch (error) {
     console.error('Error generating AI response:', error);
@@ -384,7 +431,9 @@ DO NOT deviate from this structure. DO NOT start with "As AmalSense AI" or simil
       detectedCountry: context.detectedCountry,
       recommendations,
       warnings,
-      scenarios
+      scenarios,
+      semanticFrame,
+      injectedContext
     };
   }
 }
@@ -436,6 +485,135 @@ function generateFallbackResponse(
   }
   
   return `Regarding your question about "${topic}": The current emotional state is ${emotionalState.state} with ${emotionalState.intensity} intensity. GMI stands at ${gmi.toFixed(1)}, CFI at ${cfi.toFixed(1)}%, and HRI at ${hri.toFixed(1)}%. Would you like me to elaborate on any specific aspect?`;
+}
+
+/**
+ * Build enhanced system prompt with Semantic Understanding
+ */
+function buildEnhancedSystemPrompt(
+  context: AnalysisContext,
+  emotionalState: ReturnType<typeof analyzeEmotionalState>,
+  semanticFrame?: SemanticFrame,
+  injectedContext?: InjectedContext
+): string {
+  // Base knowledge
+  let prompt = `أنت AmalSense AI - عقل ذكي يفهم المعنى وليس الكلمات فقط.
+
+معرفتك:
+- نظرية DCFT (Digital Collective Feeling Theory)
+- ثلاثة مؤشرات: GMI (المزاج العام: -100 إلى +100), CFI (مؤشر الخوف: 0-100), HRI (مؤشر الأمل: 0-100)
+
+`;
+
+  // Add semantic understanding if available
+  if (semanticFrame) {
+    prompt += `## فهم السؤال (Semantic Understanding):
+- النية: ${semanticFrame.intent} (${semanticFrame.intentConfidence.toFixed(0)}% ثقة)
+- الكيان: ${semanticFrame.entity}
+- المجال: ${semanticFrame.domain}
+- احتياج المستخدم: ${semanticFrame.userNeed}
+- نوع الاستجابة المتوقع: ${semanticFrame.expectedResponseType}
+- الإلحاح: ${semanticFrame.urgency}
+
+`;
+  }
+
+  // Current context
+  prompt += `## السياق الحالي:
+- الموضوع: ${context.topic}
+- الدولة: ${context.detectedCountry || 'عالمي'}
+- GMI: ${context.gmi.toFixed(1)} (${context.gmi > 0 ? 'إيجابي' : context.gmi < 0 ? 'سلبي' : 'محايد'})
+- CFI: ${context.cfi.toFixed(1)}% (${context.cfi > 60 ? 'خوف مرتفع' : context.cfi < 40 ? 'خوف منخفض' : 'خوف معتدل'})
+- HRI: ${context.hri.toFixed(1)}% (${context.hri > 60 ? 'أمل قوي' : context.hri < 40 ? 'أمل ضعيف' : 'أمل معتدل'})
+- العاطفة السائدة: ${context.dominantEmotion}
+- الحالة النفسية: ${emotionalState.state} (${emotionalState.intensity})
+
+`;
+
+  // Add reasoning rules if available
+  if (injectedContext && injectedContext.reasoningRules.length > 0) {
+    prompt += `## قواعد الاستدلال:
+${injectedContext.reasoningRules.map(r => `- ${r}`).join('\n')}
+
+`;
+  }
+
+  // Add preliminary recommendation if available
+  if (injectedContext && injectedContext.preliminaryRecommendation) {
+    prompt += `## التوصية المبدئية:
+${injectedContext.preliminaryRecommendation}
+
+`;
+  }
+
+  // Response format based on intent
+  if (semanticFrame) {
+    switch (semanticFrame.intent) {
+      case 'decision_support':
+        prompt += `## تعليمات الرد (قرار):
+1. ابدأ بالحكم/القرار مباشرة في سطر واحد
+2. ثم "الخلاصة:" في 2-3 جمل
+3. ثم "لماذا؟" مع شرح المؤشرات
+4. ثم "إشارة القرار:" واضحة ومحددة
+5. انتهِ بسؤال: "هل تريد استكشاف سيناريو معين؟"
+
+`;
+        break;
+      case 'prediction':
+        prompt += `## تعليمات الرد (توقع):
+1. ابدأ بالتوقع الرئيسي مباشرة
+2. ثم "التوقع الزمني:" (24 ساعة، 48 ساعة، أسبوع)
+3. ثم "العوامل المؤثرة:" 
+4. انتهِ بسؤال: "هل تريد معرفة ماذا لو تغير...؟"
+
+`;
+        break;
+      case 'explanation':
+        prompt += `## تعليمات الرد (تفسير):
+1. ابدأ بالسبب الرئيسي مباشرة
+2. ثم "التفسير:" مفصل
+3. ثم "الدليل:" من المؤشرات
+4. انتهِ بسؤال: "هل تريد فهم جانب آخر؟"
+
+`;
+        break;
+      case 'scenario':
+        prompt += `## تعليمات الرد (سيناريو):
+1. ابدأ بـ "إذا حدث هذا..."
+2. ثم "النتيجة المتوقعة:" 
+3. ثم "احتمالية الحدوث:" 
+4. انتهِ بسؤال: "هل تريد استكشاف سيناريو آخر؟"
+
+`;
+        break;
+      default:
+        prompt += `## تعليمات الرد:
+1. ابدأ بالخلاصة مباشرة (بدون مقدمات)
+2. كن مستشاراً يحكم ثم يشرح
+3. استخدم المؤشرات لدعم كلامك
+4. انتهِ بسؤال تفاعلي
+
+`;
+    }
+  } else {
+    prompt += `## تعليمات الرد:
+1. ابدأ بخلاصة في سطر واحد (بدون "بصفتي" أو مقدمات)
+2. ثم "الخلاصة:" في 2-3 جمل
+3. ثم "لماذا؟" مع شرح المؤشرات
+4. ثم "التوقع الزمني:" (24-48 ساعة)
+5. ثم "إشارة القرار:" واضحة
+6. انتهِ بسؤال تفاعلي
+
+`;
+  }
+
+  prompt += `## قواعد صارمة:
+- لا تبدأ أبداً بـ "بصفتي AmalSense" أو "As AmalSense AI"
+- ابدأ مباشرة بالحكم/الخلاصة
+- كن مستشاراً حكيماً، ليس روبوتاً يشرح فقط
+- استخدم العربية عندما يكون السؤال بالعربية`;
+
+  return prompt;
 }
 
 export default {
