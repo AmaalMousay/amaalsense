@@ -260,7 +260,7 @@ function generateExecutiveSummary(data: AnalysisData): string {
   }
 }
 
-// دالة لتحويل الرد الخام من LLM إلى رد مؤطر
+// دالة لتحويل الرد الخام من LLM إلى رد مؤطر - Decision Compression Layer
 export function enhanceAIResponse(
   rawResponse: string,
   data: AnalysisData,
@@ -268,39 +268,60 @@ export function enhanceAIResponse(
 ): string {
   const framed = frameResponse(data, tone);
   
-  // إذا كان الرد الخام يبدأ بـ "بصفتي" أو "As", نستبدله
   let enhancedResponse = rawResponse;
   
-  // إزالة الافتتاحيات الروبوتية
+  // إزالة جميع الافتتاحيات الروبوتية (موسعة)
   const roboticIntros = [
-    /^بصفتي AmalSense AI[,،]?\s*/i,
-    /^As AmalSense AI[,،]?\s*/i,
-    /^I am AmalSense[,،]?\s*/i,
-    /^أنا AmalSense[,،]?\s*/i,
+    /^بصفتي AmalSense AI[,،]?\s*/gi,
+    /^As AmalSense AI[,،]?\s*/gi,
+    /^I am AmalSense[,،]?\s*/gi,
+    /^أنا AmalSense[,،]?\s*/gi,
+    /^بصفتي [\w\s]+[,،]?\s*/gi,
+    /^As an? [\w\s]+ AI[,،]?\s*/gi,
+    /^أنا نظام[,،]?\s*/gi,
+    /^أنا مساعد[,،]?\s*/gi,
+    /^I'm [\w\s]+[,،]?\s*/gi,
+    /^بناءً على تحليلي[,،]?\s*/gi,
+    /^Based on my analysis[,،]?\s*/gi,
   ];
   
   for (const pattern of roboticIntros) {
     enhancedResponse = enhancedResponse.replace(pattern, '');
   }
   
-  // إضافة الافتتاحية الإنسانية إذا لم تكن موجودة
-  if (!enhancedResponse.startsWith('الصورة') && 
-      !enhancedResponse.startsWith('البيانات') && 
-      !enhancedResponse.startsWith('المزاج') &&
-      !enhancedResponse.startsWith('التحليل') &&
-      !enhancedResponse.startsWith('الخلاصة')) {
-    enhancedResponse = `${framed.intro}\n\n${enhancedResponse}`;
+  // إزالة النهايات التقنية
+  const roboticEndings = [
+    /Ask about predictions.*$/gi,
+    /Ask about scenarios.*$/gi,
+    /Feel free to ask.*$/gi,
+    /Let me know if.*$/gi,
+    /لا تتردد في السؤال.*$/gi,
+  ];
+  
+  for (const pattern of roboticEndings) {
+    enhancedResponse = enhancedResponse.replace(pattern, '');
   }
   
-  // إضافة السؤال الختامي إذا لم يكن موجوداً
-  if (!enhancedResponse.includes('؟') || 
-      enhancedResponse.endsWith('predictions') ||
-      enhancedResponse.endsWith('scenarios')) {
-    enhancedResponse = enhancedResponse.replace(/Ask about.*$/i, '');
+  // التأكد من بداية إنسانية - إضافة الخلاصة إذا لزم
+  const goodStarts = ['الصورة', 'البيانات', 'المزاج', 'التحليل', 'الخلاصة', 'الوضع', 'الحالة', 'المؤشرات', 'التوقع', 'الترقب', 'The', 'Current', 'Based'];
+  const hasGoodStart = goodStarts.some(start => enhancedResponse.trim().startsWith(start));
+  
+  if (!hasGoodStart) {
+    // إضافة الخلاصة في البداية
+    enhancedResponse = `${framed.summary}\n\n${enhancedResponse}`;
+  }
+  
+  // التأكد من وجود سؤال ختامي إنساني
+  const hasHumanQuestion = enhancedResponse.includes('هل تريد') || 
+                          enhancedResponse.includes('هل تحب') ||
+                          enhancedResponse.includes('هل يهمك') ||
+                          enhancedResponse.includes('Would you like');
+  
+  if (!hasHumanQuestion) {
     enhancedResponse = `${enhancedResponse.trim()}\n\n---\n${framed.closingQuestion}`;
   }
   
-  return enhancedResponse;
+  return enhancedResponse.trim();
 }
 
 // قوالب الأسئلة السريعة

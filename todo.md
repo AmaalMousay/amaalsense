@@ -1854,3 +1854,18 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Add "Last Updated" timestamp to indicators
 - [x] Add Real-time Updates section to Home page
 - [x] Support Libya timezone display
+
+
+## Phase 52: Decision Compression Layer - Transform from Analyst to Advisor
+- [ ] Remove "بصفتي AmalSense AI..." from system prompt
+- [ ] Add Executive Summary requirement (first 3 lines = conclusion)
+- [ ] Update response structure: Summary → Why → Prediction → Decision Signal → Human Question
+- [ ] Implement real Decision Compression in conversationFramer
+- [ ] Add human-style closing questions instead of "Ask about predictions..."
+
+## Phase 52: Decision Compression Layer - COMPLETED
+- [x] Remove "بصفتي AmalSense AI..." from system prompt
+- [x] Add Executive Summary requirement (first 3 lines = conclusion)
+- [x] Update response structure: Summary → Why → Prediction → Decision Signal → Human Question
+- [x] Implement real Decision Compression in conversationFramer
+- [x] Add human-style closing questions instead of "Ask about predictions..."

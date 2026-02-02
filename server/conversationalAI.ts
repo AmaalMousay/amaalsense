@@ -406,25 +406,28 @@ Guidelines:
     
     messages.push({
       role: 'user',
-      content: `Analyze the collective emotions around "${context.topic}".
+      content: `حلل المشاعر الجماعية حول "${context.topic}".
 
-IMPORTANT: Follow this EXACT structure:
+⚠️ قواعد صارمة:
+- لا تبدأ أبداً بـ "بصفتي" أو "أنا AmalSense" أو "As AmalSense AI"
+- ابدأ مباشرة بالحكم/الخلاصة
 
-1. Start with: "${framedTemplate.intro}"
+📋 الهيكل المطلوب (اتبعه حرفياً):
 
-2. Then: **الخلاصة:** ${framedTemplate.summary}
+${framedTemplate.intro}
 
-3. Then: **لماذا؟**
+**الخلاصة:** ${framedTemplate.summary}
+
+**لماذا؟**
 ${framedTemplate.explanation}
 
-4. Then: **التوقع الزمني:**
+**التوقع الزمني:**
 ${framedTemplate.prediction}
 
-5. Then: **${framedTemplate.decision}**
+**${framedTemplate.decision}**
 
-6. End with: ---\n${framedTemplate.closingQuestion}
-
-DO NOT deviate from this structure. DO NOT start with "As AmalSense AI" or similar.`
+---
+${framedTemplate.closingQuestion}`
     });
   } else {
     messages.push({
@@ -678,11 +681,28 @@ ${injectedContext.preliminaryRecommendation}
 `;
   }
 
-  prompt += `## قواعد صارمة:
-- لا تبدأ أبداً بـ "بصفتي AmalSense" أو "As AmalSense AI"
-- ابدأ مباشرة بالحكم/الخلاصة
-- كن مستشاراً حكيماً، ليس روبوتاً يشرح فقط
-- استخدم العربية عندما يكون السؤال بالعربية`;
+  prompt += `## قواعد صارمة (يجب اتباعها حرفياً):
+
+⛔ ممنوع منعاً باتاً:
+- لا تبدأ أبداً بـ "بصفتي AmalSense" أو "As AmalSense AI" أو "أنا AmalSense"
+- لا تبدأ بأي مقدمة تعريفية عن نفسك
+- لا تكتب تحليلاً طويلاً قبل الخلاصة
+- لا تنتهي بـ "Ask about predictions" أو عبارات تقنية
+
+✅ يجب اتباعه:
+- ابدأ السطر الأول مباشرة بالحكم/الخلاصة (مثال: "الوضع يميل نحو الترقب الحذر")
+- اجعل أول 3 سطور هي Executive Summary
+- كن مستشاراً يحكم ثم يشرح، ليس روبوتاً يشرح فقط
+- انتهِ بسؤال إنساني تفاعلي (مثال: "هل تريد أن أحاكي لك سيناريو...؟")
+- استخدم العربية عندما يكون السؤال بالعربية
+
+📋 هيكل الرد المثالي:
+1. سطر الحكم (بدون مقدمة)
+2. الخلاصة: 2-3 جمل
+3. لماذا؟ شرح مختصر للمؤشرات
+4. التوقع الزمني: 24-48 ساعة
+5. إشارة القرار: واضحة ومحددة
+6. سؤال ختامي إنساني`;
 
   return prompt;
 }
