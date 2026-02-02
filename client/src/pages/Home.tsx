@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { CurrentDateTime, LastUpdated, RealTimePulse } from '@/components/CurrentDateTime';
 import { FooterLegend } from '@/components/EmotionLegend';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useI18n } from '@/i18n';
@@ -635,9 +636,30 @@ export default function Home() {
       {/* Live Indices Section */}
       <section className="py-8 border-t border-border/50">
         <div className="container">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold cosmic-text mb-2">{t.home.liveIndices}</h3>
-            <p className="text-muted-foreground text-sm">{t.home.liveIndicesDesc}</p>
+          {/* Real-time Header with Date/Time */}
+          <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+            <div className="text-center md:text-start">
+              <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
+                <h3 className="text-2xl font-bold cosmic-text">{t.home.liveIndices}</h3>
+                <RealTimePulse isRTL={isRTL} />
+              </div>
+              <p className="text-muted-foreground text-sm">{t.home.liveIndicesDesc}</p>
+            </div>
+            <div className="flex flex-col items-center md:items-end gap-2">
+              <CurrentDateTime 
+                showDate={true} 
+                showTime={true} 
+                showTimezone={true}
+                isRTL={isRTL}
+                variant="full"
+                className="text-sm"
+              />
+              <LastUpdated 
+                timestamp={Date.now() - 120000} 
+                isRTL={isRTL}
+                showIcon={true}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -684,9 +706,27 @@ export default function Home() {
       {/* World Map Section - Connected to Real Data */}
       <section className="py-8 border-t border-border/50">
         <div className="container">
-          <div className="text-center mb-6">
-            <h3 className="text-2xl font-bold cosmic-text mb-2">Global Emotion Map</h3>
-            <p className="text-muted-foreground text-sm">Click on any country to view mood details • Updates every 30 seconds</p>
+          <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+            <div className="text-center md:text-start">
+              <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
+                <h3 className="text-2xl font-bold cosmic-text">
+                  {isRTL ? 'خريطة المشاعر العالمية' : 'Global Emotion Map'}
+                </h3>
+                <RealTimePulse isRTL={isRTL} />
+              </div>
+              <p className="text-muted-foreground text-sm">
+                {isRTL ? 'اضغط على أي دولة لعرض تفاصيل المزاج • يتحدث كل 30 ثانية' : 'Click on any country to view mood details • Updates every 30 seconds'}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <CurrentDateTime 
+                showDate={false} 
+                showTime={true} 
+                showTimezone={true}
+                isRTL={isRTL}
+                variant="compact"
+              />
+            </div>
           </div>
           
           <EmotionGoogleMap 

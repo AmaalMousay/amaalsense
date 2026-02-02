@@ -1847,3 +1847,10 @@ Knowledge Layer (SQL + Vector Store + RAG)
 ## Phase 50: Remove Public Dashboard
 - [x] Remove Dashboard link from main navigation for non-logged users
 - [x] Keep Dashboard only for logged-in users
+
+
+## Phase 51: Real-time Updates Feature
+- [x] Create CurrentDateTime component with live clock
+- [x] Add "Last Updated" timestamp to indicators
+- [x] Add Real-time Updates section to Home page
+- [x] Support Libya timezone display
