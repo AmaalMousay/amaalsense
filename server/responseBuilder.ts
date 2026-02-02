@@ -14,6 +14,16 @@
  */
 
 import { invokeLLMProvider, type LLMMessage } from './llmProvider';
+import {
+  buildTemplateContext,
+  buildTemplateStyle,
+  generateDynamicIntro,
+  generateDynamicClosing,
+  adjustContentLength,
+  formatNumbers,
+  type TemplateContext,
+  type TemplateStyle
+} from './dynamicTemplate';
 
 export interface AnalysisData {
   topic: string;
@@ -27,6 +37,11 @@ export interface AnalysisData {
   newsHeadlines?: string[];
   keywords?: string[];
   sources?: string[];
+  // بيانات السياق الديناميكي
+  turnCount?: number;
+  previousTopics?: string[];
+  questionsAsked?: string[];
+  userQuestion?: string;
 }
 
 export interface CausalFactors {
@@ -354,11 +369,33 @@ export function generateClosingQuestion(data: AnalysisData): string {
 }
 
 /**
- * بناء الرد الكامل بالهيكل الثابت
+ * بناء الرد الكامل بالهيكل الديناميكي
  */
 export function buildStructuredResponse(data: AnalysisData): StructuredResponse {
+  // بناء السياق الديناميكي
+  const templateContext = buildTemplateContext(
+    data.turnCount || 1,
+    data.previousTopics || [],
+    data.topic,
+    data.questionsAsked || [],
+    data.cfi,
+    data.gmi,
+    data.userQuestion
+  );
+  
+  // بناء أسلوب القالب
+  const templateStyle = buildTemplateStyle(templateContext);
+  
+  console.log('[ResponseBuilder] Context:', {
+    userLevel: templateContext.userLevel,
+    conversationDepth: templateContext.conversationDepth,
+    emotionalState: templateContext.emotionalState,
+    responseLength: templateStyle.responseLength,
+    tone: templateStyle.tone
+  });
+  
   // 1. الخلاصة التنفيذية
-  const executiveSummary = generateExecutiveSummary(data);
+  let executiveSummary = generateExecutiveSummary(data);
   
   // 2. إشارة القرار
   const decisionSignalResult = determineDecisionSignal(data);
@@ -370,10 +407,24 @@ export function buildStructuredResponse(data: AnalysisData): StructuredResponse 
   const timeforecast = generateTimeforecast(data);
   
   // 5. القراءة النفسية
-  const psychologicalInsight = generatePsychologicalInsight(data);
+  let psychologicalInsight = generatePsychologicalInsight(data);
   
-  // 6. السؤال الختامي
-  const closingQuestion = generateClosingQuestion(data);
+  // 6. السؤال الختامي - ديناميكي حسب السياق
+  const closingQuestion = generateDynamicClosing(templateContext, templateStyle);
+  
+  // تطبيق الأسلوب الديناميكي
+  if (templateStyle.responseLength === 'short') {
+    executiveSummary = adjustContentLength(executiveSummary, templateStyle);
+    psychologicalInsight = adjustContentLength(psychologicalInsight, templateStyle);
+  }
+  
+  // تنسيق الأرقام حسب مستوى المستخدم
+  if (!templateStyle.includeNumbers) {
+    executiveSummary = formatNumbers(executiveSummary, templateStyle);
+  }
+  
+  // المقدمة الديناميكية
+  const dynamicIntro = generateDynamicIntro(templateContext, data.topic);
   
   // بناء فقرة "لماذا؟"
   let whySection = '**لماذا هذا المزاج؟**\n\n';
@@ -403,27 +454,71 @@ export function buildStructuredResponse(data: AnalysisData): StructuredResponse 
     whySection += '\n';
   }
   
-  // بناء الرد الكامل
-  const fullResponse = `**الخلاصة:**
+  // بناء الرد الكامل - ديناميكي حسب السياق
+  let fullResponse = '';
+  
+  // إضافة المقدمة الديناميكية إذا وجدت
+  if (dynamicIntro) {
+    fullResponse += dynamicIntro;
+  }
+  
+  // الهيكل يتغير حسب عمق المحادثة
+  if (templateContext.conversationDepth === 'deep_conversation') {
+    // رد مختصر للحوار العميق
+    fullResponse += `**الخلاصة:** ${executiveSummary}
+
+`;
+    fullResponse += `**إشارة القرار:** ${decisionSignalResult.text}
+
+`;
+    fullResponse += `**التوقع:** ${timeforecast}
+
+`;
+    fullResponse += closingQuestion;
+  } else if (templateContext.conversationDepth === 'follow_up') {
+    // رد متوسط للمتابعة
+    fullResponse += `**الخلاصة:** ${executiveSummary}
+
+`;
+    fullResponse += `**إشارة القرار:** ${decisionSignalResult.text}
+
+---
+
+`;
+    fullResponse += whySection;
+    fullResponse += `---
+
+**التوقع الزمني:** ${timeforecast}
+
+`;
+    fullResponse += closingQuestion;
+  } else {
+    // رد كامل للرسالة الأولى
+    fullResponse += `**الخلاصة:**
 ${executiveSummary}
 
-**إشارة القرار:**
+`;
+    fullResponse += `**إشارة القرار:**
 ${decisionSignalResult.text}
 
 ---
 
-${whySection}
----
+`;
+    fullResponse += whySection;
+    fullResponse += `---
 
 **التوقع الزمني:**
 ${timeforecast}
 
-**القراءة النفسية:**
+`;
+    fullResponse += `**القراءة النفسية:**
 ${psychologicalInsight}
 
 ---
 
-${closingQuestion}`;
+`;
+    fullResponse += closingQuestion;
+  }
   
   return {
     executiveSummary,

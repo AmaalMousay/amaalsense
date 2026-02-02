@@ -1927,3 +1927,12 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Use LLM only for content generation, not structure
 - [x] Integrate with ConversationalAI
 - [x] Ensure every response has: خلاصة + إشارة قرار + لماذا (مع أسباب) + توقع + سؤال
+
+
+## Phase 60: Dynamic Template Builder - Context-Aware Responses
+- [x] Create Dynamic Template Builder with 3 context variables
+- [x] Add userLevel detection (beginner/advanced)
+- [x] Add conversationDepth tracking (first_turn/multi_turn)
+- [x] Add emotionalState awareness (calm/anxious/urgent)
+- [x] Integrate with Response Builder for dynamic output
+- [x] Ensure responses adapt to context without being robotic
