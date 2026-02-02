@@ -350,11 +350,11 @@ export default function SmartAnalysis() {
       
       {/* Main Content - Split Layout */}
       <main className="container py-6">
-        <div className={`grid grid-cols-1 ${isChatExpanded ? '' : 'lg:grid-cols-2'} gap-6 h-[calc(100vh-200px)]`}>
+        <div className={`grid grid-cols-1 ${isChatExpanded ? '' : 'lg:grid-cols-2'} gap-0 h-[calc(100vh-200px)]`}>
           
           {/* Left Panel - Metrics & Indicators (hidden when chat expanded) */}
           {!isChatExpanded && (
-            <ContextMenu className="space-y-4 overflow-y-auto pr-2">
+            <ContextMenu className="space-y-4 overflow-y-auto pr-4 bg-card/30 rounded-xl border border-border/50 p-4 mr-3">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-primary" />
                 Analysis Results
@@ -488,42 +488,50 @@ export default function SmartAnalysis() {
           )}
           
           {/* Right Panel - AI Chat */}
-          <ContextMenu className={`flex flex-col h-full ${!isChatExpanded ? 'border-l border-border/50 pl-6' : ''}`}>
+          <div 
+            className={`flex flex-col bg-card/30 rounded-xl border border-border/50 p-4 ml-3 transition-all duration-300 ${isChatExpanded ? 'col-span-full ml-0' : ''}`}
+            style={{ height: isChatExpanded ? '100%' : `${chatHeight}%`, minHeight: '300px' }}
+          >
+          <ContextMenu className="flex flex-col h-full">
             {/* Chat Header with Controls */}
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-primary" />
                 AmalSense AI
               </h2>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 {/* Height adjustment buttons */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => adjustChatHeight('up')}
-                  title="Expand chat"
-                >
-                  <ChevronUp className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => adjustChatHeight('down')}
-                  title="Shrink chat"
-                >
-                  <ChevronDown className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 hover:bg-primary/20"
+                    onClick={() => adjustChatHeight('up')}
+                    title="توسيع الدردشة"
+                  >
+                    <ChevronUp className="w-4 h-4" />
+                  </Button>
+                  <span className="text-xs text-muted-foreground px-1">{chatHeight}%</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 hover:bg-primary/20"
+                    onClick={() => adjustChatHeight('down')}
+                    title="تصغير الدردشة"
+                  >
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </div>
                 {/* Full expand toggle */}
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
+                  variant={isChatExpanded ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 gap-1"
                   onClick={toggleChatExpansion}
-                  title={isChatExpanded ? "Show metrics" : "Full screen chat"}
+                  title={isChatExpanded ? "إظهار المؤشرات" : "ملء الشاشة"}
                 >
                   {isChatExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                  <span className="text-xs">{isChatExpanded ? 'إظهار المؤشرات' : 'ملء الشاشة'}</span>
                 </Button>
               </div>
             </div>
@@ -531,8 +539,7 @@ export default function SmartAnalysis() {
             {/* Chat Messages */}
             <div 
               ref={chatContainerRef}
-              className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4"
-              style={{ maxHeight: `${chatHeight}vh` }}
+              className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent"
             >
               {isAnalyzing ? (
                 <div className="flex items-start gap-3">
@@ -655,6 +662,7 @@ export default function SmartAnalysis() {
               </p>
             </div>
           </ContextMenu>
+          </div>
         </div>
       </main>
     </div>

@@ -1821,3 +1821,7 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Add time predictions (24h, 48h, 1 week)
 - [x] Add comparison with yesterday/last week
 - [x] Show trend indicators in responses
+
+## UI Fixes - Smart Analysis Page
+- [x] Make divider between metrics and chat more visible (clear separation)
+- [x] Fix chat expand/collapse functionality to work properly
