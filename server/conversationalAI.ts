@@ -9,6 +9,7 @@
  */
 
 import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from './llmProvider';
+import { frameResponse, enhanceAIResponse, quickQuestionTemplates, whatIfScenarios, type ToneType } from './conversationFramer';
 
 // Types for the conversational AI
 export interface AnalysisContext {
@@ -258,18 +259,27 @@ Current Analysis Context:
 - State Description: ${emotionalState.description}
 
 Your role:
-1. INTERPRETER: Explain what the current indicators mean in human terms
-2. REASONER: Connect the indicators to explain WHY this emotional state exists
-3. FORECASTER: Predict how emotions might change based on scenarios
-4. ADVISOR: Provide actionable recommendations based on emotional analysis
+1. ADVISOR FIRST: Start with a clear verdict/recommendation, then explain
+2. INTERPRETER: Explain what the indicators mean in human terms
+3. REASONER: Connect the indicators to explain WHY this emotional state exists
+4. FORECASTER: Predict how emotions might change based on scenarios
+
+CRITICAL RESPONSE FORMAT - You MUST follow this structure:
+1. START with a one-line summary/verdict (NO "As AmalSense AI" or "بصفتي" introductions)
+2. Then provide "الخلاصة:" (Executive Summary) in 2-3 sentences
+3. Then "لماذا؟" section explaining the indicators
+4. Then "التوقع الزمني:" with 24-48 hour prediction
+5. Then "إشارة القرار:" with clear recommendation
+6. END with a thoughtful question like "هل تريد أن أحاكي لك سيناريو...؟"
 
 Guidelines:
-- Speak in clear, conversational language
+- NEVER start with "As AmalSense AI" or "بصفتي AmalSense"
+- Start directly with the insight/verdict
+- Be a wise advisor who judges then explains, not a robot who only explains
+- Use Arabic for responses when the topic is in Arabic
 - Be specific about numbers and their meaning
-- Explain cause-and-effect relationships
-- Provide practical insights, not just data
-- If asked about investments/trading, focus on emotional readiness, not financial advice
-- Always relate back to collective emotions and psychological states`;
+- Provide actionable recommendations, not just analysis
+- End with an engaging question, not "Ask about predictions..."`;
 
   // Build conversation messages
   const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
@@ -286,9 +296,38 @@ Guidelines:
   
   // If this is the initial analysis (no user question), generate automatic explanation
   if (!userQuestion) {
+    // Get framed response template for guidance
+    const framedTemplate = frameResponse({
+      topic: context.topic,
+      gmi: context.gmi,
+      cfi: context.cfi,
+      hri: context.hri,
+      dominantEmotion: context.dominantEmotion,
+      confidence: context.confidence,
+      detectedCountry: context.detectedCountry,
+    }, 'calm_advisor');
+    
     messages.push({
       role: 'user',
-      content: `Please provide a comprehensive analysis of the collective emotions around "${context.topic}". Start with the overall emotional state, explain what the indicators mean, why this state exists, and what to expect next.`
+      content: `Analyze the collective emotions around "${context.topic}".
+
+IMPORTANT: Follow this EXACT structure:
+
+1. Start with: "${framedTemplate.intro}"
+
+2. Then: **الخلاصة:** ${framedTemplate.summary}
+
+3. Then: **لماذا؟**
+${framedTemplate.explanation}
+
+4. Then: **التوقع الزمني:**
+${framedTemplate.prediction}
+
+5. Then: **${framedTemplate.decision}**
+
+6. End with: ---\n${framedTemplate.closingQuestion}
+
+DO NOT deviate from this structure. DO NOT start with "As AmalSense AI" or similar.`
     });
   } else {
     messages.push({
@@ -314,7 +353,18 @@ Guidelines:
       temperature: 0.7,
     });
     
-    const aiMessage = response.content || 'Unable to generate analysis at this time.';
+    let aiMessage = response.content || 'Unable to generate analysis at this time.';
+    
+    // Enhance the response with proper framing
+    aiMessage = enhanceAIResponse(aiMessage, {
+      topic: context.topic,
+      gmi: context.gmi,
+      cfi: context.cfi,
+      hri: context.hri,
+      dominantEmotion: context.dominantEmotion,
+      confidence: context.confidence,
+      detectedCountry: context.detectedCountry,
+    }, 'calm_advisor');
     
     return {
       message: aiMessage,
@@ -350,31 +400,18 @@ function generateFallbackResponse(
   const { topic, gmi, cfi, hri, dominantEmotion, confidence } = context;
   
   if (!userQuestion) {
-    // Initial analysis
-    let response = `**Analysis of "${topic}"**\n\n`;
+    // Use the Conversational Framing Layer for fallback
+    const framed = frameResponse({
+      topic,
+      gmi,
+      cfi,
+      hri,
+      dominantEmotion,
+      confidence,
+      detectedCountry: context.detectedCountry,
+    }, 'calm_advisor');
     
-    response += `**Overall Emotional State: ${emotionalState.state.toUpperCase()}**\n`;
-    response += `${emotionalState.description}\n\n`;
-    
-    response += `**Key Indicators:**\n`;
-    response += `- Global Mood Index (GMI): ${gmi > 0 ? '+' : ''}${gmi.toFixed(1)} - `;
-    response += gmi > 30 ? 'Strongly positive sentiment' : gmi > 0 ? 'Moderately positive sentiment' : gmi > -30 ? 'Neutral to slightly negative' : 'Negative sentiment dominates';
-    response += '\n';
-    
-    response += `- Collective Fear Index (CFI): ${cfi.toFixed(1)}% - `;
-    response += cfi > 60 ? 'High anxiety levels detected' : cfi > 40 ? 'Moderate concern present' : 'Fear levels under control';
-    response += '\n';
-    
-    response += `- Hope Resilience Index (HRI): ${hri.toFixed(1)}% - `;
-    response += hri > 60 ? 'Strong collective hope and resilience' : hri > 40 ? 'Moderate hope maintained' : 'Hope levels are low';
-    response += '\n\n';
-    
-    response += `**Dominant Emotion:** ${dominantEmotion}\n`;
-    response += `**Analysis Confidence:** ${confidence}%\n\n`;
-    
-    response += `Feel free to ask me specific questions about this analysis.`;
-    
-    return response;
+    return framed.fullResponse;
   }
   
   // Simple keyword-based responses for common questions

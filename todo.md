@@ -1802,3 +1802,22 @@ Knowledge Layer (SQL + Vector Store + RAG)
 
 ## Phase 48: Context Menu Feature (NEW)
 - [x] Add custom context menu (right-click) in Smart Analysis page with Select All, Copy, Paste options
+
+## Phase 49: Conversational Intelligence Enhancement (NEW)
+
+### Conversational Framing Layer
+- [x] Create ConversationFramer engine with intro/outro templates
+- [x] Add tone selector (calm advisor / analytical / news-style)
+- [x] Implement Decision Compression Layer
+- [x] Update AI prompts to start with summary, end with human question
+
+### Chat Interface Improvements
+- [x] Add expand/collapse button for chat area
+- [x] Improve visual formatting of AI responses (sections with icons)
+- [x] Add quick question buttons (predictions, risks, recommendations)
+- [x] Add What-If scenario buttons
+
+### Time-based Features
+- [x] Add time predictions (24h, 48h, 1 week)
+- [x] Add comparison with yesterday/last week
+- [x] Show trend indicators in responses

@@ -9,7 +9,8 @@ import { trpc } from '@/lib/trpc';
 import { 
   Brain, Send, Loader2, ArrowLeft, TrendingUp, TrendingDown,
   AlertTriangle, Lightbulb, Target, MessageSquare, Sparkles,
-  Globe, BarChart3, Activity, Zap
+  Globe, BarChart3, Activity, Zap, Maximize2, Minimize2,
+  ChevronUp, ChevronDown, HelpCircle, TrendingUp as Trend
 } from 'lucide-react';
 import { StockStyleIndicator } from '@/components/StockStyleIndicator';
 import { LogoIcon } from '@/components/Logo';
@@ -33,6 +34,14 @@ interface AnalysisContext {
   detectedCountry?: string;
 }
 
+// Quick question buttons
+const quickQuestions = [
+  { icon: Target, label: 'ما التوصية؟', question: 'ما هي توصيتك بناءً على هذا التحليل؟' },
+  { icon: AlertTriangle, label: 'ما المخاطر؟', question: 'ما هي المخاطر المحتملة التي يجب الانتباه لها؟' },
+  { icon: Trend, label: 'التوقعات', question: 'ما هي التوقعات للأيام القادمة؟' },
+  { icon: HelpCircle, label: 'ماذا لو؟', question: 'ماذا لو تغيرت الظروف أو ظهرت أخبار جديدة؟' },
+];
+
 export default function SmartAnalysis() {
   const [, navigate] = useLocation();
   const searchString = useSearch();
@@ -47,6 +56,10 @@ export default function SmartAnalysis() {
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
   const [userQuestion, setUserQuestion] = useState('');
   const [isAskingFollowUp, setIsAskingFollowUp] = useState(false);
+  
+  // Chat expansion state
+  const [isChatExpanded, setIsChatExpanded] = useState(false);
+  const [chatHeight, setChatHeight] = useState(50); // percentage
   
   const chatContainerRef = useRef<HTMLDivElement>(null);
   
@@ -128,10 +141,10 @@ export default function SmartAnalysis() {
     }
   };
   
-  const handleAskQuestion = async () => {
-    if (!userQuestion.trim() || !context || isAskingFollowUp) return;
+  const handleAskQuestion = async (questionText?: string) => {
+    const question = questionText || userQuestion.trim();
+    if (!question || !context || isAskingFollowUp) return;
     
-    const question = userQuestion.trim();
     setUserQuestion('');
     
     // Add user message to conversation
@@ -174,6 +187,25 @@ export default function SmartAnalysis() {
       e.preventDefault();
       handleAskQuestion();
     }
+  };
+
+  // Handle quick question click
+  const handleQuickQuestion = (question: string) => {
+    handleAskQuestion(question);
+  };
+  
+  // Toggle chat expansion
+  const toggleChatExpansion = () => {
+    setIsChatExpanded(!isChatExpanded);
+    setChatHeight(isChatExpanded ? 50 : 80);
+  };
+
+  // Adjust chat height
+  const adjustChatHeight = (direction: 'up' | 'down') => {
+    setChatHeight(prev => {
+      if (direction === 'up') return Math.min(90, prev + 15);
+      return Math.max(30, prev - 15);
+    });
   };
   
   // Get emotion color
@@ -318,152 +350,189 @@ export default function SmartAnalysis() {
       
       {/* Main Content - Split Layout */}
       <main className="container py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
+        <div className={`grid grid-cols-1 ${isChatExpanded ? '' : 'lg:grid-cols-2'} gap-6 h-[calc(100vh-200px)]`}>
           
-          {/* Left Panel - Metrics & Indicators */}
-          <ContextMenu className="space-y-4 overflow-y-auto pr-2">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-primary" />
-              Analysis Results
-            </h2>
-            
-            {isAnalyzing ? (
-              <div className="flex flex-col items-center justify-center h-64 gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                <p className="text-muted-foreground">Analyzing collective emotions...</p>
-              </div>
-            ) : context ? (
-              <>
-                {/* Main Indices */}
-                <div className="grid grid-cols-1 gap-4">
-                  <StockStyleIndicator
-                    title="Global Mood Index"
-                    shortName="GMI"
-                    value={context.gmi}
-                    previousValue={0}
-                    min={-100}
-                    max={100}
-                    description="Overall collective sentiment"
-                    indexType="gmi"
-                    historicalData={[]}
-                    isLoading={false}
-                  />
-                  <StockStyleIndicator
-                    title="Collective Fear Index"
-                    shortName="CFI"
-                    value={context.cfi}
-                    previousValue={50}
-                    min={0}
-                    max={100}
-                    description="Level of collective anxiety"
-                    indexType="cfi"
-                    historicalData={[]}
-                    isLoading={false}
-                  />
-                  <StockStyleIndicator
-                    title="Hope Resilience Index"
-                    shortName="HRI"
-                    value={context.hri}
-                    previousValue={50}
-                    min={0}
-                    max={100}
-                    description="Societal optimism & resilience"
-                    indexType="hri"
-                    historicalData={[]}
-                    isLoading={false}
-                  />
+          {/* Left Panel - Metrics & Indicators (hidden when chat expanded) */}
+          {!isChatExpanded && (
+            <ContextMenu className="space-y-4 overflow-y-auto pr-2">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-primary" />
+                Analysis Results
+              </h2>
+              
+              {isAnalyzing ? (
+                <div className="flex flex-col items-center justify-center h-64 gap-4">
+                  <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                  <p className="text-muted-foreground">Analyzing collective emotions...</p>
                 </div>
-                
-                {/* Quick Stats */}
-                <Card className="p-4 bg-card/50">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-primary" />
-                    Quick Summary
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Dominant Emotion:</span>
-                      <span className={`font-medium capitalize ${getEmotionColor(context.dominantEmotion)}`}>
-                        {context.dominantEmotion}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Confidence:</span>
-                      <span className="font-medium">{context.confidence}%</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Overall Mood:</span>
-                      <span className={`font-medium ${getGMIColor(context.gmi)}`}>
-                        {context.gmi > 30 ? 'Positive' : context.gmi > 0 ? 'Slightly Positive' : context.gmi > -30 ? 'Neutral' : 'Negative'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Fear Level:</span>
-                      <span className={`font-medium ${getCFIColor(context.cfi)}`}>
-                        {context.cfi > 70 ? 'High' : context.cfi > 50 ? 'Elevated' : context.cfi > 30 ? 'Moderate' : 'Low'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Hope Level:</span>
-                      <span className={`font-medium ${getHRIColor(context.hri)}`}>
-                        {context.hri > 70 ? 'Strong' : context.hri > 50 ? 'Moderate' : context.hri > 30 ? 'Weak' : 'Very Low'}
-                      </span>
-                    </div>
+              ) : context ? (
+                <>
+                  {/* Main Indices */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <StockStyleIndicator
+                      title="Global Mood Index"
+                      shortName="GMI"
+                      value={context.gmi}
+                      previousValue={0}
+                      min={-100}
+                      max={100}
+                      description="Overall collective sentiment"
+                      indexType="gmi"
+                      historicalData={[]}
+                      isLoading={false}
+                    />
+                    <StockStyleIndicator
+                      title="Collective Fear Index"
+                      shortName="CFI"
+                      value={context.cfi}
+                      previousValue={50}
+                      min={0}
+                      max={100}
+                      description="Level of collective anxiety"
+                      indexType="cfi"
+                      historicalData={[]}
+                      isLoading={false}
+                    />
+                    <StockStyleIndicator
+                      title="Hope Resilience Index"
+                      shortName="HRI"
+                      value={context.hri}
+                      previousValue={50}
+                      min={0}
+                      max={100}
+                      description="Societal optimism & resilience"
+                      indexType="hri"
+                      historicalData={[]}
+                      isLoading={false}
+                    />
                   </div>
-                </Card>
-                
-                {/* Emotion Vector */}
-                {context.emotionVector && Object.keys(context.emotionVector).length > 0 && (
+                  
+                  {/* Quick Stats */}
                   <Card className="p-4 bg-card/50">
                     <h3 className="font-semibold mb-3 flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-primary" />
-                      Emotion Distribution
+                      <Activity className="w-4 h-4 text-primary" />
+                      Quick Summary
                     </h3>
-                    <div className="space-y-2">
-                      {Object.entries(context.emotionVector).map(([emotion, value]) => (
-                        <div key={emotion} className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground capitalize w-20">{emotion}</span>
-                          <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full rounded-full ${
-                                emotion === 'joy' ? 'bg-yellow-400' :
-                                emotion === 'hope' ? 'bg-green-400' :
-                                emotion === 'fear' ? 'bg-orange-400' :
-                                emotion === 'anger' ? 'bg-red-400' :
-                                emotion === 'sadness' ? 'bg-blue-400' :
-                                'bg-purple-400'
-                              }`}
-                              style={{ width: `${Math.abs(value as number) * 100}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-muted-foreground w-12 text-right">
-                            {((value as number) * 100).toFixed(0)}%
-                          </span>
-                        </div>
-                      ))}
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Dominant Emotion:</span>
+                        <span className={`font-medium capitalize ${getEmotionColor(context.dominantEmotion)}`}>
+                          {context.dominantEmotion}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Confidence:</span>
+                        <span className="font-medium">{context.confidence}%</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Overall Mood:</span>
+                        <span className={`font-medium ${getGMIColor(context.gmi)}`}>
+                          {context.gmi > 30 ? 'Positive' : context.gmi > 0 ? 'Slightly Positive' : context.gmi > -30 ? 'Neutral' : 'Negative'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Fear Level:</span>
+                        <span className={`font-medium ${getCFIColor(context.cfi)}`}>
+                          {context.cfi > 70 ? 'High' : context.cfi > 50 ? 'Elevated' : context.cfi > 30 ? 'Moderate' : 'Low'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Hope Level:</span>
+                        <span className={`font-medium ${getHRIColor(context.hri)}`}>
+                          {context.hri > 70 ? 'Strong' : context.hri > 50 ? 'Moderate' : context.hri > 30 ? 'Weak' : 'Very Low'}
+                        </span>
+                      </div>
                     </div>
                   </Card>
-                )}
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted-foreground">
-                <BarChart3 className="w-12 h-12 opacity-50" />
-                <p>Enter a topic to start analysis</p>
-              </div>
-            )}
-          </ContextMenu>
+                  
+                  {/* Emotion Vector */}
+                  {context.emotionVector && Object.keys(context.emotionVector).length > 0 && (
+                    <Card className="p-4 bg-card/50">
+                      <h3 className="font-semibold mb-3 flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-primary" />
+                        Emotion Distribution
+                      </h3>
+                      <div className="space-y-2">
+                        {Object.entries(context.emotionVector).map(([emotion, value]) => (
+                          <div key={emotion} className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground capitalize w-20">{emotion}</span>
+                            <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full rounded-full ${
+                                  emotion === 'joy' ? 'bg-yellow-400' :
+                                  emotion === 'hope' ? 'bg-green-400' :
+                                  emotion === 'fear' ? 'bg-orange-400' :
+                                  emotion === 'anger' ? 'bg-red-400' :
+                                  emotion === 'sadness' ? 'bg-blue-400' :
+                                  'bg-purple-400'
+                                }`}
+                                style={{ width: `${Math.abs(value as number) * 100}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground w-12 text-right">
+                              {((value as number) * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-64 gap-4 text-muted-foreground">
+                  <BarChart3 className="w-12 h-12 opacity-50" />
+                  <p>Enter a topic to start analysis</p>
+                </div>
+              )}
+            </ContextMenu>
+          )}
           
           {/* Right Panel - AI Chat */}
-          <ContextMenu className="flex flex-col h-full border-l border-border/50 pl-6">
-            <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              AmalSense AI
-            </h2>
+          <ContextMenu className={`flex flex-col h-full ${!isChatExpanded ? 'border-l border-border/50 pl-6' : ''}`}>
+            {/* Chat Header with Controls */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-primary" />
+                AmalSense AI
+              </h2>
+              <div className="flex items-center gap-1">
+                {/* Height adjustment buttons */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => adjustChatHeight('up')}
+                  title="Expand chat"
+                >
+                  <ChevronUp className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => adjustChatHeight('down')}
+                  title="Shrink chat"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+                {/* Full expand toggle */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={toggleChatExpansion}
+                  title={isChatExpanded ? "Show metrics" : "Full screen chat"}
+                >
+                  {isChatExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </Button>
+              </div>
+            </div>
             
             {/* Chat Messages */}
             <div 
               ref={chatContainerRef}
               className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4"
+              style={{ maxHeight: `${chatHeight}vh` }}
             >
               {isAnalyzing ? (
                 <div className="flex items-start gap-3">
@@ -540,6 +609,24 @@ export default function SmartAnalysis() {
               )}
             </div>
             
+            {/* Quick Question Buttons */}
+            {analysisComplete && !isAskingFollowUp && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {quickQuestions.map((q, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs gap-1 hover:bg-primary/10 hover:border-primary/50"
+                    onClick={() => handleQuickQuestion(q.question)}
+                  >
+                    <q.icon className="w-3 h-3" />
+                    {q.label}
+                  </Button>
+                ))}
+              </div>
+            )}
+            
             {/* Input Area */}
             <div className="border-t border-border/50 pt-4">
               <div className="flex gap-2">
@@ -552,7 +639,7 @@ export default function SmartAnalysis() {
                   className="flex-1"
                 />
                 <Button
-                  onClick={handleAskQuestion}
+                  onClick={() => handleAskQuestion()}
                   disabled={!userQuestion.trim() || !analysisComplete || isAskingFollowUp}
                   className="glow-button text-white"
                 >
@@ -564,7 +651,7 @@ export default function SmartAnalysis() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Ask about predictions, recommendations, or "what if" scenarios
+                اسأل عن التوقعات، التوصيات، أو سيناريوهات "ماذا لو"
               </p>
             </div>
           </ContextMenu>
