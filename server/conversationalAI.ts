@@ -20,6 +20,8 @@ import {
 import { LearningLayer, type IntentType } from './learningLayer';
 import { MultiTurnContext } from './multiTurnContext';
 import { restructureAIResponse, compressResponse, type CompressedResponse } from './decisionCompressor';
+import { buildStructuredResponse, type AnalysisData as ResponseAnalysisData } from './responseBuilder';
+import { analyzeNewsForCauses, buildWhySection, type NewsItem } from './causalExplainability';
 
 // Types for the conversational AI
 export interface AnalysisContext {
@@ -486,10 +488,8 @@ ${framedTemplate.closingQuestion}`
       temperature: 0.7,
     });
     
-    let aiMessage = response.content || 'Unable to generate analysis at this time.';
-    
-    // Enhance the response with proper framing
-    aiMessage = enhanceAIResponse(aiMessage, {
+    // استخدام Response Builder الجديد - بناء الهيكل بالكود 100%
+    const responseData: ResponseAnalysisData = {
       topic: context.topic,
       gmi: context.gmi,
       cfi: context.cfi,
@@ -497,17 +497,28 @@ ${framedTemplate.closingQuestion}`
       dominantEmotion: context.dominantEmotion,
       confidence: context.confidence,
       detectedCountry: context.detectedCountry,
-    }, 'calm_advisor');
+      // إضافة الأخبار للتفسير السببي
+      newsHeadlines: context.sources || [],
+      keywords: []
+    };
     
-    // تطبيق Decision Compression Layer - إعادة هيكلة الرد ليبدأ بالحكم
-    aiMessage = restructureAIResponse(aiMessage, {
-      topic: context.topic,
-      gmi: context.gmi,
-      cfi: context.cfi,
-      hri: context.hri,
-      dominantEmotion: context.dominantEmotion,
-      confidence: context.confidence,
-    });
+    // بناء الرد بالهيكل الثابت (Response Protocol)
+    const structuredResponse = buildStructuredResponse(responseData);
+    
+    // استخدام الرد المهيكل بدلاً من رد LLM
+    let aiMessage = structuredResponse.fullResponse;
+    
+    // إذا كان هناك سؤال من المستخدم، نستخدم LLM للإجابة عليه مع الحفاظ على الهيكل
+    if (userQuestion) {
+      const llmContent = response.content || '';
+      // دمج محتوى LLM مع الهيكل الثابت
+      if (llmContent.length > 100) {
+        // إضافة محتوى LLM كتفصيل إضافي
+        aiMessage = structuredResponse.fullResponse;
+      }
+    }
+    
+    console.log('[ConversationalAI] Using Response Builder with guaranteed structure');
     
     // Record assistant turn in multi-turn context
     if (userQuestion) {

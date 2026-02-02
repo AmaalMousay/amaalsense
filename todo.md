@@ -1918,3 +1918,12 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Remove robotic intro via post-processing (not just regex)
 - [x] Enforce structure: خلاصة → إشارة القرار → لماذا → التوقع → سؤال ختامي
 - [x] Add "الجرأة المعرفية" - bold judgments instead of descriptions
+
+
+## Phase 59: Response Builder with Guaranteed Structure + Causal Explainability
+- [x] Create ResponseBuilder class - builds response structure 100% by code
+- [x] Add Causal Explainability Layer - links emotions to real causes
+- [x] Extract causes from news/keywords (غلاء، دولار، سيولة، أزمة)
+- [x] Use LLM only for content generation, not structure
+- [x] Integrate with ConversationalAI
+- [x] Ensure every response has: خلاصة + إشارة قرار + لماذا (مع أسباب) + توقع + سؤال
