@@ -18,6 +18,7 @@ import { classifyIntent, type ClassifiedIntent, describeIntent } from './intentC
 import { executeEngines, formatResultsForLLM, type EngineResults } from './engineSelector';
 import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from '../llmProvider';
 import { buildRAGContext, formatRAGForPrompt, storeForRAG, storeConversationForRAG } from '../knowledge/ragSystem';
+import { buildStructuredResponse, type AnalysisData } from '../responseBuilder';
 
 // Orchestration request
 export interface OrchestrationRequest {
@@ -197,16 +198,40 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
     content: request.question,
   });
   
-  // Step 7: Invoke LLM
+  // Step 7: Build structured response using Response Builder (guaranteed structure)
   const provider = getActiveProvider();
   const providerInfo = getProviderInfo(provider);
   
-  console.log('[Orchestrator] Invoking LLM:', providerInfo.name);
+  console.log('[Orchestrator] Building structured response with Response Builder');
   
-  const llmResponse = await invokeLLMProvider({
-    messages,
-    temperature: 0.7,
-    max_tokens: 1500,
+  // Extract data from engine results
+  const dcftData = engineResults.dcft || { gmi: 0, cfi: 50, hri: 50 };
+  const emotionData = engineResults.emotion || { dominantEmotion: 'neutral' };
+  const metaData = engineResults.meta || { confidence: 0.7 };
+  
+  // Build analysis data for Response Builder
+  const analysisData: AnalysisData = {
+    topic,
+    gmi: dcftData.gmi || 0,
+    cfi: dcftData.cfi || 50,
+    hri: dcftData.hri || 50,
+    dominantEmotion: emotionData.dominantEmotion || 'neutral',
+    confidence: (metaData.confidence || 0.7) * 100,
+    detectedCountry: country,
+    newsHeadlines: [],  // Will be populated from news service if available
+    keywords: [],
+    userQuestion: request.question,
+    turnCount: (request.conversationHistory?.length || 0) + 1,
+    previousTopics: [],
+  };
+  
+  // Build structured response (100% guaranteed structure by code)
+  const structuredResponse = buildStructuredResponse(analysisData);
+  
+  console.log('[Orchestrator] Structured response built:', {
+    hasExecutiveSummary: !!structuredResponse.executiveSummary,
+    hasDecisionSignal: !!structuredResponse.decisionSignal,
+    responseLength: structuredResponse.fullResponse.length,
   });
   
   const processingTimeMs = Date.now() - startTime;
@@ -218,18 +243,18 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
   storeConversationForRAG(
     'anonymous', // In production, use actual user ID
     request.question,
-    llmResponse.content,
+    structuredResponse.fullResponse,
     topic,
     country
   );
   
   return {
-    answer: llmResponse.content,
+    answer: structuredResponse.fullResponse,
     intent,
     engineResults,
     metadata: {
-      provider: providerInfo.name,
-      model: providerInfo.model,
+      provider: 'ResponseBuilder',
+      model: 'structured-template',
       processingTimeMs,
       enginesUsed: engineResults.enginesUsed,
       confidence: intent.confidence,
