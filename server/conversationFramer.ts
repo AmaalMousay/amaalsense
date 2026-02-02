@@ -276,14 +276,32 @@ export function enhanceAIResponse(
     /^As AmalSense AI[,،]?\s*/gi,
     /^I am AmalSense[,،]?\s*/gi,
     /^أنا AmalSense[,،]?\s*/gi,
-    /^بصفتي [\w\s]+[,،]?\s*/gi,
+    /^بصفتي [\w\sء-ي]+[,،]?\s*/gi,
     /^As an? [\w\s]+ AI[,،]?\s*/gi,
     /^أنا نظام[,،]?\s*/gi,
     /^أنا مساعد[,،]?\s*/gi,
+    /^أنا أداة[,،]?\s*/gi,
+    /^أنا محلل[,،]?\s*/gi,
     /^I'm [\w\s]+[,،]?\s*/gi,
     /^بناءً على تحليلي[,،]?\s*/gi,
     /^Based on my analysis[,،]?\s*/gi,
+    /^كمحلل[,،]?\s*/gi,
+    /^كنظام[,،]?\s*/gi,
   ];
+  
+  // إزالة عبارات رفض التنبؤ (جديد)
+  const refusalPatterns = [
+    /لا أستطيع التنبؤ[^.]*\./gi,
+    /لا يمكنني التنبؤ[^.]*\./gi,
+    /المستقبل غير مؤكد[^.]*\./gi,
+    /I cannot predict[^.]*\./gi,
+    /I'm unable to predict[^.]*\./gi,
+    /The future is uncertain[^.]*\./gi,
+  ];
+  
+  for (const pattern of refusalPatterns) {
+    enhancedResponse = enhancedResponse.replace(pattern, '');
+  }
   
   for (const pattern of roboticIntros) {
     enhancedResponse = enhancedResponse.replace(pattern, '');

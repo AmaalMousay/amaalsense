@@ -87,8 +87,12 @@ const INTENT_KEYWORDS: Record<IntentType, string[]> = {
     'recommend', 'suggest', 'advise', 'what should'
   ],
   scenario: [
-    'ماذا لو', 'لو حدث', 'إذا', 'سيناريو', 'افتراض',
-    'what if', 'scenario', 'suppose', 'assume'
+    'ماذا لو', 'لو حدث', 'سيناريو', 'افتراض',
+    'what if', 'scenario', 'suppose', 'assume',
+    'لو استمر', 'لو ارتفع', 'لو انخفض', 'لو تغير',
+    'إذا استمر', 'إذا ارتفع', 'إذا انخفض',
+    'كيف سيتغير', 'سيتغير', 'ماذا سيحدث لو',
+    'خلال الأسبوع القادم', 'كيف سيكون'
   ],
   explanation: [
     'لماذا', 'السبب', 'كيف', 'اشرح', 'فسر',
@@ -136,8 +140,29 @@ export function classifyIntent(question: string): { intent: IntentType; confiden
   if (lowerQuestion.startsWith('لماذا') || lowerQuestion.startsWith('why')) {
     scores.explanation += 0.5;
   }
+  
+  // === ENHANCED SCENARIO DETECTION ===
+  // اكتشاف أسئلة What-If بشكل أفضل
   if (lowerQuestion.includes('ماذا لو') || lowerQuestion.includes('what if')) {
-    scores.scenario += 1;
+    scores.scenario += 2; // زيادة الوزن
+  }
+  // "لو" + فعل استمراري
+  if (lowerQuestion.includes('لو استمر') || lowerQuestion.includes('إذا استمر')) {
+    scores.scenario += 2;
+  }
+  // سؤال عن التغير المستقبلي
+  if (lowerQuestion.includes('كيف سيتغير') || lowerQuestion.includes('كيف سيكون')) {
+    scores.scenario += 1.5;
+  }
+  // الإطار الزمني المستقبلي مع الشرط
+  if ((lowerQuestion.includes('الأسبوع القادم') || lowerQuestion.includes('next week')) &&
+      (lowerQuestion.includes('لو') || lowerQuestion.includes('إذا') || lowerQuestion.includes('سيتغير'))) {
+    scores.scenario += 2;
+  }
+  // المزاج الجماعي + التغير
+  if ((lowerQuestion.includes('المزاج') || lowerQuestion.includes('mood')) &&
+      (lowerQuestion.includes('سيتغير') || lowerQuestion.includes('يتغير') || lowerQuestion.includes('change'))) {
+    scores.scenario += 1.5;
   }
   
   let maxIntent: IntentType = 'general';

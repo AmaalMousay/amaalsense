@@ -318,6 +318,38 @@ export async function generateAIResponse(
       expectedResponseType: semanticFrame.expectedResponseType
     });
     
+    // === SCENARIO ENGINE: Handle What-If questions directly ===
+    if (semanticFrame.intent === 'scenario') {
+      console.log('[ConversationalAI] 🎯 Scenario detected! Using Scenario Engine...');
+      const { generateScenarioResponse } = await import('./scenarioEngine');
+      const scenarioResponse = generateScenarioResponse(
+        questionToAnalyze,
+        { gmi: context.gmi, cfi: context.cfi, hri: context.hri },
+        context.topic
+      );
+      
+      // Record interaction for learning
+      LearningLayer.recordInteraction({
+        question: userQuestion,
+        detectedIntent: 'scenario',
+        wasHelpful: null,
+        topic: context.topic,
+        responseQuality: 4
+      });
+      
+      return {
+        message: scenarioResponse,
+        detectedCountry: context.detectedCountry,
+        recommendations,
+        warnings,
+        scenarios,
+        semanticFrame,
+        injectedContext,
+        learningInsights,
+        contextInfo
+      };
+    }
+    
     // Build context with DCFT data
     injectedContext = buildContext(semanticFrame, {
       gmi: context.gmi,
@@ -652,11 +684,32 @@ ${injectedContext.preliminaryRecommendation}
 `;
         break;
       case 'scenario':
-        prompt += `## تعليمات الرد (سيناريو):
-1. ابدأ بـ "إذا حدث هذا..."
-2. ثم "النتيجة المتوقعة:" 
-3. ثم "احتمالية الحدوث:" 
-4. انتهِ بسؤال: "هل تريد استكشاف سيناريو آخر؟"
+        prompt += `## تعليمات الرد (سيناريو What-If) - مهم جداً:
+
+⚠️ هذا سؤال "ماذا لو" - يجب أن تُحاكي السيناريو وليس رفضه!
+
+✅ يجب عليك:
+- محاكاة السيناريو بناءً على المؤشرات الحالية
+- تقديم أرقام متوقعة للتغيرات
+- شرح السبب وراء التوقع
+
+❌ ممنوع منعاً باتاً:
+- لا تقل "لا أستطيع التنبؤ"
+- لا ترفض السؤال
+- لا تقل "المستقبل غير مؤكد"
+
+📋 هيكل الرد:
+1. ابدأ بـ "إذا استمر [X]..." أو "لو حدث [X]..."
+2. ثم "التأثير المتوقع:" مع أرقام محددة
+   - GMI سيتغير من X إلى Y
+   - CFI سيرتفع/ينخفض بنسبة Z%
+   - HRI سيتأثر بشكل W
+3. ثم "السبب:" لماذا هذا التوقع
+4. ثم "التوصية:" ماذا يفعل المستخدم
+5. انتهِ بسؤال: "هل تريد استكشاف سيناريو آخر؟"
+
+💡 مثال للرد الصحيح:
+"إذا استمر ارتفاع الدولار، سيرتفع مؤشر الخوف (CFI) من 45% إلى 65%، وينخفض المزاج العام (GMI) بحوالي 15 نقطة..."
 
 `;
         break;
@@ -688,6 +741,8 @@ ${injectedContext.preliminaryRecommendation}
 - لا تبدأ بأي مقدمة تعريفية عن نفسك
 - لا تكتب تحليلاً طويلاً قبل الخلاصة
 - لا تنتهي بـ "Ask about predictions" أو عبارات تقنية
+- لا تقل "لا أستطيع التنبؤ" أو "المستقبل غير مؤكد" - أنت محرك محاكاة!
+- لا ترفض أسئلة "ماذا لو" - حاكِها بناءً على المؤشرات الحالية
 
 ✅ يجب اتباعه:
 - ابدأ السطر الأول مباشرة بالحكم/الخلاصة (مثال: "الوضع يميل نحو الترقب الحذر")

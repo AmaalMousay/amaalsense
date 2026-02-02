@@ -1881,3 +1881,23 @@ Knowledge Layer (SQL + Vector Store + RAG)
 
 ## Phase 54: Context Menu Improvement
 - [x] Show secondary popup with Copy option after Select All is clicked
+
+
+## Phase 55: Transform AmalSense to Predictive Intelligence
+- [ ] Fix Intent Classifier to properly classify "what-if" questions
+- [ ] Enable Scenario Engine for future simulation instead of rejection
+- [ ] Fix System Prompt to remove "بصفتي AmalSense AI"
+- [ ] Enable Decision Compression to start with summary
+- [ ] Add what-if keywords detection (لو، ماذا لو، خلال الأسبوع، سيتغير)
+
+
+## Phase 56: Transform AmalSense to Predictive Intelligence (Scenario Engine)
+- [x] Fix Intent Classifier to properly classify "what-if" questions (لو استمر، ماذا لو، كيف سيتغير)
+- [x] Create Scenario Engine (scenarioEngine.ts) for future simulation
+- [x] Add event impact calculations (dollar_rise, positive_news, political_crisis, etc.)
+- [x] Add timeframe multipliers (24h, 48h, 1week, 1month)
+- [x] Update System Prompt to encourage scenario simulation instead of rejection
+- [x] Add refusal pattern removal in enhanceAIResponse (لا أستطيع التنبؤ)
+- [x] Integrate Scenario Engine with ConversationalAI for automatic scenario detection
+- [x] Remove robotic introductions (بصفتي AmalSense AI)
+- [x] Enable Decision Compression Layer to start with summary
