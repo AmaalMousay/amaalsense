@@ -17,6 +17,8 @@ import {
   type SemanticFrame,
   type InjectedContext 
 } from './semanticUnderstanding';
+import { LearningLayer, type IntentType } from './learningLayer';
+import { MultiTurnContext } from './multiTurnContext';
 
 // Types for the conversational AI
 export interface AnalysisContext {
@@ -49,6 +51,19 @@ export interface AIResponse {
   // Semantic Understanding Layer outputs
   semanticFrame?: SemanticFrame;
   injectedContext?: InjectedContext;
+  // Learning Layer outputs
+  learningInsights?: {
+    detectedIntent: IntentType;
+    intentConfidence: number;
+    alternativeIntents: Array<{ intent: IntentType; score: number }>;
+  };
+  // Multi-turn Context outputs
+  contextInfo?: {
+    conversationId: string;
+    resolvedQuestion: string;
+    contextUsed: boolean;
+    mainTopic: string | null;
+  };
 }
 
 // Country detection from topic context
@@ -255,10 +270,47 @@ export async function generateAIResponse(
   // NEW: Semantic Understanding Layer
   let semanticFrame: SemanticFrame | undefined;
   let injectedContext: InjectedContext | undefined;
+  let learningInsights: AIResponse['learningInsights'] | undefined;
+  let contextInfo: AIResponse['contextInfo'] | undefined;
+  
+  // Generate conversation ID for multi-turn context
+  const conversationId = 'conv_' + context.topic.replace(/\s+/g, '_') + '_' + Date.now();
   
   if (userQuestion) {
+    // === Learning Layer: Classify intent with learning ===
+    const intentResult = LearningLayer.classifyIntent(userQuestion);
+    learningInsights = {
+      detectedIntent: intentResult.intent,
+      intentConfidence: intentResult.confidence,
+      alternativeIntents: intentResult.alternatives
+    };
+    console.log('[ConversationalAI] Learning Layer Intent:', {
+      intent: intentResult.intent,
+      confidence: intentResult.confidence.toFixed(1) + '%'
+    });
+    
+    // === Multi-turn Context: Resolve references ===
+    const resolved = MultiTurnContext.resolveReferences(conversationId, userQuestion);
+    contextInfo = {
+      conversationId,
+      resolvedQuestion: resolved.resolvedQuestion,
+      contextUsed: resolved.contextUsed,
+      mainTopic: MultiTurnContext.getContext(conversationId).mainTopic
+    };
+    
+    // Use resolved question for semantic parsing
+    const questionToAnalyze = resolved.contextUsed ? resolved.resolvedQuestion : userQuestion;
+    console.log('[ConversationalAI] Multi-turn Context:', {
+      contextUsed: resolved.contextUsed,
+      originalQuestion: userQuestion,
+      resolvedQuestion: questionToAnalyze
+    });
+    
+    // Add user turn to context
+    MultiTurnContext.addTurn(conversationId, 'user', userQuestion, intentResult.intent, context.topic);
+    
     // Parse the question to understand intent and meaning
-    semanticFrame = parseQuestion(userQuestion);
+    semanticFrame = parseQuestion(questionToAnalyze);
     console.log(`[ConversationalAI] Semantic Frame:`, {
       intent: semanticFrame.intent,
       entity: semanticFrame.entity,
@@ -411,6 +463,21 @@ DO NOT deviate from this structure. DO NOT start with "As AmalSense AI" or simil
       detectedCountry: context.detectedCountry,
     }, 'calm_advisor');
     
+    // Record assistant turn in multi-turn context
+    if (userQuestion) {
+      MultiTurnContext.addTurn(conversationId, 'assistant', aiMessage, undefined, context.topic);
+      MultiTurnContext.updateEmotionalState(conversationId, context.gmi, context.cfi, context.hri);
+      
+      // Record interaction for learning
+      LearningLayer.recordInteraction({
+        question: userQuestion,
+        detectedIntent: learningInsights?.detectedIntent || 'general_inquiry',
+        wasHelpful: null,
+        topic: context.topic,
+        responseQuality: 3
+      });
+    }
+    
     return {
       message: aiMessage,
       detectedCountry: context.detectedCountry,
@@ -418,7 +485,9 @@ DO NOT deviate from this structure. DO NOT start with "As AmalSense AI" or simil
       warnings,
       scenarios,
       semanticFrame,
-      injectedContext
+      injectedContext,
+      learningInsights,
+      contextInfo
     };
   } catch (error) {
     console.error('Error generating AI response:', error);
@@ -433,7 +502,9 @@ DO NOT deviate from this structure. DO NOT start with "As AmalSense AI" or simil
       warnings,
       scenarios,
       semanticFrame,
-      injectedContext
+      injectedContext,
+      learningInsights,
+      contextInfo
     };
   }
 }
