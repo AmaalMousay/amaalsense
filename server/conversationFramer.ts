@@ -287,6 +287,12 @@ export function enhanceAIResponse(
     /^Based on my analysis[,،]?\s*/gi,
     /^كمحلل[,،]?\s*/gi,
     /^كنظام[,،]?\s*/gi,
+    // إضافات جديدة لإزالة المقدمات الروبوتية
+    /^بناءً? على تحليلات محركات AmalSense[,،]?\s*/gi,
+    /^بناءً? على تحليلات[,،]?\s*/gi,
+    /^Based on AmalSense[,،]?\s*/gi,
+    /^وفقًا لتحليلات[,،]?\s*/gi,
+    /^إليك تقييم[,،]?\s*/gi,
   ];
   
   // إزالة عبارات رفض التنبؤ (جديد)
@@ -314,6 +320,9 @@ export function enhanceAIResponse(
     /Feel free to ask.*$/gi,
     /Let me know if.*$/gi,
     /لا تتردد في السؤال.*$/gi,
+    /اسأل عن التوقعات.*$/gi,
+    /اسأل عن التوصيات.*$/gi,
+    /اسأل عن سيناريوهات.*$/gi,
   ];
   
   for (const pattern of roboticEndings) {
