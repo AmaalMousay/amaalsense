@@ -1832,3 +1832,13 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Create Context Builder - add indicators, trend, reasoning rules
 - [x] Integrate Semantic Understanding with ConversationalAI
 - [x] Write and pass unit tests (19 tests passing)
+
+
+## Phase 48: Decision Compression + Conversational Framing Layer
+- [x] Update AI prompts to start with verdict/summary (no "بصفتي AmalSense AI")
+- [x] Add Executive Summary in first 3 lines
+- [x] Transform from Analyst to Advisor style
+- [x] Add human-style intro templates (calm advisor, analytical, informative)
+- [x] End responses with thoughtful questions (not "Ask about predictions")
+- [x] Improve chat interface - expand/collapse functionality
+- [x] Add visual formatting for response sections

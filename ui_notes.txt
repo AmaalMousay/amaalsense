@@ -1,0 +1,7 @@
+UI Observations after updates:
+1. Two panels are now clearly separated with borders (accent/30 for left, primary/30 for right)
+2. Vertical divider is visible between panels
+3. Chat expansion controls are visible (14, 15, 16 buttons)
+4. Quick question buttons are working (17-20)
+5. The response still starts with "Based on the AmalSense engines' data" - needs to be more human
+6. Need to verify the prompts are using the new framing layer

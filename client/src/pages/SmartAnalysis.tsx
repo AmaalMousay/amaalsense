@@ -350,11 +350,11 @@ export default function SmartAnalysis() {
       
       {/* Main Content - Split Layout */}
       <main className="container py-6">
-        <div className={`grid grid-cols-1 ${isChatExpanded ? '' : 'lg:grid-cols-2'} gap-0 h-[calc(100vh-200px)]`}>
+        <div className={`flex ${isChatExpanded ? 'flex-col' : 'flex-row'} gap-0 h-[calc(100vh-200px)]`}>
           
           {/* Left Panel - Metrics & Indicators (hidden when chat expanded) */}
           {!isChatExpanded && (
-            <ContextMenu className="space-y-4 overflow-y-auto pr-4 bg-card/30 rounded-xl border border-border/50 p-4 mr-3">
+            <ContextMenu className="flex-1 space-y-4 overflow-y-auto pr-4 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-card/80 to-card/40 p-4 shadow-lg shadow-accent/5">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-primary" />
                 Analysis Results
@@ -487,10 +487,19 @@ export default function SmartAnalysis() {
             </ContextMenu>
           )}
           
+          {/* Vertical Divider - Visible separator between panels */}
+          {!isChatExpanded && (
+            <div className="flex flex-col items-center justify-center px-2">
+              <div className="w-1 h-full bg-gradient-to-b from-primary/30 via-primary/60 to-primary/30 rounded-full" />
+            </div>
+          )}
+          
           {/* Right Panel - AI Chat */}
           <div 
-            className={`flex flex-col bg-card/30 rounded-xl border border-border/50 p-4 ml-3 transition-all duration-300 ${isChatExpanded ? 'col-span-full ml-0' : ''}`}
-            style={{ height: isChatExpanded ? '100%' : `${chatHeight}%`, minHeight: '300px' }}
+            className={`flex flex-col rounded-xl border-2 border-primary/30 bg-gradient-to-br from-card/80 to-card/40 p-4 shadow-lg shadow-primary/5 transition-all duration-300 ${isChatExpanded ? 'w-full' : 'flex-1'}`}
+            style={{ 
+              minHeight: '350px'
+            }}
           >
           <ContextMenu className="flex flex-col h-full">
             {/* Chat Header with Controls */}
@@ -500,26 +509,29 @@ export default function SmartAnalysis() {
                 AmalSense AI
               </h2>
               <div className="flex items-center gap-2">
-                {/* Height adjustment buttons */}
-                <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+                {/* Height adjustment buttons - More visible */}
+                <div className="flex items-center gap-1 bg-primary/10 border border-primary/30 rounded-lg p-1">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 hover:bg-primary/20"
+                    className="h-8 w-8 hover:bg-primary/30 text-primary"
                     onClick={() => adjustChatHeight('up')}
-                    title="توسيع الدردشة"
+                    title="توسيع الدردشة ↑"
                   >
-                    <ChevronUp className="w-4 h-4" />
+                    <ChevronUp className="w-5 h-5" />
                   </Button>
-                  <span className="text-xs text-muted-foreground px-1">{chatHeight}%</span>
+                  <div className="flex flex-col items-center px-2">
+                    <span className="text-sm font-bold text-primary">{chatHeight}%</span>
+                    <span className="text-[10px] text-muted-foreground">حجم</span>
+                  </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 hover:bg-primary/20"
+                    className="h-8 w-8 hover:bg-primary/30 text-primary"
                     onClick={() => adjustChatHeight('down')}
-                    title="تصغير الدردشة"
+                    title="تصغير الدردشة ↓"
                   >
-                    <ChevronDown className="w-4 h-4" />
+                    <ChevronDown className="w-5 h-5" />
                   </Button>
                 </div>
                 {/* Full expand toggle */}
