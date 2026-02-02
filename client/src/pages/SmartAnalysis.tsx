@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { ContextMenu } from '@/components/ContextMenu';
 import { useLocation, useSearch } from 'wouter';
 import { ConversationSidebar } from '@/components/ConversationSidebar';
 import { Button } from '@/components/ui/button';
@@ -320,7 +321,7 @@ export default function SmartAnalysis() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
           
           {/* Left Panel - Metrics & Indicators */}
-          <div className="space-y-4 overflow-y-auto pr-2">
+          <ContextMenu className="space-y-4 overflow-y-auto pr-2">
             <h2 className="text-xl font-bold flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-primary" />
               Analysis Results
@@ -450,10 +451,10 @@ export default function SmartAnalysis() {
                 <p>Enter a topic to start analysis</p>
               </div>
             )}
-          </div>
+          </ContextMenu>
           
           {/* Right Panel - AI Chat */}
-          <div className="flex flex-col h-full border-l border-border/50 pl-6">
+          <ContextMenu className="flex flex-col h-full border-l border-border/50 pl-6">
             <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
               <MessageSquare className="w-5 h-5 text-primary" />
               AmalSense AI
@@ -566,7 +567,7 @@ export default function SmartAnalysis() {
                 Ask about predictions, recommendations, or "what if" scenarios
               </p>
             </div>
-          </div>
+          </ContextMenu>
         </div>
       </main>
     </div>
