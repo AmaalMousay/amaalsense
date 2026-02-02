@@ -16,13 +16,15 @@
 import { invokeLLMProvider, type LLMMessage } from './llmProvider';
 import {
   buildTemplateContext,
+  buildTemplateContextWithProfile,
   buildTemplateStyle,
   generateDynamicIntro,
   generateDynamicClosing,
   adjustContentLength,
   formatNumbers,
   type TemplateContext,
-  type TemplateStyle
+  type TemplateStyle,
+  type UserProfileContext
 } from './dynamicTemplate';
 
 export interface AnalysisData {
@@ -42,6 +44,8 @@ export interface AnalysisData {
   previousTopics?: string[];
   questionsAsked?: string[];
   userQuestion?: string;
+  // بروفايل المستخدم المحفوظ
+  userProfile?: UserProfileContext;
 }
 
 export interface CausalFactors {
@@ -372,16 +376,38 @@ export function generateClosingQuestion(data: AnalysisData): string {
  * بناء الرد الكامل بالهيكل الديناميكي
  */
 export function buildStructuredResponse(data: AnalysisData): StructuredResponse {
-  // بناء السياق الديناميكي
-  const templateContext = buildTemplateContext(
-    data.turnCount || 1,
-    data.previousTopics || [],
-    data.topic,
-    data.questionsAsked || [],
-    data.cfi,
-    data.gmi,
-    data.userQuestion
-  );
+  // بناء السياق الديناميكي - مع دعم User Profile
+  let templateContext: TemplateContext;
+  
+  if (data.userProfile) {
+    // استخدام بروفايل المستخدم المحفوظ
+    templateContext = buildTemplateContextWithProfile(
+      data.turnCount || 1,
+      data.previousTopics || [],
+      data.topic,
+      data.questionsAsked || [],
+      data.cfi,
+      data.gmi,
+      data.userQuestion,
+      data.userProfile
+    );
+    console.log('[ResponseBuilder] Using saved user profile:', {
+      savedLevel: data.userProfile.userLevel,
+      conversationCount: data.userProfile.conversationCount,
+      messageCount: data.userProfile.messageCount
+    });
+  } else {
+    // الطريقة القديمة - اكتشاف المستوى من السياق
+    templateContext = buildTemplateContext(
+      data.turnCount || 1,
+      data.previousTopics || [],
+      data.topic,
+      data.questionsAsked || [],
+      data.cfi,
+      data.gmi,
+      data.userQuestion
+    );
+  }
   
   // بناء أسلوب القالب
   const templateStyle = buildTemplateStyle(templateContext);

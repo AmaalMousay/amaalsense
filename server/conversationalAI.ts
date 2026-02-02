@@ -22,6 +22,7 @@ import { MultiTurnContext } from './multiTurnContext';
 import { restructureAIResponse, compressResponse, type CompressedResponse } from './decisionCompressor';
 import { buildStructuredResponse, type AnalysisData as ResponseAnalysisData } from './responseBuilder';
 import { analyzeNewsForCauses, buildWhySection, type NewsItem } from './causalExplainability';
+import { getOrCreateProfile, updateProfileFromInteraction, type UserProfileData } from './userProfileService';
 
 // Types for the conversational AI
 export interface AnalysisContext {
@@ -34,6 +35,7 @@ export interface AnalysisContext {
   confidence: number;
   detectedCountry?: string;
   sources?: string[];
+  userId?: number;  // لتحميل بروفايل المستخدم
 }
 
 export interface ConversationMessage {

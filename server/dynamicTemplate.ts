@@ -351,10 +351,15 @@ export function buildTemplateContext(
   questionsAsked: string[],
   cfi: number,
   gmi: number,
-  userQuestion?: string
+  userQuestion?: string,
+  savedUserLevel?: UserLevel  // مستوى المستخدم المحفوظ من قاعدة البيانات
 ): TemplateContext {
+  // إذا كان المستوى محفوظاً، نستخدمه مباشرة
+  // وإلا نكتشفه من السياق
+  const userLevel = savedUserLevel || detectUserLevel(turnCount, questionsAsked, previousTopics);
+  
   return {
-    userLevel: detectUserLevel(turnCount, questionsAsked, previousTopics),
+    userLevel,
     conversationDepth: determineConversationDepth(turnCount, previousTopics, currentTopic),
     emotionalState: determineEmotionalState(cfi, gmi, userQuestion),
     previousTopics,
@@ -362,9 +367,58 @@ export function buildTemplateContext(
   };
 }
 
+/**
+ * بناء السياق مع بروفايل المستخدم المحفوظ
+ */
+export interface UserProfileContext {
+  userLevel: UserLevel;
+  conversationCount: number;
+  messageCount: number;
+  preferredTopics: string[];
+  preferredResponseLength: 'short' | 'medium' | 'detailed';
+}
+
+export function buildTemplateContextWithProfile(
+  turnCount: number,
+  previousTopics: string[],
+  currentTopic: string,
+  questionsAsked: string[],
+  cfi: number,
+  gmi: number,
+  userQuestion: string | undefined,
+  userProfile: UserProfileContext
+): TemplateContext {
+  // استخدام المستوى المحفوظ من البروفايل
+  // مع إمكانية الترقية إذا أظهر المستخدم مستوى أعلى في هذه الجلسة
+  const detectedLevel = detectUserLevel(turnCount, questionsAsked, previousTopics);
+  
+  // اختيار المستوى الأعلى بين المحفوظ والمكتشف
+  const levelOrder: UserLevel[] = ['beginner', 'intermediate', 'advanced'];
+  const savedIndex = levelOrder.indexOf(userProfile.userLevel);
+  const detectedIndex = levelOrder.indexOf(detectedLevel);
+  const userLevel = levelOrder[Math.max(savedIndex, detectedIndex)];
+  
+  // تعديل عمق المحادثة بناءً على تاريخ المستخدم
+  let conversationDepth = determineConversationDepth(turnCount, previousTopics, currentTopic);
+  
+  // إذا كان المستخدم لديه تاريخ طويل، نعتبره في حوار عميق
+  if (userProfile.conversationCount >= 5 && turnCount >= 2) {
+    conversationDepth = 'deep_conversation';
+  }
+  
+  return {
+    userLevel,
+    conversationDepth,
+    emotionalState: determineEmotionalState(cfi, gmi, userQuestion),
+    previousTopics: [...userProfile.preferredTopics.slice(0, 5), ...previousTopics],
+    turnCount: turnCount + userProfile.messageCount  // إجمالي الرسائل
+  };
+}
+
 export default {
   detectUserLevel,
   determineConversationDepth,
+  buildTemplateContextWithProfile,
   determineEmotionalState,
   buildTemplateStyle,
   generateDynamicIntro,

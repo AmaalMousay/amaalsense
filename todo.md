@@ -1936,3 +1936,21 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Add emotionalState awareness (calm/anxious/urgent)
 - [x] Integrate with Response Builder for dynamic output
 - [x] Ensure responses adapt to context without being robotic
+
+
+## Phase 61: User Profile Storage - Persistent User Context
+- [ ] Add user_profiles table to database schema
+- [ ] Create UserProfileService for profile management
+- [ ] Store userLevel, preferredTopics, conversationCount
+- [ ] Integrate with Dynamic Template for personalized responses
+- [ ] Auto-update profile based on user interactions
+
+
+## Phase 61: User Profile Storage - Persistent User Context
+- [x] Add user_profiles table to database
+- [x] Create UserProfileService for profile management
+- [x] Store user level (beginner/intermediate/advanced)
+- [x] Store preferred topics and countries of interest
+- [x] Track technical terms usage for level detection
+- [x] Integrate with Dynamic Template for personalized responses
+- [x] Auto-update profile on each interaction

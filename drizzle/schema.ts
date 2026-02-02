@@ -841,3 +841,41 @@ export const aiConversationMessages = mysqlTable("ai_conversation_messages", {
 
 export type AIConversationMessage = typeof aiConversationMessages.$inferSelect;
 export type InsertAIConversationMessage = typeof aiConversationMessages.$inferInsert;
+
+
+/**
+ * User Profiles - stores persistent user context for personalized responses
+ * Tracks user level, preferred topics, and interaction patterns
+ */
+export const userProfiles = mysqlTable("user_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to user */
+  userId: int("userId").notNull().unique(),
+  /** User expertise level: beginner, intermediate, advanced */
+  userLevel: mysqlEnum("userLevel", ["beginner", "intermediate", "advanced"]).default("beginner").notNull(),
+  /** Total conversation count */
+  conversationCount: int("conversationCount").default(0).notNull(),
+  /** Total message count */
+  messageCount: int("messageCount").default(0).notNull(),
+  /** Preferred topics JSON array */
+  preferredTopics: text("preferredTopics"),
+  /** Technical terms used count (for level detection) */
+  technicalTermsUsed: int("technicalTermsUsed").default(0).notNull(),
+  /** Preferred response length: short, medium, detailed */
+  preferredResponseLength: mysqlEnum("preferredResponseLength", ["short", "medium", "detailed"]).default("medium"),
+  /** Preferred language: ar, en */
+  preferredLanguage: varchar("preferredLanguage", { length: 5 }).default("ar"),
+  /** Last detected emotional state */
+  lastEmotionalState: varchar("lastEmotionalState", { length: 32 }),
+  /** Countries of interest JSON array */
+  countriesOfInterest: text("countriesOfInterest"),
+  /** Last active topic */
+  lastActiveTopic: varchar("lastActiveTopic", { length: 255 }),
+  /** Profile confidence score (how confident we are in the profile) */
+  profileConfidence: int("profileConfidence").default(50).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type InsertUserProfile = typeof userProfiles.$inferInsert;
