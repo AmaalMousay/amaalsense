@@ -1877,3 +1877,7 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Fix/hide resize controls on mobile
 - [x] Fix Arabic text overlap with "Analyzing:" label
 - [x] Improve spacing and borders for mobile view
+
+
+## Phase 54: Context Menu Improvement
+- [x] Show secondary popup with Copy option after Select All is clicked

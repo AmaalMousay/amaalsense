@@ -11,8 +11,10 @@ interface MenuPosition {
   y: number;
 }
 
+type MenuState = 'closed' | 'main' | 'afterSelect';
+
 export function ContextMenu({ children, className = '' }: ContextMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [menuState, setMenuState] = useState<MenuState>('closed');
   const [position, setPosition] = useState<MenuPosition>({ x: 0, y: 0 });
   const [copied, setCopied] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -27,7 +29,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
     const y = Math.min(e.clientY, window.innerHeight - 150);
     
     setPosition({ x, y });
-    setIsOpen(true);
+    setMenuState('main');
     setCopied(false);
   }, []);
 
@@ -35,17 +37,17 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
+        setMenuState('closed');
       }
     };
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsOpen(false);
+        setMenuState('closed');
       }
     };
 
-    if (isOpen) {
+    if (menuState !== 'closed') {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
     }
@@ -54,9 +56,9 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isOpen]);
+  }, [menuState]);
 
-  // Select All function
+  // Select All function - now shows secondary menu
   const handleSelectAll = useCallback(() => {
     if (containerRef.current) {
       const selection = window.getSelection();
@@ -65,7 +67,8 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
       selection?.removeAllRanges();
       selection?.addRange(range);
     }
-    setIsOpen(false);
+    // Show secondary menu with Copy option
+    setMenuState('afterSelect');
   }, []);
 
   // Copy function
@@ -78,12 +81,12 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
         await navigator.clipboard.writeText(selectedText);
         setCopied(true);
         setTimeout(() => {
-          setIsOpen(false);
+          setMenuState('closed');
           setCopied(false);
         }, 500);
       } catch (err) {
         console.error('Failed to copy:', err);
-        setIsOpen(false);
+        setMenuState('closed');
       }
     } else {
       // If nothing selected, select all and copy
@@ -93,12 +96,12 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
           await navigator.clipboard.writeText(text);
           setCopied(true);
           setTimeout(() => {
-            setIsOpen(false);
+            setMenuState('closed');
             setCopied(false);
           }, 500);
         } catch (err) {
           console.error('Failed to copy:', err);
-          setIsOpen(false);
+          setMenuState('closed');
         }
       }
     }
@@ -123,7 +126,12 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
     } catch (err) {
       console.error('Failed to paste:', err);
     }
-    setIsOpen(false);
+    setMenuState('closed');
+  }, []);
+
+  // Go back to main menu
+  const handleBack = useCallback(() => {
+    setMenuState('main');
   }, []);
 
   return (
@@ -134,8 +142,8 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
     >
       {children}
       
-      {/* Context Menu */}
-      {isOpen && (
+      {/* Main Context Menu */}
+      {menuState === 'main' && (
         <div
           ref={menuRef}
           className="fixed z-[9999] bg-popover border border-border rounded-lg shadow-lg py-1 min-w-[180px] animate-in fade-in-0 zoom-in-95 duration-100"
@@ -150,7 +158,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             <MousePointerClick className="w-4 h-4" />
-            <span>Select All</span>
+            <span>تحديد الكل</span>
             <span className="ml-auto text-xs text-muted-foreground">Ctrl+A</span>
           </button>
           
@@ -167,7 +175,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             ) : (
               <Copy className="w-4 h-4" />
             )}
-            <span>{copied ? 'Copied!' : 'Copy'}</span>
+            <span>{copied ? 'تم النسخ!' : 'نسخ'}</span>
             <span className="ml-auto text-xs text-muted-foreground">Ctrl+C</span>
           </button>
           
@@ -177,8 +185,59 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             <ClipboardPaste className="w-4 h-4" />
-            <span>Paste</span>
+            <span>لصق</span>
             <span className="ml-auto text-xs text-muted-foreground">Ctrl+V</span>
+          </button>
+        </div>
+      )}
+
+      {/* Secondary Menu - After Select All */}
+      {menuState === 'afterSelect' && (
+        <div
+          ref={menuRef}
+          className="fixed z-[9999] bg-popover border border-border rounded-lg shadow-lg py-1 min-w-[200px] animate-in fade-in-0 zoom-in-95 duration-100"
+          style={{
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+          }}
+        >
+          {/* Header */}
+          <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border flex items-center gap-2">
+            <Check className="w-3 h-3 text-green-500" />
+            <span>تم تحديد النص</span>
+          </div>
+          
+          {/* Copy - Main action */}
+          <button
+            onClick={handleCopy}
+            className="w-full px-4 py-3 text-sm text-left flex items-center gap-3 hover:bg-primary/20 hover:text-primary transition-colors bg-primary/10"
+          >
+            {copied ? (
+              <Check className="w-5 h-5 text-green-500" />
+            ) : (
+              <Copy className="w-5 h-5 text-primary" />
+            )}
+            <span className="font-medium">{copied ? 'تم النسخ!' : 'نسخ النص المحدد'}</span>
+            <span className="ml-auto text-xs text-muted-foreground">Ctrl+C</span>
+          </button>
+          
+          {/* Divider */}
+          <div className="h-px bg-border my-1" />
+          
+          {/* Back to main menu */}
+          <button
+            onClick={handleBack}
+            className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors text-muted-foreground"
+          >
+            <span>← رجوع</span>
+          </button>
+          
+          {/* Cancel */}
+          <button
+            onClick={() => setMenuState('closed')}
+            className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors text-muted-foreground"
+          >
+            <span>إلغاء</span>
           </button>
         </div>
       )}
