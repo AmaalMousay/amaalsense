@@ -19,6 +19,7 @@ import { executeEngines, formatResultsForLLM, type EngineResults } from './engin
 import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from '../llmProvider';
 import { buildRAGContext, formatRAGForPrompt, storeForRAG, storeConversationForRAG } from '../knowledge/ragSystem';
 import { buildStructuredResponse, type AnalysisData } from '../responseBuilder';
+import { fetchEconomicData, type EconomicData } from '../economicDataService';
 
 // Orchestration request
 export interface OrchestrationRequest {
@@ -209,6 +210,18 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
   const emotionData = engineResults.emotion || { dominantEmotion: 'neutral' };
   const metaData = engineResults.meta || { confidence: 0.7 };
   
+  // Step 7.5: Fetch economic data for traders
+  let economicData: EconomicData | undefined;
+  try {
+    economicData = await fetchEconomicData();
+    console.log('[Orchestrator] Economic data fetched:', {
+      currencies: economicData.currencies.length,
+      commodities: economicData.commodities.length,
+    });
+  } catch (error) {
+    console.error('[Orchestrator] Failed to fetch economic data:', error);
+  }
+  
   // Build analysis data for Response Builder
   const analysisData: AnalysisData = {
     topic,
@@ -223,6 +236,7 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
     userQuestion: request.question,
     turnCount: (request.conversationHistory?.length || 0) + 1,
     previousTopics: [],
+    economicData,  // البيانات الاقتصادية للمتداولين
   };
   
   // Build structured response (100% guaranteed structure by code)

@@ -26,6 +26,12 @@ import {
   type TemplateStyle,
   type UserProfileContext
 } from './dynamicTemplate';
+import {
+  fetchEconomicData,
+  analyzeEconomicSentiment,
+  formatEconomicDataForResponse,
+  type EconomicData
+} from './economicDataService';
 
 export interface AnalysisData {
   topic: string;
@@ -46,6 +52,8 @@ export interface AnalysisData {
   userQuestion?: string;
   // بروفايل المستخدم المحفوظ
   userProfile?: UserProfileContext;
+  // البيانات الاقتصادية
+  economicData?: EconomicData;
 }
 
 export interface CausalFactors {
@@ -628,9 +636,14 @@ ${decisionSignalResult.text}
 
 `;
     fullResponse += whySection;
-    fullResponse += `---
-
-**التوقع الزمني:**
+    
+    // إضافة البيانات الاقتصادية إذا وجدت
+    if (data.economicData) {
+      const economicSection = formatEconomicDataForResponse(data.economicData);
+      fullResponse += economicSection + '\n\n---\n\n';
+    }
+    
+    fullResponse += `**التوقع الزمني:**
 ${timeforecast}
 
 `;
