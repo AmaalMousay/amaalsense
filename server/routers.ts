@@ -2358,8 +2358,9 @@ Please verify the payment and confirm in the admin panel.
         });
         
         // Use Orchestrator for intelligent AI response
+        // Pass the user's original question directly (not wrapped in English)
         const orchestrationResult = await orchestrate({
-          question: `Analyze the collective emotional state for: ${input.topic}`,
+          question: input.topic,
           topic: input.topic,
           country: detectedCountry || undefined,
         });
