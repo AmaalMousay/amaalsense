@@ -450,6 +450,12 @@ function generateFallbackCauses(topic: string, indicators?: { gmi?: number; cfi?
 // EXPORTS
 // ============================================
 
+// Import new components
+import { SessionContextManager, getFullContext } from './sessionContext';
+import { DynamicResponseEngine, determineResponseStructure } from './dynamicResponseEngine';
+import { NarrativeStyleEngine, generateStyleInstructions, applyConsultantStyle } from './narrativeStyleEngine';
+import { EnhancedPipeline, executeEnhancedPipeline } from './enhancedPipeline';
+
 export {
   // Layer 2
   filterSignals,
@@ -478,5 +484,22 @@ export {
   getConfidenceIndicator,
   formatAssessmentForDisplay,
   shouldShowConfidence,
-  type MetacognitiveAssessment
+  type MetacognitiveAssessment,
+  
+  // New Components - Session Context
+  SessionContextManager,
+  getFullContext,
+  
+  // New Components - Dynamic Response
+  DynamicResponseEngine,
+  determineResponseStructure,
+  
+  // New Components - Narrative Style
+  NarrativeStyleEngine,
+  generateStyleInstructions,
+  applyConsultantStyle,
+  
+  // New Components - Enhanced Pipeline
+  EnhancedPipeline,
+  executeEnhancedPipeline
 };
