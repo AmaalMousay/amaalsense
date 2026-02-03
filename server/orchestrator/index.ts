@@ -27,6 +27,7 @@ import {
   type AwarenessResponse,
   type RealNewsData
 } from '../cognitiveArchitecture/awarenessResponseBuilder';
+import { runIntelligentPipeline } from '../cognitiveArchitecture/intelligentPipeline';
 
 // Orchestration request
 export interface OrchestrationRequest {
@@ -187,8 +188,8 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
   const topic = request.topic || intent.context.topic || request.question;
   const country = request.country || intent.context.country;
   
-  // Step 3: Execute required engines
-  const engineResults = await executeEngines(intent, topic, country);
+  // Step 3: Execute required engines with SMART QUERY
+  const engineResults = await executeEngines(intent, topic, country, request.question);
   
   console.log('[Orchestrator] Engines executed:', {
     enginesUsed: engineResults.enginesUsed,
@@ -311,48 +312,86 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
     } : undefined,
   };
   
-  // Step 8: Build response using Awareness Response Builder (What → Why → So what)
-  // NOW WITH REAL NEWS DATA - causes come from actual news!
+  // Step 8: Build response using INTELLIGENT PIPELINE
+  // This is the new system that:
+  // 1. Interprets news psychologically (not just lists them)
+  // 2. Makes decisive judgments (not "متذبذب")
+  // 3. Generates fluent responses (not templates)
+  // 4. Creates relevant follow-up questions
   
-  // Convert engineResults.realNews to RealNewsData format
-  const realNewsData: RealNewsData | undefined = engineResults.realNews ? {
-    items: engineResults.realNews.items.map(item => ({
-      title: item.title,
-      description: item.description,
-      source: item.source,
-      url: item.url,
-      publishedAt: item.publishedAt
-    })),
-    topKeywords: engineResults.realNews.topKeywords,
-    topSources: engineResults.realNews.topSources
-  } : undefined;
+  let intelligentResponse: string;
   
-  console.log('[Orchestrator] Real news data:', {
-    hasRealNews: !!realNewsData,
-    newsCount: realNewsData?.items.length || 0,
-    topKeywords: realNewsData?.topKeywords.slice(0, 5) || [],
-  });
+  // Check if we have real news data
+  const hasRealNews = engineResults.realNews && engineResults.realNews.items.length > 0;
   
-  const awarenessResponse = buildAwarenessResponse(
-    request.question,
-    questionAnalysis.cleanTopic || topic,
-    {
-      fear: dcftData.cfi || 50,
-      hope: dcftData.hri || 50,
-      mood: dcftData.gmi || 0
-    },
-    questionAnalysis.intent,
-    realNewsData  // NEW: Pass real news data!
-  );
+  if (hasRealNews) {
+    console.log('[Orchestrator] Using Intelligent Pipeline with', engineResults.realNews!.items.length, 'news items');
+    
+    try {
+      // Run the intelligent pipeline
+      const pipelineResult = await runIntelligentPipeline({
+        question: request.question,
+        topic: questionAnalysis.cleanTopic || topic,
+        country: questionAnalysis.country || country,
+        newsItems: engineResults.realNews!.items.map(item => ({
+          title: item.title,
+          description: item.description,
+          source: item.source
+        })),
+        emotionData: {
+          fear: dcftData.cfi || 50,
+          hope: dcftData.hri || 50,
+          anger: 0, // TODO: Get from emotion engine
+          gmi: dcftData.gmi || 0,
+          cfi: dcftData.cfi || 50,
+          hri: dcftData.hri || 50
+        }
+      });
+      
+      intelligentResponse = pipelineResult.formattedResponse;
+      
+      console.log('[Orchestrator] Intelligent Pipeline complete:', {
+        confidence: pipelineResult.metadata.confidence,
+        dominantEmotion: pipelineResult.decision.dominantEmotion,
+        emotionType: pipelineResult.decision.emotionType,
+        followUpQuestions: pipelineResult.response.followUpQuestions.length
+      });
+      
+    } catch (error) {
+      console.error('[Orchestrator] Intelligent Pipeline failed, falling back:', error);
+      // Fallback to old system
+      const realNewsData: RealNewsData = {
+        items: engineResults.realNews!.items,
+        topKeywords: engineResults.realNews!.topKeywords,
+        topSources: engineResults.realNews!.topSources
+      };
+      const awarenessResponse = buildAwarenessResponse(
+        request.question,
+        questionAnalysis.cleanTopic || topic,
+        { fear: dcftData.cfi || 50, hope: dcftData.hri || 50, mood: dcftData.gmi || 0 },
+        questionAnalysis.intent,
+        realNewsData
+      );
+      intelligentResponse = formatAwarenessResponse(awarenessResponse);
+    }
+  } else {
+    console.log('[Orchestrator] No real news data, using fallback response builder');
+    // Fallback when no news data
+    const awarenessResponse = buildAwarenessResponse(
+      request.question,
+      questionAnalysis.cleanTopic || topic,
+      { fear: dcftData.cfi || 50, hope: dcftData.hri || 50, mood: dcftData.gmi || 0 },
+      questionAnalysis.intent,
+      undefined
+    );
+    intelligentResponse = formatAwarenessResponse(awarenessResponse);
+  }
   
-  // Format the awareness response
-  const intelligentResponse = formatAwarenessResponse(awarenessResponse);
-  
-  console.log('[Orchestrator] Awareness response built:', {
+  console.log('[Orchestrator] Response built:', {
     intent: questionAnalysis.intent,
     responseType: questionAnalysis.expectedResponseType,
     responseLength: intelligentResponse.length,
-    topicDomain: awarenessResponse.why.context.substring(0, 50),
+    hasRealNews: hasRealNews,
   });
   
   const processingTimeMs = Date.now() - startTime;

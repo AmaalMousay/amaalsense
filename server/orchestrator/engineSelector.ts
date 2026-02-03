@@ -100,7 +100,8 @@ export interface EngineResults {
 export async function executeEngines(
   intent: ClassifiedIntent,
   topic: string,
-  country?: string
+  country?: string,
+  question?: string  // NEW: Pass the original question for smart query building
 ): Promise<EngineResults> {
   const startTime = Date.now();
   const results: EngineResults = {
@@ -108,11 +109,14 @@ export async function executeEngines(
     enginesUsed: [],
   };
   
-  // FIRST: Fetch real news data (this is the foundation)
+  // FIRST: Fetch real news data with SMART QUERY (this is the foundation)
   try {
-    const realNewsData = await fetchRealNewsData(topic, country);
+    const realNewsData = await fetchRealNewsData(topic, country, question);
     results.realNews = realNewsData;
-    console.log(`[EngineSelector] Fetched ${realNewsData.items.length} real news items`);
+    console.log(`[EngineSelector] Fetched ${realNewsData.items.length} relevant news items`);
+    if (realNewsData.smartQuery) {
+      console.log(`[EngineSelector] Smart query used:`, realNewsData.smartQuery.primaryTerms);
+    }
   } catch (error) {
     console.error('[EngineSelector] Failed to fetch real news:', error);
   }
@@ -536,42 +540,64 @@ Historical Trend:
 /**
  * Fetch real news data from multiple sources
  * This is the foundation for the Why Layer - real causes from real data
+ * 
+ * IMPROVED: Now uses Smart Query Builder to ensure relevant results
  */
 async function fetchRealNewsData(
   topic: string,
-  country?: string
+  country?: string,
+  question?: string
 ): Promise<{
   items: RealNewsItem[];
   topKeywords: string[];
   topSources: string[];
+  smartQuery?: import('../cognitiveArchitecture/smartQueryBuilder').SmartQuery;
 }> {
   const items: RealNewsItem[] = [];
   const allSources: string[] = [];
   
   try {
-    // Import news services
+    // Import services
     const { searchGNews, fetchGNewsHeadlines } = await import('../gnewsService');
-    const { fetchGoogleNewsByTopic, fetchGoogleNews } = await import('../googleRssService');
-    const { fetchAllMajorNews } = await import('../majorNewsRssService');
+    const { fetchGoogleNewsByTopic } = await import('../googleRssService');
+    const { buildSmartQuery, filterRelevantNews } = await import('../cognitiveArchitecture/smartQueryBuilder');
     
-    // Fetch from multiple sources in parallel
-    const [gnewsResults, googleResults, majorResults] = await Promise.all([
-      // GNews API
-      topic 
-        ? searchGNews({ query: topic, country, max: 10 })
+    // Build smart query from question
+    const smartQuery = question ? await buildSmartQuery(question) : null;
+    
+    // Use smart query terms or fallback to topic
+    const searchTerms = smartQuery 
+      ? smartQuery.searchQueries.arabic[0] || topic
+      : topic;
+    
+    const englishTerms = smartQuery
+      ? smartQuery.searchQueries.english[0] || ''
+      : '';
+    
+    console.log('[fetchRealNewsData] Smart search terms:', { searchTerms, englishTerms });
+    
+    // Fetch from multiple sources in parallel - ALL with search terms!
+    const [gnewsArabic, gnewsEnglish, googleResults] = await Promise.all([
+      // GNews API - Arabic
+      searchTerms 
+        ? searchGNews({ query: searchTerms, country: smartQuery?.country || country, max: 15, language: 'ar' })
         : fetchGNewsHeadlines({ country, max: 10 }),
       
-      // Google RSS
-      topic
-        ? fetchGoogleNewsByTopic(topic, 10)
-        : fetchGoogleNews(10),
+      // GNews API - English (if we have English terms)
+      englishTerms
+        ? searchGNews({ query: englishTerms, max: 10, language: 'en' })
+        : Promise.resolve([]),
       
-      // Major News (BBC, Reuters, Al Jazeera, CNN)
-      fetchAllMajorNews(10)
+      // Google RSS - with search terms
+      searchTerms
+        ? fetchGoogleNewsByTopic(searchTerms, 15)
+        : Promise.resolve([])
+      
+      // REMOVED: fetchAllMajorNews - it was fetching irrelevant general news!
     ]);
     
-    // Convert GNews results
-    for (const article of gnewsResults) {
+    // Convert GNews Arabic results
+    for (const article of gnewsArabic) {
       items.push({
         title: article.title,
         description: article.description || '',
@@ -580,6 +606,18 @@ async function fetchRealNewsData(
         publishedAt: new Date(article.publishedAt)
       });
       allSources.push(article.source || 'GNews');
+    }
+    
+    // Convert GNews English results
+    for (const article of gnewsEnglish) {
+      items.push({
+        title: article.title,
+        description: article.description || '',
+        source: article.source || 'GNews EN',
+        url: article.url,
+        publishedAt: new Date(article.publishedAt)
+      });
+      allSources.push(article.source || 'GNews EN');
     }
     
     // Convert Google RSS results
@@ -594,35 +632,34 @@ async function fetchRealNewsData(
       allSources.push(article.source || 'Google News');
     }
     
-    // Convert Major News results
-    for (const article of majorResults) {
-      items.push({
-        title: article.title,
-        description: article.description || '',
-        source: article.source,
-        url: article.link,
-        publishedAt: new Date(article.pubDate)
-      });
-      allSources.push(article.source);
-    }
+    // Filter to keep only relevant news
+    const filteredItems = smartQuery 
+      ? filterRelevantNews(items, smartQuery)
+      : items;
     
-    console.log(`[fetchRealNewsData] Total: ${items.length} items from ${new Set(allSources).size} sources`);
+    console.log(`[fetchRealNewsData] Total: ${items.length} items, Relevant: ${filteredItems.length} from ${new Set(allSources).size} sources`);
+    
+    // Extract top keywords from filtered titles
+    const topKeywords = extractTopKeywords(filteredItems.map(i => i.title).join(' '));
+    
+    // Get unique sources
+    const topSources = Array.from(new Set(allSources)).slice(0, 10);
+    
+    return {
+      items: filteredItems.length > 0 ? filteredItems : items.slice(0, 10),
+      topKeywords,
+      topSources,
+      smartQuery: smartQuery || undefined
+    };
     
   } catch (error) {
     console.error('[fetchRealNewsData] Error fetching news:', error);
+    return {
+      items: [],
+      topKeywords: [],
+      topSources: []
+    };
   }
-  
-  // Extract top keywords from titles
-  const topKeywords = extractTopKeywords(items.map(i => i.title).join(' '));
-  
-  // Get unique sources
-  const topSources = Array.from(new Set(allSources)).slice(0, 10);
-  
-  return {
-    items,
-    topKeywords,
-    topSources
-  };
 }
 
 /**

@@ -2444,3 +2444,36 @@ AmalSense is a **digital simulation of a mind** that feels, understands, thinks,
 بعد: fear=70 → من الأخبار "60% من العناوين تذكر إغلاق بنوك"
 ```
 
+
+
+## Phase 51: إصلاح شامل - نظام واعي وفاهم
+
+### المشاكل المكتشفة
+1. **Query Builder مكسور** - يجلب أخبار غير متعلقة بالسؤال
+2. **Awareness Layer يعمل كـ Logger** - يسرد عناوين بدل تفسيرها
+3. **Decision Layer متردد** - لا يحسم (خوف أم غضب؟)
+4. **ردود مقيدة بقوالب** - ليست طلقة
+5. **أسئلة ختامية عامة** - غير مرتبطة بالموضوع
+
+### الحل المطلوب
+- [x] Query Builder ذكي - يستخرج كلمات البحث من السؤال (smartQueryBuilder.ts)
+- [x] LLM Interpreter - يحول الأخبار إلى أسباب نفسية اجتماعية (llmInterpreter.ts)
+- [x] Decision Engine - عقل يحسم ويرجح (makeEmotionalDecision)
+- [x] Response Builder طلق - LLM يكتب الرد كاملاً بدون قوالب (fluentResponseBuilder.ts)
+- [x] 3 أسئلة ختامية مرتبطة بالموضوع (generateFollowUpQuestions)
+- [x] Intelligent Pipeline - ربط كل المكونات (intelligentPipeline.ts)
+- [x] 420 اختبار ناجح
+
+### الفلسفة الجديدة
+```
+قبل:
+سؤال → Query عشوائي → أخبار غير متعلقة → سرد عناوين → رد متردد
+
+بعد:
+سؤال → Query ذكي (كلمات من السؤال)
+      → أخبار متعلقة فعلاً
+      → LLM يفسر الأخبار كأسباب نفسية
+      → عقل يحسم (خوف > غضب)
+      → رد طلق بدون قوالب
+      → 3 أسئلة ختامية ذكية
+```
