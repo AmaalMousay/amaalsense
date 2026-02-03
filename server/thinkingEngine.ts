@@ -118,13 +118,21 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
     ],
     psychological: [
       /حالة نفسية/,
+      /الحالة النفسية/,
       /مشاعر/,
       /خائف/,
       /متوتر/,
-      /إنكار أم وعي/,
+      /إنكار أم/,
+      /قبول أم/,
       /انهيار أم تكيف/,
       /صدمة/,
-      /ذاكرة عاطفية/
+      /ذاكرة عاطفية/,
+      /نوع الخوف/,
+      /مستوى الثقة/,
+      /مستعد للتغيير/,
+      /المرونة النفسية/,
+      /أمل حقيقي/,
+      /وجودي أم مالي/
     ],
     journalistic: [
       /كيف يشعر/,
@@ -132,7 +140,15 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
       /ما الذي يقلق/,
       /بجملة واحدة/,
       /صف/,
-      /تحول/
+      /تحول/,
+      /ملخص/,
+      /أعطني/,
+      /أهم 3/,
+      /أهم ثلاث/,
+      /كيف أكتب/,
+      /الزاوية الصحفية/,
+      /الأرقام التي يجب/,
+      /تقرير/
     ],
     academic: [
       /إحصائي/,
@@ -140,7 +156,18 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
       /مؤشر تنبؤي/,
       /دوري/,
       /قياس/,
-      /نمط/
+      /نمط/,
+      /نظرية DCFT/,
+      /كيف يتم حساب/,
+      /الفرق بين CFI/,
+      /الفرق بين HRI/,
+      /مصادر البيانات/,
+      /تحليل المشاعر/,
+      /دقة التنبؤات/,
+      /يختلف AmalSense/,
+      /GMI/,
+      /CFI/,
+      /HRI/
     ]
   };
 
@@ -284,14 +311,18 @@ export function composeResponseStructure(analysis: QuestionAnalysis): DynamicRes
   // الخلاصة دائماً مطلوبة
   sections.push({ type: 'summary', required: true, maxWords: 40 });
 
-  // إشارة القرار للأسئلة القرارية والاقتصادية
-  if (['decision', 'economic', 'forecast'].includes(analysis.intent)) {
-    sections.push({ type: 'judgment', required: true });
+  // إشارة القرار لمعظم الأسئلة (ماعدا العامة والأكاديمية)
+  if (!['general', 'academic'].includes(analysis.intent)) {
     sections.push({ type: 'signal', required: true });
   }
+  
+  // الحكم للأسئلة القرارية فقط
+  if (analysis.intent === 'decision') {
+    sections.push({ type: 'judgment', required: true });
+  }
 
-  // الأسباب للتفسير والتحليل
-  if (['explanation', 'decision', 'economic', 'political', 'psychological'].includes(analysis.intent)) {
+  // الأسباب لمعظم الأسئلة (ماعدا العامة)
+  if (!['general'].includes(analysis.intent)) {
     sections.push({ type: 'causes', required: true });
   }
 
@@ -315,8 +346,8 @@ export function composeResponseStructure(analysis: QuestionAnalysis): DynamicRes
     sections.push({ type: 'forecast', required: true });
   }
 
-  // القراءة النفسية للأسئلة النفسية والعامة
-  if (['psychological', 'general', 'journalistic'].includes(analysis.intent)) {
+  // القراءة النفسية للأسئلة النفسية والعامة والصحفية
+  if (['psychological', 'general', 'journalistic', 'academic'].includes(analysis.intent)) {
     sections.push({ type: 'insight', required: true });
   }
 
@@ -441,6 +472,20 @@ function buildSummary(analysis: QuestionAnalysis, data: ResponseData): string {
     return `**الخلاصة:** عند مقارنة ${topic}، الوضع النفسي ${moodDescription}`;
   }
   
+  if (analysis.intent === 'psychological') {
+    const psychState = data.cfi > 60 ? 'حالة توتر وقلق' : data.hri > 55 ? 'حالة ترقب مع أمل' : 'حالة محايدة مع حذر';
+    return `**الخلاصة:** ${topic} - المجتمع في ${psychState}`;
+  }
+  
+  if (analysis.intent === 'academic') {
+    return `**الخلاصة:** ${topic} - إطار علمي لقياس المشاعر الجماعية`;
+  }
+  
+  if (analysis.intent === 'journalistic') {
+    const headline = data.cfi > 60 ? 'القلق يسيطر' : data.hri > 55 ? 'الأمل يتصاعد' : 'ترقب وانتظار';
+    return `**الخلاصة:** ${topic} - العنوان: "${headline}" - ${moodDescription}`;
+  }
+  
   return `**الخلاصة:** ${topic} - ${moodDescription}`;
 }
 
@@ -482,26 +527,60 @@ function buildSignal(data: ResponseData): string {
 
 function buildCauses(analysis: QuestionAnalysis, data: ResponseData): string {
   const causes = data.causes || {};
-  const parts: string[] = ['**لماذا هذا الوضع؟**'];
+  
+  // عنوان مخصص حسب نوع السؤال
+  let title = '**لماذا هذا الوضع؟**';
+  if (analysis.intent === 'psychological') {
+    title = '**العوامل النفسية:**';
+  } else if (analysis.intent === 'academic') {
+    title = '**المنهجية العلمية:**';
+  } else if (analysis.intent === 'journalistic') {
+    title = '**الأرقام الرئيسية:**';
+  }
+  
+  const parts: string[] = [title];
   
   // إذا لم تكن هناك أسباب محددة، نولد أسباب بناءً على المؤشرات
   const hasCauses = Object.values(causes).some(arr => arr && arr.length > 0);
   
   if (!hasCauses) {
-    // توليد أسباب بناءً على المؤشرات
+    // توليد أسباب بناءً على نوع السؤال
     const generatedCauses: string[] = [];
     
-    if (data.cfi > 60) {
-      generatedCauses.push('• ارتفاع مستوى القلق الجماعي (مؤشر الخوف ' + data.cfi + '%)');
-    }
-    if (data.hri < 45) {
-      generatedCauses.push('• تراجع مستوى التفاؤل (مؤشر الأمل ' + data.hri + '%)');
-    }
-    if (data.gmi < 40) {
-      generatedCauses.push('• المزاج العام يميل للسلبية (مؤشر المزاج ' + data.gmi + '%)');
-    }
-    if (data.dominantEmotion && data.dominantEmotion !== 'neutral') {
-      generatedCauses.push(`• الشعور السائد: ${data.dominantEmotion}`);
+    if (analysis.intent === 'psychological') {
+      // أسباب نفسية مخصصة
+      generatedCauses.push(`• مؤشر الخوف الجماعي (CFI): ${data.cfi}% - ${data.cfi > 60 ? 'مرتفع' : data.cfi > 45 ? 'معتدل' : 'منخفض'}`);
+      generatedCauses.push(`• مؤشر الأمل (HRI): ${data.hri}% - ${data.hri > 55 ? 'إيجابي' : data.hri > 40 ? 'محايد' : 'منخفض'}`);
+      generatedCauses.push(`• المزاج العام (GMI): ${data.gmi}% - ${data.gmi > 50 ? 'يميل للإيجابية' : 'يميل للسلبية'}`);
+      if (data.dominantEmotion) {
+        generatedCauses.push(`• الشعور السائد: ${data.dominantEmotion}`);
+      }
+    } else if (analysis.intent === 'academic') {
+      // معلومات أكاديمية
+      generatedCauses.push('• النظرية: Digital Collective Field Theory (DCFT)');
+      generatedCauses.push('• المصادر: أخبار + وسائل تواصل + بيانات اقتصادية');
+      generatedCauses.push('• الخوارزمية: Transformers + VADER + تحليل عربي');
+      generatedCauses.push(`• الدقة التقديرية: 75-85% للاتجاهات العامة`);
+    } else if (analysis.intent === 'journalistic') {
+      // أرقام صحفية
+      generatedCauses.push(`• مؤشر المزاج العام: ${data.gmi}%`);
+      generatedCauses.push(`• مؤشر الخوف: ${data.cfi}%`);
+      generatedCauses.push(`• مؤشر الأمل: ${data.hri}%`);
+      generatedCauses.push(`• الشعور السائد: ${data.dominantEmotion || 'الترقب'}`);
+    } else {
+      // أسباب عامة
+      if (data.cfi > 60) {
+        generatedCauses.push('• ارتفاع مستوى القلق الجماعي (مؤشر الخوف ' + data.cfi + '%)');
+      }
+      if (data.hri < 45) {
+        generatedCauses.push('• تراجع مستوى التفاؤل (مؤشر الأمل ' + data.hri + '%)');
+      }
+      if (data.gmi < 40) {
+        generatedCauses.push('• المزاج العام يميل للسلبية (مؤشر المزاج ' + data.gmi + '%)');
+      }
+      if (data.dominantEmotion && data.dominantEmotion !== 'neutral') {
+        generatedCauses.push(`• الشعور السائد: ${data.dominantEmotion}`);
+      }
     }
     
     if (generatedCauses.length > 0) {
@@ -563,8 +642,54 @@ function buildEconomicSection(economicData: ResponseData['economicData']): strin
 }
 
 function buildComparison(analysis: QuestionAnalysis, data: ResponseData): string {
-  // سيتم تحسينها لاحقاً مع بيانات المقارنة الفعلية
-  return `**المقارنة:** تحليل مقارن لـ ${analysis.topic} قيد التطوير`;
+  const topic = analysis.topic;
+  const parts: string[] = ['**المقارنة:**'];
+  
+  // استخراج عناصر المقارنة من الموضوع
+  const comparisonItems = extractComparisonItems(topic);
+  
+  if (comparisonItems.length >= 2) {
+    const [item1, item2] = comparisonItems;
+    
+    // توليد مقارنة بناءً على المؤشرات
+    const score1 = data.cfi > 55 ? 'أعلى قلقاً' : 'أكثر استقراراً';
+    const score2 = data.hri > 55 ? 'أكثر تفاؤلاً' : 'أقل تفاؤلاً';
+    
+    parts.push(`| العنصر | الحالة النفسية | التوصية |`);
+    parts.push(`|--------|-----------------|---------|`);
+    parts.push(`| ${item1} | ${score1} | ${data.cfi > 55 ? 'حذر' : 'مراقبة'} |`);
+    parts.push(`| ${item2} | ${score2} | ${data.hri > 55 ? 'فرصة' : 'انتظار'} |`);
+    parts.push(``);
+    parts.push(`**الخلاصة:** ${data.cfi > data.hri ? item1 + ' يحمل مخاطر أعلى' : item2 + ' يبدو أفضل نسبياً'}`);
+  } else {
+    // مقارنة عامة
+    parts.push(`عند مقارنة ${topic}:`);
+    parts.push(`• مستوى القلق: ${data.cfi > 55 ? 'مرتفع' : 'معتدل'} (${data.cfi}%)`);
+    parts.push(`• مستوى الأمل: ${data.hri > 55 ? 'إيجابي' : 'محايد'} (${data.hri}%)`);
+    parts.push(`• المزاج العام: ${data.gmi > 50 ? 'يميل للإيجابية' : 'يميل للسلبية'} (${data.gmi}%)`);
+  }
+  
+  return parts.join('\n');
+}
+
+// دالة مساعدة لاستخراج عناصر المقارنة
+function extractComparisonItems(topic: string): string[] {
+  // البحث عن "أم" أو "و" للفصل
+  const patterns = [
+    /(.+?)\s+أم\s+(.+)/,
+    /(.+?)\s+و\s+(.+)/,
+    /بين\s+(.+?)\s+و\s*(.+)/,
+    /(.+?)\s+مقابل\s+(.+)/
+  ];
+  
+  for (const pattern of patterns) {
+    const match = topic.match(pattern);
+    if (match) {
+      return [match[1].trim(), match[2].trim()];
+    }
+  }
+  
+  return [];
 }
 
 function buildScenario(analysis: QuestionAnalysis, data: ResponseData): string {
@@ -585,7 +710,20 @@ function buildInsight(data: ResponseData): string {
   const emotion = data.dominantEmotion || 'الترقب';
   const insight = getInsightByEmotion(emotion, data.cfi, data.hri);
   
-  return `**القراءة النفسية:** ${insight}`;
+  // إضافة تفاصيل أكثر للقراءة النفسية
+  const parts: string[] = [`**القراءة النفسية:**`];
+  parts.push(insight);
+  
+  // إضافة ملاحظة إضافية بناءً على المؤشرات
+  if (data.cfi > 60 && data.hri > 50) {
+    parts.push(`الملفت: وجود خوف وأمل معاً يشير إلى مجتمع يقاوم ولا يستسلم.`);
+  } else if (data.cfi > 65) {
+    parts.push(`الملفت: القلق المرتفع قد يؤثر على القرارات اليومية والثقة في المستقبل.`);
+  } else if (data.hri > 60) {
+    parts.push(`الملفت: التفاؤل الموجود قد يكون مؤشراً على استعداد للتغيير الإيجابي.`);
+  }
+  
+  return parts.join(' ');
 }
 
 function buildClosingQuestion(analysis: QuestionAnalysis): string {

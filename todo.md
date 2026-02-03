@@ -1992,3 +1992,20 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Make responses feel like ChatGPT - intelligent and contextual, not robotic
 - [x] Integrate Thinking Engine with Orchestrator
 - [x] Add dynamic cause generation based on indicators when no specific causes found
+
+
+## Phase 66: 70 Questions Test Suite & Quality Improvements
+- [x] Create test_suite.txt with 70 questions in 10 categories
+- [x] Create automated test runner (run_test_suite.ts)
+- [x] Test all 70 questions and document results
+- [x] Improve patterns for psychological, academic, journalistic questions
+- [x] Add specialized content for each question type in buildSummary
+- [x] Add specialized causes for psychological/academic/journalistic in buildCauses
+- [x] Improve comparison function with actual comparison tables
+- [x] Add signal to more question types (not just decision/economic)
+
+### Test Results Summary:
+- **Final Score: 78.9/100** (improved from 56.6%)
+- Decision: 87.1% | Scenario: 82.9% | Comparison: 88.6%
+- Psychological: 90.0% | Journalistic: 88.6%
+- Element Coverage: Summary 100%, Signal 79%, Causes 83%, Closing 100%
