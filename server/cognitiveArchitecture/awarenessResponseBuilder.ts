@@ -387,6 +387,19 @@ const TOPIC_CAUSES_DATABASE: TopicCauses[] = [
 
 // ==================== AWARENESS RESPONSE BUILDER ====================
 
+// Real news data for Why Layer
+export interface RealNewsData {
+  items: Array<{
+    title: string;
+    description: string;
+    source: string;
+    url?: string;
+    publishedAt: Date;
+  }>;
+  topKeywords: string[];
+  topSources: string[];
+}
+
 export interface AwarenessResponse {
   what: {
     summary: string;
@@ -397,8 +410,9 @@ export interface AwarenessResponse {
     };
   };
   why: {
-    causes: string[];
+    causes: string[];  // Now from real data!
     context: string;
+    sources?: string[];  // Which news sources mentioned these causes
   };
   soWhat: {
     meaning: string;
@@ -412,7 +426,8 @@ export function buildAwarenessResponse(
   question: string,
   topic: string,
   indicators: { fear: number; hope: number; mood: number },
-  intent: string
+  intent: string,
+  realNews?: RealNewsData  // NEW: Real news data for Why Layer
 ): AwarenessResponse {
   // 1. Find the matching topic domain
   const topicData = findTopicDomain(question, topic);
@@ -423,8 +438,10 @@ export function buildAwarenessResponse(
   // 3. Build WHAT section
   const what = buildWhat(topic, indicators, emotionalState);
   
-  // 4. Build WHY section - SPECIFIC to the topic!
-  const why = buildWhy(topicData, emotionalState, question);
+  // 4. Build WHY section - NOW FROM REAL DATA!
+  const why = realNews && realNews.items.length > 0
+    ? buildWhyFromRealData(realNews, emotionalState, topicData)
+    : buildWhy(topicData, emotionalState, question);
   
   // 5. Build SO WHAT section
   const soWhat = buildSoWhat(topicData, emotionalState, intent);
@@ -507,6 +524,136 @@ function buildWhy(
   const context = buildContextParagraph(topicData.domain, emotionalState);
   
   return { causes, context };
+}
+
+/**
+ * NEW: Build Why section from REAL NEWS DATA
+ * This is the core of the "awareness" - causes come from actual news!
+ */
+function buildWhyFromRealData(
+  realNews: RealNewsData,
+  emotionalState: string,
+  topicData: TopicCauses
+): AwarenessResponse['why'] {
+  const causes: string[] = [];
+  const mentionedSources: string[] = [];
+  
+  // Extract causes from real headlines
+  const headlines = realNews.items.map(item => item.title);
+  const topKeywords = realNews.topKeywords;
+  
+  // Analyze headlines to extract main themes
+  const themes = extractThemesFromHeadlines(headlines, topKeywords);
+  
+  // Build causes from themes
+  if (themes.length > 0) {
+    // Format: "الأخبار تتحدث عن: [theme]" or "[X]% من الأخبار تذكر: [theme]"
+    for (const theme of themes.slice(0, 4)) {
+      if (theme.count > 1) {
+        causes.push(`${theme.count} أخبار تتحدث عن: ${theme.theme}`);
+      } else {
+        causes.push(`الأخبار تذكر: ${theme.theme}`);
+      }
+    }
+  }
+  
+  // If we couldn't extract enough themes, add some headlines directly
+  if (causes.length < 2 && headlines.length > 0) {
+    const shortHeadlines = headlines
+      .filter(h => h.length < 80)
+      .slice(0, 3);
+    for (const headline of shortHeadlines) {
+      causes.push(`"${headline}"`);
+    }
+  }
+  
+  // Fallback to template causes if no real data
+  if (causes.length === 0) {
+    return buildWhy(topicData, emotionalState, '');
+  }
+  
+  // Build context from real data
+  const sourceCount = realNews.topSources.length;
+  const newsCount = realNews.items.length;
+  const context = `تم تحليل ${newsCount} خبر من ${sourceCount} مصدر. الكلمات الأكثر تكراراً: ${topKeywords.slice(0, 5).join('، ')}.`;
+  
+  // Collect sources
+  for (const item of realNews.items.slice(0, 5)) {
+    if (!mentionedSources.includes(item.source)) {
+      mentionedSources.push(item.source);
+    }
+  }
+  
+  return { 
+    causes, 
+    context,
+    sources: mentionedSources
+  };
+}
+
+/**
+ * Extract main themes from headlines
+ */
+function extractThemesFromHeadlines(
+  headlines: string[],
+  topKeywords: string[]
+): Array<{ theme: string; count: number }> {
+  const themes: Map<string, number> = new Map();
+  
+  // Common theme patterns to look for
+  const themePatterns = [
+    // Arabic patterns
+    /ارتفاع\s+([\u0600-\u06FF\s]+)/gi,
+    /انخفاض\s+([\u0600-\u06FF\s]+)/gi,
+    /أزمة\s+([\u0600-\u06FF\s]+)/gi,
+    /تراجع\s+([\u0600-\u06FF\s]+)/gi,
+    /تحسن\s+([\u0600-\u06FF\s]+)/gi,
+    /إغلاق\s+([\u0600-\u06FF\s]+)/gi,
+    /افتتاح\s+([\u0600-\u06FF\s]+)/gi,
+    /احتجاجات\s+([\u0600-\u06FF\s]+)/gi,
+    /مظاهرات\s+([\u0600-\u06FF\s]+)/gi,
+    /قرار\s+([\u0600-\u06FF\s]+)/gi,
+    // English patterns
+    /rise\s+in\s+([\w\s]+)/gi,
+    /fall\s+in\s+([\w\s]+)/gi,
+    /crisis\s+([\w\s]+)/gi,
+    /protests?\s+([\w\s]+)/gi,
+  ];
+  
+  for (const headline of headlines) {
+    // Try to match patterns
+    for (const pattern of themePatterns) {
+      const matches = headline.match(pattern);
+      if (matches) {
+        for (const match of matches) {
+          const cleanMatch = match.trim().substring(0, 50);
+          themes.set(cleanMatch, (themes.get(cleanMatch) || 0) + 1);
+        }
+      }
+    }
+    
+    // Also check for top keywords in headlines
+    for (const keyword of topKeywords) {
+      if (headline.toLowerCase().includes(keyword.toLowerCase())) {
+        // Extract phrase around keyword
+        const keywordIndex = headline.toLowerCase().indexOf(keyword.toLowerCase());
+        const start = Math.max(0, keywordIndex - 10);
+        const end = Math.min(headline.length, keywordIndex + keyword.length + 20);
+        const phrase = headline.substring(start, end).trim();
+        if (phrase.length > 5 && phrase.length < 60) {
+          themes.set(phrase, (themes.get(phrase) || 0) + 1);
+        }
+      }
+    }
+  }
+  
+  // Convert to array and sort by count
+  const result = Array.from(themes.entries())
+    .map(([theme, count]) => ({ theme, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+  
+  return result;
 }
 
 function buildContextParagraph(domain: string, emotionalState: string): string {

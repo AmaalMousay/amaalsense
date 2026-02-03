@@ -2422,3 +2422,25 @@ AmalSense is a **digital simulation of a mind** that feels, understands, thinks,
 - [x] توثيق الهيكل العام للمشروع (PROJECT_SUMMARY.md)
 - [x] 21 اختبار ناجح
 
+
+
+## Phase 50: ربط Why Layer بالبيانات الحقيقية (CRITICAL)
+
+### المشكلة المكتشفة
+- الأسباب تأتي من قوالب ثابتة وليس من البيانات الحقيقية
+- Orchestrator يستخدم DCFT Engine الذي يحلل نص السؤال فقط
+- unifiedDataService موجود لكن غير مستخدم في pipeline الرئيسي
+
+### الحل
+- [x] تعديل engineSelector ليستخدم unifiedDataService
+- [x] تمرير الأخبار الحقيقية (headlines, texts) للـ AwarenessResponseBuilder
+- [x] تعديل AwarenessResponseBuilder ليستخرج الأسباب من البيانات
+- [x] إضافة buildWhyFromRealData لاستخراج الأسباب من العناوين الحقيقية
+- [x] 420 اختبار ناجح
+
+### الفلسفة الجديدة
+```
+قبل: fear=70 → قالب ثابت "ارتفاع الأسعار"
+بعد: fear=70 → من الأخبار "60% من العناوين تذكر إغلاق بنوك"
+```
+

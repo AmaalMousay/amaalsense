@@ -63,6 +63,15 @@ export interface HistoricalResult {
   }>;
 }
 
+// Real news data item
+export interface RealNewsItem {
+  title: string;
+  description: string;
+  source: string;
+  url?: string;
+  publishedAt: Date;
+}
+
 // Combined engine results
 export interface EngineResults {
   emotion?: EmotionEngineResult;
@@ -74,6 +83,12 @@ export interface EngineResults {
     newsCount: number;
     socialCount: number;
     sources: string[];
+  };
+  // NEW: Real news data for Why Layer
+  realNews?: {
+    items: RealNewsItem[];
+    topKeywords: string[];
+    topSources: string[];
   };
   executionTime: number;
   enginesUsed: RequiredEngine[];
@@ -92,6 +107,15 @@ export async function executeEngines(
     executionTime: 0,
     enginesUsed: [],
   };
+  
+  // FIRST: Fetch real news data (this is the foundation)
+  try {
+    const realNewsData = await fetchRealNewsData(topic, country);
+    results.realNews = realNewsData;
+    console.log(`[EngineSelector] Fetched ${realNewsData.items.length} real news items`);
+  } catch (error) {
+    console.error('[EngineSelector] Failed to fetch real news:', error);
+  }
   
   // Execute engines in parallel where possible
   const enginePromises: Promise<void>[] = [];
@@ -506,4 +530,134 @@ Historical Trend:
   }
   
   return parts.join('\n\n');
+}
+
+
+/**
+ * Fetch real news data from multiple sources
+ * This is the foundation for the Why Layer - real causes from real data
+ */
+async function fetchRealNewsData(
+  topic: string,
+  country?: string
+): Promise<{
+  items: RealNewsItem[];
+  topKeywords: string[];
+  topSources: string[];
+}> {
+  const items: RealNewsItem[] = [];
+  const allSources: string[] = [];
+  
+  try {
+    // Import news services
+    const { searchGNews, fetchGNewsHeadlines } = await import('../gnewsService');
+    const { fetchGoogleNewsByTopic, fetchGoogleNews } = await import('../googleRssService');
+    const { fetchAllMajorNews } = await import('../majorNewsRssService');
+    
+    // Fetch from multiple sources in parallel
+    const [gnewsResults, googleResults, majorResults] = await Promise.all([
+      // GNews API
+      topic 
+        ? searchGNews({ query: topic, country, max: 10 })
+        : fetchGNewsHeadlines({ country, max: 10 }),
+      
+      // Google RSS
+      topic
+        ? fetchGoogleNewsByTopic(topic, 10)
+        : fetchGoogleNews(10),
+      
+      // Major News (BBC, Reuters, Al Jazeera, CNN)
+      fetchAllMajorNews(10)
+    ]);
+    
+    // Convert GNews results
+    for (const article of gnewsResults) {
+      items.push({
+        title: article.title,
+        description: article.description || '',
+        source: article.source || 'GNews',
+        url: article.url,
+        publishedAt: new Date(article.publishedAt)
+      });
+      allSources.push(article.source || 'GNews');
+    }
+    
+    // Convert Google RSS results
+    for (const article of googleResults) {
+      items.push({
+        title: article.title,
+        description: article.description || '',
+        source: article.source || 'Google News',
+        url: article.link,
+        publishedAt: new Date(article.pubDate)
+      });
+      allSources.push(article.source || 'Google News');
+    }
+    
+    // Convert Major News results
+    for (const article of majorResults) {
+      items.push({
+        title: article.title,
+        description: article.description || '',
+        source: article.source,
+        url: article.link,
+        publishedAt: new Date(article.pubDate)
+      });
+      allSources.push(article.source);
+    }
+    
+    console.log(`[fetchRealNewsData] Total: ${items.length} items from ${new Set(allSources).size} sources`);
+    
+  } catch (error) {
+    console.error('[fetchRealNewsData] Error fetching news:', error);
+  }
+  
+  // Extract top keywords from titles
+  const topKeywords = extractTopKeywords(items.map(i => i.title).join(' '));
+  
+  // Get unique sources
+  const topSources = Array.from(new Set(allSources)).slice(0, 10);
+  
+  return {
+    items,
+    topKeywords,
+    topSources
+  };
+}
+
+/**
+ * Extract top keywords from text
+ * Used to identify main themes in news
+ */
+function extractTopKeywords(text: string): string[] {
+  // Arabic and English stop words
+  const stopWords = new Set([
+    // English
+    'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
+    'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had',
+    'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might',
+    'this', 'that', 'these', 'those', 'it', 'its', 'as', 'by', 'from',
+    // Arabic
+    'في', 'من', 'إلى', 'على', 'عن', 'مع', 'هذا', 'هذه', 'التي', 'الذي', 'التى',
+    'أن', 'إن', 'كان', 'كانت', 'يكون', 'تكون', 'ما', 'لا', 'لم', 'لن',
+    'قد', 'هو', 'هي', 'هم', 'نحن', 'أنت', 'أنا', 'بين', 'حتى', 'بعد', 'قبل',
+    'كل', 'بعض', 'أي', 'كما', 'عند', 'منذ', 'خلال', 'ضد', 'حول', 'دون'
+  ]);
+  
+  // Tokenize and count
+  const words = text.toLowerCase()
+    .replace(/[^\u0600-\u06FFa-zA-Z\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !stopWords.has(w));
+  
+  const wordCount: Record<string, number> = {};
+  for (const word of words) {
+    wordCount[word] = (wordCount[word] || 0) + 1;
+  }
+  
+  // Sort by frequency and return top 10
+  return Object.entries(wordCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([word]) => word);
 }

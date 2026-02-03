@@ -24,7 +24,8 @@ import { think, analyzeQuestionIntent, type ResponseData } from '../thinkingEngi
 import { 
   buildAwarenessResponse, 
   formatAwarenessResponse,
-  type AwarenessResponse 
+  type AwarenessResponse,
+  type RealNewsData
 } from '../cognitiveArchitecture/awarenessResponseBuilder';
 
 // Orchestration request
@@ -311,7 +312,27 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
   };
   
   // Step 8: Build response using Awareness Response Builder (What → Why → So what)
-  // This ensures topic-specific causes and social meaning
+  // NOW WITH REAL NEWS DATA - causes come from actual news!
+  
+  // Convert engineResults.realNews to RealNewsData format
+  const realNewsData: RealNewsData | undefined = engineResults.realNews ? {
+    items: engineResults.realNews.items.map(item => ({
+      title: item.title,
+      description: item.description,
+      source: item.source,
+      url: item.url,
+      publishedAt: item.publishedAt
+    })),
+    topKeywords: engineResults.realNews.topKeywords,
+    topSources: engineResults.realNews.topSources
+  } : undefined;
+  
+  console.log('[Orchestrator] Real news data:', {
+    hasRealNews: !!realNewsData,
+    newsCount: realNewsData?.items.length || 0,
+    topKeywords: realNewsData?.topKeywords.slice(0, 5) || [],
+  });
+  
   const awarenessResponse = buildAwarenessResponse(
     request.question,
     questionAnalysis.cleanTopic || topic,
@@ -320,7 +341,8 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
       hope: dcftData.hri || 50,
       mood: dcftData.gmi || 0
     },
-    questionAnalysis.intent
+    questionAnalysis.intent,
+    realNewsData  // NEW: Pass real news data!
   );
   
   // Format the awareness response
