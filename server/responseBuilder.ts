@@ -122,10 +122,44 @@ const CAUSAL_KEYWORDS = {
 };
 
 /**
+ * استخراج الموضوع النظيف من السؤال
+ * يحول السؤال إلى موضوع قابل للاستخدام في الخلاصة
+ */
+export function extractCleanTopic(question: string): string {
+  // إزالة علامات الاستفهام وكلمات السؤال
+  let clean = question
+    .replace(/^(هل|ما|كيف|لماذا|متى|أين|من|شن|شنو|وين|كم|ليش)\s+/gi, '')
+    .replace(/\?|؟/g, '')
+    .trim();
+  
+  // إذا كان السؤال يبدأ بـ "هل X سيؤدي إلى Y" نستخرج X
+  const willLeadTo = clean.match(/(.+?)\s+(سيؤدي|يؤدي|سيسبب|يسبب|سيتسبب)\s+(إلى|في|ب)/i);
+  if (willLeadTo) {
+    clean = willLeadTo[1].trim();
+  }
+  
+  // إذا كان السؤال يبدأ بـ "رفع/خفض/زيادة" نحافظ عليه
+  const actionMatch = clean.match(/^(رفع|خفض|زيادة|تقليص|إلغاء|تعديل)\s+(.+)/i);
+  if (actionMatch) {
+    return `${actionMatch[1]} ${actionMatch[2]}`;
+  }
+  
+  // إذا كان الموضوع طويلاً جداً، نأخذ أول 50 حرف
+  if (clean.length > 50) {
+    clean = clean.substring(0, 50) + '...';
+  }
+  
+  return clean || question;
+}
+
+/**
  * 1. توليد الخلاصة التنفيذية
  */
 export function generateExecutiveSummary(data: AnalysisData): string {
-  const { topic, gmi, cfi, hri } = data;
+  const { topic, gmi, cfi, hri, userQuestion } = data;
+  
+  // استخراج الموضوع النظيف من السؤال أو استخدام topic
+  const cleanTopic = userQuestion ? extractCleanTopic(userQuestion) : topic;
   
   // تحديد الحالة العامة
   let state = '';
@@ -154,7 +188,7 @@ export function generateExecutiveSummary(data: AnalysisData): string {
     description = 'لا إشارات حاسمة واضحة';
   }
   
-  return `الوضع في ${topic} يُنظر إليه نفسياً كحالة **${state}** - ${description}.`;
+  return `**${cleanTopic}** يُنظر إليه نفسياً كحالة **${state}** - ${description}.`;
 }
 
 /**
@@ -198,10 +232,70 @@ export function determineDecisionSignal(data: AnalysisData): { type: DecisionSig
 }
 
 /**
+ * استخراج الأسباب الخاصة بالسياق من السؤال
+ * يحلل السؤال لاستخراج أسباب محددة بدلاً من عامة
+ */
+export function extractContextualCauses(question: string): { economic: string[], media: string[], political: string[], social: string[] } {
+  const causes = { economic: [] as string[], media: [] as string[], political: [] as string[], social: [] as string[] };
+  const q = question.toLowerCase();
+  
+  // أسباب خاصة برفع الدعم
+  if (q.includes('دعم') || q.includes('وقود') || q.includes('بنزين')) {
+    causes.economic.push('تداول أخبار وتصريحات حول نية تقليص الدعم');
+    causes.economic.push('ربط مباشر بين الوقود وارتفاع تكاليف النقل والمعيشة');
+    causes.media.push('عناوين إعلامية تحذر من تأثير القرار على الأسعار');
+    causes.social.push('خوف من تأثير مباشر على النقل والمعيشة');
+  }
+  
+  // أسباب خاصة بالدولار/العملة
+  if (q.includes('دولار') || q.includes('سعر الصرف') || q.includes('عملة')) {
+    causes.economic.push('تقلبات في سعر صرف الدولار');
+    causes.economic.push('مخاوف من انخفاض قيمة العملة المحلية');
+    causes.media.push('تغطية إعلامية مكثفة لتحركات السوق');
+  }
+  
+  // أسباب خاصة بالأسعار/الغلاء
+  if (q.includes('أسعار') || q.includes('غلاء') || q.includes('تضخم')) {
+    causes.economic.push('ارتفاع ملحوظ في أسعار السلع الأساسية');
+    causes.social.push('ضغط معيشي متزايد على الأسر');
+  }
+  
+  // أسباب خاصة بالانتخابات/السياسة
+  if (q.includes('انتخاب') || q.includes('حكومة') || q.includes('برلمان')) {
+    causes.political.push('ترقب نتائج العملية السياسية');
+    causes.political.push('عدم وضوح المشهد السياسي');
+    causes.media.push('تغطية إعلامية مكثفة للتطورات السياسية');
+  }
+  
+  // أسباب خاصة بالاضطرابات/الاحتجاجات
+  if (q.includes('اضطراب') || q.includes('احتجاج') || q.includes('مظاهر')) {
+    causes.social.push('توتر اجتماعي متصاعد');
+    causes.social.push('شعور بالظلم أو التهميش');
+    causes.media.push('تغطية إعلامية للتحركات الشعبية');
+  }
+  
+  // أسباب خاصة بالرواتب/السيولة
+  if (q.includes('رواتب') || q.includes('سيولة') || q.includes('مرتبات')) {
+    causes.economic.push('تأخر في صرف الرواتب');
+    causes.economic.push('نقص السيولة النقدية في المصارف');
+    causes.social.push('ضغط معيشي على الموظفين');
+  }
+  
+  // أسباب خاصة بالذهب/الفضة/الاستثمار
+  if (q.includes('ذهب') || q.includes('فضة') || q.includes('استثمار')) {
+    causes.economic.push('تقلبات في أسواق المعادن الثمينة');
+    causes.economic.push('بحث عن ملاذات آمنة للاستثمار');
+    causes.media.push('تحليلات إعلامية عن توجهات السوق');
+  }
+  
+  return causes;
+}
+
+/**
  * 3. استخراج العوامل السببية من البيانات
  */
 export function extractCausalFactors(data: AnalysisData): CausalFactors {
-  const { topic, cfi, hri, gmi, newsHeadlines = [], keywords = [] } = data;
+  const { topic, cfi, hri, gmi, newsHeadlines = [], keywords = [], userQuestion } = data;
   
   const factors: CausalFactors = {
     economic: [],
@@ -210,50 +304,53 @@ export function extractCausalFactors(data: AnalysisData): CausalFactors {
     social: []
   };
   
-  // دمج الكلمات المفتاحية من العناوين والكلمات
-  const allText = [...newsHeadlines, ...keywords, topic].join(' ').toLowerCase();
-  
-  // البحث عن العوامل الاقتصادية
-  const hasEconomicKeywords = CAUSAL_KEYWORDS.economic.keywords.some(k => allText.includes(k));
-  if (hasEconomicKeywords || cfi > 50) {
-    // اختيار عوامل مناسبة بناءً على المؤشرات
-    if (cfi > 60) {
-      factors.economic.push('تذبذب سعر الصرف');
-      factors.economic.push('ارتفاع أسعار السلع الأساسية');
-    }
-    if (cfi > 50 && hri < 60) {
-      factors.economic.push('ضعف القوة الشرائية');
-    }
-    if (allText.includes('سيولة') || allText.includes('رواتب')) {
-      factors.economic.push('نقص السيولة النقدية');
-    }
+  // أولاً: استخراج الأسباب الخاصة بالسياق من السؤال
+  if (userQuestion) {
+    const contextualCauses = extractContextualCauses(userQuestion);
+    factors.economic.push(...contextualCauses.economic);
+    factors.media.push(...contextualCauses.media);
+    factors.political.push(...contextualCauses.political);
+    factors.social.push(...contextualCauses.social);
   }
   
-  // البحث عن العوامل الإعلامية
-  const hasMediaKeywords = CAUSAL_KEYWORDS.media.keywords.some(k => allText.includes(k));
-  if (hasMediaKeywords || newsHeadlines.length > 0) {
-    if (cfi > 50) {
-      factors.media.push('كثافة الأخبار السلبية');
-      factors.media.push('عناوين تحذيرية متكررة');
-    }
-    if (gmi < 0) {
-      factors.media.push('خطاب إعلامي متشائم');
-    }
-  }
+  // ثانياً: إضافة عوامل عامة إذا لم نجد أسباب خاصة
+  const totalContextual = factors.economic.length + factors.media.length + 
+                          factors.political.length + factors.social.length;
   
-  // البحث عن العوامل السياسية
-  const hasPoliticalKeywords = CAUSAL_KEYWORDS.political.keywords.some(k => allText.includes(k));
-  if (hasPoliticalKeywords) {
-    factors.political.push('عدم استقرار مؤسسي');
-    if (cfi > 60) {
-      factors.political.push('غياب حلول واضحة');
+  if (totalContextual === 0) {
+    // دمج الكلمات المفتاحية من العناوين والكلمات
+    const allText = [...newsHeadlines, ...keywords, topic].join(' ').toLowerCase();
+    
+    // البحث عن العوامل الاقتصادية
+    const hasEconomicKeywords = CAUSAL_KEYWORDS.economic.keywords.some(k => allText.includes(k));
+    if (hasEconomicKeywords || cfi > 50) {
+      if (cfi > 60) {
+        factors.economic.push('تذبذب سعر الصرف');
+        factors.economic.push('ارتفاع أسعار السلع الأساسية');
+      }
+      if (cfi > 50 && hri < 60) {
+        factors.economic.push('ضعف القوة الشرائية');
+      }
     }
-  }
-  
-  // البحث عن العوامل الاجتماعية
-  if (cfi > 60 && hri < 50) {
-    factors.social.push('قلق اجتماعي متزايد');
-    factors.social.push('مخاوف معيشية');
+    
+    // البحث عن العوامل الإعلامية
+    const hasMediaKeywords = CAUSAL_KEYWORDS.media.keywords.some(k => allText.includes(k));
+    if (hasMediaKeywords || newsHeadlines.length > 0) {
+      if (cfi > 50) {
+        factors.media.push('كثافة الأخبار السلبية');
+      }
+    }
+    
+    // البحث عن العوامل السياسية
+    const hasPoliticalKeywords = CAUSAL_KEYWORDS.political.keywords.some(k => allText.includes(k));
+    if (hasPoliticalKeywords) {
+      factors.political.push('عدم استقرار مؤسسي');
+    }
+    
+    // البحث عن العوامل الاجتماعية
+    if (cfi > 60 && hri < 50) {
+      factors.social.push('قلق اجتماعي متزايد');
+    }
   }
   
   // إضافة عوامل افتراضية إذا لم نجد شيء

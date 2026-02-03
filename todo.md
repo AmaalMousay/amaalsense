@@ -1964,3 +1964,10 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Remove robotic ending "اسأل عن التوقعات، التوصيات..." - Now using dynamic closing
 - [x] Enforce Response Protocol: خلاصة → إشارة قرار → لماذا → توقع → سؤال
 - [x] Limit response to 200-300 words maximum - Controlled by Response Builder
+
+
+## Phase 63: Improve Response Quality - Clean Summary & Contextual Causes
+- [x] Fix summary to be linguistically clean (remove question from summary)
+- [x] Extract topic/event from question instead of using raw question
+- [x] Link "Why" section to specific events from question context
+- [x] Add context-aware cause extraction based on question keywords
