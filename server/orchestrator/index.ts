@@ -21,6 +21,11 @@ import { buildRAGContext, formatRAGForPrompt, storeForRAG, storeConversationForR
 import { buildStructuredResponse, type AnalysisData } from '../responseBuilder';
 import { fetchEconomicData, type EconomicData } from '../economicDataService';
 import { think, analyzeQuestionIntent, type ResponseData } from '../thinkingEngine';
+import { 
+  buildAwarenessResponse, 
+  formatAwarenessResponse,
+  type AwarenessResponse 
+} from '../cognitiveArchitecture/awarenessResponseBuilder';
 
 // Orchestration request
 export interface OrchestrationRequest {
@@ -305,13 +310,27 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
     } : undefined,
   };
   
-  // Use Thinking Engine to build intelligent response
-  const intelligentResponse = think(request.question, responseData);
+  // Step 8: Build response using Awareness Response Builder (What → Why → So what)
+  // This ensures topic-specific causes and social meaning
+  const awarenessResponse = buildAwarenessResponse(
+    request.question,
+    questionAnalysis.cleanTopic || topic,
+    {
+      fear: dcftData.cfi || 50,
+      hope: dcftData.hri || 50,
+      mood: dcftData.gmi || 0
+    },
+    questionAnalysis.intent
+  );
   
-  console.log('[Orchestrator] Intelligent response built:', {
+  // Format the awareness response
+  const intelligentResponse = formatAwarenessResponse(awarenessResponse);
+  
+  console.log('[Orchestrator] Awareness response built:', {
     intent: questionAnalysis.intent,
     responseType: questionAnalysis.expectedResponseType,
     responseLength: intelligentResponse.length,
+    topicDomain: awarenessResponse.why.context.substring(0, 50),
   });
   
   const processingTimeMs = Date.now() - startTime;

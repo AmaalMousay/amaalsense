@@ -20,6 +20,12 @@
 
 // Import all layers
 import { filterSignals, type AttentionSignal } from './layer2_attention';
+import { 
+  buildAwarenessResponse, 
+  formatAwarenessResponse,
+  TOPIC_CAUSES_DATABASE,
+  type AwarenessResponse 
+} from './awarenessResponseBuilder';
 import { encode, type EncodedText } from './layer3_encoding';
 import { 
   getWorkingMemory, 
@@ -250,87 +256,37 @@ interface BuiltResponse {
 function buildIntelligentResponse(context: ResponseBuildContext): BuiltResponse {
   const { understanding, causes, explanationChain, applicableRules, relevantPatterns, indicators, conversationContext } = context;
   
-  const parts: string[] = [];
-  const extractedCauses: string[] = [];
+  const topic = understanding.surface.topic;
   const realIntent = understanding.deep.realIntent;
   
-  // ========== SUMMARY ==========
-  const summary = buildSummary(understanding, indicators, conversationContext);
-  parts.push(`**الخلاصة:**\n${summary}`);
+  // ========== استخدام AwarenessResponseBuilder الجديد ==========
+  // بناء الرد بفلسفة What → Why → So what
+  const awarenessResponse = buildAwarenessResponse(
+    understanding.surface.text || topic,
+    topic,
+    {
+      fear: indicators?.cfi || 50,
+      hope: indicators?.hri || 50,
+      mood: indicators?.gmi || 0
+    },
+    realIntent
+  );
   
-  // ========== CAUSES (لماذا) ==========
-  if (realIntent === 'understand_cause' || causes.length > 0) {
-    parts.push('\n\n**لماذا هذا الوضع؟**');
-    
-    // Use knowledge base causes
-    if (causes.length > 0) {
-      for (const cause of causes.slice(0, 3)) {
-        const causeText = `**${cause.cause}** - ${cause.context || cause.effect}`;
-        parts.push(`\n${causeText}`);
-        extractedCauses.push(cause.cause);
-      }
-    }
-    
-    // Add explanation chain if available
-    if (explanationChain.chain.length > 0 && extractedCauses.length < 3) {
-      for (const rel of explanationChain.chain.slice(0, 2)) {
-        if (!extractedCauses.includes(rel.cause)) {
-          parts.push(`\n**${rel.cause}** - ${rel.context || ''}`);
-          extractedCauses.push(rel.cause);
-        }
-      }
-    }
-    
-    // Fallback causes based on topic
-    if (extractedCauses.length === 0) {
-      const fallbackCauses = generateFallbackCauses(understanding.surface.topic, indicators);
-      for (const cause of fallbackCauses) {
-        parts.push(`\n${cause}`);
-        extractedCauses.push(cause);
-      }
-    }
-  }
+  // تنسيق الرد
+  const formattedResponse = formatAwarenessResponse(awarenessResponse);
   
-  // ========== EXPERT RULES ==========
-  if (applicableRules.length > 0) {
-    parts.push('\n\n**قواعد الخبراء:**');
-    for (const rule of applicableRules.slice(0, 2)) {
-      parts.push(`\n• ${rule.conclusion}`);
-    }
-  }
+  // استخراج الأسباب للتصدير
+  const extractedCauses = awarenessResponse.why.causes;
   
-  // ========== HISTORICAL PATTERNS ==========
-  if (relevantPatterns.length > 0) {
-    parts.push('\n\n**أنماط تاريخية:**');
-    for (const pattern of relevantPatterns.slice(0, 1)) {
-      parts.push(`\n${pattern.description}`);
-      if (pattern.examples.length > 0) {
-        parts.push(`\n_مثال: ${pattern.examples[0]}_`);
-      }
-    }
-  }
-  
-  // ========== DECISION SIGNAL ==========
+  // بناء إشارة القرار
   const decision = buildDecisionSignal(understanding, indicators, applicableRules);
-  if (decision.signal) {
-    parts.push(`\n\n**إشارة القرار:** ${decision.signal}`);
-  }
-  
-  // ========== RECOMMENDATION ==========
-  if (decision.recommendation) {
-    parts.push(`\n\n**التوصية:**\n${decision.recommendation}`);
-  }
-  
-  // ========== CLOSING QUESTION ==========
-  const closingQuestion = buildClosingQuestion(understanding, conversationContext);
-  parts.push(`\n\n${closingQuestion}`);
   
   return {
-    fullResponse: parts.join(''),
-    summary,
+    fullResponse: formattedResponse,
+    summary: awarenessResponse.what.summary,
     causes: extractedCauses,
     decision,
-    closingQuestion
+    closingQuestion: awarenessResponse.closingQuestion
   };
 }
 
