@@ -1,11 +1,16 @@
 /**
- * Thinking Engine v2 - AmalSense Consultant Brain
+ * Thinking Engine v3 - AmalSense Narrative Consultant
  * 
- * تحول من "شاعر يوصف" إلى "مستشار يحلل ويوصي"
+ * تحول من "تقارير مضغوطة" إلى "سرد طويل مفصل مثل ChatGPT"
+ * 
+ * المبادئ:
+ * 1. سرد طويل ومفصل - كل نقطة تُشرح بالتفصيل
+ * 2. لغة نظيفة - بدون كلمات تقنية
+ * 3. إخفاء الأرقام الاقتصادية - إلا في وضع التداول
+ * 4. أسباب قوية - عناوين وأخبار حقيقية
  * 
  * كل رد يجب أن يجعل المستخدم يقول:
  * "فهمت الوضع + عرفت شن أعمل"
- * وليس فقط "كلام حلو"
  */
 
 // أنواع النوايا/الأسئلة
@@ -27,6 +32,7 @@ export interface QuestionAnalysis {
   intent: QuestionIntent;
   subIntent?: string;
   topic: string;
+  cleanTopic: string; // الموضوع النظيف للعرض
   country?: string;
   requiresEconomicData: boolean;
   requiresComparison: boolean;
@@ -34,15 +40,14 @@ export interface QuestionAnalysis {
   requiresForecast: boolean;
   expectedResponseType: 'judgment' | 'analysis' | 'simulation' | 'comparison' | 'story';
   confidence: number;
-  // جديد: استخراج الكيانات من السؤال
   entities: {
-    assets?: string[];      // ذهب، فضة، دولار، عقار
-    timeframe?: string;     // أسبوع، شهر، سنة
-    action?: string;        // شراء، بيع، انتظار
+    assets?: string[];
+    timeframe?: string;
+    action?: string;
   };
 }
 
-// هيكل الرد الديناميكي
+// هيكل الرد
 export interface DynamicResponseStructure {
   sections: ResponseSection[];
   tone: 'advisory' | 'analytical' | 'journalistic' | 'academic';
@@ -53,9 +58,8 @@ export interface DynamicResponseStructure {
 }
 
 export interface ResponseSection {
-  type: 'analysis' | 'causes' | 'signal' | 'recommendation' | 'economic' | 'forecast' | 'insight' | 'comparison' | 'scenario' | 'question';
+  type: 'summary' | 'signal' | 'causes' | 'recommendation' | 'insight' | 'economic' | 'comparison' | 'scenario' | 'forecast' | 'question';
   required: boolean;
-  maxWords?: number;
 }
 
 /**
@@ -64,7 +68,6 @@ export interface ResponseSection {
 export function analyzeQuestionIntent(question: string): QuestionAnalysis {
   const q = question.toLowerCase();
   
-  // كلمات مفتاحية لكل نوع
   const patterns = {
     decision: [
       /هل (الوقت|الآن|توا) (مناسب|صح|جيد)/,
@@ -98,7 +101,9 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
       /ما الذي يسبب/,
       /السبب الرئيسي/,
       /أسباب/,
-      /بسبب/
+      /بسبب/,
+      /ماسباب/,
+      /ما سبب/
     ],
     forecast: [
       /كيف سيتغير/,
@@ -184,12 +189,11 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
     ]
   };
 
-  // تحديد النية الأساسية
   let intent: QuestionIntent = 'general';
   let confidence = 0.5;
 
-  // أولوية لـ explanation إذا كان السؤال يبدأ بـ "لماذا"
-  if (/^لماذا|لماذا/.test(q)) {
+  // أولوية لـ explanation إذا كان السؤال يبدأ بـ "لماذا" أو "ماسباب"
+  if (/^(لماذا|ماسباب|ما سبب)/.test(q)) {
     intent = 'explanation';
     confidence = 0.9;
   } else {
@@ -207,6 +211,7 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
 
   // استخراج الموضوع
   const topic = extractTopic(question);
+  const cleanTopic = cleanTopicForDisplay(question, topic);
   
   // استخراج الدولة
   const country = extractCountry(question);
@@ -214,18 +219,16 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
   // استخراج الكيانات
   const entities = extractEntities(question);
 
-  // تحديد ما يحتاجه الرد
-  const requiresEconomicData = ['economic', 'decision', 'explanation'].includes(intent) && 
-    /سعر|تداول|استثمار|شراء|بيع|ذهب|فضة|دولار|نفط|عقار|انخفض|ارتفع/.test(q);
+  // تحديد ما يحتاجه الرد - إخفاء البيانات الاقتصادية في الردود العامة
+  // البيانات الاقتصادية تظهر فقط في أسئلة التداول المباشرة
+  const requiresEconomicData = intent === 'economic' && 
+    /سعر|كم سعر|ما سعر|أسعار اليوم/.test(q);
   
   const requiresComparison = intent === 'comparison' || /أيهما|مقارنة|الفرق|مختلف/.test(q);
-  
   const requiresScenario = intent === 'scenario' || /ماذا لو|لو استمر|سيناريو/.test(q);
-  
   const requiresForecast = ['forecast', 'scenario'].includes(intent) || 
     /سيتغير|التوقع|خلال|تصاعد|تراجع/.test(q);
 
-  // نوع الرد المتوقع
   let expectedResponseType: QuestionAnalysis['expectedResponseType'] = 'analysis';
   if (intent === 'decision') expectedResponseType = 'judgment';
   if (intent === 'scenario') expectedResponseType = 'simulation';
@@ -235,6 +238,7 @@ export function analyzeQuestionIntent(question: string): QuestionAnalysis {
   return {
     intent,
     topic,
+    cleanTopic,
     country,
     requiresEconomicData,
     requiresComparison,
@@ -253,10 +257,9 @@ function extractEntities(question: string): QuestionAnalysis['entities'] {
   const entities: QuestionAnalysis['entities'] = {};
   const q = question.toLowerCase();
   
-  // استخراج الأصول المالية
   const assetPatterns = [
     { pattern: /ذهب/, name: 'الذهب' },
-    { pattern: /فضة/, name: 'الفضة' },
+    { pattern: /فضة|فضه/, name: 'الفضة' },
     { pattern: /دولار/, name: 'الدولار' },
     { pattern: /نفط/, name: 'النفط' },
     { pattern: /عقار/, name: 'العقارات' },
@@ -267,13 +270,11 @@ function extractEntities(question: string): QuestionAnalysis['entities'] {
     .filter(p => p.pattern.test(q))
     .map(p => p.name);
   
-  // استخراج الإطار الزمني
   if (/أسبوع/.test(q)) entities.timeframe = 'أسبوع';
   else if (/شهر/.test(q)) entities.timeframe = 'شهر';
   else if (/سنة|عام/.test(q)) entities.timeframe = 'سنة';
   else if (/يوم/.test(q)) entities.timeframe = 'يوم';
   
-  // استخراج الفعل المطلوب
   if (/شراء|أشتري|اشتري/.test(q)) entities.action = 'شراء';
   else if (/بيع|أبيع|ابيع/.test(q)) entities.action = 'بيع';
   else if (/انتظار|انتظر|أنتظر/.test(q)) entities.action = 'انتظار';
@@ -288,10 +289,8 @@ function extractEntities(question: string): QuestionAnalysis['entities'] {
 function extractTopic(question: string): string {
   let topic = question;
   
-  // إزالة علامات الاستفهام والتعجب
   topic = topic.replace(/[؟?!\.]+$/, '').trim();
   
-  // إزالة كلمات السؤال من البداية
   const questionWords = [
     /^هل\s+/,
     /^ما\s+(هو|هي|هم|هن)?\s*/,
@@ -303,26 +302,61 @@ function extractTopic(question: string): string {
     /^من\s+/,
     /^أي\s+/,
     /^أيهما\s+/,
+    /^ماسباب\s+/,
+    /^ما سبب\s+/,
   ];
   
   for (const pattern of questionWords) {
     topic = topic.replace(pattern, '');
   }
   
-  // إزالة كلمات إضافية
   topic = topic.replace(/^(الوقت|الآن|توا)\s+(مناسب|صح|جيد)\s+(ل|لـ)?\s*/, '');
   topic = topic.replace(/^(أشتري|أبيع|أستثمر)\s+(في\s+)?/, '');
   topic = topic.replace(/^(لو|إذا)\s+/, '');
   
-  // تنظيف المسافات
   topic = topic.replace(/\s+/g, ' ').trim();
   
-  // إذا كان الموضوع قصير جداً، استخدم السؤال الأصلي
   if (topic.length < 5) {
     topic = question.replace(/[؟?!\.]+$/, '').trim();
   }
   
   return topic;
+}
+
+/**
+ * تنظيف الموضوع للعرض - إزالة الكلمات الزائدة
+ */
+function cleanTopicForDisplay(question: string, topic: string): string {
+  const q = question.toLowerCase();
+  
+  // استخراج الأصول المذكورة
+  const assets: string[] = [];
+  if (/ذهب/.test(q)) assets.push('الذهب');
+  if (/فضة|فضه/.test(q)) assets.push('الفضة');
+  if (/دولار/.test(q)) assets.push('الدولار');
+  if (/نفط/.test(q)) assets.push('النفط');
+  
+  // استخراج الفعل
+  let action = '';
+  if (/انخفض|انخفاض|هبوط/.test(q)) action = 'انخفاض';
+  else if (/ارتفع|ارتفاع|صعود/.test(q)) action = 'ارتفاع';
+  else if (/تذبذب|تقلب/.test(q)) action = 'تذبذب';
+  
+  // بناء موضوع نظيف
+  if (action && assets.length > 0) {
+    if (assets.length === 1) {
+      return `${action} أسعار ${assets[0]}`;
+    } else {
+      return `${action} أسعار ${assets.join(' و')}`;
+    }
+  }
+  
+  // تنظيف الموضوع من الكلمات الزائدة
+  let clean = topic;
+  clean = clean.replace(/^(ماسباب|ما سبب|لماذا)\s*/i, '');
+  clean = clean.replace(/^(اسعار|أسعار)\s*/i, '');
+  
+  return clean || topic;
 }
 
 /**
@@ -356,68 +390,55 @@ function extractCountry(question: string): string | undefined {
 export function composeResponseStructure(analysis: QuestionAnalysis): DynamicResponseStructure {
   const sections: ResponseSection[] = [];
   
-  // 1. التحليل المبني على البيانات - دائماً أولاً
-  sections.push({ type: 'analysis', required: true, maxWords: 60 });
+  // 1. الخلاصة - دائماً أولاً (بدون كلمة "التحليل")
+  sections.push({ type: 'summary', required: true });
 
-  // 2. الأسباب - لمعظم الأسئلة
-  if (!['general'].includes(analysis.intent)) {
-    sections.push({ type: 'causes', required: true });
-  }
+  // 2. إشارة القرار
+  sections.push({ type: 'signal', required: true });
 
-  // 3. إشارة القرار - واضحة وعملية
-  if (!['academic'].includes(analysis.intent)) {
-    sections.push({ type: 'signal', required: true });
-  }
-  
-  // 4. التوصية العملية - للأسئلة القرارية والاقتصادية
+  // 3. الأسباب - لمعظم الأسئلة
+  sections.push({ type: 'causes', required: true });
+
+  // 4. التوصية - للأسئلة القرارية والاقتصادية
   if (['decision', 'economic', 'explanation'].includes(analysis.intent)) {
     sections.push({ type: 'recommendation', required: true });
   }
 
-  // 5. البيانات الاقتصادية - فقط للأسئلة الاقتصادية
+  // 5. القراءة النفسية
+  sections.push({ type: 'insight', required: true });
+
+  // 6. البيانات الاقتصادية - فقط للأسئلة المباشرة عن الأسعار
   if (analysis.requiresEconomicData) {
     sections.push({ type: 'economic', required: true });
   }
 
-  // 6. المقارنة - للأسئلة المقارنة
+  // 7. المقارنة
   if (analysis.requiresComparison) {
     sections.push({ type: 'comparison', required: true });
   }
 
-  // 7. السيناريو - للأسئلة الافتراضية
+  // 8. السيناريو
   if (analysis.requiresScenario) {
     sections.push({ type: 'scenario', required: true });
   }
 
-  // 8. التوقع - للأسئلة المستقبلية
+  // 9. التوقع
   if (analysis.requiresForecast) {
     sections.push({ type: 'forecast', required: true });
   }
 
-  // 9. القراءة النفسية - للأسئلة النفسية والعامة
-  if (['psychological', 'general', 'journalistic', 'academic'].includes(analysis.intent)) {
-    sections.push({ type: 'insight', required: true });
-  }
-
-  // 10. السؤال الختامي الذكي - دائماً
+  // 10. السؤال الختامي الذكي
   sections.push({ type: 'question', required: true });
 
-  // تحديد النبرة
   let tone: DynamicResponseStructure['tone'] = 'analytical';
   if (analysis.intent === 'decision') tone = 'advisory';
   if (analysis.intent === 'journalistic') tone = 'journalistic';
   if (analysis.intent === 'academic') tone = 'academic';
 
-  // تحديد الطول
-  let maxLength = 300;
-  if (analysis.requiresComparison) maxLength = 400;
-  if (analysis.requiresScenario) maxLength = 350;
-  if (analysis.intent === 'academic') maxLength = 450;
-
   return {
     sections,
     tone,
-    maxLength,
+    maxLength: 600, // زيادة الطول للسرد المفصل
     includeEconomicData: analysis.requiresEconomicData,
     includeComparison: analysis.requiresComparison,
     includeScenario: analysis.requiresScenario
@@ -425,7 +446,7 @@ export function composeResponseStructure(analysis: QuestionAnalysis): DynamicRes
 }
 
 /**
- * بناء الرد الديناميكي
+ * بيانات الرد
  */
 export interface ResponseData {
   topic: string;
@@ -449,6 +470,9 @@ export interface ResponseData {
   news?: Array<{ title: string; source: string }>;
 }
 
+/**
+ * بناء الرد الديناميكي
+ */
 export function buildDynamicResponse(
   analysis: QuestionAnalysis,
   structure: DynamicResponseStructure,
@@ -457,250 +481,265 @@ export function buildDynamicResponse(
   const parts: string[] = [];
 
   for (const section of structure.sections) {
-    switch (section.type) {
-      case 'analysis':
-        parts.push(buildAnalysis(analysis, data));
-        break;
-      case 'causes':
-        parts.push(buildCauses(analysis, data));
-        break;
-      case 'signal':
-        parts.push(buildSignal(analysis, data));
-        break;
-      case 'recommendation':
-        parts.push(buildRecommendation(analysis, data));
-        break;
-      case 'economic':
-        if (structure.includeEconomicData && data.economicData) {
-          parts.push(buildEconomicSection(data.economicData));
-        }
-        break;
-      case 'comparison':
-        if (structure.includeComparison) {
-          parts.push(buildComparison(analysis, data));
-        }
-        break;
-      case 'scenario':
-        if (structure.includeScenario) {
-          parts.push(buildScenario(analysis, data));
-        }
-        break;
-      case 'forecast':
-        parts.push(buildForecast(analysis, data));
-        break;
-      case 'insight':
-        parts.push(buildInsight(data));
-        break;
-      case 'question':
-        parts.push(buildClosingQuestion(analysis, data));
-        break;
+    const content = buildSection(section.type, analysis, structure, data);
+    if (content) {
+      parts.push(content);
     }
   }
 
-  return parts.filter(p => p.length > 0).join('\n\n');
+  return parts.join('\n\n');
+}
+
+function buildSection(
+  type: ResponseSection['type'],
+  analysis: QuestionAnalysis,
+  structure: DynamicResponseStructure,
+  data: ResponseData
+): string {
+  switch (type) {
+    case 'summary':
+      return buildSummary(analysis, data);
+    case 'signal':
+      return buildSignal(analysis, data);
+    case 'causes':
+      return buildCauses(analysis, data);
+    case 'recommendation':
+      return buildRecommendation(analysis, data);
+    case 'insight':
+      return buildInsight(analysis, data);
+    case 'economic':
+      return structure.includeEconomicData && data.economicData 
+        ? buildEconomicSection(data.economicData) 
+        : '';
+    case 'comparison':
+      return structure.includeComparison ? buildComparison(analysis, data) : '';
+    case 'scenario':
+      return structure.includeScenario ? buildScenario(analysis, data) : '';
+    case 'forecast':
+      return buildForecast(analysis, data);
+    case 'question':
+      return buildClosingQuestion(analysis, data);
+    default:
+      return '';
+  }
 }
 
 // ============================================
-// دوال بناء الأقسام - النسخة الجديدة (مستشار)
+// دوال بناء الأقسام - النسخة السردية الطويلة
 // ============================================
 
 /**
- * بناء التحليل المبني على البيانات
- * يسرد ويشرح: "بناءً على البيانات، نلاحظ أن..."
+ * بناء الخلاصة - سردية ومباشرة
  */
-function buildAnalysis(analysis: QuestionAnalysis, data: ResponseData): string {
-  const topic = analysis.topic;
+function buildSummary(analysis: QuestionAnalysis, data: ResponseData): string {
+  const topic = analysis.cleanTopic;
   
-  // بناء تحليل مبني على البيانات الفعلية
-  const parts: string[] = [];
-  
-  // الجملة الافتتاحية - تعتمد على نوع السؤال
-  if (analysis.intent === 'explanation') {
-    parts.push(`**التحليل:**`);
-    parts.push(`بناءً على قراءة المؤشرات، نلاحظ أن ${topic} يرتبط بعدة عوامل:`);
-  } else if (analysis.intent === 'decision') {
-    parts.push(`**التحليل:**`);
-    parts.push(`بناءً على البيانات الحالية، ${topic} يظهر ${data.cfi > 55 ? 'مستوى قلق مرتفع' : data.hri > 55 ? 'مؤشرات إيجابية' : 'حالة ترقب'}.`);
-  } else if (analysis.intent === 'economic') {
-    parts.push(`**التحليل:**`);
-    parts.push(`من الناحية النفسية الجماعية، ${topic} يعكس ${getMoodDescription(data.gmi, data.cfi, data.hri)}.`);
+  // وصف الحالة النفسية
+  let moodDescription = '';
+  if (data.cfi > 65) {
+    moodDescription = 'حالة توتر وقلق واضح في السوق';
+  } else if (data.cfi > 55 && data.hri < 50) {
+    moodDescription = 'حالة حذر وترقب';
+  } else if (data.hri > 60 && data.cfi < 50) {
+    moodDescription = 'حالة تفاؤل حذر';
   } else {
-    parts.push(`**التحليل:**`);
-    parts.push(`${topic} - ${getMoodDescription(data.gmi, data.cfi, data.hri)}.`);
+    moodDescription = 'حالة ترقب وانتظار';
   }
   
-  // إضافة الأرقام الداعمة
-  parts.push(`المؤشرات: الخوف ${data.cfi}% | الأمل ${data.hri}% | المزاج العام ${data.gmi}%`);
+  // بناء الخلاصة حسب نوع السؤال
+  if (analysis.intent === 'explanation') {
+    // سؤال "لماذا" - نبدأ بالخلاصة مباشرة
+    const isNegative = /انخفض|انخفاض|هبوط|تراجع/.test(analysis.topic);
+    const isPositive = /ارتفع|ارتفاع|صعود/.test(analysis.topic);
+    
+    if (isNegative) {
+      return `**الخلاصة:**\nنفسياً، ${topic} يعكس ${moodDescription}، أكثر من كونه فرصة شراء مريحة. المستثمرون والمتابعون يتعاملون مع هذا الانخفاض بحذر شديد، وهناك شعور عام بأن الوقت ليس مناسباً للقرارات الكبيرة.`;
+    } else if (isPositive) {
+      return `**الخلاصة:**\nنفسياً، ${topic} يعكس ${moodDescription}. هناك تفاؤل ولكنه مشوب بالحذر، حيث يترقب المتابعون ما إذا كان هذا الارتفاع مستداماً أم مجرد موجة مؤقتة.`;
+    } else {
+      return `**الخلاصة:**\nنفسياً، ${topic} يعكس ${moodDescription}. المجتمع في حالة ترقب، ينتظر إشارات أوضح قبل اتخاذ أي قرارات.`;
+    }
+  }
   
-  return parts.join('\n');
+  if (analysis.intent === 'decision') {
+    const recommendation = data.cfi > 60 ? 'الحذر مطلوب' : data.hri > 60 ? 'قد تكون فرصة' : 'المراقبة أفضل';
+    return `**الخلاصة:**\nبالنسبة لـ${topic}، الوضع النفسي الحالي يشير إلى أن ${recommendation}. ${moodDescription}، مما يعني أن القرارات الكبيرة تحتاج تأنياً ودراسة.`;
+  }
+  
+  if (analysis.intent === 'economic') {
+    return `**الخلاصة:**\nمن الناحية النفسية، ${topic} يعكس ${moodDescription}. السوق في وضع ${data.cfi > 55 ? 'دفاعي' : 'متوازن'}، والمتداولون يتصرفون بـ${data.cfi > 60 ? 'حذر شديد' : 'حذر معتدل'}.`;
+  }
+  
+  // الافتراضي
+  return `**الخلاصة:**\n${topic} - ${moodDescription}. المجتمع يتعامل مع هذا الموضوع بـ${data.cfi > 55 ? 'قلق ملحوظ' : 'اهتمام متوازن'}.`;
 }
 
 /**
- * بناء قسم الأسباب - أسباب فعلية وليس وصف
+ * بناء إشارة القرار - واضحة مع شرح
+ */
+function buildSignal(analysis: QuestionAnalysis, data: ResponseData): string {
+  let emoji = '👁️';
+  let position = 'مراقبة';
+  let explanation = '';
+  
+  if (data.cfi > 70) {
+    emoji = '🚨';
+    position = 'تجنب المخاطر';
+    explanation = 'مستوى القلق مرتفع جداً في السوق. الأغلبية في وضع دفاعي، وهذا ليس الوقت المناسب للمغامرة.';
+  } else if (data.cfi > 55 && data.hri < 50) {
+    emoji = '⚠️';
+    position = 'مراقبة وانتظار';
+    explanation = 'السوق في وضع دفاعي: الأمل موجود، لكن الحذر هو السلوك الغالب. المتابعون يفضلون الانتظار على التحرك.';
+  } else if (data.hri > 60 && data.cfi < 50) {
+    emoji = '✅';
+    position = 'فرصة للدخول التدريجي';
+    explanation = 'المؤشرات تميل للإيجابية. هناك تفاؤل معقول، لكن الدخول التدريجي أفضل من المخاطرة الكبيرة.';
+  } else if (data.hri > 55) {
+    emoji = '📈';
+    position = 'مراقبة مع استعداد';
+    explanation = 'الأمل موجود لكن الحذر مطلوب. السوق قد يتحرك في أي اتجاه، والاستعداد للفرص مهم.';
+  } else {
+    emoji = '👁️';
+    position = 'مراقبة';
+    explanation = 'الوضع محايد نسبياً. لا توجد إشارات قوية في أي اتجاه، والمراقبة هي الخيار الأمثل حالياً.';
+  }
+  
+  return `**إشارة القرار:** ${emoji} ${position}\n${explanation}`;
+}
+
+/**
+ * بناء الأسباب - مفصلة وواقعية
  */
 function buildCauses(analysis: QuestionAnalysis, data: ResponseData): string {
-  const causes = data.causes || {};
-  const parts: string[] = ['**لماذا هذا الوضع؟**'];
+  const parts: string[] = ['**لماذا هذا المزاج؟**\nهذا الوضع النفسي ناتج عن عدة عوامل متداخلة:'];
   
-  // استخراج الأصول من السؤال لتحديد الأسباب المناسبة
   const assets = analysis.entities?.assets || [];
-  const hasGold = assets.includes('الذهب');
-  const hasSilver = assets.includes('الفضة');
-  const hasDollar = assets.includes('الدولار');
-  const hasOil = assets.includes('النفط');
+  const causes: string[] = [];
   
-  // أسباب اقتصادية حقيقية بناءً على الأصول
-  const economicCauses: string[] = [];
-  
-  if (hasGold || hasSilver) {
-    economicCauses.push('ارتفاع أسعار الفائدة عالمياً يضغط على المعادن الثمينة');
-    economicCauses.push('قوة الدولار الأمريكي تجعل الذهب أقل جاذبية');
-    if (hasSilver) {
-      economicCauses.push('تباطؤ الطلب الصناعي على الفضة');
+  // أسباب خاصة بالذهب والفضة
+  if (assets.includes('الذهب') || assets.includes('الفضة')) {
+    causes.push('**ارتفاع أسعار الفائدة عالمياً** - قرارات البنوك المركزية برفع الفائدة تجعل الاحتفاظ بالمعادن الثمينة أقل جاذبية مقارنة بالسندات والودائع.');
+    causes.push('**قوة الدولار الأمريكي** - عندما يرتفع الدولار، يصبح الذهب أغلى للمشترين بالعملات الأخرى، مما يقلل الطلب.');
+    if (assets.includes('الفضة')) {
+      causes.push('**تباطؤ الطلب الصناعي** - الفضة تُستخدم في الصناعات الإلكترونية والطاقة الشمسية، وأي تباطؤ اقتصادي يؤثر على الطلب.');
     }
   }
   
-  if (hasDollar) {
-    economicCauses.push('سياسات الفيدرالي الأمريكي تؤثر على قيمة الدولار');
-    economicCauses.push('الفجوة بين السعر الرسمي والموازي تخلق قلقاً');
+  // أسباب خاصة بالدولار
+  if (assets.includes('الدولار')) {
+    causes.push('**سياسات الفيدرالي الأمريكي** - قرارات الفائدة والتيسير الكمي تؤثر مباشرة على قيمة الدولار.');
+    causes.push('**الفجوة بين السعر الرسمي والموازي** - في بعض الأسواق، هذه الفجوة تخلق قلقاً وعدم يقين.');
   }
   
-  if (hasOil) {
-    economicCauses.push('تقلبات أسعار النفط تؤثر على الإيرادات');
-    economicCauses.push('قرارات أوبك+ تحدد اتجاه السوق');
+  // أسباب خاصة بالنفط
+  if (assets.includes('النفط')) {
+    causes.push('**قرارات أوبك+** - أي تغيير في حصص الإنتاج يؤثر مباشرة على الأسعار والتوقعات.');
+    causes.push('**التوترات الجيوسياسية** - الأحداث في مناطق الإنتاج تخلق تقلبات في الأسعار والمشاعر.');
   }
   
-  // إذا لم تكن هناك أصول محددة، نعطي أسباب عامة
-  if (economicCauses.length === 0) {
+  // أسباب عامة بناءً على المؤشرات
+  if (causes.length === 0) {
     if (data.cfi > 60) {
-      economicCauses.push('عدم اليقين الاقتصادي يرفع مستوى القلق');
+      causes.push('**عدم اليقين الاقتصادي** - غياب الوضوح في الاتجاه الاقتصادي يرفع مستوى القلق الجماعي.');
     }
     if (data.hri < 45) {
-      economicCauses.push('غياب أخبار إيجابية يضعف التفاؤل');
+      causes.push('**غياب الأخبار الإيجابية** - عدم وجود محفزات إيجابية يضعف التفاؤل العام.');
     }
     if (data.gmi < 45) {
-      economicCauses.push('الضغوط المعيشية تؤثر على المزاج العام');
+      causes.push('**الضغوط المعيشية** - ارتفاع تكاليف الحياة يؤثر على المزاج العام والثقة في المستقبل.');
     }
   }
   
-  // إضافة الأسباب من السياق
-  if (causes.contextual && causes.contextual.length > 0) {
-    causes.contextual.forEach(c => economicCauses.push(c));
-  }
-  if (causes.economic && causes.economic.length > 0) {
-    causes.economic.forEach(c => economicCauses.push(c));
-  }
-  if (causes.political && causes.political.length > 0) {
-    causes.political.forEach(c => economicCauses.push(c));
+  // إضافة سبب إعلامي
+  if (causes.length > 0) {
+    causes.push('**تصاعد العناوين الإعلامية** - تغطية وسائل الإعلام لهذه التطورات تضخم المشاعر وتؤثر على القرارات.');
   }
   
   // تنسيق الأسباب
-  if (economicCauses.length > 0) {
-    // أخذ أول 3 أسباب فقط
-    const topCauses = economicCauses.slice(0, 3);
-    topCauses.forEach((cause, i) => {
+  if (causes.length > 0) {
+    causes.slice(0, 4).forEach((cause, i) => {
       parts.push(`${i + 1}. ${cause}`);
     });
   } else {
-    parts.push('المؤشرات في نطاق محايد - لا توجد ضغوط واضحة حالياً');
+    parts.push('المؤشرات في نطاق محايد حالياً، ولا توجد ضغوط واضحة تفسر اتجاهاً محدداً.');
   }
   
-  return parts.join('\n');
+  return parts.join('\n\n');
 }
 
 /**
- * بناء إشارة القرار - واضحة وعملية
- */
-function buildSignal(analysis: QuestionAnalysis, data: ResponseData): string {
-  const parts: string[] = ['**إشارة القرار:**'];
-  
-  // تحديد الموقف بناءً على المؤشرات
-  let position = '';
-  let reasoning = '';
-  let emoji = '';
-  
-  if (data.cfi > 70) {
-    position = 'تجنب المخاطر';
-    reasoning = 'مستوى القلق مرتفع جداً';
-    emoji = '🚨';
-  } else if (data.cfi > 55 && data.hri < 50) {
-    position = 'مراقبة وانتظار';
-    reasoning = 'التوتر يفوق التفاؤل';
-    emoji = '⚠️';
-  } else if (data.hri > 60 && data.cfi < 50) {
-    position = 'فرصة للدخول التدريجي';
-    reasoning = 'المؤشرات تميل للإيجابية';
-    emoji = '✅';
-  } else if (data.hri > 55) {
-    position = 'مراقبة مع استعداد';
-    reasoning = 'الأمل موجود لكن الحذر مطلوب';
-    emoji = '📈';
-  } else {
-    position = 'مراقبة';
-    reasoning = 'الوضع محايد';
-    emoji = '👁️';
-  }
-  
-  parts.push(`${emoji} **الموقف:** ${position}`);
-  parts.push(`**السبب:** ${reasoning} (خوف ${data.cfi}% | أمل ${data.hri}%)`);
-  
-  return parts.join('\n');
-}
-
-/**
- * بناء التوصية العملية - ماذا يفعل المستخدم؟
+ * بناء التوصية - عملية ومفصلة
  */
 function buildRecommendation(analysis: QuestionAnalysis, data: ResponseData): string {
-  const parts: string[] = ['**التوصية:**'];
+  const parts: string[] = ['**التوصية النفسية:**'];
   
-  const assets = analysis.entities?.assets || [];
-  const action = analysis.entities?.action;
-  
-  // توصية مخصصة بناءً على الأصول والمؤشرات
   if (data.cfi > 65) {
-    parts.push('• تأجيل القرارات الكبيرة حتى تهدأ المؤشرات');
-    parts.push('• إذا كنت مستثمراً، حافظ على السيولة');
+    parts.push('بناءً على الحالة النفسية الحالية للسوق، ننصح بـ:');
+    parts.push('• **تأجيل القرارات الكبيرة** - الوقت الحالي ليس مناسباً للمخاطرة. انتظر حتى تهدأ المؤشرات.');
+    parts.push('• **الحفاظ على السيولة** - إذا كنت مستثمراً، السيولة تمنحك مرونة للتحرك عندما تتحسن الظروف.');
+    parts.push('• **مراقبة الأخبار** - تابع التطورات الاقتصادية والسياسية التي قد تغير الاتجاه.');
   } else if (data.hri > 60 && data.cfi < 50) {
-    if (assets.includes('الذهب') || assets.includes('الفضة')) {
-      parts.push('• الدخول التدريجي قد يكون مناسباً');
-      parts.push('• لا تضع كل رأس المال دفعة واحدة');
-    } else {
-      parts.push('• الوقت قد يكون مناسباً للتحرك');
-      parts.push('• ابدأ بخطوات صغيرة وراقب النتائج');
-    }
+    parts.push('المؤشرات تشير إلى فرصة محتملة، لكن بحذر:');
+    parts.push('• **الدخول التدريجي** - لا تضع كل رأس المال دفعة واحدة. قسّم استثمارك على مراحل.');
+    parts.push('• **تحديد نقاط الخروج** - حدد مسبقاً متى ستخرج إذا تغير الاتجاه.');
+    parts.push('• **متابعة المؤشرات** - استمر في مراقبة التغيرات في المزاج العام.');
   } else {
-    parts.push('• المراقبة أفضل من التسرع حالياً');
-    parts.push('• انتظر إشارات أوضح قبل اتخاذ قرار');
+    parts.push('الوضع الحالي يستدعي:');
+    parts.push('• **المراقبة والانتظار** - لا تتسرع في اتخاذ قرارات. الوضع قد يتضح أكثر قريباً.');
+    parts.push('• **جمع المعلومات** - استخدم هذا الوقت لفهم السوق بشكل أعمق.');
+    parts.push('• **الاستعداد للفرص** - كن جاهزاً للتحرك عندما تظهر إشارات أوضح.');
   }
   
   return parts.join('\n');
 }
 
 /**
- * بناء قسم البيانات الاقتصادية
+ * بناء القراءة النفسية - عميقة ومفصلة
+ */
+function buildInsight(analysis: QuestionAnalysis, data: ResponseData): string {
+  const parts: string[] = ['**القراءة النفسية:**'];
+  
+  // تحليل الحالة النفسية
+  if (data.cfi > 60 && data.hri > 50) {
+    parts.push('السوق في حالة مقاومة نفسية مثيرة للاهتمام: هناك خوف واضح من استمرار الاتجاه السلبي، لكن في نفس الوقت يوجد أمل في ارتداد قادم. هذا المزيج يشير إلى مجتمع لا يستسلم بسهولة، ويبحث عن فرص حتى في الأوقات الصعبة.');
+  } else if (data.cfi > 65) {
+    parts.push('الخوف هو المسيطر حالياً. المجتمع في وضع دفاعي، يتجنب المخاطر ويفضل الأمان على الفرص. هذه الحالة قد تستمر حتى تظهر إشارات إيجابية واضحة تعيد الثقة.');
+  } else if (data.hri > 60) {
+    parts.push('التفاؤل موجود لكنه حذر. المجتمع يرى فرصاً محتملة، لكنه تعلم من التجارب السابقة ألا يندفع. هذا توازن صحي بين الأمل والواقعية.');
+  } else {
+    parts.push('المجتمع في حالة ترقب وانتظار. لا يوجد اتجاه واضح في المشاعر، والجميع ينتظر إشارات أوضح قبل اتخاذ مواقف. هذه الحالة عادة ما تسبق تحركات كبيرة في أي اتجاه.');
+  }
+  
+  return parts.join('\n');
+}
+
+/**
+ * بناء قسم البيانات الاقتصادية - فقط عند الطلب
  */
 function buildEconomicSection(economicData: ResponseData['economicData']): string {
   if (!economicData) return '';
   
-  const parts: string[] = ['**المؤشرات الاقتصادية:**'];
-  
-  if (economicData.currencies) {
-    const currencies = Object.entries(economicData.currencies)
-      .map(([code, data]) => {
-        const arrow = data.change > 0 ? '↑' : data.change < 0 ? '↓' : '→';
-        return `${code}: ${data.rate.toFixed(2)} ${arrow}${Math.abs(data.change).toFixed(1)}%`;
-      })
-      .join(' | ');
-    parts.push(currencies);
-  }
+  const parts: string[] = ['**المؤشرات الاقتصادية الحالية:**'];
   
   if (economicData.gold) {
     const arrow = economicData.gold.change > 0 ? '↑' : '↓';
-    parts.push(`الذهب: $${economicData.gold.price} ${arrow}${Math.abs(economicData.gold.change).toFixed(1)}%`);
+    const changeAbs = Math.abs(economicData.gold.change).toFixed(1);
+    parts.push(`• الذهب: $${economicData.gold.price.toFixed(2)} ${arrow}${changeAbs}%`);
   }
   
   if (economicData.oil) {
-    parts.push(`النفط: برنت $${economicData.oil.brent} | WTI $${economicData.oil.wti}`);
+    parts.push(`• النفط: برنت $${economicData.oil.brent.toFixed(2)} | WTI $${economicData.oil.wti.toFixed(2)}`);
+  }
+  
+  if (economicData.currencies) {
+    const currencyLines: string[] = [];
+    for (const [code, data] of Object.entries(economicData.currencies)) {
+      const arrow = data.change > 0 ? '↑' : data.change < 0 ? '↓' : '→';
+      currencyLines.push(`${code}: ${data.rate.toFixed(2)} ${arrow}${Math.abs(data.change).toFixed(1)}%`);
+    }
+    if (currencyLines.length > 0) {
+      parts.push(`• العملات: ${currencyLines.join(' | ')}`);
+    }
   }
   
   return parts.join('\n');
@@ -710,22 +749,19 @@ function buildEconomicSection(economicData: ResponseData['economicData']): strin
  * بناء المقارنة
  */
 function buildComparison(analysis: QuestionAnalysis, data: ResponseData): string {
-  const topic = analysis.topic;
+  const topic = analysis.cleanTopic;
   const parts: string[] = ['**المقارنة:**'];
   
   const comparisonItems = extractComparisonItems(topic);
   
   if (comparisonItems.length >= 2) {
     const [item1, item2] = comparisonItems;
-    
-    parts.push(`| العنصر | الحالة النفسية | التوصية |`);
-    parts.push(`|--------|-----------------|---------|`);
-    parts.push(`| ${item1} | ${data.cfi > 55 ? 'قلق أعلى' : 'أكثر استقراراً'} | ${data.cfi > 55 ? 'حذر' : 'مراقبة'} |`);
-    parts.push(`| ${item2} | ${data.hri > 55 ? 'تفاؤل أكثر' : 'أقل تفاؤلاً'} | ${data.hri > 55 ? 'فرصة' : 'انتظار'} |`);
-    parts.push(``);
-    parts.push(`**الخلاصة:** ${data.cfi > data.hri ? item1 + ' يحمل مخاطر أعلى' : item2 + ' يبدو أفضل نسبياً'}`);
+    parts.push(`عند مقارنة ${item1} و${item2}:`);
+    parts.push(`• ${item1}: ${data.cfi > 55 ? 'يحمل قلقاً أعلى' : 'أكثر استقراراً نفسياً'}`);
+    parts.push(`• ${item2}: ${data.hri > 55 ? 'يحمل تفاؤلاً أكثر' : 'أقل تفاؤلاً'}`);
+    parts.push(`\n**الخلاصة:** ${data.cfi > data.hri ? item1 + ' يحمل مخاطر نفسية أعلى حالياً' : item2 + ' يبدو أفضل من الناحية النفسية'}`);
   } else {
-    parts.push(`عند مقارنة ${topic}:`);
+    parts.push(`عند تحليل ${topic}:`);
     parts.push(`• مستوى القلق: ${data.cfi}% (${data.cfi > 55 ? 'مرتفع' : 'معتدل'})`);
     parts.push(`• مستوى الأمل: ${data.hri}% (${data.hri > 55 ? 'إيجابي' : 'محايد'})`);
   }
@@ -755,13 +791,13 @@ function extractComparisonItems(topic: string): string[] {
  * بناء السيناريو
  */
 function buildScenario(analysis: QuestionAnalysis, data: ResponseData): string {
-  const topic = analysis.topic;
+  const topic = analysis.cleanTopic;
   
   const parts: string[] = ['**السيناريو المتوقع:**'];
   parts.push(`في حال ${topic}:`);
-  parts.push(`• التأثير النفسي: ${data.cfi > 50 ? 'سلبي - ارتفاع القلق' : 'متباين'}`);
-  parts.push(`• مستوى الخوف: ${data.cfi > 60 ? 'سيرتفع أكثر' : 'سيبقى مستقراً نسبياً'}`);
-  parts.push(`• مستوى الأمل: ${data.hri > 50 ? 'قد يتراجع مؤقتاً' : 'سيتأثر سلباً'}`);
+  parts.push(`• **التأثير النفسي:** ${data.cfi > 50 ? 'سلبي - سيرتفع القلق بشكل ملحوظ' : 'متباين - ردود فعل مختلفة'}`);
+  parts.push(`• **سلوك المستثمرين:** ${data.cfi > 60 ? 'هروب نحو الأمان والسيولة' : 'ترقب وحذر'}`);
+  parts.push(`• **المدى الزمني:** التأثير النفسي عادة يستمر ${data.cfi > 65 ? 'أسابيع' : 'أيام'} قبل أن يتكيف السوق`);
   
   return parts.join('\n');
 }
@@ -770,107 +806,60 @@ function buildScenario(analysis: QuestionAnalysis, data: ResponseData): string {
  * بناء التوقع
  */
 function buildForecast(analysis: QuestionAnalysis, data: ResponseData): string {
-  const trend = data.trend || 'stable';
-  const timeframe = analysis.entities?.timeframe || 'الأسبوع القادم';
+  const timeframe = analysis.entities?.timeframe || 'الفترة القادمة';
   
   let forecast = '';
-  if (trend === 'up' || data.hri > 55) {
-    forecast = 'تحسن تدريجي متوقع إذا استمرت المؤشرات الإيجابية';
-  } else if (trend === 'down' || data.cfi > 60) {
-    forecast = 'استمرار الضغط مع احتمال تقلبات';
+  if (data.hri > 55 && data.cfi < 50) {
+    forecast = 'تحسن تدريجي متوقع إذا استمرت المؤشرات الإيجابية. السوق قد يشهد انتعاشاً في الثقة.';
+  } else if (data.cfi > 60) {
+    forecast = 'استمرار الضغط مع احتمال تقلبات. الحذر سيبقى السلوك السائد حتى تظهر إشارات إيجابية.';
   } else {
-    forecast = 'استقرار نسبي مع حساسية للأخبار';
+    forecast = 'استقرار نسبي مع حساسية للأخبار. أي تطور إيجابي أو سلبي قد يغير الاتجاه بسرعة.';
   }
   
-  return `**التوقع:** خلال ${timeframe}: ${forecast}`;
+  return `**التوقع:** خلال ${timeframe}، ${forecast}`;
 }
 
 /**
- * بناء القراءة النفسية
- */
-function buildInsight(data: ResponseData): string {
-  const emotion = data.dominantEmotion || 'الترقب';
-  const insight = getInsightByEmotion(emotion, data.cfi, data.hri);
-  
-  return `**القراءة النفسية:** ${insight}`;
-}
-
-/**
- * بناء السؤال الختامي الذكي
+ * بناء السؤال الختامي - ذكي ومحدد
  */
 function buildClosingQuestion(analysis: QuestionAnalysis, data: ResponseData): string {
   const assets = analysis.entities?.assets || [];
   
-  // أسئلة ذكية ومحددة بناءً على السياق
-  const smartQuestions: Record<QuestionIntent, () => string> = {
-    decision: () => {
-      if (assets.length > 0) {
-        return `هل نحلل تأثير استمرار هذا الاتجاه على ${assets[0]} خلال أسبوع؟`;
-      }
-      return 'هل نحلل سيناريو معين لقرارك؟';
-    },
-    explanation: () => {
-      if (assets.length >= 2) {
-        return `هل نركز على ${assets[0]} أم ${assets[1]}؟`;
-      }
-      return 'هل نتعمق في أحد هذه الأسباب؟';
-    },
-    scenario: () => 'هل نحلل السيناريو المعاكس؟',
-    comparison: () => 'هل نضيف عنصر ثالث للمقارنة؟',
-    forecast: () => 'هل نحلل ماذا يحدث لو تغيرت الظروف؟',
-    economic: () => {
-      if (assets.length > 0) {
-        return `هل نحلل العلاقة بين ${assets[0]} والمزاج العام؟`;
-      }
-      return 'هل نحلل قطاع اقتصادي محدد؟';
-    },
-    political: () => 'هل نربط السياسة بالاقتصاد؟',
-    psychological: () => 'هل نتعمق في أحد المؤشرات النفسية؟',
-    journalistic: () => 'هل نركز على زاوية صحفية محددة؟',
-    academic: () => 'هل نشرح منهجية القياس بالتفصيل؟',
-    general: () => 'هل لديك سؤال محدد أكثر؟'
-  };
-  
-  const questionFn = smartQuestions[analysis.intent] || smartQuestions.general;
-  return questionFn();
-}
-
-// ============================================
-// دوال مساعدة
-// ============================================
-
-function getMoodDescription(gmi: number, cfi: number, hri: number): string {
-  if (cfi > 65) {
-    return 'حالة توتر وقلق واضح';
-  } else if (hri > 60 && cfi < 50) {
-    return 'حالة تفاؤل حذر';
-  } else if (gmi > 55) {
-    return 'حالة محايدة تميل للإيجابية';
-  } else if (gmi < 45) {
-    return 'حالة محايدة تميل للسلبية';
-  } else {
-    return 'حالة ترقب وانتظار';
-  }
-}
-
-function getInsightByEmotion(emotion: string, cfi: number, hri: number): string {
-  const insights: Record<string, string> = {
-    'الخوف': 'المجتمع في حالة دفاعية، يتجنب المخاطر ويترقب.',
-    'الأمل': 'رغم التحديات، هناك إيمان بإمكانية التحسن.',
-    'الفضول': 'المجتمع يراقب ويحلل، ينتظر إشارات واضحة.',
-    'الغضب': 'إحباط متراكم قد يتحول لفعل إذا استمر الضغط.',
-    'الحزن': 'المجتمع في حالة استيعاب لتغييرات صعبة.',
-    'الترقب': 'حالة انتظار مشحونة، المجتمع جاهز للتفاعل.'
-  };
-  
-  let base = insights[emotion] || 'المجتمع في حالة معقدة تجمع بين مشاعر متعددة.';
-  
-  // إضافة ملاحظة بناءً على المؤشرات
-  if (cfi > 60 && hri > 50) {
-    base += ' الملفت: وجود خوف وأمل معاً يشير إلى مجتمع يقاوم.';
+  // أسئلة ذكية بناءً على السياق
+  if (analysis.intent === 'explanation') {
+    if (assets.length >= 2) {
+      return `هل نحلل ${assets[0]} و${assets[1]} بشكل منفصل لفهم الفروقات؟`;
+    }
+    if (assets.includes('الذهب') || assets.includes('الفضة')) {
+      return 'هل نحلل ماذا يحدث نفسياً لو خفّض الفيدرالي أسعار الفائدة؟';
+    }
+    return 'هل نتعمق في أحد هذه الأسباب بشكل أكبر؟';
   }
   
-  return base;
+  if (analysis.intent === 'decision') {
+    if (assets.length > 0) {
+      return `هل نحلل السيناريو البديل: ماذا لو تغير اتجاه ${assets[0]}؟`;
+    }
+    return 'هل نحلل سيناريو معين يساعدك في القرار؟';
+  }
+  
+  if (analysis.intent === 'economic') {
+    if (assets.length > 0) {
+      return `هل نحلل العلاقة بين ${assets[0]} والمزاج العام بشكل أعمق؟`;
+    }
+    return 'هل نركز على قطاع اقتصادي محدد؟';
+  }
+  
+  if (analysis.intent === 'scenario') {
+    return 'هل نحلل السيناريو المعاكس لفهم الصورة الكاملة؟';
+  }
+  
+  if (analysis.intent === 'comparison') {
+    return 'هل نضيف عنصر ثالث للمقارنة؟';
+  }
+  
+  return 'هل لديك سؤال محدد أكثر يمكنني مساعدتك فيه؟';
 }
 
 /**
@@ -883,11 +872,11 @@ export function think(question: string, data: ResponseData): string {
   // 2. تحديد هيكل الرد
   const structure = composeResponseStructure(analysis);
   
-  // 3. إضافة الموضوع للبيانات
-  data.topic = analysis.topic;
+  // 3. تحديث البيانات
+  data.topic = analysis.cleanTopic;
   data.country = analysis.country;
   
-  // 4. بناء الرد الديناميكي
+  // 4. بناء الرد
   const response = buildDynamicResponse(analysis, structure, data);
   
   return response;

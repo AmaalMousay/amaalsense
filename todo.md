@@ -2052,3 +2052,61 @@ After reading the response, user should say:
 "فهمت الوضع + عرفت شن أعمل"
 NOT just:
 "كلام حلو"
+
+
+## Phase 69: Transform to Long-Form Narrative Responses (ChatGPT Style)
+
+### Current Score: 70% - Need to reach 100%
+
+### What's Working (Keep):
+- [x] Real causes (interest rates, dollar strength)
+- [x] Clear decision signal with reasoning
+- [x] Practical recommendations
+- [x] Smart closing questions
+
+### What Needs to Change:
+
+#### 1. Response Style - From Bullet Points to Narrative:
+- [x] Remove "التحليل:" header - start with الخلاصة directly
+- [x] Write in flowing paragraphs, not bullet points
+- [x] Each section should explain WHY, not just WHAT
+- [x] Make it feel like a consultant explaining, not a report
+
+#### 2. Clean Language:
+- [x] Remove "من الناحية النفسية الجماعية" - too technical
+- [x] Remove "تداول حديث حول..." - replace with actual news context
+- [x] Fix topic extraction - "ماسباب" should be "أسباب انخفاض"
+- [x] Format numbers properly - $2673.10 not $2673.103350503565
+
+#### 3. Hide Economic Data in General Responses:
+- [x] Economic indicators (USD, EUR, Gold prices) only in Trading View
+- [x] General responses should focus on psychology + causes + decision
+- [x] 90% of users don't understand raw price data
+
+#### 4. Stronger Causes:
+- [x] Replace "تداول حديث حول..." with specific news headlines
+- [x] Example: "تصاعد عناوين إعلامية حول تباطؤ الطلب الصناعي وتحركات الفيدرالي"
+
+### Target Response Format:
+```
+الخلاصة:
+نفسيًا، انخفاض أسعار الذهب والفضة يعكس حالة توتر وقلق واضح في السوق، أكثر من كونه فرصة شراء مريحة.
+
+إشارة القرار: 📈 مراقبة مع استعداد
+السوق في وضع دفاعي: الأمل موجود، لكن الحذر هو السلوك الغالب.
+
+لماذا هذا المزاج؟
+هذا القلق ناتج عن:
+- ارتفاع أسعار الفائدة عالميًا مما يضغط على المعادن الثمينة
+- قوة الدولار الأمريكي التي تقلل جاذبية الذهب
+- تصاعد عناوين إعلامية حول تباطؤ الطلب الصناعي
+
+التوصية النفسية:
+- تأجيل القرارات الكبيرة حاليًا
+- الحفاظ على السيولة وانتظار إشارات أوضح
+
+القراءة النفسية:
+السوق في حالة مقاومة: خوف من استمرار الهبوط، مع أمل في ارتداد قادم.
+
+هل نحلل ماذا يحدث نفسيًا لو خفّض الفيدرالي أسعار الفائدة؟
+```
