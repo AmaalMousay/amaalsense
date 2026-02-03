@@ -15,6 +15,10 @@ import {
   type DecisionResult,
   generateFollowUpQuestions 
 } from './llmInterpreter';
+import {
+  type CognitiveOutput,
+  COGNITIVE_PATTERNS
+} from './humanCognitiveLayer';
 
 export interface FluentResponseInput {
   question: string;
@@ -30,6 +34,7 @@ export interface FluentResponseInput {
   };
   newsCount: number;
   sourcesCount: number;
+  cognitivePattern?: CognitiveOutput;  // NEW: Human cognitive pattern
 }
 
 export interface FluentResponse {
@@ -39,6 +44,11 @@ export interface FluentResponse {
   causesSection: string;     // الأسباب الرئيسية
   meaningSection: string;    // ماذا يعني للمجتمع؟
   recommendationSection: string;  // التوصية
+  
+  // NEW: Human cognitive insight
+  cognitiveInsight?: string;  // كيف يفكر الناس
+  innerQuestion?: string;     // السؤال الداخلي
+  cognitivePattern?: string;  // النمط المعرفي
   
   // Follow-up questions (3 specific ones)
   followUpQuestions: string[];
@@ -70,12 +80,14 @@ export async function buildFluentResponse(input: FluentResponseInput): Promise<F
 3. تفسر نفسياً - لا تسرد فقط
 4. تقدم توصيات عملية
 5. تتحدث بالعربية الفصحى السلسة
+6. تفهم كيف يفكر الناس (النمط المعرفي)
 
 هيكل الرد:
 - الخلاصة: جملة واحدة حاسمة تجيب السؤال
 - لماذا: تفسير نفسي موجز
 - الأسباب: 2-3 أسباب محددة من البيانات
 - المعنى: ماذا يعني للمجتمع
+- كيف يفكرون: النمط المعرفي والسؤال الداخلي
 - التوصية: نصيحة عملية واحدة
 
 ممنوع:
@@ -113,7 +125,11 @@ ${input.interpretedCauses.socialImplications.join('\n')}
 التوصيات:
 ${input.decision.recommendations.join('\n')}
 
-اكتب رداً طبيعياً وحاسماً.`
+${input.cognitivePattern ? `النمط المعرفي: ${COGNITIVE_PATTERNS[input.cognitivePattern.primaryPattern]?.nameAr || ''}
+السؤال الداخلي: ${input.cognitivePattern.innerQuestion}
+كيف يفكرون: ${input.cognitivePattern.humanReasoning}` : ''}
+
+اكتب رداً طبيعياً وحاسماً. اذكر النمط المعرفي والسؤال الداخلي الذي يسأله الناس.`
         }
       ],
       response_format: {
@@ -143,9 +159,13 @@ ${input.decision.recommendations.join('\n')}
               recommendationSection: { 
                 type: 'string',
                 description: 'التوصية - نصيحة عملية'
+              },
+              cognitiveInsight: {
+                type: 'string',
+                description: 'كيف يفكر الناس - النمط المعرفي والسؤال الداخلي'
               }
             },
-            required: ['summary', 'whySection', 'causesSection', 'meaningSection', 'recommendationSection'],
+            required: ['summary', 'whySection', 'causesSection', 'meaningSection', 'recommendationSection', 'cognitiveInsight'],
             additionalProperties: false
           }
         }
@@ -164,12 +184,20 @@ ${input.decision.recommendations.join('\n')}
     
     console.log('[FluentResponseBuilder] Response built successfully');
     
+    // Get cognitive pattern info
+    const patternInfo = input.cognitivePattern 
+      ? COGNITIVE_PATTERNS[input.cognitivePattern.primaryPattern] 
+      : null;
+    
     return {
       summary: result.summary || '',
       whySection: result.whySection || '',
       causesSection: result.causesSection || '',
       meaningSection: result.meaningSection || '',
       recommendationSection: result.recommendationSection || '',
+      cognitiveInsight: result.cognitiveInsight || input.cognitivePattern?.humanReasoning || '',
+      innerQuestion: input.cognitivePattern?.innerQuestion || '',
+      cognitivePattern: patternInfo?.nameAr || '',
       followUpQuestions,
       confidence: input.interpretedCauses.confidence,
       dominantEmotion: input.decision.dominantEmotion,
@@ -220,6 +248,20 @@ export function formatFluentResponse(response: FluentResponse): string {
   // Meaning section
   if (response.meaningSection) {
     parts.push(`\n**ماذا يعني هذا للمجتمع؟** ${response.meaningSection}`);
+  }
+  
+  // NEW: Cognitive insight - How people THINK
+  if (response.cognitiveInsight || response.cognitivePattern) {
+    parts.push(`\n**كيف يفكر الناس؟**`);
+    if (response.cognitivePattern) {
+      parts.push(`النمط المعرفي: ${response.cognitivePattern}`);
+    }
+    if (response.innerQuestion) {
+      parts.push(`السؤال الداخلي: "${response.innerQuestion}"`);
+    }
+    if (response.cognitiveInsight) {
+      parts.push(response.cognitiveInsight);
+    }
   }
   
   // Recommendation

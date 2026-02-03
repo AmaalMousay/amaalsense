@@ -2477,3 +2477,32 @@ AmalSense is a **digital simulation of a mind** that feels, understands, thinks,
       → رد طلق بدون قوالب
       → 3 أسئلة ختامية ذكية
 ```
+
+
+## Phase 52: Human Cognitive Layer - طبقة الأنماط المعرفية البشرية
+
+### الفلسفة
+- Fluent Response Builder = كيف يُقال؟ (صياغة لغوية)
+- Human Cognitive Layer = كيف يُفكر؟ (نمط معرفي)
+- الفرق: AI Product vs Artificial Mind
+- الجملة المفتاحية: "أريده يفكر مثل إنسان قبل أن يتكلم"
+
+### الأنماط المعرفية البشرية
+- [x] قلق وجودي (Existential Anxiety) - "ماذا سيحدث لنا؟"
+- [x] غضب أخلاقي (Moral Outrage) - "هذا ظلم!"
+- [x] أمل واقعي (Realistic Hope) - "يمكننا تجاوز هذا"
+- [x] إنكار جماعي (Collective Denial) - "ليس بهذا السوء"
+- [x] حيرة معرفية (Cognitive Confusion) - "لا نفهم ما يحدث"
+- [x] ترقب حذر (Cautious Anticipation) - "ننتظر ونرى"
+- [x] يأس مكتوم (Suppressed Despair) - "لا فائدة"
+- [x] تبرير دفاعي (Defensive Rationalization) - "هناك سبب وجيه"
+- [x] تعبئة جماعية (Collective Mobilization) - "يجب أن نتحرك"
+- [x] قبول مستسلم (Resigned Acceptance) - "هذا قدرنا"
+
+### المهام
+- [x] إنشاء humanCognitiveLayer.ts (10 أنماط معرفية)
+- [x] تحديد النمط المعرفي من البيانات (detectCognitivePattern)
+- [x] دمج الطبقة في Intelligent Pipeline
+- [x] تحديث Fluent Response Builder لاستخدام النمط
+- [x] إضافة cognitiveInsight و innerQuestion للرد
+- [x] 420 اختبار ناجح

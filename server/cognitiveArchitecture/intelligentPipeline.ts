@@ -22,6 +22,12 @@ import {
   formatFluentResponse,
   type FluentResponse 
 } from './fluentResponseBuilder';
+import {
+  detectCognitivePattern,
+  type CognitiveOutput,
+  type CognitivePattern,
+  COGNITIVE_PATTERNS
+} from './humanCognitiveLayer';
 
 export interface PipelineInput {
   question: string;
@@ -55,6 +61,9 @@ export interface PipelineOutput {
   // Decision details
   decision: DecisionResult;
   
+  // Human cognitive pattern - HOW people are THINKING
+  cognitivePattern: CognitiveOutput;
+  
   // Smart query used
   smartQuery?: SmartQuery;
   
@@ -64,6 +73,7 @@ export interface PipelineOutput {
     sourcesUsed: number;
     confidence: number;
     processingSteps: string[];
+    cognitivePatternName: string;
   };
 }
 
@@ -114,14 +124,33 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
     type: decision.emotionType
   });
   
-  // Step 4: Build fluent response
+  // Step 4: Detect cognitive pattern - HOW people are THINKING
+  // This is the Human Cognitive Layer - it determines the thinking pattern
+  const cognitivePattern = await detectCognitivePattern({
+    question: input.question,
+    interpretation,
+    decision,
+    emotionData: input.emotionData
+  });
+  processingSteps.push('Cognitive Pattern Detected');
+  
+  const patternInfo = COGNITIVE_PATTERNS[cognitivePattern.primaryPattern];
+  console.log('[IntelligentPipeline] Cognitive Pattern:', {
+    pattern: cognitivePattern.primaryPattern,
+    nameAr: patternInfo.nameAr,
+    innerQuestion: cognitivePattern.innerQuestion,
+    confidence: cognitivePattern.confidence
+  });
+  
+  // Step 5: Build fluent response WITH cognitive pattern
   const response = await buildFluentResponse({
     question: input.question,
     interpretedCauses: interpretation,
     decision,
     emotionData: input.emotionData,
     newsCount: input.newsItems.length,
-    sourcesCount: new Set(input.newsItems.map(n => n.source)).size
+    sourcesCount: new Set(input.newsItems.map(n => n.source)).size,
+    cognitivePattern  // NEW: Pass cognitive pattern to response builder
   });
   processingSteps.push('Response Built');
   
@@ -135,12 +164,14 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
     response,
     interpretation,
     decision,
+    cognitivePattern,
     smartQuery,
     metadata: {
       newsAnalyzed: input.newsItems.length,
       sourcesUsed: new Set(input.newsItems.map(n => n.source)).size,
       confidence: interpretation.confidence,
-      processingSteps
+      processingSteps,
+      cognitivePatternName: patternInfo.nameAr
     }
   };
 }
