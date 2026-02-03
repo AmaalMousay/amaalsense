@@ -21,6 +21,7 @@ import { LearningLayer, type IntentType } from './learningLayer';
 import { MultiTurnContext } from './multiTurnContext';
 import { restructureAIResponse, compressResponse, type CompressedResponse } from './decisionCompressor';
 import { buildStructuredResponse, type AnalysisData as ResponseAnalysisData } from './responseBuilder';
+import { think, analyzeQuestionIntent, type ResponseData as ThinkingResponseData } from './thinkingEngine';
 import { analyzeNewsForCauses, buildWhySection, type NewsItem } from './causalExplainability';
 import { getOrCreateProfile, updateProfileFromInteraction, type UserProfileData } from './userProfileService';
 
@@ -490,37 +491,24 @@ ${framedTemplate.closingQuestion}`
       temperature: 0.7,
     });
     
-    // استخدام Response Builder الجديد - بناء الهيكل بالكود 100%
-    const responseData: ResponseAnalysisData = {
+    // استخدام Thinking Engine v3 - بناء الرد الذكي
+    const thinkingData: ThinkingResponseData = {
       topic: context.topic,
+      country: context.detectedCountry,
       gmi: context.gmi,
       cfi: context.cfi,
       hri: context.hri,
       dominantEmotion: context.dominantEmotion,
-      confidence: context.confidence,
-      detectedCountry: context.detectedCountry,
-      // إضافة الأخبار للتفسير السببي
-      newsHeadlines: context.sources || [],
-      keywords: []
+      trend: 'stable',
+      causes: {
+        contextual: context.sources || []
+      }
     };
     
-    // بناء الرد بالهيكل الثابت (Response Protocol)
-    const structuredResponse = buildStructuredResponse(responseData);
+    // استخدام Thinking Engine لبناء الرد الذكي
+    const aiMessage = think(userQuestion || context.topic, thinkingData);
     
-    // استخدام الرد المهيكل بدلاً من رد LLM
-    let aiMessage = structuredResponse.fullResponse;
-    
-    // إذا كان هناك سؤال من المستخدم، نستخدم LLM للإجابة عليه مع الحفاظ على الهيكل
-    if (userQuestion) {
-      const llmContent = response.content || '';
-      // دمج محتوى LLM مع الهيكل الثابت
-      if (llmContent.length > 100) {
-        // إضافة محتوى LLM كتفصيل إضافي
-        aiMessage = structuredResponse.fullResponse;
-      }
-    }
-    
-    console.log('[ConversationalAI] Using Response Builder with guaranteed structure');
+    console.log('[ConversationalAI] Using Thinking Engine v3 for intelligent response');
     
     // Record assistant turn in multi-turn context
     if (userQuestion) {

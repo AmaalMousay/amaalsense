@@ -2110,3 +2110,16 @@ NOT just:
 
 هل نحلل ماذا يحدث نفسيًا لو خفّض الفيدرالي أسعار الفائدة؟
 ```
+
+
+## Phase 70: Fix ConversationalAI to Use Thinking Engine (CRITICAL)
+
+### Problem:
+- Orchestrator uses Thinking Engine v3 ✅
+- ConversationalAI uses old responseBuilder ❌
+- Smart Analysis page uses ConversationalAI → Old responses appear!
+
+### Solution:
+- [x] Replace buildStructuredResponse with think() in ConversationalAI
+- [x] Ensure all chat responses use Thinking Engine v3
+- [ ] Test on Smart Analysis page
