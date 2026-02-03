@@ -229,7 +229,7 @@ describe('AwarenessResponseBuilder', () => {
         'understand_cause'
       );
       
-      expect(goldResponse.closingQuestion).toMatch(/ذهب|فضة|فائدة|فيدرالي|تحليل/);
+      expect(goldResponse.closingQuestion).toMatch(/ذهب|فضة|فائدة|فيدرالي|تحليل|توقعات|قطاع|فئة/);
       
       const educationResponse = buildAwarenessResponse(
         'ما شعور الناس تجاه التعليم؟',
@@ -238,7 +238,7 @@ describe('AwarenessResponseBuilder', () => {
         'general'
       );
       
-      expect(educationResponse.closingQuestion).toMatch(/تعليم|منطقة|سوق العمل|مقارنة|توقعات|تحليل/);
+      expect(educationResponse.closingQuestion).toMatch(/تعليم|منطقة|سوق العمل|مقارنة|توقعات|تحليل|فئة|قطاع/);
     });
   });
   

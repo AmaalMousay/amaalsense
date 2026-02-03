@@ -2379,3 +2379,25 @@ AmalSense is a **digital simulation of a mind** that feels, understands, thinks,
 - **So What**: Social meaning, implications, and actionable recommendations
 - **Closing Question**: Context-aware follow-up question
 
+
+
+## Phase 48: إضافة مجالات جديدة لقاعدة بيانات الأسباب (NEW)
+
+### المجالات الجديدة المطلوبة
+- [x] psychology: علم النفس والمشاعر والأنماط الدورية
+- [x] health: الصحة والأوبئة والرعاية الصحية
+- [x] technology: التكنولوجيا والذكاء الاصطناعي
+- [x] sports: الرياضة والمنافسات
+- [x] environment: البيئة والمناخ
+- [x] social: القضايا الاجتماعية والعلاقات
+- [x] security: الأمن والصراعات
+- [x] real_estate: العقارات والإسكان
+- [x] energy: الطاقة والوقود
+- [x] employment: التوظيف وسوق العمل
+
+### الإنجازات
+- [x] إضافة 10 مجالات جديدة لقاعدة بيانات الأسباب
+- [x] تحديث buildContextParagraph للمجالات الجديدة
+- [x] إضافة أسئلة إغلاق للمجالات الجديدة
+- [x] 16 اختبار ناجح
+
