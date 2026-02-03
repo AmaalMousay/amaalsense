@@ -168,10 +168,18 @@ export async function analyzeTopicInCountry(
   options?: {
     timeRange?: 'day' | 'week' | 'month';
     language?: string;
+    conversationHistory?: Array<{ role: string; content: string }>;
+    isFollowUp?: boolean;
   }
 ): Promise<TopicAnalysisResult> {
+  // Phase 56: Pass conversationHistory to analyzeHybrid
+  // If this is a follow-up question, pass the previous context
+  const contextMessage = options?.isFollowUp && options?.conversationHistory && options.conversationHistory.length > 0
+    ? `Previous context: ${options.conversationHistory.map(m => m.content).join(' | ')}. New question: ${topic}`
+    : `${topic} in ${countryName}`;
+  
   // Get base analysis using hybrid analyzer
-  const baseAnalysis = await analyzeHybrid(`${topic} in ${countryName}`, 'news');
+  const baseAnalysis = await analyzeHybrid(contextMessage, 'news');
   
   // Get regions for this country
   const regions = COUNTRY_REGIONS[countryCode] || DEFAULT_REGIONS;

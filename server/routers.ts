@@ -1747,6 +1747,11 @@ Please verify the payment and confirm in the admin panel.
         countryName: z.string().min(1).max(100),
         timeRange: z.enum(['day', 'week', 'month']).default('week'),
         language: z.string().optional(),
+        conversationHistory: z.array(z.object({
+          role: z.string(),
+          content: z.string(),
+        })).optional(),
+        isFollowUp: z.boolean().optional(),
       }))
       .mutation(async ({ input }) => {
         const { analyzeTopicInCountry } = await import("./topicAnalyzer");
@@ -1757,6 +1762,8 @@ Please verify the payment and confirm in the admin panel.
           {
             timeRange: input.timeRange,
             language: input.language,
+            conversationHistory: input.conversationHistory,
+            isFollowUp: input.isFollowUp,
           }
         );
       }),

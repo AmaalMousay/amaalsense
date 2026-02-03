@@ -110,6 +110,10 @@ export default function TopicAnalysisResults() {
   // Mutations
   const analyzeTopicMutation = trpc.topic.analyzeTopicInCountry.useMutation();
   const generatePdfMutation = trpc.pdfExport.generateAnalysisReport.useMutation();
+  const createConversationMutation = trpc.conversations.create.useMutation();
+  
+  // Conversation state
+  const [conversationId, setConversationId] = useState<number | null>(null);
 
   // Export PDF
   const handleExportPDF = async () => {
@@ -175,6 +179,39 @@ export default function TopicAnalysisResults() {
         .then((data) => {
           setAnalysisData(data);
           setIsLoading(false);
+          
+          // حفظ الدردشة تلقائياً بعد التحليل
+          if (!conversationId) {
+            // تحديد العاطفة السائدة من بيانات المشاعر
+            const emotions = (data as any).emotions || {};
+            const emotionEntries = Object.entries(emotions) as [string, number][];
+            const dominant = emotionEntries.length > 0 
+              ? emotionEntries.sort((a, b) => b[1] - a[1])[0][0] 
+              : 'neutral';
+            
+            // الحصول على الرد الذكي من البيانات
+            const aiResponseText = (data as any).aiResponse || 
+              (data as any).metaDecision?.finalRecommendation || 
+              (data as any).intelligentResponse ||
+              `تحليل ${topic} في ${effectiveCountryName}`;
+            
+            createConversationMutation.mutateAsync({
+              topic: `${topic} - ${effectiveCountryName}`,
+              countryCode: effectiveCountryCode !== 'ALL' ? effectiveCountryCode : undefined,
+              initialAnalysis: {
+                gmi: data.gmi || 0,
+                cfi: data.cfi || 50,
+                hri: data.hri || 50,
+                dominantEmotion: dominant,
+                aiResponse: aiResponseText,
+              },
+            }).then((conv) => {
+              setConversationId(conv.id);
+              console.log('تم حفظ الدردشة:', conv.id);
+            }).catch((err) => {
+              console.error('فشل حفظ الدردشة:', err);
+            });
+          }
         })
         .catch((err) => {
           console.error('Analysis error:', err);
