@@ -2015,3 +2015,40 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Remove English prompt text from appearing in responses
 - [x] Fix Orchestrator to pass clean Arabic question to Thinking Engine
 - [x] Test with real questions on platform
+
+
+## Phase 68: Transform from Poet to Consultant (CRITICAL REBUILD)
+
+### Problem Statement:
+Current responses are "beautiful descriptions" not "intelligent analysis"
+- User asks "why?" but gets no actual reasons
+- Responses describe feelings but don't explain causes
+- No actionable decisions or recommendations
+- Closing questions are generic ChatGPT-style
+
+### Required Changes:
+
+#### 1. Response Structure - Must Include:
+- [x] **Data-driven explanation**: "بناءً على البيانات، نلاحظ أن X وهذا بسبب Y"
+- [x] **Actual causes**: For economic questions, include real factors (interest rates, dollar strength, industrial demand)
+- [x] **Clear decision signal**: Not just "حذر" but "الموقف: مراقبة أو دخول تدريجي"
+- [x] **Actionable recommendation**: What should user DO, not just FEEL
+
+#### 2. For "Why?" Questions:
+- [x] Must provide 2-3 actual causes from economic/political context
+- [x] Connect causes to the emotional state
+- [x] Example: "هذا القلق ناتج عن: ارتفاع الفائدة + قوة الدولار + تباطؤ الطلب"
+
+#### 3. Decision Signal Improvement:
+- [x] Change from vague "حذر" to specific "الموقف: مراقبة/شراء تدريجي/انتظار"
+- [x] Include reasoning: "لأن المؤشرات تشير إلى..."
+
+#### 4. Smart Closing Questions:
+- [x] Replace generic "هل تريد التعمق؟" with specific questions
+- [x] Examples: "هل نحلل تأثير استمرار هذا الاتجاه أسبوعًا؟" or "هل نركز على الذهب أم الفضة؟"
+
+### Success Criteria:
+After reading the response, user should say:
+"فهمت الوضع + عرفت شن أعمل"
+NOT just:
+"كلام حلو"
