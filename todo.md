@@ -2123,3 +2123,113 @@ NOT just:
 - [x] Replace buildStructuredResponse with think() in ConversationalAI
 - [x] Ensure all chat responses use Thinking Engine v3
 - [ ] Test on Smart Analysis page
+
+
+## Phase 71: Build Intelligent Question Understanding System (Cognitive Architecture)
+
+### Philosophy:
+AmalSense is NOT a Machine Learning problem - it's a Cognitive System Design problem.
+We don't need to "train a model" - we need to "build a mind that thinks".
+
+### Architecture:
+```
+User Question
+     ↓
+Question Understanding Engine (فهم السؤال بعمق)
+     ↓
+Source Selector (أين يبحث عن المعلومات)
+     ↓
+Context Builder (جمع المعلومات المناسبة)
+     ↓
+Reasoning Layer (ربط المعلومات بالمنطق)
+     ↓
+Intelligent Narrator (شرح كعقل يتكلم)
+     ↓
+Response (رد ذكي مخصص للسؤال)
+```
+
+### Components to Build:
+
+#### 1. Question Understanding Engine
+- [ ] Extract the REAL question (not just keywords)
+- [ ] Identify what the user WANTS to know
+- [ ] Detect implicit questions (what they didn't ask but need)
+- [ ] Understand the context (why are they asking this?)
+
+#### 2. Source Selector
+- [ ] Map question types to data sources
+- [ ] Economic questions → Economic data + News
+- [ ] Psychological questions → Emotion indicators + Context
+- [ ] Decision questions → All sources + Risk analysis
+- [ ] Comparison questions → Multiple data points
+
+#### 3. Context Builder
+- [ ] Gather relevant information from selected sources
+- [ ] Filter noise - only what's relevant to THIS question
+- [ ] Build a "knowledge packet" for the question
+
+#### 4. Reasoning Layer
+- [ ] Connect indicators to causes
+- [ ] Connect causes to implications
+- [ ] Connect implications to recommendations
+- [ ] Build logical chains: "Because X, therefore Y"
+
+#### 5. Intelligent Narrator
+- [ ] Transform reasoning into human language
+- [ ] Explain like a consultant, not a robot
+- [ ] Use the user's language level
+- [ ] Make complex things simple
+
+### Success Criteria:
+- Response feels like "a mind is talking"
+- Each response is unique to the question
+- User understands WHY, not just WHAT
+- Response includes: Understanding + Analysis + Insight + Recommendation
+
+
+## Phase 72: Transform Source Selector to Cognitive Router (CRITICAL FIX)
+
+### Problem:
+- Source Selector was designed to "search external sources" (news, APIs)
+- This turns AmalSense into "smart Google" or "Arabic Perplexity"
+- Loses the unique identity of emotional intelligence system
+
+### Key Insight (from ChatGPT review):
+> AmalSense doesn't "search the world" - it "interprets the world"
+> This is the difference between an Information System and a Consciousness System
+
+### Solution - Cognitive Router:
+Instead of "where to search" → "which mind to activate"
+
+### Internal Engines to Route To:
+- [x] Emotion Engine - for emotional state analysis
+- [x] Trend Engine - for direction and momentum
+- [x] Economic Layer - for financial/trading questions
+- [x] Media Bias Engine - for media influence questions
+- [x] Social Pattern Engine - for collective behavior
+- [x] Decision Engine - for should/shouldn't questions
+
+### Key Difference:
+| Source Selector (wrong) | Cognitive Router (correct) |
+|------------------------|---------------------------|
+| Searches news | Activates Emotion Engine |
+| Collects articles | Activates Trend Engine |
+| Summarizes texts | Activates Media Bias Engine |
+| Information Retrieval | Cognitive Reasoning |
+
+### Golden Rule:
+> "يختار أين يبحث" (wrong)
+> "يختار كيف يفكر" (correct)
+
+### Implementation:
+- [x] Rename sourceSelector.ts to cognitiveRouter.ts
+- [x] Replace external source fetching with internal engine activation
+- [x] Create routing logic based on question intent
+- [x] Update Context Builder to work with engine outputs
+- [x] Test with various question types
+
+### Test Results:
+- Question "لماذا انخفض سعر الذهب؟" → explanation_engine → emotion_engine → economic_engine → trend_engine
+- Question "هل الإعلام عامل تضخيم نفسي؟" → decision_engine → emotion_engine → media_bias_engine → scenario_engine
+- Question "هل أشتري الذهب الآن أم أنتظر؟" → decision_engine → emotion_engine → economic_engine → trend_engine → scenario_engine
+

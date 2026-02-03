@@ -22,6 +22,7 @@ import { MultiTurnContext } from './multiTurnContext';
 import { restructureAIResponse, compressResponse, type CompressedResponse } from './decisionCompressor';
 import { buildStructuredResponse, type AnalysisData as ResponseAnalysisData } from './responseBuilder';
 import { think, analyzeQuestionIntent, type ResponseData as ThinkingResponseData } from './thinkingEngine';
+import { cognitiveProcess, type EmotionIndicators as CognitiveEmotionIndicators } from './cognitiveEngine';
 import { analyzeNewsForCauses, buildWhySection, type NewsItem } from './causalExplainability';
 import { getOrCreateProfile, updateProfileFromInteraction, type UserProfileData } from './userProfileService';
 
@@ -491,24 +492,53 @@ ${framedTemplate.closingQuestion}`
       temperature: 0.7,
     });
     
-    // استخدام Thinking Engine v3 - بناء الرد الذكي
-    const thinkingData: ThinkingResponseData = {
-      topic: context.topic,
-      country: context.detectedCountry,
-      gmi: context.gmi,
-      cfi: context.cfi,
-      hri: context.hri,
-      dominantEmotion: context.dominantEmotion,
-      trend: 'stable',
-      causes: {
-        contextual: context.sources || []
-      }
-    };
+    // استخدام Cognitive Engine - العقل الذكي الجديد
+    let aiMessage: string;
     
-    // استخدام Thinking Engine لبناء الرد الذكي
-    const aiMessage = think(userQuestion || context.topic, thinkingData);
-    
-    console.log('[ConversationalAI] Using Thinking Engine v3 for intelligent response');
+    if (userQuestion) {
+      // استخدام Cognitive Engine للأسئلة
+      console.log('[ConversationalAI] Using Cognitive Engine for intelligent response');
+      
+      const cognitiveIndicators: CognitiveEmotionIndicators = {
+        gmi: context.gmi,
+        cfi: context.cfi,
+        hri: context.hri,
+        dominantEmotion: context.dominantEmotion,
+        emotionBreakdown: context.emotionVector,
+        trend: 'stable',
+        confidence: context.confidence / 100
+      };
+      
+      const cognitiveResponse = await cognitiveProcess(
+        userQuestion,
+        cognitiveIndicators,
+        conversationHistory.map(m => ({ role: m.role, content: m.content }))
+      );
+      
+      aiMessage = cognitiveResponse.text;
+      console.log('[ConversationalAI] Cognitive Engine processed:', {
+        questionType: cognitiveResponse.metadata.questionType,
+        realIntent: cognitiveResponse.metadata.realIntent,
+        confidence: cognitiveResponse.metadata.confidence
+      });
+    } else {
+      // استخدام Thinking Engine للتحليل الأولي
+      const thinkingData: ThinkingResponseData = {
+        topic: context.topic,
+        country: context.detectedCountry,
+        gmi: context.gmi,
+        cfi: context.cfi,
+        hri: context.hri,
+        dominantEmotion: context.dominantEmotion,
+        trend: 'stable',
+        causes: {
+          contextual: context.sources || []
+        }
+      };
+      
+      aiMessage = think(context.topic, thinkingData);
+      console.log('[ConversationalAI] Using Thinking Engine for initial analysis');
+    }
     
     // Record assistant turn in multi-turn context
     if (userQuestion) {
