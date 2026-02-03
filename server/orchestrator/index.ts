@@ -328,7 +328,7 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
     console.log('[Orchestrator] Using Intelligent Pipeline with', engineResults.realNews!.items.length, 'news items');
     
     try {
-      // Run the intelligent pipeline
+      // Run the intelligent pipeline with session context
       const pipelineResult = await runIntelligentPipeline({
         question: request.question,
         topic: questionAnalysis.cleanTopic || topic,
@@ -345,7 +345,10 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
           gmi: dcftData.gmi || 0,
           cfi: dcftData.cfi || 50,
           hri: dcftData.hri || 50
-        }
+        },
+        // Phase 54: تمرير السياق للرد الديناميكي
+        sessionId: 'user-session', // TODO: Get from actual user session
+        conversationHistory: request.conversationHistory
       });
       
       intelligentResponse = pipelineResult.formattedResponse;

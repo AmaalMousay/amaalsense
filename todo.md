@@ -2604,3 +2604,40 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 ### الجملة الذهبية
 - قبل: AmalSense = عقل ذكي يلبس زي نموذج امتحان
 - بعد: AmalSense = عقل ذكي يتكلم مثل إنسان فاهم
+
+
+## Phase 55: إصلاح عدم تفعيل المكونات الجديدة (BUG FIX)
+
+### المشكلة
+الردود لا تزال بنفس الشكل القديم رغم إنشاء المكونات الجديدة:
+- Session Context موجود لكن غير مستخدم في الـ pipeline الفعلي
+- Dynamic Response Engine موجود لكن غير مدمج
+- الرد لا يتغير حسب نوع السؤال (لماذا/كيف/ماذا)
+- الرد لسؤال المتابعة بنفس طول الرد الأول
+
+### المطلوب
+- [x] ربط Session Context بـ intelligentPipeline.ts
+- [x] دمج Dynamic Response Engine في بناء الرد
+- [x] تغيير شكل الرد حسب نوع السؤال (isFollowUp + maxLength)
+- [x] اختصار ردود المتابعة (shortenFollowUpResponse)
+- [x] تحديث fluentResponseBuilder.ts لتعليمات مختلفة حسب نوع السؤال
+- [x] تحديث orchestrator/index.ts لتمرير sessionId و conversationHistory
+- [x] تشغيل 43 اختبار بنجاح
+
+### التغييرات التقنية
+1. intelligentPipeline.ts:
+   - إضافة getFullContext للحصول على السياق
+   - إضافة determineResponseStructure لتحديد هيكل الرد
+   - إضافة applyConsultantStyle لتطبيق أسلوب المستشار
+   - إضافة shortenFollowUpResponse لاختصار المتابعات
+
+2. fluentResponseBuilder.ts:
+   - إضافة isFollowUp, questionNumber, responseStructure للـ input
+   - تعليمات LLM مختلفة حسب نوع السؤال:
+     - short: خلاصة + توصية فقط
+     - medium: خلاصة + لماذا + توصية
+     - long: الهيكل الكامل
+
+3. orchestrator/index.ts:
+   - تمرير sessionId و conversationHistory للـ pipeline
+

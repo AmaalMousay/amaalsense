@@ -34,7 +34,20 @@ export interface FluentResponseInput {
   };
   newsCount: number;
   sourcesCount: number;
-  cognitivePattern?: CognitiveOutput;  // NEW: Human cognitive pattern
+  cognitivePattern?: CognitiveOutput;  // Human cognitive pattern
+  // Phase 54 - المعلمات الجديدة للرد الديناميكي
+  isFollowUp?: boolean;
+  questionNumber?: number;
+  responseStructure?: {
+    format: string;
+    maxLength: 'short' | 'medium' | 'long';
+    sections: Array<{ name: string; required: boolean; order: number }>;
+  };
+  sessionContext?: {
+    country: string;
+    domain: string;
+    topic: string;
+  };
 }
 
 export interface FluentResponse {
@@ -65,6 +78,39 @@ export interface FluentResponse {
  */
 export async function buildFluentResponse(input: FluentResponseInput): Promise<FluentResponse> {
   console.log('[FluentResponseBuilder] Building response for:', input.question.substring(0, 50));
+  console.log('[FluentResponseBuilder] isFollowUp:', input.isFollowUp, 'questionNumber:', input.questionNumber);
+  
+  // تحديد هيكل الرد حسب نوع السؤال
+  const isFollowUp = input.isFollowUp || false;
+  const maxLength = input.responseStructure?.maxLength || 'long';
+  
+  // تعليمات مختلفة حسب نوع السؤال
+  let structureInstructions = '';
+  if (isFollowUp) {
+    if (maxLength === 'short') {
+      structureInstructions = `
+هذا سؤال متابعة. كن مختصراً جداً:
+- الخلاصة: جملة واحدة فقط
+- التوصية: جملة واحدة فقط
+لا تكرر المعلومات السابقة. أجب السؤال مباشرة.`;
+    } else if (maxLength === 'medium') {
+      structureInstructions = `
+هذا سؤال متابعة. كن موجزاً:
+- الخلاصة: جملة واحدة
+- لماذا: فقرة قصيرة
+- التوصية: جملة واحدة
+لا تكرر المعلومات السابقة. ركز على الإجابة المباشرة.`;
+    }
+  } else {
+    structureInstructions = `
+هيكل الرد الكامل:
+- الخلاصة: جملة واحدة حاسمة تجيب السؤال
+- لماذا: تفسير نفسي موجز
+- الأسباب: 2-3 أسباب محددة من البيانات
+- المعنى: ماذا يعني للمجتمع
+- كيف يفكرون: النمط المعرفي والسؤال الداخلي
+- التوصية: نصيحة عملية واحدة`;
+  }
   
   try {
     // Generate the main response
@@ -81,14 +127,7 @@ export async function buildFluentResponse(input: FluentResponseInput): Promise<F
 4. تقدم توصيات عملية
 5. تتحدث بالعربية الفصحى السلسة
 6. تفهم كيف يفكر الناس (النمط المعرفي)
-
-هيكل الرد:
-- الخلاصة: جملة واحدة حاسمة تجيب السؤال
-- لماذا: تفسير نفسي موجز
-- الأسباب: 2-3 أسباب محددة من البيانات
-- المعنى: ماذا يعني للمجتمع
-- كيف يفكرون: النمط المعرفي والسؤال الداخلي
-- التوصية: نصيحة عملية واحدة
+${structureInstructions}
 
 ممنوع:
 - "متذبذب بين..." (إلا إذا البيانات متساوية فعلاً)

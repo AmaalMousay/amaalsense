@@ -28,6 +28,49 @@ import {
   type CognitivePattern,
   COGNITIVE_PATTERNS
 } from './humanCognitiveLayer';
+// المكونات الجديدة - Phase 54
+import { getFullContext } from './sessionContext';
+import { determineResponseStructure, generateFormattingInstructions, type ResponseStructure } from './dynamicResponseEngine';
+import { generateStyleInstructions, applyConsultantStyle, generateConsultantQuestions } from './narrativeStyleEngine';
+
+/**
+ * اختصار رد المتابعة
+ * لأن سؤال المتابعة لا يحتاج تحليل كامل
+ */
+function shortenFollowUpResponse(response: string, maxLength: 'short' | 'medium' | 'long'): string {
+  const lines = response.split('\n');
+  
+  if (maxLength === 'short') {
+    // فقط الخلاصة والتوصية
+    const summary = lines.find(l => l.includes('الخلاصة'));
+    const recommendation = lines.find(l => l.includes('التوصية'));
+    const questions = lines.filter(l => l.match(/^\d+\./));
+    
+    const parts: string[] = [];
+    if (summary) parts.push(summary);
+    if (recommendation) parts.push(recommendation);
+    if (questions.length > 0) {
+      parts.push('\n**أسئلة للاستكشاف:**');
+      parts.push(...questions.slice(0, 2));
+    }
+    
+    return parts.join('\n');
+  }
+  
+  if (maxLength === 'medium') {
+    // حذف قسم "كيف يفكر الناس" و"ماذا يعني للمجتمع"
+    const filtered = lines.filter(l => {
+      if (l.includes('كيف يفكر الناس')) return false;
+      if (l.includes('النمط المعرفي:')) return false;
+      if (l.includes('السؤال الداخلي:')) return false;
+      if (l.includes('ماذا يعني هذا للمجتمع')) return false;
+      return true;
+    });
+    return filtered.join('\n');
+  }
+  
+  return response;
+}
 
 export interface PipelineInput {
   question: string;
@@ -46,6 +89,10 @@ export interface PipelineInput {
     cfi: number;
     hri: number;
   };
+  // المعلمات الجديدة - Phase 54
+  sessionId?: string;
+  conversationHistory?: Array<{ role: 'user' | 'assistant'; content: string }>;
+  userRole?: string;
 }
 
 export interface PipelineOutput {
@@ -85,6 +132,38 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
   console.log('[IntelligentPipeline] Starting pipeline for:', input.question.substring(0, 50));
   
   const processingSteps: string[] = [];
+  
+  // Step 0: الحصول على السياق من Session Context
+  const sessionId = input.sessionId || 'default';
+  const { session, effectiveContext } = getFullContext(sessionId, input.question);
+  
+  // تحديد هل هذا سؤال متابعة
+  const isFollowUp = effectiveContext.isFollowUp;
+  const questionNumber = effectiveContext.questionNumber;
+  
+  console.log('[IntelligentPipeline] Session context:', {
+    isFollowUp,
+    questionNumber,
+    country: effectiveContext.country,
+    topic: effectiveContext.topic
+  });
+  
+  // Step 0.5: تحديد هيكل الرد بناء على نوع السؤال
+  const lastIntent = session.questionHistory[session.questionHistory.length - 1]?.intent;
+  const responseStructure = determineResponseStructure({
+    questionIntent: lastIntent || { type: 'what', isFollowUp: false, requiresContext: false },
+    questionNumber,
+    userRole: input.userRole || 'general',
+    isFollowUp,
+    hasContext: !!effectiveContext.topic
+  });
+  
+  console.log('[IntelligentPipeline] Response structure:', {
+    format: responseStructure.format,
+    maxLength: responseStructure.maxLength,
+    isFollowUp
+  });
+  processingSteps.push('Session Context Loaded');
   
   // Step 1: Build smart query (for logging/debugging)
   let smartQuery: SmartQuery | undefined;
@@ -142,7 +221,7 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
     confidence: cognitivePattern.confidence
   });
   
-  // Step 5: Build fluent response WITH cognitive pattern
+  // Step 5: Build fluent response WITH cognitive pattern AND session context
   const response = await buildFluentResponse({
     question: input.question,
     interpretedCauses: interpretation,
@@ -150,12 +229,25 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
     emotionData: input.emotionData,
     newsCount: input.newsItems.length,
     sourcesCount: new Set(input.newsItems.map(n => n.source)).size,
-    cognitivePattern  // NEW: Pass cognitive pattern to response builder
+    cognitivePattern,
+    // المعلمات الجديدة - Phase 54
+    isFollowUp,
+    questionNumber,
+    responseStructure,
+    sessionContext: effectiveContext
   });
   processingSteps.push('Response Built');
   
-  // Format the response
-  const formattedResponse = formatFluentResponse(response);
+  // Format the response - استخدام أسلوب المستشار
+  let formattedResponse = formatFluentResponse(response);
+  
+  // تطبيق أسلوب المستشار على الرد
+  formattedResponse = applyConsultantStyle(formattedResponse);
+  
+  // إذا كان سؤال متابعة، اختصر الرد
+  if (isFollowUp && responseStructure.maxLength !== 'long') {
+    formattedResponse = shortenFollowUpResponse(formattedResponse, responseStructure.maxLength);
+  }
   
   console.log('[IntelligentPipeline] Pipeline complete');
   
