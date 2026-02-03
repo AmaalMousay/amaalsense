@@ -20,6 +20,7 @@ import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage 
 import { buildRAGContext, formatRAGForPrompt, storeForRAG, storeConversationForRAG } from '../knowledge/ragSystem';
 import { buildStructuredResponse, type AnalysisData } from '../responseBuilder';
 import { fetchEconomicData, type EconomicData } from '../economicDataService';
+import { think, analyzeQuestionIntent, type ResponseData } from '../thinkingEngine';
 
 // Orchestration request
 export interface OrchestrationRequest {
@@ -103,6 +104,56 @@ You help users understand collective emotions and their implications.
 Use the provided data to answer questions accurately.
 Respond in the same language as the user's question.`,
 };
+
+/**
+ * Extract causes from question context
+ */
+function extractCausesFromQuestion(question: string, analysis: { topic: string; intent: string }): {
+  economic?: string[];
+  media?: string[];
+  political?: string[];
+  contextual?: string[];
+} {
+  const causes: {
+    economic?: string[];
+    media?: string[];
+    political?: string[];
+    contextual?: string[];
+  } = {};
+  
+  const q = question.toLowerCase();
+  
+  // استخراج أسباب اقتصادية
+  if (q.includes('دولار') || q.includes('سعر الصرف') || q.includes('عملة')) {
+    causes.economic = ['تذبذب سعر الصرف', 'ضغوط على العملة المحلية'];
+  }
+  if (q.includes('أسعار') || q.includes('غلاء') || q.includes('تضخم')) {
+    causes.economic = [...(causes.economic || []), 'ارتفاع تكاليف المعيشة'];
+  }
+  if (q.includes('دعم') || q.includes('وقود') || q.includes('بنزين')) {
+    causes.economic = [...(causes.economic || []), 'مخاوف من تغيير سياسات الدعم'];
+  }
+  
+  // استخراج أسباب سياسية
+  if (q.includes('انتخاب') || q.includes('حكومة') || q.includes('برلمان')) {
+    causes.political = ['ترقب للمستجدات السياسية'];
+  }
+  if (q.includes('حرب') || q.includes('صراع') || q.includes('أمن')) {
+    causes.political = [...(causes.political || []), 'قلق من التوترات الأمنية'];
+  }
+  
+  // استخراج أسباب إعلامية
+  if (q.includes('أخبار') || q.includes('إعلام') || q.includes('تقارير')) {
+    causes.media = ['تداول أخبار مؤثرة'];
+  }
+  
+  // أسباب سياقية من الموضوع
+  if (analysis.topic) {
+    causes.contextual = [`تداول حديث حول ${analysis.topic}`];
+  }
+  
+  return causes;
+}
 
 /**
  * Main orchestration function
@@ -199,53 +250,68 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
     content: request.question,
   });
   
-  // Step 7: Build structured response using Response Builder (guaranteed structure)
-  const provider = getActiveProvider();
-  const providerInfo = getProviderInfo(provider);
+  // Step 7: Use Thinking Engine - AI that thinks then speaks
+  console.log('[Orchestrator] Using Thinking Engine for intelligent response');
   
-  console.log('[Orchestrator] Building structured response with Response Builder');
+  // Analyze question intent with Thinking Engine
+  const questionAnalysis = analyzeQuestionIntent(request.question);
+  console.log('[Orchestrator] Question analysis:', {
+    intent: questionAnalysis.intent,
+    topic: questionAnalysis.topic,
+    requiresEconomicData: questionAnalysis.requiresEconomicData,
+    expectedResponseType: questionAnalysis.expectedResponseType,
+  });
   
   // Extract data from engine results
   const dcftData = engineResults.dcft || { gmi: 0, cfi: 50, hri: 50 };
   const emotionData = engineResults.emotion || { dominantEmotion: 'neutral' };
   const metaData = engineResults.meta || { confidence: 0.7 };
   
-  // Step 7.5: Fetch economic data for traders
+  // Step 7.5: Fetch economic data ONLY if needed for this question type
   let economicData: EconomicData | undefined;
-  try {
-    economicData = await fetchEconomicData();
-    console.log('[Orchestrator] Economic data fetched:', {
-      currencies: economicData.currencies.length,
-      commodities: economicData.commodities.length,
-    });
-  } catch (error) {
-    console.error('[Orchestrator] Failed to fetch economic data:', error);
+  if (questionAnalysis.requiresEconomicData) {
+    try {
+      economicData = await fetchEconomicData();
+      console.log('[Orchestrator] Economic data fetched for trading question:', {
+        currencies: economicData.currencies.length,
+        commodities: economicData.commodities.length,
+      });
+    } catch (error) {
+      console.error('[Orchestrator] Failed to fetch economic data:', error);
+    }
   }
   
-  // Build analysis data for Response Builder
-  const analysisData: AnalysisData = {
-    topic,
+  // Build response data for Thinking Engine
+  const responseData: ResponseData = {
+    topic: questionAnalysis.topic,
+    country: questionAnalysis.country || country,
     gmi: dcftData.gmi || 0,
     cfi: dcftData.cfi || 50,
     hri: dcftData.hri || 50,
     dominantEmotion: emotionData.dominantEmotion || 'neutral',
-    confidence: (metaData.confidence || 0.7) * 100,
-    detectedCountry: country,
-    newsHeadlines: [],  // Will be populated from news service if available
-    keywords: [],
-    userQuestion: request.question,
-    turnCount: (request.conversationHistory?.length || 0) + 1,
-    previousTopics: [],
-    economicData,  // البيانات الاقتصادية للمتداولين
+    trend: 'stable', // Default trend
+    causes: extractCausesFromQuestion(request.question, questionAnalysis),
+    economicData: economicData ? {
+      currencies: Object.fromEntries(
+        economicData.currencies.map(c => [c.code, { rate: c.rate, change: c.change }])
+      ),
+      gold: economicData.commodities.find(c => c.symbol === 'XAU') 
+        ? { price: economicData.commodities.find(c => c.symbol === 'XAU')!.price, change: economicData.commodities.find(c => c.symbol === 'XAU')!.change }
+        : undefined,
+      oil: {
+        brent: economicData.commodities.find(c => c.symbol === 'BRENT')?.price || 0,
+        wti: economicData.commodities.find(c => c.symbol === 'WTI')?.price || 0,
+      },
+    } : undefined,
   };
   
-  // Build structured response (100% guaranteed structure by code)
-  const structuredResponse = buildStructuredResponse(analysisData);
+  // Use Thinking Engine to build intelligent response
+  const intelligentResponse = think(request.question, responseData);
   
-  console.log('[Orchestrator] Structured response built:', {
-    hasExecutiveSummary: !!structuredResponse.executiveSummary,
-    hasDecisionSignal: !!structuredResponse.decisionSignal,
-    responseLength: structuredResponse.fullResponse.length,
+  console.log('[Orchestrator] Intelligent response built:', {
+    intent: questionAnalysis.intent,
+    responseType: questionAnalysis.expectedResponseType,
+    responseLength: intelligentResponse.length,
   });
   
   const processingTimeMs = Date.now() - startTime;
@@ -257,18 +323,18 @@ export async function orchestrate(request: OrchestrationRequest): Promise<Orches
   storeConversationForRAG(
     'anonymous', // In production, use actual user ID
     request.question,
-    structuredResponse.fullResponse,
+    intelligentResponse,
     topic,
     country
   );
   
   return {
-    answer: structuredResponse.fullResponse,
+    answer: intelligentResponse,
     intent,
     engineResults,
     metadata: {
-      provider: 'ResponseBuilder',
-      model: 'structured-template',
+      provider: 'ThinkingEngine',
+      model: 'intent-driven',
       processingTimeMs,
       enginesUsed: engineResults.enginesUsed,
       confidence: intent.confidence,

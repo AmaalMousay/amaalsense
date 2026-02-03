@@ -1981,3 +1981,14 @@ Knowledge Layer (SQL + Vector Store + RAG)
 - [x] Link economic data with emotional analysis
 - [x] Add economic context to Response Builder
 - [x] Add trader-specific insights and signals (bullish/bearish/neutral)
+
+
+## Phase 65: Transform from Template Engine to Thinking Engine
+- [x] Create Intent Analyzer - classify question type accurately (decision/scenario/comparison/explanation/economic/psychological)
+- [x] Create Response Composer - choose response format based on intent
+- [x] Economic indicators only appear for economic/trading questions
+- [x] Response shape follows question type, not fixed template
+- [x] Fix topic extraction - clean topic from question words (هل، ما، كيف، لو)
+- [x] Make responses feel like ChatGPT - intelligent and contextual, not robotic
+- [x] Integrate Thinking Engine with Orchestrator
+- [x] Add dynamic cause generation based on indicators when no specific causes found
