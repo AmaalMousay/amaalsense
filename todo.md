@@ -2506,3 +2506,50 @@ AmalSense is a **digital simulation of a mind** that feels, understands, thinks,
 - [x] تحديث Fluent Response Builder لاستخدام النمط
 - [x] إضافة cognitiveInsight و innerQuestion للرد
 - [x] 420 اختبار ناجح
+
+
+## Phase 53: Self-Improving Cognitive System - الحلقات الثلاث للتطور الذاتي
+
+### الفلسفة
+- النظام لا يتطور لأنه ذكي، بل لأنه يشك في نفسه
+- الانتقال من "نظام ذكي" إلى "كائن معرفي ينضج مع الوقت"
+- القاعدة الذهبية: يرى نفسه → يُقيّم نفسه → يعدّل نفسه
+
+### الحلقة 1: Feedback Loop (حلقة التغذية الراجعة)
+- [x] إنشاء جدول user_feedback في قاعدة البيانات
+- [x] تخزين: question, answer, rating, comment, timestamp
+- [x] إنشاء feedbackLoop.ts لجمع وتحليل feedback
+- [x] إضافة دوال saveFeedback, getFeedbackStats, getRecentFeedback
+
+### الحلقة 2: Self-Evaluation (الوعي الذاتي)
+- [x] إنشاء selfEvaluation.ts
+- [x] تقييم: confidenceScore, dataQuality, reasoningQuality
+- [x] تقييم: causesFromData (boolean), isAnalysis vs isSummary
+- [x] تقييم: هل سردت أم حللت؟ (isAnalysis)
+- [x] تخزين نتيجة التقييم الذاتي في جدول self_evaluations
+
+### الحلقة 3: Learning from Patterns (التعلم من الأخطاء)
+- [x] إنشاء metaLearning.ts
+- [x] تحليل: في أي نوع أسئلة يفشل؟ (analyzeFailurePatterns)
+- [x] تحليل: متى يعطي أسباب عامة؟ (detectGenericCauses)
+- [x] تحليل: متى المستخدمون يعطون تقييم منخفض؟ (analyzeLowRatings)
+- [x] تعديل Reasoning Rules بناءً على الأنماط (updateReasoningRules)
+- [x] Weekly Self-Report (تقرير أسبوعي) - generateWeeklySelfReport
+
+### الدمج الكامل
+- [x] إنشاء cognitiveLoop.ts - دمج الحلقات الثلاث
+- [x] processResponseWithLearning - معالجة كل رد مع التعلم
+- [x] triggerLearningCycle - تشغيل دورة التعلم
+- [x] getSystemHealth - فحص صحة النظام
+- [x] 419 اختبار ناجح
+
+### الهدف النهائي
+```
+User Question → AmalSense Response → User Feedback + Self-Eval
+                                            ↓
+                                    Meta-Learning Layer
+                                            ↓
+                                    Update Reasoning Rules
+                                            ↓
+                                    Better Next Response
+```

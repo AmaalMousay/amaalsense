@@ -879,3 +879,178 @@ export const userProfiles = mysqlTable("user_profiles", {
 
 export type UserProfile = typeof userProfiles.$inferSelect;
 export type InsertUserProfile = typeof userProfiles.$inferInsert;
+
+
+// ============================================================================
+// SELF-IMPROVING COGNITIVE SYSTEM TABLES
+// ============================================================================
+
+/**
+ * Feedback Loop Table - stores user feedback on responses
+ * This is the "memory" that allows the system to learn from user reactions
+ */
+export const responseFeedback = mysqlTable("response_feedback", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User who provided feedback (null for anonymous) */
+  userId: int("userId"),
+  /** The original question asked */
+  question: text("question").notNull(),
+  /** The response given by AmalSense */
+  response: text("response").notNull(),
+  /** User rating: 1-5 stars */
+  rating: int("rating").notNull(),
+  /** Was the response helpful? */
+  wasHelpful: mysqlEnum("wasHelpful", ["yes", "no", "partial"]),
+  /** Was the analysis accurate? */
+  wasAccurate: mysqlEnum("wasAccurate", ["yes", "no", "unsure"]),
+  /** Did the user understand the response? */
+  wasUnderstandable: mysqlEnum("wasUnderstandable", ["yes", "no", "partial"]),
+  /** User's comment/feedback */
+  comment: text("comment"),
+  /** Topic/domain of the question */
+  topic: varchar("topic", { length: 100 }),
+  /** Cognitive pattern used */
+  cognitivePattern: varchar("cognitivePattern", { length: 50 }),
+  /** Dominant emotion in response */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  /** Response confidence score */
+  responseConfidence: int("responseConfidence"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ResponseFeedback = typeof responseFeedback.$inferSelect;
+export type InsertResponseFeedback = typeof responseFeedback.$inferInsert;
+
+/**
+ * Self-Evaluation Table - stores the system's self-assessment of each response
+ * The system evaluates its own thinking quality after each response
+ */
+export const selfEvaluations = mysqlTable("self_evaluations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to the response (question hash or session ID) */
+  questionHash: varchar("questionHash", { length: 64 }).notNull(),
+  /** The question asked */
+  question: text("question").notNull(),
+  /** Was confidence high enough? (0-100) */
+  confidenceScore: int("confidenceScore").notNull(),
+  /** Was data sufficient? (0-100) */
+  dataSufficiencyScore: int("dataSufficiencyScore").notNull(),
+  /** Were causes from real data? (0-100) */
+  causesFromDataScore: int("causesFromDataScore").notNull(),
+  /** Was it analysis vs narration? (0-100, higher = more analysis) */
+  analysisVsNarrationScore: int("analysisVsNarrationScore").notNull(),
+  /** Overall self-evaluation score (0-100) */
+  overallScore: int("overallScore").notNull(),
+  /** Self-identified weaknesses */
+  identifiedWeaknesses: text("identifiedWeaknesses"),
+  /** Self-identified strengths */
+  identifiedStrengths: text("identifiedStrengths"),
+  /** Suggestions for improvement */
+  improvementSuggestions: text("improvementSuggestions"),
+  /** Number of news sources used */
+  newsSourcesCount: int("newsSourcesCount").default(0),
+  /** Number of relevant headlines found */
+  relevantHeadlinesCount: int("relevantHeadlinesCount").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SelfEvaluation = typeof selfEvaluations.$inferSelect;
+export type InsertSelfEvaluation = typeof selfEvaluations.$inferInsert;
+
+/**
+ * Cognitive Learning Insights - stores patterns learned from feedback and self-evaluation
+ * This is where the system stores its "lessons learned" for cognitive improvement
+ */
+export const cognitiveLearningInsights = mysqlTable("cognitive_learning_insights", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Pattern type: weakness, strength, rule_adjustment */
+  patternType: mysqlEnum("patternType", ["weakness", "strength", "rule_adjustment"]).notNull(),
+  /** Topic/domain this pattern applies to */
+  topic: varchar("topic", { length: 100 }),
+  /** Question type this pattern applies to */
+  questionType: varchar("questionType", { length: 100 }),
+  /** Description of the pattern */
+  description: text("description").notNull(),
+  /** Evidence count (how many cases support this pattern) */
+  evidenceCount: int("evidenceCount").default(1).notNull(),
+  /** Confidence in this pattern (0-100) */
+  patternConfidence: int("patternConfidence").default(50).notNull(),
+  /** Suggested action/adjustment */
+  suggestedAction: text("suggestedAction"),
+  /** Is this pattern active/applied? */
+  isActive: mysqlEnum("isActive", ["yes", "no"]).default("no").notNull(),
+  /** When was this pattern last validated */
+  lastValidated: timestamp("lastValidated"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CognitiveLearningInsight = typeof cognitiveLearningInsights.$inferSelect;
+export type InsertCognitiveLearningInsight = typeof cognitiveLearningInsights.$inferInsert;
+
+/**
+ * Weekly Self-Reports Table - stores the system's weekly introspection reports
+ * Machine Introspection: The system reflects on its performance
+ */
+export const weeklySelfReports = mysqlTable("weekly_self_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Report period start date */
+  periodStart: timestamp("periodStart").notNull(),
+  /** Report period end date */
+  periodEnd: timestamp("periodEnd").notNull(),
+  /** Total responses in this period */
+  totalResponses: int("totalResponses").default(0).notNull(),
+  /** Average user rating */
+  averageRating: int("averageRating"),
+  /** Average self-evaluation score */
+  averageSelfScore: int("averageSelfScore"),
+  /** Top 10 failure cases (JSON) */
+  topFailures: text("topFailures"),
+  /** Top 10 success cases (JSON) */
+  topSuccesses: text("topSuccesses"),
+  /** Most confusing question types (JSON) */
+  confusingQuestionTypes: text("confusingQuestionTypes"),
+  /** Topics where data was insufficient (JSON) */
+  dataGapTopics: text("dataGapTopics"),
+  /** Topics with weak interpretation (JSON) */
+  weakInterpretationTopics: text("weakInterpretationTopics"),
+  /** Key insights from this period */
+  keyInsights: text("keyInsights"),
+  /** Recommended rule adjustments */
+  recommendedAdjustments: text("recommendedAdjustments"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WeeklySelfReport = typeof weeklySelfReports.$inferSelect;
+export type InsertWeeklySelfReport = typeof weeklySelfReports.$inferInsert;
+
+/**
+ * Reasoning Rules Table - stores adjustable reasoning rules
+ * These rules can be modified based on learning patterns
+ */
+export const reasoningRules = mysqlTable("reasoning_rules", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Rule name/identifier */
+  ruleName: varchar("ruleName", { length: 100 }).notNull().unique(),
+  /** Rule category: decision, interpretation, response, query */
+  category: mysqlEnum("category", ["decision", "interpretation", "response", "query"]).notNull(),
+  /** Rule description */
+  description: text("description").notNull(),
+  /** Rule weight/priority (0-100) */
+  weight: int("weight").default(50).notNull(),
+  /** Rule parameters (JSON) */
+  parameters: text("parameters"),
+  /** Is this rule active? */
+  isActive: mysqlEnum("isActive", ["yes", "no"]).default("yes").notNull(),
+  /** Times this rule was applied */
+  timesApplied: int("timesApplied").default(0).notNull(),
+  /** Success rate when applied (0-100) */
+  successRate: int("successRate").default(50),
+  /** Last modified by (system/admin) */
+  lastModifiedBy: varchar("lastModifiedBy", { length: 50 }).default("system"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReasoningRule = typeof reasoningRules.$inferSelect;
+export type InsertReasoningRule = typeof reasoningRules.$inferInsert;
