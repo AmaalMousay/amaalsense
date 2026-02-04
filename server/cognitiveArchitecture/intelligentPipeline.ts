@@ -18,8 +18,7 @@ import {
   type DecisionResult
 } from './llmInterpreter';
 import { 
-  buildFluentResponse, 
-  formatFluentResponse,
+  buildFluentResponse,
   type FluentResponse 
 } from './fluentResponseBuilder';
 import {
@@ -32,6 +31,46 @@ import {
 import { getFullContext } from './sessionContext';
 import { determineResponseStructure, generateFormattingInstructions, type ResponseStructure } from './dynamicResponseEngine';
 import { generateStyleInstructions, applyConsultantStyle, generateConsultantQuestions } from './narrativeStyleEngine';
+
+/**
+ * Format FluentResponse object to string
+ */
+function formatResponseAsString(response: FluentResponse): string {
+  const parts: string[] = [];
+  
+  if (response.summary) {
+    parts.push(`الخلاصة: ${response.summary}`);
+  }
+  
+  if (response.whySection) {
+    parts.push(`\nلماذا هذا المزاج؟ ${response.whySection}`);
+  }
+  
+  if (response.causesSection) {
+    parts.push(`\nالأسباب الرئيسية: ${response.causesSection}`);
+  }
+  
+  if (response.meaningSection) {
+    parts.push(`\nماذا يعني للمجتمع؟ ${response.meaningSection}`);
+  }
+  
+  if (response.cognitiveInsight) {
+    parts.push(`\nكيف يفكر الناس؟ ${response.cognitiveInsight}`);
+  }
+  
+  if (response.recommendationSection) {
+    parts.push(`\nالتوصية: ${response.recommendationSection}`);
+  }
+  
+  if (response.followUpQuestions && response.followUpQuestions.length > 0) {
+    parts.push(`\nأسئلة للاستكشاف:`);
+    response.followUpQuestions.forEach((q, i) => {
+      parts.push(`${i + 1}. ${q}`);
+    });
+  }
+  
+  return parts.join('\n');
+}
 
 /**
  * اختصار رد المتابعة
@@ -239,7 +278,8 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
   processingSteps.push('Response Built');
   
   // Format the response - استخدام أسلوب المستشار
-  let formattedResponse = formatFluentResponse(response);
+  // Phase 57: Response is already formatted by buildFluentResponse with Perception Layer
+  let formattedResponse = formatResponseAsString(response);
   
   // تطبيق أسلوب المستشار على الرد
   formattedResponse = applyConsultantStyle(formattedResponse);

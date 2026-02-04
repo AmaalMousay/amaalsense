@@ -1,12 +1,8 @@
 /**
- * Fluent Response Builder
+ * Fluent Response Builder - with Perception Layer (Phase 57)
  * 
- * Generates natural, flowing responses without templates.
- * This is the "voice" of AmalSense - it speaks like a wise analyst, not a robot.
- * 
- * Problem it solves:
- * - Old system: "المزاج متذبذب بين الخوف والأمل" (template)
- * - New system: Natural, specific response based on actual data
+ * Generates natural, flowing responses without fixed templates.
+ * Uses deep perception analysis to understand context and emotion.
  */
 
 import { invokeLLM } from '../_core/llm';
@@ -19,6 +15,12 @@ import {
   type CognitiveOutput,
   COGNITIVE_PATTERNS
 } from './humanCognitiveLayer';
+import {
+  analyzePerception,
+  determineResponseDirective,
+  type PerceptionContext,
+  type ResponseDirective
+} from './perceptionLayer';
 
 export interface FluentResponseInput {
   question: string;
@@ -34,8 +36,7 @@ export interface FluentResponseInput {
   };
   newsCount: number;
   sourcesCount: number;
-  cognitivePattern?: CognitiveOutput;  // Human cognitive pattern
-  // Phase 54 - المعلمات الجديدة للرد الديناميكي
+  cognitivePattern?: CognitiveOutput;
   isFollowUp?: boolean;
   questionNumber?: number;
   responseStructure?: {
@@ -48,72 +49,58 @@ export interface FluentResponseInput {
     domain: string;
     topic: string;
   };
+  previousContext?: string;
+  analysisData?: any;
 }
 
 export interface FluentResponse {
-  // Main response sections
-  summary: string;           // الخلاصة
-  whySection: string;        // لماذا هذا المزاج؟
-  causesSection: string;     // الأسباب الرئيسية
-  meaningSection: string;    // ماذا يعني للمجتمع؟
-  recommendationSection: string;  // التوصية
-  
-  // NEW: Human cognitive insight
-  cognitiveInsight?: string;  // كيف يفكر الناس
-  innerQuestion?: string;     // السؤال الداخلي
-  cognitivePattern?: string;  // النمط المعرفي
-  
-  // Follow-up questions (3 specific ones)
+  summary: string;
+  whySection: string;
+  causesSection: string;
+  meaningSection: string;
+  recommendationSection: string;
+  cognitiveInsight?: string;
+  innerQuestion?: string;
+  cognitivePattern?: string;
   followUpQuestions: string[];
-  
-  // Metadata
   confidence: number;
   dominantEmotion: string;
   emotionType: string;
 }
 
 /**
- * Build a fluent, natural response
- * Uses LLM to generate the entire response - no templates!
+ * Build a fluent, natural response using Perception Layer
+ * Phase 57: No more fixed templates - pure perception-driven responses
  */
 export async function buildFluentResponse(input: FluentResponseInput): Promise<FluentResponse> {
   console.log('[FluentResponseBuilder] Building response for:', input.question.substring(0, 50));
-  console.log('[FluentResponseBuilder] isFollowUp:', input.isFollowUp, 'questionNumber:', input.questionNumber);
   
-  // تحديد هيكل الرد حسب نوع السؤال
-  const isFollowUp = input.isFollowUp || false;
-  const maxLength = input.responseStructure?.maxLength || 'long';
+  // Phase 57: Analyze perception instead of applying fixed template
+  const perception = analyzePerception(
+    input.question,
+    input.previousContext || '',
+    input.analysisData || input.decision
+  );
   
-  // تعليمات مختلفة حسب نوع السؤال
-  let structureInstructions = '';
-  if (isFollowUp) {
-    if (maxLength === 'short') {
-      structureInstructions = `
-هذا سؤال متابعة. كن مختصراً جداً:
-- الخلاصة: جملة واحدة فقط
-- التوصية: جملة واحدة فقط
-لا تكرر المعلومات السابقة. أجب السؤال مباشرة.`;
-    } else if (maxLength === 'medium') {
-      structureInstructions = `
-هذا سؤال متابعة. كن موجزاً:
-- الخلاصة: جملة واحدة
-- لماذا: فقرة قصيرة
-- التوصية: جملة واحدة
-لا تكرر المعلومات السابقة. ركز على الإجابة المباشرة.`;
-    }
-  } else {
-    structureInstructions = `
-هيكل الرد الكامل:
-- الخلاصة: جملة واحدة حاسمة تجيب السؤال
-- لماذا: تفسير نفسي موجز
-- الأسباب: 2-3 أسباب محددة من البيانات
-- المعنى: ماذا يعني للمجتمع
-- كيف يفكرون: النمط المعرفي والسؤال الداخلي
-- التوصية: نصيحة عملية واحدة`;
+  const directive = determineResponseDirective(
+    perception,
+    input.question,
+    input.isFollowUp || false
+  );
+  
+  console.log('[FluentResponseBuilder] Perception:', perception);
+  console.log('[FluentResponseBuilder] Directive:', directive);
+  
+  // Validate context - ensure we're staying on the same topic
+  if (directive.contextValidation.length > 0) {
+    console.warn('[FluentResponseBuilder] Context warnings:', directive.contextValidation);
   }
   
   try {
-    // Generate the main response
+    // Build dynamic instructions based on perception, not templates
+    const dynamicInstructions = buildDynamicInstructions(perception, directive, input.isFollowUp || false);
+    
+    // Generate the response
     const response = await invokeLLM({
       messages: [
         {
@@ -127,17 +114,23 @@ export async function buildFluentResponse(input: FluentResponseInput): Promise<F
 4. تقدم توصيات عملية
 5. تتحدث بالعربية الفصحى السلسة
 6. تفهم كيف يفكر الناس (النمط المعرفي)
-${structureInstructions}
+
+${dynamicInstructions}
 
 ممنوع:
-- "متذبذب بين..." (إلا إذا البيانات متساوية فعلاً)
-- "الحيرة طبيعية" (ليست توصية)
-- سرد العناوين كما هي
-- كلام عام ينطبق على أي موضوع`
+- استخدام قوالب ثابتة مثل "متذبذب بين..."
+- تكرار نفس الهيكل لكل سؤال
+- الانتقال لموضوع مختلف عن السؤال الأصلي
+- الكلام العام الذي ينطبق على أي موضوع`
         },
         {
           role: 'user',
           content: `السؤال: ${input.question}
+
+الموضوع الأساسي: ${perception.topic}
+العاطفة السائدة: ${perception.primaryEmotion}
+الاستعجالية: ${perception.urgency}
+مستوى الوعي: ${perception.awarenessLevel}
 
 البيانات:
 - الخوف: ${input.emotionData.fear}%
@@ -149,26 +142,18 @@ ${structureInstructions}
 التحليل النفسي:
 الشعور السائد: ${input.decision.dominantEmotion}
 السبب: ${input.decision.dominantEmotionReason}
-النوع: ${input.decision.emotionType === 'social' ? 'اجتماعي' : input.decision.emotionType === 'political' ? 'سياسي' : input.decision.emotionType === 'economic' ? 'اقتصادي' : 'مختلط'}
-التبرير: ${input.decision.emotionTypeReason}
+النوع: ${input.decision.emotionType}
 
-الأسباب المستخرجة من الأخبار:
+الأسباب المستخرجة:
 ${input.interpretedCauses.psychologicalCauses.join('\n')}
 
 التداعيات الاجتماعية:
 ${input.interpretedCauses.socialImplications.join('\n')}
 
-التقييم: ${input.decision.assessment}
-مستوى الخطورة: ${input.decision.riskLevel}
+الوعي الجمعي: ${perception.collectiveConsciousness}
+المجموعات المتأثرة: ${perception.affectedGroups.join(', ')}
 
-التوصيات:
-${input.decision.recommendations.join('\n')}
-
-${input.cognitivePattern ? `النمط المعرفي: ${COGNITIVE_PATTERNS[input.cognitivePattern.primaryPattern]?.nameAr || ''}
-السؤال الداخلي: ${input.cognitivePattern.innerQuestion}
-كيف يفكرون: ${input.cognitivePattern.humanReasoning}` : ''}
-
-اكتب رداً طبيعياً وحاسماً. اذكر النمط المعرفي والسؤال الداخلي الذي يسأله الناس.`
+اكتب رداً طبيعياً وحاسماً. ركز على: ${directive.focus}`
         }
       ],
       response_format: {
@@ -185,11 +170,11 @@ ${input.cognitivePattern ? `النمط المعرفي: ${COGNITIVE_PATTERNS[inpu
               },
               whySection: { 
                 type: 'string',
-                description: 'لماذا هذا المزاج - تفسير موجز'
+                description: 'لماذا هذا المزاج'
               },
               causesSection: { 
                 type: 'string',
-                description: 'الأسباب الرئيسية - 2-3 نقاط'
+                description: 'الأسباب الرئيسية'
               },
               meaningSection: { 
                 type: 'string',
@@ -197,11 +182,11 @@ ${input.cognitivePattern ? `النمط المعرفي: ${COGNITIVE_PATTERNS[inpu
               },
               recommendationSection: { 
                 type: 'string',
-                description: 'التوصية - نصيحة عملية'
+                description: 'التوصية'
               },
               cognitiveInsight: {
                 type: 'string',
-                description: 'كيف يفكر الناس - النمط المعرفي والسؤال الداخلي'
+                description: 'كيف يفكر الناس'
               }
             },
             required: ['summary', 'whySection', 'causesSection', 'meaningSection', 'recommendationSection', 'cognitiveInsight'],
@@ -223,7 +208,6 @@ ${input.cognitivePattern ? `النمط المعرفي: ${COGNITIVE_PATTERNS[inpu
     
     console.log('[FluentResponseBuilder] Response built successfully');
     
-    // Get cognitive pattern info
     const patternInfo = input.cognitivePattern 
       ? COGNITIVE_PATTERNS[input.cognitivePattern.primaryPattern] 
       : null;
@@ -246,19 +230,17 @@ ${input.cognitivePattern ? `النمط المعرفي: ${COGNITIVE_PATTERNS[inpu
   } catch (error) {
     console.error('[FluentResponseBuilder] Failed to build response:', error);
     
-    // Fallback response
     return {
-      summary: `تحليل ${input.question.substring(0, 30)}...`,
-      whySection: input.decision.dominantEmotionReason || 'جاري التحليل',
-      causesSection: input.interpretedCauses.psychologicalCauses.join('. ') || 'لا تتوفر بيانات كافية',
-      meaningSection: input.interpretedCauses.socialImplications.join('. ') || '',
-      recommendationSection: input.decision.recommendations[0] || 'راقب التطورات',
-      followUpQuestions: [
-        'ما تأثير ذلك على المجتمع؟',
-        'ما التوقعات المستقبلية؟',
-        'ما الحلول المقترحة؟'
-      ],
-      confidence: 0.3,
+      summary: `تحليل ${perception.topic}: ${perception.primaryEmotion}`,
+      whySection: perception.collectiveConsciousness,
+      causesSection: perception.rootCause,
+      meaningSection: `يؤثر على: ${perception.affectedGroups.join(', ')}`,
+      recommendationSection: 'يتطلب تدخل عاجل',
+      cognitiveInsight: input.cognitivePattern?.humanReasoning || '',
+      innerQuestion: input.cognitivePattern?.innerQuestion || '',
+      cognitivePattern: '',
+      followUpQuestions: [],
+      confidence: input.interpretedCauses.confidence,
       dominantEmotion: input.decision.dominantEmotion,
       emotionType: input.decision.emotionType
     };
@@ -266,55 +248,68 @@ ${input.cognitivePattern ? `النمط المعرفي: ${COGNITIVE_PATTERNS[inpu
 }
 
 /**
- * Format the fluent response for display
+ * Build dynamic instructions based on perception and directive
+ * Not a fixed template - changes based on actual analysis
  */
-export function formatFluentResponse(response: FluentResponse): string {
-  const parts: string[] = [];
+function buildDynamicInstructions(
+  perception: PerceptionContext,
+  directive: ResponseDirective,
+  isFollowUp: boolean
+): string {
+  let instructions = '';
   
-  // Summary
-  parts.push(`**الخلاصة:** ${response.summary}`);
-  
-  // Why section
-  if (response.whySection) {
-    parts.push(`\n**لماذا هذا المزاج؟** ${response.whySection}`);
+  // Focus-based instructions
+  switch (directive.focus) {
+    case 'solution':
+      instructions += `ركز على الحلول العملية والخطوات الملموسة.\n`;
+      break;
+    case 'warning':
+      instructions += `اشرح المخاطر والتهديدات بوضوح.\n`;
+      break;
+    case 'hope':
+      instructions += `ركز على الفرص والحلول الممكنة.\n`;
+      break;
+    case 'action':
+      instructions += `اشرح ما يجب فعله الآن.\n`;
+      break;
+    default:
+      instructions += `اشرح السياق بعمق.\n`;
   }
   
-  // Causes section
-  if (response.causesSection) {
-    parts.push(`\n**الأسباب الرئيسية:**\n${response.causesSection}`);
+  // Tone-based instructions
+  switch (directive.tone) {
+    case 'urgent':
+      instructions += `النبرة: عاجلة وحاسمة - هذا وضع حرج.\n`;
+      break;
+    case 'empathetic':
+      instructions += `النبرة: متعاطفة وفاهمة للمشاعر.\n`;
+      break;
+    case 'advisory':
+      instructions += `النبرة: استشارية وحكيمة.\n`;
+      break;
+    case 'analytical':
+      instructions += `النبرة: تحليلية وموضوعية.\n`;
+      break;
   }
   
-  // Meaning section
-  if (response.meaningSection) {
-    parts.push(`\n**ماذا يعني هذا للمجتمع؟** ${response.meaningSection}`);
+  // Depth-based instructions
+  if (directive.depth === 'brief') {
+    instructions += `كن مختصراً جداً - جملتان كحد أقصى لكل قسم.\n`;
+  } else if (directive.depth === 'moderate') {
+    instructions += `كن موجزاً - فقرة واحدة لكل قسم.\n`;
+  } else {
+    instructions += `شرح عميق - فقرتان لكل قسم.\n`;
   }
   
-  // NEW: Cognitive insight - How people THINK
-  if (response.cognitiveInsight || response.cognitivePattern) {
-    parts.push(`\n**كيف يفكر الناس؟**`);
-    if (response.cognitivePattern) {
-      parts.push(`النمط المعرفي: ${response.cognitivePattern}`);
-    }
-    if (response.innerQuestion) {
-      parts.push(`السؤال الداخلي: "${response.innerQuestion}"`);
-    }
-    if (response.cognitiveInsight) {
-      parts.push(response.cognitiveInsight);
-    }
+  // Follow-up specific
+  if (isFollowUp) {
+    instructions += `هذا سؤال متابعة - لا تكرر المعلومات السابقة، ركز على الإجابة الجديدة.\n`;
   }
   
-  // Recommendation
-  if (response.recommendationSection) {
-    parts.push(`\n**التوصية:** ${response.recommendationSection}`);
+  // Context validation
+  if (directive.contextValidation.length > 0) {
+    instructions += `تحذيرات السياق:\n${directive.contextValidation.join('\n')}\n`;
   }
   
-  // Follow-up questions
-  if (response.followUpQuestions.length > 0) {
-    parts.push(`\n---\n**أسئلة للاستكشاف:**`);
-    response.followUpQuestions.forEach((q, i) => {
-      parts.push(`${i + 1}. ${q}`);
-    });
-  }
-  
-  return parts.join('\n');
+  return instructions;
 }
