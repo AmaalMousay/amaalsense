@@ -503,3 +503,10 @@ export {
   EnhancedPipeline,
   executeEnhancedPipeline
 };
+
+// Export new layers
+export * from './workingMemory';
+export * from './longTermMemory';
+export * from './contextualBinding';
+export * from './causalInference';
+export * from './metacognition';

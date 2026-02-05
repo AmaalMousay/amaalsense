@@ -2691,3 +2691,46 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [x] تعليمات LLM جديدة تركز على الفهم بدلاً من القالب
 - [x] إنشاء 11 اختبار بنجاح للمكونات الجديدة
 
+
+
+## Phase 59: إضافة الطبقات الناقصة من ملف البراءة
+
+### الطبقات المطلوبة
+- [x] Layer 5: Working Memory (ذاكرة قصيرة المدى - 24 ساعة)
+- [x] Layer 6: Long-Term Memory (ذاكرة طويلة المدى مع vector database)
+- [x] Layer 7: Contextual Binding (ربط السياق الثقافي والزمني - 9 دول عربية)
+- [x] Layer 9: Causal Inference (استنتاج العلاقات السببية)
+- [x] Layer 11: Metacognition (الوعي الذاتي للنظام)
+- [x] إضافة exports في index.ts
+
+### التفاصيل التقنية
+
+#### Layer 5: Working Memory
+- Capacity: Last 100 data points per domain
+- Retention: 24-hour sliding window
+- Structure: Temporal queue with priority indexing
+
+#### Layer 6: Long-Term Memory
+- Storage: Vector database with semantic embeddings
+- Retrieval: Similarity-based search
+- Capacity: Unlimited with automatic archiving
+
+#### Layer 7: Contextual Binding
+- Cultural context mapper (regional norms)
+- Temporal context tracker (historical events)
+- Situational context analyzer (current events)
+- Binding Algorithm: Weighted context fusion
+
+#### Layer 9: Causal Inference
+- Granger causality testing
+- Bayesian network inference
+- Temporal correlation analysis
+- Output: Causal chains with strength indicators
+
+#### Layer 11: Metacognition
+- Performance tracking
+- Confidence calibration
+- Error detection and correction
+- Learning rate optimization
+- Output: System health reports
+
