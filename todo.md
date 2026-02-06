@@ -2734,3 +2734,28 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - Learning rate optimization
 - Output: System health reports
 
+
+
+## Phase 60: إضافة الـ 9 طبقات الناقصة ودمجها في الـ pipeline
+
+### الطبقات الحرجة (Priority 1)
+- [ ] 1. Context Lock Layer - قفل السياق (يمنع الهروب من موضوع لموضوع)
+- [ ] 2. Cognitive Control Layer - مركز قرار التفكير (معلوماتي/تحليلي/سيناريو/رأي)
+- [ ] 3. Knowledge/Fact Engine - محرك المعرفة (للإجابة على من/متى/كم)
+
+### طبقات الوعي (Priority 2)
+- [ ] 4. Dialogical Consciousness - الوعي الحواري (يفهم أننا في نفس المحادثة)
+- [ ] 5. Cognitive Consistency Check - فحص الاتساق (يمنع التناقض بين الردود)
+- [ ] 6. Cognitive Answer Gate - بوابة الإجابة (أجاوب؟ أبحث؟ أقول لا أعرف؟)
+
+### طبقات التحليل (Priority 3)
+- [ ] 7. Analysis Lifecycle Manager - مدير دورة التحليل (هل نعيد جلب البيانات؟)
+- [ ] 8. Evidence Grounding - ربط التحليل بالبيانات الحقيقية
+- [ ] 9. Narrative Reasoner - تحسين الدمج الكامل
+
+### الدمج في الـ pipeline
+- [ ] دمج الطبقات الـ 5 السابقة (Working Memory, Long-Term Memory, Contextual Binding, Causal Inference, Metacognition)
+- [ ] دمج الطبقات الـ 9 الجديدة
+- [ ] تحديث intelligentPipeline.ts لاستخدام جميع الطبقات
+- [ ] تحديث orchestrator/index.ts للتنسيق بين الطبقات
+- [ ] اختبارات شاملة للـ pipeline الكامل

@@ -504,9 +504,31 @@ export {
   executeEnhancedPipeline
 };
 
-// Export new layers
+
+
+// ============================================
+// Phase 59: Patent Layers (5 layers)
+// ============================================
 export * from './workingMemory';
 export * from './longTermMemory';
 export * from './contextualBinding';
 export * from './causalInference';
 export * from './metacognition';
+export * from './perceptionLayer';
+
+// ============================================
+// Phase 60: Critical Layers (8 layers)
+// ============================================
+export * from './contextLockLayer';
+export * from './cognitiveControlLayer';
+export * from './knowledgeEngine';
+export * from './dialogicalConsciousness';
+export * from './cognitiveConsistencyCheck';
+export * from './cognitiveAnswerGate';
+export * from './analysisLifecycleManager';
+export * from './evidenceGrounding';
+
+// ============================================
+// Unified Pipeline (integrates all 14 layers)
+// ============================================
+export * from './unifiedPipeline';
