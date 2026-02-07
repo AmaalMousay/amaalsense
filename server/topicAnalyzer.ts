@@ -10,6 +10,7 @@
 
 import { analyzeHybrid } from './hybridAnalyzer';
 import { getTopicMood, MoodResult } from './unifiedDataService';
+import { UnifiedPipeline } from './cognitiveArchitecture/unifiedPipeline';
 
 // Age group definitions
 export const AGE_GROUPS = {
@@ -172,13 +173,20 @@ export async function analyzeTopicInCountry(
     isFollowUp?: boolean;
   }
 ): Promise<TopicAnalysisResult> {
-  // Phase 56: Pass conversationHistory to analyzeHybrid
-  // If this is a follow-up question, pass the previous context
+  // Phase 61: Use UnifiedPipeline for intelligent analysis
+  
+  // Process through unified pipeline
+  const pipelineResult = await UnifiedPipeline.process({
+    question: topic,
+    country: countryName,
+    conversationHistory: options?.conversationHistory || [],
+    sessionId: `topic-${Date.now()}`,
+  });
+  
+  // Get base analysis using hybrid analyzer for backwards compatibility
   const contextMessage = options?.isFollowUp && options?.conversationHistory && options.conversationHistory.length > 0
     ? `Previous context: ${options.conversationHistory.map(m => m.content).join(' | ')}. New question: ${topic}`
     : `${topic} in ${countryName}`;
-  
-  // Get base analysis using hybrid analyzer
   const baseAnalysis = await analyzeHybrid(contextMessage, 'news');
   
   // Get regions for this country
