@@ -42,6 +42,7 @@ import JournalistDashboard from "./pages/JournalistDashboard";
 import ResearcherDashboard from "./pages/ResearcherDashboard";
 // Markets page removed - functionality integrated into Smart Analysis
 import SmartAnalysis from "./pages/SmartAnalysis";
+import MetacognitionDashboard from "./pages/MetacognitionDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -98,6 +99,9 @@ function Router() {
       
       {/* AI-Powered Smart Analysis */}
       <Route path={"/smart-analysis"} component={SmartAnalysis} />
+      
+      {/* Metacognition Dashboard */}
+      <Route path={"/metacognition"} component={MetacognitionDashboard} />
       
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

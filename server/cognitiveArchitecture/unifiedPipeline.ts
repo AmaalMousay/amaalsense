@@ -36,6 +36,7 @@ import { CognitiveConsistencyCheck } from './cognitiveConsistencyCheck';
 import { CognitiveAnswerGate, type AnswerContext, type GateDecision } from './cognitiveAnswerGate';
 import { AnalysisLifecycleManager, type AnalysisContext, type AnalysisDecision } from './analysisLifecycleManager';
 import { EvidenceGrounding, type Evidence } from './evidenceGrounding';
+import { runIntelligentPipeline, type PipelineInput, type PipelineOutput as IntelligentPipelineOutput } from './intelligentPipeline';
 // Working Memory and Contextual Binding are functional modules
 // They will be integrated at application level
 
@@ -45,6 +46,10 @@ export interface UnifiedPipelineInput {
   country?: string;
   domain?: string;
   conversationHistory?: Array<{ role: string; content: string }>;
+  // Data for intelligent pipeline
+  newsItems?: Array<{ title: string; content: string; url: string; publishedAt: string }>;
+  emotionData?: { fear: number; hope: number; anger: number };
+  userRole?: string;
 }
 
 export interface UnifiedPipelineOutput {
@@ -167,9 +172,43 @@ class UnifiedPipelineClass {
     // Note: Contextual binding will be integrated at application level
     // const culturalContext = country ? bindContext({ ... }) : null;
 
-    // At this point, we would call the existing intelligent pipeline
-    // For now, return a placeholder that indicates the pathway
-    const answer = this.generatePlaceholderAnswer(classification, analysisDecision, dialogueContext);
+    // At this point, call the existing intelligent pipeline
+    let answer: string;
+    
+    if (analysisDecision.action === 'fetch_and_analyze' && input.newsItems && input.emotionData) {
+      // Call intelligent pipeline with real data
+      const pipelineInput: PipelineInput = {
+        question,
+        newsItems: input.newsItems.map(item => ({
+          title: item.title,
+          description: item.content,
+          source: item.url
+        })),
+        emotionData: {
+          ...input.emotionData,
+          gmi: (input.emotionData.hope - input.emotionData.fear) / 2,
+          cfi: input.emotionData.fear,
+          hri: input.emotionData.hope
+        },
+        sessionId,
+        userRole: input.userRole,
+        conversationHistory: conversationHistory?.map(m => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content
+        })),
+      };
+      
+      const pipelineOutput = await runIntelligentPipeline(pipelineInput);
+      answer = typeof pipelineOutput.response === 'string' 
+        ? pipelineOutput.response 
+        : JSON.stringify(pipelineOutput.response);
+    } else if (analysisDecision.action === 'reinterpret_existing') {
+      // Reinterpret based on conversation history
+      answer = this.generateReinterpretationAnswer(dialogueContext, conversationHistory || []);
+    } else {
+      // Think only (no new data needed)
+      answer = this.generateThinkingAnswer(classification, dialogueContext);
+    }
 
     // LAYER 14: Cognitive Consistency Check
     const previousResponses = conversationHistory
@@ -218,19 +257,35 @@ class UnifiedPipelineClass {
   }
 
   /**
-   * Generate placeholder answer (will be replaced with actual pipeline call)
+   * Generate reinterpretation answer (when reinterpreting existing data)
    */
-  private generatePlaceholderAnswer(
+  private generateReinterpretationAnswer(
+    dialogueContext: DialogueContext,
+    conversationHistory: Array<{ role: string; content: string }>
+  ): string {
+    const previousAnswer = conversationHistory
+      .filter(m => m.role === 'assistant')
+      .slice(-1)[0]?.content || '';
+    
+    return `بناءً على التحليل السابق:\n\n${previousAnswer}\n\nهذا يعني أن الوضع يتطلب مزيداً من التأمل والتفكير في السياق الأوسع.`;
+  }
+
+  /**
+   * Generate thinking answer (when no new data is needed)
+   */
+  private generateThinkingAnswer(
     classification: QuestionClassification,
-    analysisDecision: AnalysisDecision,
     dialogueContext: DialogueContext
   ): string {
-    return `[Unified Pipeline Response]\n\n` +
-      `نوع السؤال: ${classification.type}\n` +
-      `المسار المعرفي: ${classification.pathway}\n` +
-      `إجراء التحليل: ${analysisDecision.action}\n` +
-      `مرحلة المحادثة: ${dialogueContext.conversationPhase}\n\n` +
-      `هذا رد مؤقت. سيتم استبداله بالتكامل الكامل مع intelligent pipeline.`;
+    if (classification.type === 'opinion') {
+      return 'من وجهة نظري، هذا الموضوع يتطلب تحليلاً عميقاً للسياق الثقافي والسياسي. أحتاج إلى مزيد من المعلومات لتقديم رأي مدروس.';
+    }
+    
+    if (classification.type === 'scenario') {
+      return 'لتحليل هذا السيناريو بشكل دقيق، أحتاج إلى بيانات حديثة عن الوضع الحالي. هل يمكنك تحديد الإطار الزمني والجغرافي للسيناريو؟';
+    }
+    
+    return 'أحتاج إلى مزيد من السياق للإجابة على هذا السؤال بشكل دقيق.';
   }
 }
 

@@ -2685,6 +2685,65 @@ Please verify the payment and confirm in the admin panel.
         return { success: true };
       }),
   }),
+
+  metacognition: router({
+    getSystemHealth: publicProcedure.query(async () => {
+      // Get system health from Metacognition layer
+      const { initMetacognition, generateHealthReport } = await import('./cognitiveArchitecture/metacognition');
+      const state = initMetacognition();
+      const health = generateHealthReport(state);
+      
+      return {
+        status: health.overallHealth > 0.8 ? 'healthy' : 'needs_attention',
+        successRate: Math.round(health.overallHealth * 100),
+        layersStatus: [
+          { name: 'Context Lock', description: 'قفل السياق', status: 'active' },
+          { name: 'Cognitive Control', description: 'مركز قرار التفكير', status: 'active' },
+          { name: 'Knowledge Engine', description: 'محرك المعرفة', status: 'active' },
+          { name: 'Dialogical Consciousness', description: 'الوعي الحواري', status: 'active' },
+          { name: 'Cognitive Consistency', description: 'فحص الاتساق', status: 'active' },
+          { name: 'Answer Gate', description: 'بوابة الإجابة', status: 'active' },
+          { name: 'Analysis Lifecycle', description: 'مدير دورة التحليل', status: 'active' },
+          { name: 'Evidence Grounding', description: 'ربط التحليل بالبيانات', status: 'active' },
+          { name: 'Working Memory', description: 'ذاكرة قصيرة المدى', status: 'active' },
+          { name: 'Long-Term Memory', description: 'ذاكرة طويلة المدى', status: 'active' },
+          { name: 'Contextual Binding', description: 'ربط السياق', status: 'active' },
+          { name: 'Causal Inference', description: 'الاستنتاج السببي', status: 'active' },
+          { name: 'Metacognition', description: 'الوعي الذاتي', status: 'active' },
+        ],
+      };
+    }),
+
+    getRecentErrors: publicProcedure.query(async () => {
+      // Get recent errors from Metacognition layer
+      const { initMetacognition, generateHealthReport } = await import('./cognitiveArchitecture/metacognition');
+      const state = initMetacognition();
+      const health = generateHealthReport(state);
+      const errors = health.errors || [];
+      
+      return errors.map((error: any) => ({
+        type: error.errorType,
+        message: error.description,
+        timestamp: error.timestamp,
+        severity: error.severity,
+      }));
+    }),
+
+    getRecommendations: publicProcedure.query(async () => {
+      // Get recommendations from Metacognition layer
+      const { initMetacognition, generateHealthReport } = await import('./cognitiveArchitecture/metacognition');
+      const state = initMetacognition();
+      const health = generateHealthReport(state);
+      const recommendations = health.recommendations || [];
+      
+      return recommendations.map((rec: string, index: number) => ({
+        title: `توصية ${index + 1}`,
+        description: rec,
+        priority: 'medium',
+        action: rec,
+      }));
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
