@@ -1755,17 +1755,54 @@ Please verify the payment and confirm in the admin panel.
       }))
       .mutation(async ({ input }) => {
         const { analyzeTopicInCountry } = await import("./topicAnalyzer");
-        return await analyzeTopicInCountry(
-          input.topic,
-          input.countryCode,
-          input.countryName,
-          {
-            timeRange: input.timeRange,
-            language: input.language,
-            conversationHistory: input.conversationHistory,
-            isFollowUp: input.isFollowUp,
+        const { StreamingResponse } = await import("./_core/streamingHelper");
+        
+        const stream = new StreamingResponse();
+        
+        try {
+          // Phase 67: Stream thinking phase
+          stream.addThinking(`جاري تحليل "${input.topic}" في ${input.countryName}...`);
+          
+          // Run analysis
+          const result = await analyzeTopicInCountry(
+            input.topic,
+            input.countryCode,
+            input.countryName,
+            {
+              timeRange: input.timeRange,
+              language: input.language,
+              conversationHistory: input.conversationHistory,
+              isFollowUp: input.isFollowUp,
+            }
+          );
+          
+          // Stream analysis phase
+          if (result.intelligentResponse) {
+            stream.addAnalysis(result.intelligentResponse);
           }
-        );
+          
+          // Stream emotion data
+          if ((result as any).emotionData) {
+            stream.addEmotion((result as any).emotionData);
+          }
+          
+          // Stream metadata
+          if ((result as any).pipelineMetadata) {
+            stream.addMetadata((result as any).pipelineMetadata);
+          }
+          
+          // Complete with full result
+          stream.complete(result);
+          
+          // Return chunks for streaming
+          return {
+            chunks: stream.getChunks(),
+            result: result,
+          };
+        } catch (error) {
+          stream.addError(error instanceof Error ? error.message : 'Unknown error');
+          throw error;
+        }
       }),
 
     /**
