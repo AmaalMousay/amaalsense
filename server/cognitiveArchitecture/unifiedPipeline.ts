@@ -48,7 +48,7 @@ export interface UnifiedPipelineInput {
   conversationHistory?: Array<{ role: string; content: string }>;
   // Data for intelligent pipeline
   newsItems?: Array<{ title: string; content: string; url: string; publishedAt: string }>;
-  emotionData?: { fear: number; hope: number; anger: number };
+  emotionData?: { fear: number; hope: number; anger: number; gmi?: number; cfi?: number; hri?: number };
   userRole?: string;
 }
 
@@ -202,12 +202,36 @@ class UnifiedPipelineClass {
       answer = typeof pipelineOutput.response === 'string' 
         ? pipelineOutput.response 
         : JSON.stringify(pipelineOutput.response);
-    } else if (analysisDecision.action === 'reinterpret_existing') {
-      // Reinterpret based on conversation history
-      answer = this.generateReinterpretationAnswer(dialogueContext, conversationHistory || []);
     } else {
-      // Think only (no new data needed)
-      answer = this.generateThinkingAnswer(classification, dialogueContext);
+      // Phase 66: Always use intelligent pipeline - no placeholder answers
+      // Even for "thinking only" questions, we use the pipeline with available context
+      const pipelineInput: PipelineInput = {
+        question,
+        newsItems: (input.newsItems || []).map(item => ({
+          title: item.title,
+          description: item.content,
+          source: 'context',
+        })),
+        emotionData: input.emotionData ? {
+          fear: input.emotionData.fear,
+          hope: input.emotionData.hope,
+          anger: input.emotionData.anger,
+          gmi: input.emotionData.gmi || 0,
+          cfi: input.emotionData.cfi || 0,
+          hri: input.emotionData.hri || 0,
+        } : { fear: 0, hope: 0, anger: 0, gmi: 0, cfi: 0, hri: 0 },
+        conversationHistory: (conversationHistory || []).map(msg => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+        })),
+        sessionId,
+        userRole: input.userRole,
+      };
+      
+      const pipelineOutput = await runIntelligentPipeline(pipelineInput);
+      answer = typeof pipelineOutput.response === 'string' 
+        ? pipelineOutput.response 
+        : JSON.stringify(pipelineOutput.response);
     }
 
     // LAYER 14: Cognitive Consistency Check
@@ -256,37 +280,8 @@ class UnifiedPipelineClass {
     return map[confidence];
   }
 
-  /**
-   * Generate reinterpretation answer (when reinterpreting existing data)
-   */
-  private generateReinterpretationAnswer(
-    dialogueContext: DialogueContext,
-    conversationHistory: Array<{ role: string; content: string }>
-  ): string {
-    const previousAnswer = conversationHistory
-      .filter(m => m.role === 'assistant')
-      .slice(-1)[0]?.content || '';
-    
-    return `بناءً على التحليل السابق:\n\n${previousAnswer}\n\nهذا يعني أن الوضع يتطلب مزيداً من التأمل والتفكير في السياق الأوسع.`;
-  }
-
-  /**
-   * Generate thinking answer (when no new data is needed)
-   */
-  private generateThinkingAnswer(
-    classification: QuestionClassification,
-    dialogueContext: DialogueContext
-  ): string {
-    if (classification.type === 'opinion') {
-      return 'من وجهة نظري، هذا الموضوع يتطلب تحليلاً عميقاً للسياق الثقافي والسياسي. أحتاج إلى مزيد من المعلومات لتقديم رأي مدروس.';
-    }
-    
-    if (classification.type === 'scenario') {
-      return 'لتحليل هذا السيناريو بشكل دقيق، أحتاج إلى بيانات حديثة عن الوضع الحالي. هل يمكنك تحديد الإطار الزمني والجغرافي للسيناريو؟';
-    }
-    
-    return 'أحتاج إلى مزيد من السياق للإجابة على هذا السؤال بشكل دقيق.';
-  }
+  // Phase 66: Removed generateReinterpretationAnswer and generateThinkingAnswer
+  // All responses now use runIntelligentPipeline for consistency and quality
 }
 
 export const UnifiedPipeline = new UnifiedPipelineClass();

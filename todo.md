@@ -2808,3 +2808,134 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - ✅ Dev server running
 - ✅ 13/13 unit tests passing
 - ✅ Ready for production testing
+
+
+## Phase 63: Metacognition Dashboard - واجهة مراقبة صحة النظام (IN PROGRESS)
+
+### مكونات Metacognition Dashboard
+- [ ] إنشاء MetacognitionDashboard.tsx component
+- [ ] عرض صحة كل طبقة من الطبقات الـ 14
+- [ ] عرض معدل الثقة في الردود
+- [ ] عرض عدد الأسئلة المحللة
+- [ ] عرض الأخطاء والتحذيرات
+- [ ] عرض أداء النظام (response time, accuracy)
+- [ ] عرض الأنماط المكتشفة
+- [ ] عرض الكيانات المذكورة الأكثر شيوعاً
+
+### Metrics to Track
+- [ ] Layer health status (each of 14 layers)
+- [ ] Average confidence score
+- [ ] Total questions analyzed
+- [ ] Error rate
+- [ ] Response time (ms)
+- [ ] Context preservation score
+- [ ] Cognitive pattern distribution
+- [ ] Learning progress
+
+### Backend Support
+- [ ] Create MetacognitionMetrics table in database
+- [ ] Create tRPC procedure to fetch metrics
+- [ ] Implement metrics collection in UnifiedPipeline
+- [ ] Add metrics logging for each layer
+
+## Phase 64: Learning Layer - طبقة التعلم الذاتي (IN PROGRESS)
+
+### Core Components
+- [ ] Create learningLayer.ts - Main learning engine
+- [ ] Create feedbackCollector.ts - Collect user feedback
+- [ ] Create patternLearner.ts - Learn from patterns
+- [ ] Create weightAdjuster.ts - Adjust layer weights
+- [ ] Create performanceTracker.ts - Track accuracy
+
+### Learning Mechanisms
+- [ ] Implement feedback loop (user rates response quality)
+- [ ] Track which layers performed well vs poorly
+- [ ] Adjust layer weights based on feedback
+- [ ] Learn new question patterns
+- [ ] Learn new emotional patterns
+- [ ] Improve vocabulary adaptation
+- [ ] Cache successful analysis patterns
+
+### Database Schema
+- [ ] Add feedback table (question, response, rating, timestamp)
+- [ ] Add learning_metrics table (layer_id, accuracy, confidence)
+- [ ] Add pattern_cache table (pattern_hash, success_rate)
+- [ ] Add vocabulary_weights table (word, weight, language)
+
+### User Feedback Integration
+- [ ] Add rating buttons to response (👍 helpful, 👎 not helpful)
+- [ ] Add detailed feedback form (optional)
+- [ ] Show learning progress to user
+- [ ] Implement feedback tRPC procedure
+
+## Phase 65: حفظ المحادثات في قاعدة البيانات (IN PROGRESS)
+
+### Database Schema
+- [ ] Create conversations table
+  - conversation_id (UUID)
+  - user_id (foreign key)
+  - created_at
+  - updated_at
+  - context (country, topic, domain)
+  - metadata (language, user_role)
+
+- [ ] Create messages table
+  - message_id (UUID)
+  - conversation_id (foreign key)
+  - role (user/assistant)
+  - content (text)
+  - intent (question type)
+  - timestamp
+  - metadata (confidence, layers_used)
+
+- [ ] Create context_snapshots table
+  - snapshot_id (UUID)
+  - conversation_id (foreign key)
+  - context (full context state)
+  - timestamp
+
+### Backend Implementation
+- [ ] Create conversation service (save, load, update)
+- [ ] Create message service (add, retrieve, search)
+- [ ] Create context service (save, restore context)
+- [ ] Add tRPC procedures for conversation management
+- [ ] Implement conversation history retrieval
+- [ ] Add context restoration on conversation load
+
+### Frontend Implementation
+- [ ] Add conversation history sidebar
+- [ ] Show previous conversations list
+- [ ] Load conversation and restore context
+- [ ] Continue conversation from previous point
+- [ ] Show conversation metadata (date, topic, messages count)
+
+## Phase 66: البحث عن وإزالة جميع Placeholder Answers (COMPLETED ✅)
+
+### Search for Placeholders
+- [x] Search for "جاري تحليل" (in progress messages)
+- [x] Search for "رد مؤقت" (temporary response)
+- [x] Search for "placeholder" (English placeholders)
+- [x] Search for "TODO" comments
+- [x] Search for "FIXME" comments
+- [x] Search for hardcoded test responses
+- [x] Search for "mock" responses
+
+### Files to Check
+- [x] server/topicAnalyzer.ts
+- [x] server/cognitiveArchitecture/*.ts
+- [x] server/routers.ts
+- [x] client/src/pages/*.tsx
+- [x] server/db.ts
+
+### Replacement Strategy
+- [x] Replace with actual intelligent pipeline calls
+- [x] Ensure all paths use real data
+- [x] Add error handling for failed analyses
+- [x] Implement fallback mechanisms
+- [x] Add logging for debugging
+
+### Testing
+- [x] Test all analysis paths
+- [x] Verify no placeholder responses appear
+- [x] Test error handling
+- [x] Test fallback mechanisms
