@@ -33,35 +33,68 @@ import { determineResponseStructure, generateFormattingInstructions, type Respon
 import { generateStyleInstructions, applyConsultantStyle, generateConsultantQuestions } from './narrativeStyleEngine';
 
 /**
- * Format FluentResponse object to string
+ * Format FluentResponse object to string - DYNAMIC based on response structure
+ * Phase 62: Make response format dynamic, not fixed templates
  */
-function formatResponseAsString(response: FluentResponse): string {
+function formatResponseAsString(response: FluentResponse, responseStructure?: ResponseStructure): string {
   const parts: string[] = [];
   
-  if (response.summary) {
-    parts.push(`الخلاصة: ${response.summary}`);
+  // If no structure specified, use full format (backward compatibility)
+  if (!responseStructure || responseStructure.format === 'full_analysis') {
+    // Full format - all sections
+    if (response.summary) {
+      parts.push(`الخلاصة: ${response.summary}`);
+    }
+    
+    if (response.whySection) {
+      parts.push(`\nلماذا هذا المزاج؟ ${response.whySection}`);
+    }
+    
+    if (response.causesSection) {
+      parts.push(`\nالأسباب الرئيسية: ${response.causesSection}`);
+    }
+    
+    if (response.meaningSection) {
+      parts.push(`\nماذا يعني للمجتمع؟ ${response.meaningSection}`);
+    }
+    
+    if (response.cognitiveInsight) {
+      parts.push(`\nكيف يفكر الناس؟ ${response.cognitiveInsight}`);
+    }
+    
+    if (response.recommendationSection) {
+      parts.push(`\nالتوصية: ${response.recommendationSection}`);
+    }
+  } else if (responseStructure.format === 'direct_answer') {
+    // Direct answer format - just the summary
+    if (response.summary) {
+      parts.push(response.summary);
+    }
+  } else if (responseStructure.format === 'deep_explanation') {
+    // Analytical format - summary + causes + decision
+    if (response.summary) {
+      parts.push(`الخلاصة: ${response.summary}`);
+    }
+    
+    if (response.causesSection) {
+      parts.push(`\nالأسباب الرئيسية: ${response.causesSection}`);
+    }
+    
+    if (response.recommendationSection) {
+      parts.push(`\nالتوصية: ${response.recommendationSection}`);
+    }
+  } else if (responseStructure.format === 'brief_followup') {
+    // Follow-up format - brief answer + next steps
+    if (response.summary) {
+      parts.push(response.summary);
+    }
+    
+    if (response.recommendationSection) {
+      parts.push(`\n${response.recommendationSection}`);
+    }
   }
   
-  if (response.whySection) {
-    parts.push(`\nلماذا هذا المزاج؟ ${response.whySection}`);
-  }
-  
-  if (response.causesSection) {
-    parts.push(`\nالأسباب الرئيسية: ${response.causesSection}`);
-  }
-  
-  if (response.meaningSection) {
-    parts.push(`\nماذا يعني للمجتمع؟ ${response.meaningSection}`);
-  }
-  
-  if (response.cognitiveInsight) {
-    parts.push(`\nكيف يفكر الناس؟ ${response.cognitiveInsight}`);
-  }
-  
-  if (response.recommendationSection) {
-    parts.push(`\nالتوصية: ${response.recommendationSection}`);
-  }
-  
+  // Add follow-up questions if available
   if (response.followUpQuestions && response.followUpQuestions.length > 0) {
     parts.push(`\nأسئلة للاستكشاف:`);
     response.followUpQuestions.forEach((q, i) => {
@@ -166,6 +199,9 @@ export interface PipelineOutput {
 /**
  * Run the intelligent pipeline
  * This is the main entry point for generating intelligent responses
+ */
+/**
+ * Phase 62: Updated to pass responseStructure to formatResponseAsString
  */
 export async function runIntelligentPipeline(input: PipelineInput): Promise<PipelineOutput> {
   console.log('[IntelligentPipeline] Starting pipeline for:', input.question.substring(0, 50));
@@ -278,8 +314,8 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
   processingSteps.push('Response Built');
   
   // Format the response - استخدام أسلوب المستشار
-  // Phase 57: Response is already formatted by buildFluentResponse with Perception Layer
-  let formattedResponse = formatResponseAsString(response);
+  // Phase 62: Format is now dynamic based on responseStructure
+  let formattedResponse = formatResponseAsString(response, responseStructure);
   
   // تطبيق أسلوب المستشار على الرد
   formattedResponse = applyConsultantStyle(formattedResponse);

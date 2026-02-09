@@ -283,6 +283,10 @@ export default function TopicAnalysisResults() {
   const emotions = analysisData.emotions || {};
   const confidence = analysisData.confidence || 85;
   const metaDecision = analysisData.metaDecision || null;
+  
+  // ✅ Extract intelligent response from UnifiedPipeline (Phase 62)
+  const intelligentResponse = analysisData.intelligentResponse || null;
+  const pipelineMetadata = analysisData.pipelineMetadata || null;
 
   // Prepare emotion data
   const emotionData = [
@@ -373,7 +377,54 @@ export default function TopicAnalysisResults() {
       </div>
 
       <div className="container py-6 space-y-6">
-        {/* ========== 1. EXECUTIVE SUMMARY (الخلاصة النهائية) - أول شيء ========== */}
+        {/* ========== 1. INTELLIGENT RESPONSE FROM UNIFIED PIPELINE ========== */}
+        {intelligentResponse && (
+          <Card className={`relative overflow-hidden border-2 border-primary/50 bg-primary/5`}>
+            <div className="absolute top-0 right-0 p-4">
+              <span className="text-4xl">🧠</span>
+            </div>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-primary" />
+                التحليل الذكي
+              </CardTitle>
+              <CardDescription>
+                رد مبني على 14 طبقة معرفية - نوع السؤال: {pipelineMetadata?.questionType || 'تحليلي'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <p className="text-base leading-relaxed whitespace-pre-wrap">
+                  {intelligentResponse}
+                </p>
+              </div>
+              {pipelineMetadata && (
+                <div className="mt-4 pt-4 border-t border-border/50">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                    <div>
+                      <span className="text-muted-foreground">مسار:</span>
+                      <p className="font-medium">{pipelineMetadata.cognitivePathway}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">الإجراء:</span>
+                      <p className="font-medium">{pipelineMetadata.analysisAction}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">القرار:</span>
+                      <p className="font-medium">{pipelineMetadata.gateDecision}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">الثقة:</span>
+                      <p className="font-medium">{(pipelineMetadata.confidence * 100).toFixed(0)}%</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* ========== 2. EXECUTIVE SUMMARY (الخلاصة النهاية) - أول شيء ========== */}
         <Card className={`relative overflow-hidden border-2 ${finalStateStyle.bg} ${actionSignalStyle.border}`}>
           <div className="absolute top-0 right-0 p-4">
             <span className="text-4xl">{finalStateStyle.icon}</span>
@@ -392,7 +443,7 @@ export default function TopicAnalysisResults() {
               
               {/* Human Summary - الجملة الأهم */}
               <h2 className="text-2xl font-bold mb-4 leading-relaxed">
-                {metaDecision?.humanSummaryAr || `المزاج العام تجاه "${topic}" ${gmi > 0 ? 'إيجابي' : gmi < 0 ? 'سلبي' : 'محايد'}.`}
+                {metaDecision?.humanSummaryAr || `المزاج العام تجاه "ربط الموضوع" ${gmi > 0 ? 'إيجابي' : gmi < 0 ? 'سلبي' : 'محايد'}.`}
               </h2>
               
               {/* Forecast & Risk */}
@@ -419,7 +470,7 @@ export default function TopicAnalysisResults() {
           </CardContent>
         </Card>
 
-        {/* ========== 2. THREE INDICES WITH EXPLANATIONS ========== */}
+        {/* ========== 3. THREE INDICES WITH EXPLANATIONS ========== */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* GMI */}
           <Card className="border-l-4 border-l-primary">

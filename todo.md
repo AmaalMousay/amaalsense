@@ -2759,3 +2759,52 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [ ] تحديث intelligentPipeline.ts لاستخدام جميع الطبقات
 - [ ] تحديث orchestrator/index.ts للتنسيق بين الطبقات
 - [ ] اختبارات شاملة للـ pipeline الكامل
+
+
+## Phase 62: إصلاح المشاكل الحرجة
+
+### المشاكل المكتشفة
+- [ ] **الردود قالب ثابت**: الطبقات الجديدة موجودة لكن غير مفعلة في الـ pipeline
+- [ ] **البيانات غير حقيقية**: تتبع مسار البيانات من الإدخال (الأخبار) إلى الإخراج (الرد)
+- [ ] **مشكلة الترجمة**: صفحة النتائج تظهر عربي فقط حتى عند اختيار الإنجليزية
+
+### المطلوب
+- [ ] تتبع مسار البيانات: أخبار → تحليل عاطفي → Unified Pipeline → الرد
+- [ ] التأكد من أن جميع الطبقات تعمل بشكل صحيح
+- [ ] إصلاح مشكلة الترجمة في TopicAnalysisResults.tsx
+
+
+## Phase 62: Fix Data Flow and Dynamic Response Format (COMPLETED)
+
+### Critical Issues Fixed
+- [x] Real data passing from topicAnalyzer to UnifiedPipeline
+  - Added fetchRealNews() function to fetch actual news data
+  - Pass newsItems and emotionData to UnifiedPipeline.process()
+  - Return intelligentResponse and pipelineMetadata in TopicAnalysisResult
+
+- [x] Dynamic response format based on question type
+  - Modified formatResponseAsString() to accept responseStructure parameter
+  - Support 4 response formats: full_analysis, direct_answer, deep_explanation, brief_followup
+  - Different formats for first questions vs follow-up questions
+
+- [x] Frontend display of intelligent response
+  - Updated TopicAnalysisResults.tsx to extract intelligentResponse
+  - Display intelligent response with pipeline metadata
+  - Show cognitive pathway, analysis action, gate decision, confidence
+
+- [x] Unit tests for dynamic response format
+  - 13 tests passing for response structure determination
+  - Tests verify different formats for different question types
+  - Tests confirm no fixed templates are used
+
+### Key Changes
+1. topicAnalyzer.ts: Added fetchRealNews() and data passing to UnifiedPipeline
+2. intelligentPipeline.ts: Made formatResponseAsString() dynamic based on responseStructure
+3. TopicAnalysisResults.tsx: Display intelligentResponse instead of fixed templates
+4. phase62-unit.test.ts: 13 unit tests all passing
+
+### Status
+- ✅ All TypeScript errors fixed
+- ✅ Dev server running
+- ✅ 13/13 unit tests passing
+- ✅ Ready for production testing
