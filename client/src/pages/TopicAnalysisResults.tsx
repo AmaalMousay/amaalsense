@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useStreamingAnalysis, type StreamChunk } from "@/hooks/useStreamingAnalysis";
+import { DynamicQuestionGenerator, type DynamicQuestion } from "@/services/dynamicQuestionGenerator";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -110,6 +111,9 @@ export default function TopicAnalysisResults() {
   const [feedbackGiven, setFeedbackGiven] = useState<'accurate' | 'inaccurate' | 'correction' | null>(null);
   const [showCorrectionDialog, setShowCorrectionDialog] = useState(false);
   const [correctionEmotion, setCorrectionEmotion] = useState<string | null>(null);
+  
+  // Dynamic Questions State
+  const [suggestedQuestions, setSuggestedQuestions] = useState<DynamicQuestion[]>([]);
 
   // Mutations
   const analyzeTopicMutation = trpc.topic.analyzeTopicInCountry.useMutation();
@@ -190,6 +194,13 @@ export default function TopicAnalysisResults() {
             setAnalysisData(data);
           }
           setIsLoading(false);
+          
+          // Generate dynamic questions
+          const resultData = (data as any).result || data;
+          if (resultData) {
+            const questions = DynamicQuestionGenerator.generateQuestions(resultData);
+            setSuggestedQuestions(questions);
+          }
           
           // حفظ الدردشة تلقائياً بعد التحليل
           if (!conversationId) {
@@ -621,6 +632,46 @@ export default function TopicAnalysisResults() {
                 countryName={countryName || 'Global'}
                 topic={topic}
               />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* ========== 6. SUGGESTED FOLLOW-UP QUESTIONS (أسئلة متابعة مقترحة) ========== */}
+        {suggestedQuestions && suggestedQuestions.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-blue-500" />
+                أسئلة للاستكشاف الأعمق
+              </CardTitle>
+              <CardDescription>أسئلة مقترحة بناءً على التحليل</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {suggestedQuestions.map((question, idx) => (
+                  <Button
+                    key={idx}
+                    variant="outline"
+                    className="h-auto p-4 text-left justify-start whitespace-normal hover:bg-primary/10 hover:border-primary"
+                    onClick={() => {
+                      // Handle question click - could trigger new analysis
+                      console.log('Question clicked:', question.text);
+                    }}
+                  >
+                    <div className="flex flex-col gap-2 w-full">
+                      <p className="font-medium text-sm">{question.text}</p>
+                      <div className="flex items-center justify-between">
+                        <Badge variant="secondary" className="text-xs">
+                          {question.category}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {question.relevance}% ملاءمة
+                        </span>
+                      </div>
+                    </div>
+                  </Button>
+                ))}
+              </div>
             </CardContent>
           </Card>
         )}

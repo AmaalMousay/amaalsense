@@ -2939,3 +2939,11 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [x] Verify no placeholder responses appear
 - [x] Test error handling
 - [x] Test fallback mechanisms
+
+
+## Phase 69: Dynamic Questions Generator (COMPLETED ✅)
+- [x] إنشاء DynamicQuestionGenerator
+- [x] توليد أسئلة بناءً على المشاعر
+- [x] توليد أسئلة بناءً على نوع الموضوع
+- [x] تحديث TopicAnalysisResults لعرض الأسئلة
+- [x] اختبار النظام (14 اختبار ناجح)
