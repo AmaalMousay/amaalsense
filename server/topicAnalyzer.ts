@@ -12,6 +12,10 @@ import { analyzeHybrid } from './hybridAnalyzer';
 import { getTopicMood, MoodResult } from './unifiedDataService';
 import { UnifiedPipeline } from './cognitiveArchitecture/unifiedPipeline';
 import { calculateIndices, CalculationInput, validateCalculation } from './indicesCalculationEngine';
+import { calculateDCFTIndices, DCFTInput, EmotionVector } from './dcftCalculationEngine';
+import { analyzeTemporalTrends, TemporalDataPoint } from './temporalAnalysisEngine';
+import { generateSourceAttribution, createSourceInfo } from './sourceAttributionSystem';
+import { getLanguageContext, getCulturallyAwareInterpretation } from './multiLanguageSupport';
 
 /**
  * Calculate credibility score for a news source
@@ -191,6 +195,31 @@ export interface TopicAnalysisResult {
     isGrounded: boolean;
     confidence: number;
   };
+  
+  // ✅ DCFT Indices (Phase 73)
+  dcftIndices?: {
+    gmi: number;
+    cfi: number;
+    hri: number;
+    aci: number;
+    sdi: number;
+    confidence: number;
+    breakdown: {
+      positiveEnergy: number;
+      negativeEnergy: number;
+      neutralEnergy: number;
+      emotionalIntensity: number;
+    };
+  };
+  
+  // ✅ Temporal Analysis (Phase 74)
+  temporalAnalysis?: any;
+  
+  // ✅ Source Attribution (Phase 75)
+  sourceAttribution?: any;
+  
+  // ✅ Multi-language Support (Phase 76)
+  multilingualInterpretation?: any;
 }
 
 /**
@@ -283,7 +312,31 @@ export async function analyzeTopicInCountry(
     },
   }));
   
-  // Calculate indices from REAL DATA using mathematical formulas
+  // ✅ Phase 73: Calculate DCFT Indices from REAL DATA
+  const emotionVectors: EmotionVector[] = newsArticles.map(article => ({
+    joy: article.emotions.joy / 100,
+    fear: article.emotions.fear / 100,
+    anger: article.emotions.anger / 100,
+    sadness: article.emotions.sadness / 100,
+    hope: article.emotions.hope / 100,
+    curiosity: article.emotions.curiosity / 100,
+    trust: 0.5,
+    surprise: 0.3,
+  }));
+  
+  const dcftInput: DCFTInput = {
+    emotionVectors,
+    timestamps: newsArticles.map(a => a.date),
+    credibilityScores: newsArticles.map(a => a.credibilityScore),
+    culturalContext: countryName,
+    topic,
+    region: countryCode,
+  };
+  
+  const dcftResult = calculateDCFTIndices(dcftInput);
+  console.log(`[TopicAnalyzer] DCFT: GMI=${dcftResult.gmi}, CFI=${dcftResult.cfi}, HRI=${dcftResult.hri}, ACI=${dcftResult.aci}, SDI=${dcftResult.sdi}`);
+  
+  // Legacy calculation
   const calculationInput: CalculationInput = {
     newsArticles,
     topic,
@@ -297,8 +350,6 @@ export async function analyzeTopicInCountry(
   if (!validation.valid) {
     console.warn('[TopicAnalyzer] Calculation validation errors:', validation.errors);
   }
-  
-  console.log(`[TopicAnalyzer] Calculated indices from ${newsArticles.length} sources: GMI=${calculatedIndices.gmi}, CFI=${calculatedIndices.cfi}, HRI=${calculatedIndices.hri}`);
   
   // Process through unified pipeline with REAL DATA
   const sessionId = `topic-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -329,6 +380,39 @@ export async function analyzeTopicInCountry(
   
   // Generate regional analysis
   const regionalAnalysis = await generateRegionalAnalysis(topic, countryCode, regions, baseAnalysis);
+  
+  // ✅ Phase 74: Temporal Analysis
+  const temporalDataPoints: TemporalDataPoint[] = [{
+    timestamp: new Date(),
+    gmi: dcftResult.gmi,
+    cfi: dcftResult.cfi,
+    hri: dcftResult.hri,
+    aci: dcftResult.aci,
+    sdi: dcftResult.sdi,
+    confidence: dcftResult.confidence,
+    dataCount: newsArticles.length,
+  }];
+  const temporalAnalysis = analyzeTemporalTrends(temporalDataPoints);
+  
+  // ✅ Phase 75: Source Attribution
+  const sources = newsArticles.map(article => 
+    createSourceInfo(article.source, '', calculateCredibilityScore(article.source), 1)
+  );
+  const sourceAttribution = generateSourceAttribution(
+    sources,
+    [],
+    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    new Date()
+  );
+  
+  // ✅ Phase 76: Multi-language Support
+  const multilingualInterpretation = getCulturallyAwareInterpretation(
+    dcftResult.gmi,
+    dcftResult.cfi,
+    dcftResult.hri,
+    countryName,
+    options?.language === 'en' ? 'en' : 'ar'
+  );
   
   // Use the intelligent response from UnifiedPipeline if available
   const intelligentResponse = pipelineResult.answer;
@@ -371,6 +455,32 @@ export async function analyzeTopicInCountry(
     // ✅ Add intelligent response from UnifiedPipeline (Phase 62)
     intelligentResponse,
     pipelineMetadata: pipelineResult.metadata,
+    
+    // ✅ Phase 73: DCFT Indices
+    dcftIndices: dcftResult,
+    
+    // ✅ Phase 74: Temporal Analysis
+    temporalAnalysis,
+    
+    // ✅ Phase 75: Source Attribution
+    sourceAttribution: {
+      sources: sourceAttribution.sources.map(s => ({
+        name: s.name,
+        credibilityScore: s.credibilityScore,
+        articleCount: s.articleCount,
+        category: s.category,
+      })),
+      totalArticles: sourceAttribution.totalArticles,
+      averageCredibility: sourceAttribution.averageCredibility,
+      disclaimer: sourceAttribution.disclaimer,
+    },
+    
+    // ✅ Phase 76: Multi-language Support
+    multilingualInterpretation: {
+      ar: multilingualInterpretation,
+      en: getCulturallyAwareInterpretation(dcftResult.gmi, dcftResult.cfi, dcftResult.hri, countryName, 'en'),
+      culturalContext: countryName,
+    },
   };
 }
 
