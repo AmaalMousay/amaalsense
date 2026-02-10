@@ -11,6 +11,28 @@
 import { analyzeHybrid } from './hybridAnalyzer';
 import { getTopicMood, MoodResult } from './unifiedDataService';
 import { UnifiedPipeline } from './cognitiveArchitecture/unifiedPipeline';
+import { calculateIndices, CalculationInput, validateCalculation } from './indicesCalculationEngine';
+
+/**
+ * Calculate credibility score for a news source
+ */
+function calculateCredibilityScore(source: string | undefined): number {
+  if (!source) return 0.5;
+  const sourceLower = source.toLowerCase();
+  if (sourceLower.includes('reuters') || sourceLower.includes('ap') || sourceLower.includes('bbc')) {
+    return 0.95;
+  }
+  if (sourceLower.includes('aljazeera') || sourceLower.includes('france24')) {
+    return 0.85;
+  }
+  if (sourceLower.includes('news') || sourceLower.includes('times')) {
+    return 0.75;
+  }
+  if (sourceLower.includes('twitter') || sourceLower.includes('facebook')) {
+    return 0.4;
+  }
+  return 0.6;
+}
 
 // Age group definitions
 export const AGE_GROUPS = {
@@ -244,6 +266,40 @@ export async function analyzeTopicInCountry(
   // Fetch real news data
   const newsItems = await fetchRealNews(topic, countryName);
   
+  // Convert news items to calculation format with emotion analysis
+  const newsArticles = newsItems.map((item: any) => ({
+    title: item.title,
+    content: item.content,
+    source: item.source || 'Unknown',
+    date: new Date(item.publishedAt),
+    credibilityScore: calculateCredibilityScore(item.source),
+    emotions: {
+      joy: baseAnalysis.emotions.joy * 100,
+      fear: baseAnalysis.emotions.fear * 100,
+      anger: baseAnalysis.emotions.anger * 100,
+      sadness: baseAnalysis.emotions.sadness * 100,
+      hope: baseAnalysis.emotions.hope * 100,
+      curiosity: baseAnalysis.emotions.curiosity * 100,
+    },
+  }));
+  
+  // Calculate indices from REAL DATA using mathematical formulas
+  const calculationInput: CalculationInput = {
+    newsArticles,
+    topic,
+    country: countryCode,
+    timeframe: (options?.timeRange === 'day' ? 'today' : options?.timeRange || 'week') as 'today' | 'week' | 'month',
+  };
+  
+  const calculatedIndices = calculateIndices(calculationInput);
+  const validation = validateCalculation(calculatedIndices);
+  
+  if (!validation.valid) {
+    console.warn('[TopicAnalyzer] Calculation validation errors:', validation.errors);
+  }
+  
+  console.log(`[TopicAnalyzer] Calculated indices from ${newsArticles.length} sources: GMI=${calculatedIndices.gmi}, CFI=${calculatedIndices.cfi}, HRI=${calculatedIndices.hri}`);
+  
   // Process through unified pipeline with REAL DATA
   const sessionId = `topic-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const pipelineResult = await UnifiedPipeline.process({
@@ -296,9 +352,10 @@ export async function analyzeTopicInCountry(
     overallOpposition: Math.round(overallOpposition),
     overallNeutral: Math.round(Math.max(0, overallNeutral)),
     
-    gmi: baseAnalysis.indices.gmi,
-    cfi: baseAnalysis.indices.cfi,
-    hri: baseAnalysis.indices.hri,
+    // Use calculated indices from REAL DATA instead of hardcoded values
+    gmi: calculatedIndices.gmi,
+    cfi: calculatedIndices.cfi,
+    hri: calculatedIndices.hri,
     
     demographics,
     regions: regionalAnalysis,
