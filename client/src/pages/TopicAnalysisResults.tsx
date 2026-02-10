@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RegionalHeatMap } from "@/components/RegionalHeatMap";
+import { DCFTVisualization } from "@/components/DCFTVisualization";
 import { COUNTRIES, getCountryByCode } from "@/data/countries";
 import { 
   ArrowLeft, Download, Share2, Clock, Globe, Brain, 
@@ -449,7 +450,15 @@ export default function TopicAnalysisResults() {
           </Card>
         )}
 
-        {/* ========== 2. EXECUTIVE SUMMARY (الخلاصة النهاية) - أول شيء ========== */}
+        {/* ========== 2. DCFT VISUALIZATION (مؤشرات DCFT) ========== */}
+        {analysisData.dcftIndices && (
+          <DCFTVisualization 
+            indices={analysisData.dcftIndices} 
+            language="ar"
+          />
+        )}
+
+        {/* ========== 3. EXECUTIVE SUMMARY (الخلاصة النهاية) - أول شيء ========== */}
         <Card className={`relative overflow-hidden border-2 ${finalStateStyle.bg} ${actionSignalStyle.border}`}>
           <div className="absolute top-0 right-0 p-4">
             <span className="text-4xl">{finalStateStyle.icon}</span>

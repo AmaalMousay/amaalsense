@@ -92,6 +92,13 @@
       "when": 1770135328422,
       "tag": "0012_bitter_smasher",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1770684891906,
+      "tag": "0013_chief_mindworm",
+      "breakpoints": true
     }
   ]
 }

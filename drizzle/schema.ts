@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -1054,3 +1054,84 @@ export const reasoningRules = mysqlTable("reasoning_rules", {
 
 export type ReasoningRule = typeof reasoningRules.$inferSelect;
 export type InsertReasoningRule = typeof reasoningRules.$inferInsert;
+
+
+/**
+ * Conversations Table - stores conversation sessions for users
+ * Each conversation represents a multi-turn analysis session
+ */
+export const conversations = mysqlTable("conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID who owns this conversation */
+  userId: int("userId").notNull(),
+  /** Conversation title (auto-generated from first question) */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Country code if country-specific */
+  countryCode: varchar("countryCode", { length: 2 }),
+  /** Country name */
+  countryName: varchar("countryName", { length: 100 }),
+  /** Number of turns in this conversation */
+  turnCount: int("turnCount").notNull().default(1),
+  /** Last message timestamp */
+  lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
+  /** Archived status */
+  isArchived: boolean("isArchived").default(false).notNull(),
+  /** Pinned status */
+  isPinned: boolean("isPinned").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversation = typeof conversations.$inferInsert;
+
+/**
+ * Messages Table - stores individual messages within a conversation
+ * Each message represents a question and its analysis result
+ */
+export const messages = mysqlTable("messages", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to parent conversation */
+  conversationId: int("conversationId").notNull(),
+  /** User ID */
+  userId: int("userId").notNull(),
+  /** Question/query text */
+  question: text("question").notNull(),
+  /** Question type: what, why, how, risks, recommendation, whatif, comparison, followup, clarification */
+  questionType: varchar("questionType", { length: 32 }).notNull(),
+  /** Intelligent response from UnifiedPipeline */
+  intelligentResponse: text("intelligentResponse"),
+  /** Global Mood Index result */
+  gmi: int("gmi").notNull().default(0),
+  /** Collective Fear Index result */
+  cfi: int("cfi").notNull().default(0),
+  /** Hope Resilience Index result */
+  hri: int("hri").notNull().default(0),
+  /** Antagonism & Conflict Index */
+  aci: int("aci").notNull().default(0),
+  /** Stability & Dynamics Index */
+  sdi: int("sdi").notNull().default(0),
+  /** Confidence score */
+  confidence: int("confidence").notNull().default(75),
+  /** DCFT breakdown JSON */
+  dcftBreakdown: text("dcftBreakdown"),
+  /** Temporal analysis JSON */
+  temporalAnalysis: text("temporalAnalysis"),
+  /** Source attribution JSON */
+  sourceAttribution: text("sourceAttribution"),
+  /** Dominant emotion */
+  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  /** Number of sources analyzed */
+  sourcesCount: int("sourcesCount").notNull().default(0),
+  /** Analysis duration in milliseconds */
+  durationMs: int("durationMs"),
+  /** User feedback: helpful, not_helpful, neutral */
+  userFeedback: varchar("userFeedback", { length: 32 }),
+  /** User feedback comment */
+  feedbackComment: text("feedbackComment"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;

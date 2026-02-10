@@ -1,0 +1,40 @@
+CREATE TABLE `conversations` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`title` varchar(255) NOT NULL,
+	`countryCode` varchar(2),
+	`countryName` varchar(100),
+	`turnCount` int NOT NULL DEFAULT 1,
+	`lastMessageAt` timestamp NOT NULL DEFAULT (now()),
+	`isArchived` boolean NOT NULL DEFAULT false,
+	`isPinned` boolean NOT NULL DEFAULT false,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `conversations_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `messages` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`conversationId` int NOT NULL,
+	`userId` int NOT NULL,
+	`question` text NOT NULL,
+	`questionType` varchar(32) NOT NULL,
+	`intelligentResponse` text,
+	`gmi` int NOT NULL DEFAULT 0,
+	`cfi` int NOT NULL DEFAULT 0,
+	`hri` int NOT NULL DEFAULT 0,
+	`aci` int NOT NULL DEFAULT 0,
+	`sdi` int NOT NULL DEFAULT 0,
+	`confidence` int NOT NULL DEFAULT 75,
+	`dcftBreakdown` text,
+	`temporalAnalysis` text,
+	`sourceAttribution` text,
+	`dominantEmotion` varchar(32),
+	`sourcesCount` int NOT NULL DEFAULT 0,
+	`durationMs` int,
+	`userFeedback` varchar(32),
+	`feedbackComment` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `messages_id` PRIMARY KEY(`id`)
+);
