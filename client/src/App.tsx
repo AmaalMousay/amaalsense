@@ -43,6 +43,7 @@ import ResearcherDashboard from "./pages/ResearcherDashboard";
 // Markets page removed - functionality integrated into Smart Analysis
 import SmartAnalysis from "./pages/SmartAnalysis";
 import MetacognitionDashboard from "./pages/MetacognitionDashboard";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 
 function Router() {
@@ -69,6 +70,7 @@ function Router() {
       
       {/* User Pages */}
       <Route path={"/admin"} component={Admin} />
+      <Route path={"/admin/dashboard"} component={AdminDashboard} />
       <Route path={"/notifications"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/terms"} component={Terms} />
