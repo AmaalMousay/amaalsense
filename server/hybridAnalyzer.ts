@@ -35,6 +35,7 @@ import {
   TopicContribution,
   getRepresentationDisclaimer
 } from './biasAndTransparency';
+import { applyContextualAdjustments } from './contextualAdjustments';
 
 /**
  * Hybrid analysis configuration
@@ -258,7 +259,7 @@ function fuseEmotions(
 export async function analyzeHybrid(
   text: string,
   source: 'news' | 'social' | 'user' = 'user',
-  options: Partial<typeof HYBRID_CONFIG> = {}
+  options: Partial<typeof HYBRID_CONFIG> & { topic?: string; country?: string; culturalRegion?: string } = {}
 ): Promise<HybridAnalysisResult> {
   const startTime = Date.now();
   const config = { ...HYBRID_CONFIG, ...options };
@@ -367,28 +368,40 @@ export async function analyzeHybrid(
 
   // Step 4: Calculate final indices using DCFT formulas
   // The indices are primarily from DCFT, enhanced by fused emotions
-  const indices = {
+  let indices = {
     gmi: dcftResult.indices.gmi,
     cfi: dcftResult.indices.cfi,
     hri: dcftResult.indices.hri,
   };
+  
+  // Apply contextual adjustments based on topic, country, and cultural region
+  // This ensures different topics and countries get different emotional readings
+  indices = applyContextualAdjustments(indices, {
+    topic: options.topic,
+    country: options.country,
+    culturalRegion: options.culturalRegion,
+  });
+  console.log(`[HybridAnalyzer] Contextual adjustments applied: GMI=${indices.gmi}, CFI=${indices.cfi}, HRI=${indices.hri}`);
 
-  // Adjust indices based on fused emotions
+  // Adjust indices based on fused emotions (after contextual adjustments)
   if (aiWasUsed) {
     // Slight adjustment based on AI contribution
     const positiveEmotions = fusedEmotions.joy + fusedEmotions.hope + fusedEmotions.curiosity;
     const negativeEmotions = fusedEmotions.fear + fusedEmotions.anger + fusedEmotions.sadness;
     
-    // GMI adjustment
-    indices.gmi = indices.gmi * config.dcftWeight + 
+    // GMI adjustment (preserve contextual adjustments)
+    const baseGMI = indices.gmi;
+    indices.gmi = baseGMI * config.dcftWeight + 
                   ((positiveEmotions - negativeEmotions) * 50 + 50) * config.aiWeight;
     
-    // CFI adjustment (fear-based)
-    indices.cfi = indices.cfi * config.dcftWeight + 
+    // CFI adjustment (fear-based, preserve contextual adjustments)
+    const baseCFI = indices.cfi;
+    indices.cfi = baseCFI * config.dcftWeight + 
                   ((fusedEmotions.fear + fusedEmotions.anger * 0.5) * 100) * config.aiWeight;
     
-    // HRI adjustment (hope-based)
-    indices.hri = indices.hri * config.dcftWeight + 
+    // HRI adjustment (hope-based, preserve contextual adjustments)
+    const baseHRI = indices.hri;
+    indices.hri = baseHRI * config.dcftWeight + 
                   ((fusedEmotions.hope + fusedEmotions.joy * 0.5) * 100) * config.aiWeight;
 
     // Clamp values

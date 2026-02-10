@@ -235,7 +235,11 @@ export async function analyzeTopicInCountry(
   const contextMessage = options?.isFollowUp && options?.conversationHistory && options.conversationHistory.length > 0
     ? `Previous context: ${options.conversationHistory.map(m => m.content).join(' | ')}. New question: ${topic}`
     : `${topic} in ${countryName}`;
-  const baseAnalysis = await analyzeHybrid(contextMessage, 'news');
+  const baseAnalysis = await analyzeHybrid(contextMessage, 'news', {
+    topic: topic,
+    country: countryCode,
+    culturalRegion: countryName,
+  });
   
   // Fetch real news data
   const newsItems = await fetchRealNews(topic, countryName);
