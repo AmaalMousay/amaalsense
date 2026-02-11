@@ -3047,3 +3047,22 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [x] Write comprehensive unit tests (38/38 passing)
 - [ ] Integrate streaming manager into routers.ts
 - [ ] Test with long responses
+
+## Phase 87: Fix Bug #4 - Confidence Calculation Precision Issues (MEDIUM)
+- [x] Create confidence calibration engine
+- [x] Implement precision rounding (fix 44.99999999 issue)
+- [x] Add temporal decay for old analyses
+- [x] Implement data quality scoring
+- [x] Add source reliability calculation
+- [x] Write comprehensive unit tests (41/41 passing)
+- [ ] Integrate into routers.ts
+- [ ] Test with real analysis results
+
+## Phase 88: Fix Bug #5 - Lack of Customization and Cultural Depth (MEDIUM)
+- [x] Create cultural customization engine
+- [x] Define cultural profiles for MENA, Europe, Asia, Americas
+- [x] Implement emotional interpretation by culture
+- [x] Add cultural significance calculation
+- [ ] Write comprehensive unit tests
+- [ ] Integrate into analysis pipeline
+- [ ] Test with different regions
