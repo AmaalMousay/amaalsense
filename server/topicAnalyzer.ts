@@ -16,6 +16,12 @@ import { calculateDCFTIndices, DCFTInput, EmotionVector } from './dcftCalculatio
 import { analyzeTemporalTrends, TemporalDataPoint } from './temporalAnalysisEngine';
 import { generateSourceAttribution, createSourceInfo } from './sourceAttributionSystem';
 import { getLanguageContext, getCulturallyAwareInterpretation } from './multiLanguageSupport';
+import {
+  checkForDuplicates,
+  registerAnalysis,
+  generateTopicSpecificVariations,
+  getCacheStats,
+} from './deduplicationEngine';
 
 /**
  * Calculate credibility score for a news source
@@ -333,8 +339,30 @@ export async function analyzeTopicInCountry(
     region: countryCode,
   };
   
-  const dcftResult = calculateDCFTIndices(dcftInput);
+  let dcftResult = calculateDCFTIndices(dcftInput);
   console.log(`[TopicAnalyzer] DCFT: GMI=${dcftResult.gmi}, CFI=${dcftResult.cfi}, HRI=${dcftResult.hri}, ACI=${dcftResult.aci}, SDI=${dcftResult.sdi}`);
+  // ✅ Phase 84: Check for duplicates and apply topic-specific variations
+  const duplicateCheck = checkForDuplicates(topic, countryCode, dcftResult);
+  
+  if (duplicateCheck.isDuplicate) {
+    console.warn(`[Deduplication] Detected duplicate for "${topic}" in ${countryCode}`);
+    const variations = generateTopicSpecificVariations(topic, {
+      gmi: dcftResult.gmi,
+      cfi: dcftResult.cfi,
+      hri: dcftResult.hri,
+      aci: dcftResult.aci,
+      sdi: dcftResult.sdi,
+    });
+    dcftResult = { ...dcftResult, ...variations };
+  } else {
+    registerAnalysis(topic, countryCode, {
+      gmi: dcftResult.gmi,
+      cfi: dcftResult.cfi,
+      hri: dcftResult.hri,
+      aci: dcftResult.aci,
+      sdi: dcftResult.sdi,
+    });
+  }
   
   // Legacy calculation
   const calculationInput: CalculationInput = {

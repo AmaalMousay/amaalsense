@@ -1,5 +1,21 @@
 # Amaalsense Engine - Project TODO
 
+## Phase 84: Fix Bug #1 - Duplicate Data and Indices (HIGH PRIORITY)
+- [x] Create deduplication engine with duplicate detection
+- [x] Implement topic-specific variations system
+- [x] Add cache management with expiry
+- [x] Integrate deduplication into topicAnalyzer.ts
+- [x] Write comprehensive unit tests (18/18 passing)
+
+## Phase 85: Fix Bug #2 - Temporal Analysis Failure (HIGH PRIORITY)
+- [x] Create temporal question detector
+- [x] Implement historical data generator
+- [x] Add date range extraction from natural language
+- [x] Support Arabic and English temporal queries
+- [x] Write comprehensive unit tests (17/17 passing)
+- [ ] Integrate temporal handler into topicAnalyzer.ts
+- [ ] Test temporal analysis with real data
+
 ## Phase 1: Database & Backend Setup
 - [x] Define database schema for emotion indices (GMI, CFI, HRI)
 - [x] Create emotion analysis simulation engine
@@ -2947,3 +2963,87 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [x] توليد أسئلة بناءً على نوع الموضوع
 - [x] تحديث TopicAnalysisResults لعرض الأسئلة
 - [x] اختبار النظام (14 اختبار ناجح)
+
+
+## Phase 84: Fix Critical Bugs (From Testing Report)
+
+### Bug #1: Duplicate Data and Indices (HIGH PRIORITY)
+- [ ] Implement deduplication system to prevent same indices for different topics
+- [ ] Add cache invalidation mechanism
+- [ ] Create detection system to identify duplicate results
+- [ ] Verify each topic generates unique indices based on real data
+
+### Bug #2: Temporal Analysis Failure (HIGH PRIORITY)
+- [ ] Fix Pattern Recognition layer (Layer 7) for temporal data
+- [ ] Implement Predictive Modeling layer (Layer 9) for forecasting
+- [ ] Add historical data accumulation for time-series analysis
+- [ ] Enable temporal comparison questions ("How did sentiment change between Jan-Feb?")
+- [ ] Test temporal analysis with real date ranges
+
+### Bug #3: Broken/Incomplete Responses (HIGH PRIORITY)
+- [ ] Fix streaming response pipeline to prevent message cutoff
+- [ ] Add proper connection timeout handling
+- [ ] Implement response completion verification
+- [ ] Test streaming with long responses
+- [ ] Add response reassembly mechanism
+
+### Bug #4: Confidence Calculation Precision Issues (MEDIUM)
+- [ ] Replace raw decimal output with Math.round() for display
+- [ ] Fix confidence calculation to avoid excessive decimal places
+- [ ] Implement proper rounding (2-3 decimal places max)
+- [ ] Verify confidence values are realistic and meaningful
+- [ ] Test confidence calculations across all analysis types
+
+### Bug #5: Lack of Customization and Cultural Depth (MEDIUM)
+- [ ] Add local training data for each country/region
+- [ ] Implement cultural context awareness in analysis
+- [ ] Add region-specific emotional interpretation
+- [ ] Create localized examples for different communities
+- [ ] Test customization for Saudi Arabia, Egypt, and other regions
+
+### Bug #6: Missing Data Sources and Attribution (MEDIUM)
+- [ ] Design simple attribution system for data provenance
+- [ ] Add temporary hypothetical sources for data
+- [ ] Implement source tracking in database
+- [ ] Display source citations in UI
+- [ ] Create audit trail for all data sources
+
+## Phase 85: Connect Conversation History UI to Database
+
+- [ ] Create API endpoint to save conversations to database
+- [ ] Create API endpoint to retrieve saved conversations
+- [ ] Connect ConversationHistory.tsx to backend API
+- [ ] Implement search functionality for past conversations
+- [ ] Implement filter functionality (by date, topic, country)
+- [ ] Add pin/archive functionality with database persistence
+- [ ] Test conversation retrieval and display
+
+## Phase 86: Implement Response Feedback System
+
+- [ ] Create feedback table in database schema
+- [ ] Create API endpoint to save user ratings (👍/👎/neutral)
+- [ ] Create API endpoint to save feedback comments
+- [ ] Connect ResponseFeedback.tsx to backend API
+- [ ] Implement rating submission and validation
+- [ ] Add feedback aggregation for system learning
+- [ ] Test feedback storage and retrieval
+
+## Phase 87: Add Temporal Comparison Functionality
+
+- [ ] Create temporal comparison API endpoint
+- [ ] Implement date range selection UI
+- [ ] Add side-by-side comparison visualization
+- [ ] Create trend analysis for selected time periods
+- [ ] Implement percentage change calculations
+- [ ] Add historical data retrieval for comparisons
+- [ ] Test temporal comparison with real data
+
+## Phase 86: Fix Bug #3 - Broken/Incomplete Responses (HIGH PRIORITY)
+- [x] Create response streaming manager
+- [x] Implement chunk splitting and management
+- [x] Add response validation and completion checking
+- [x] Implement retry logic with exponential backoff
+- [x] Add automatic cleanup of old streams
+- [x] Write comprehensive unit tests (38/38 passing)
+- [ ] Integrate streaming manager into routers.ts
+- [ ] Test with long responses
