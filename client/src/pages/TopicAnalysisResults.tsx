@@ -190,7 +190,9 @@ export default function TopicAnalysisResults() {
           if (data && typeof data === 'object' && 'chunks' in data) {
             const chunks = (data as any).chunks as StreamChunk[];
             processChunks(chunks);
-            setAnalysisData((data as any).result);
+            const resultData = (data as any).result;
+            console.log('[DEBUG] dcftIndices:', resultData?.dcftIndices);
+            setAnalysisData(resultData);
           } else {
             setAnalysisData(data);
           }

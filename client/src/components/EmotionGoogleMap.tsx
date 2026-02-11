@@ -171,6 +171,8 @@ interface CountryData {
   gmi: number;
   cfi: number;
   hri: number;
+  aci: number;
+  sdi: number;
   confidence: number;
 }
 

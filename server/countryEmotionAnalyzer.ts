@@ -9,6 +9,8 @@ export interface CountryEmotionData {
   gmi: number;
   cfi: number;
   hri: number;
+  aci: number;
+  sdi: number;
   confidence: number;
 }
 
@@ -54,45 +56,49 @@ export function generateCountryEmotionData(
   globalHRI: number = 50
 ): CountryEmotionData {
   // Country-specific variation factors (simulate different regional sentiments)
-  const countryVariationMap: Record<string, { gmiShift: number; cfiShift: number; hriShift: number }> = {
-    'SA': { gmiShift: 10, cfiShift: -5, hriShift: 5 },
-    'AE': { gmiShift: 15, cfiShift: -10, hriShift: 10 },
-    'EG': { gmiShift: -5, cfiShift: 10, hriShift: -5 },
-    'US': { gmiShift: 5, cfiShift: 5, hriShift: 5 },
-    'GB': { gmiShift: 0, cfiShift: 0, hriShift: 0 },
-    'DE': { gmiShift: 5, cfiShift: -5, hriShift: 5 },
-    'FR': { gmiShift: -5, cfiShift: 5, hriShift: 0 },
-    'JP': { gmiShift: 0, cfiShift: 10, hriShift: 5 },
-    'CN': { gmiShift: 10, cfiShift: 0, hriShift: 10 },
-    'IN': { gmiShift: 5, cfiShift: 5, hriShift: 10 },
-    'BR': { gmiShift: -10, cfiShift: 15, hriShift: -5 },
-    'CA': { gmiShift: 10, cfiShift: -5, hriShift: 10 },
-    'AU': { gmiShift: 10, cfiShift: -5, hriShift: 10 },
-    'KR': { gmiShift: 5, cfiShift: 10, hriShift: 5 },
-    'MX': { gmiShift: -5, cfiShift: 10, hriShift: 0 },
-    'RU': { gmiShift: -10, cfiShift: 15, hriShift: -10 },
-    'IT': { gmiShift: -5, cfiShift: 5, hriShift: 0 },
-    'ES': { gmiShift: 0, cfiShift: 5, hriShift: 5 },
-    'NL': { gmiShift: 10, cfiShift: -5, hriShift: 10 },
-    'SE': { gmiShift: 15, cfiShift: -10, hriShift: 15 },
-    'CH': { gmiShift: 15, cfiShift: -10, hriShift: 15 },
-    'SG': { gmiShift: 15, cfiShift: -5, hriShift: 15 },
-    'ID': { gmiShift: 5, cfiShift: 10, hriShift: 5 },
-    'TH': { gmiShift: 0, cfiShift: 10, hriShift: 5 },
-    'MY': { gmiShift: 10, cfiShift: 0, hriShift: 10 },
+  const countryVariationMap: Record<string, { gmiShift: number; cfiShift: number; hriShift: number; aciShift: number; sdiShift: number }> = {
+    'SA': { gmiShift: 10, cfiShift: -5, hriShift: 5, aciShift: -10, sdiShift: 15 },
+    'AE': { gmiShift: 15, cfiShift: -10, hriShift: 10, aciShift: -15, sdiShift: 20 },
+    'EG': { gmiShift: -5, cfiShift: 10, hriShift: -5, aciShift: 15, sdiShift: -10 },
+    'US': { gmiShift: 5, cfiShift: 5, hriShift: 5, aciShift: 5, sdiShift: 10 },
+    'GB': { gmiShift: 0, cfiShift: 0, hriShift: 0, aciShift: 0, sdiShift: 5 },
+    'DE': { gmiShift: 5, cfiShift: -5, hriShift: 5, aciShift: -5, sdiShift: 15 },
+    'FR': { gmiShift: -5, cfiShift: 5, hriShift: 0, aciShift: 10, sdiShift: 0 },
+    'JP': { gmiShift: 0, cfiShift: 10, hriShift: 5, aciShift: 5, sdiShift: 10 },
+    'CN': { gmiShift: 10, cfiShift: 0, hriShift: 10, aciShift: 10, sdiShift: 5 },
+    'IN': { gmiShift: 5, cfiShift: 5, hriShift: 10, aciShift: 15, sdiShift: 0 },
+    'BR': { gmiShift: -10, cfiShift: 15, hriShift: -5, aciShift: 20, sdiShift: -15 },
+    'CA': { gmiShift: 10, cfiShift: -5, hriShift: 10, aciShift: -10, sdiShift: 15 },
+    'AU': { gmiShift: 10, cfiShift: -5, hriShift: 10, aciShift: -10, sdiShift: 15 },
+    'KR': { gmiShift: 5, cfiShift: 10, hriShift: 5, aciShift: 10, sdiShift: 5 },
+    'MX': { gmiShift: -5, cfiShift: 10, hriShift: 0, aciShift: 15, sdiShift: -10 },
+    'RU': { gmiShift: -10, cfiShift: 15, hriShift: -10, aciShift: 20, sdiShift: -20 },
+    'IT': { gmiShift: -5, cfiShift: 5, hriShift: 0, aciShift: 10, sdiShift: 0 },
+    'ES': { gmiShift: 0, cfiShift: 5, hriShift: 5, aciShift: 5, sdiShift: 5 },
+    'NL': { gmiShift: 10, cfiShift: -5, hriShift: 10, aciShift: -10, sdiShift: 15 },
+    'SE': { gmiShift: 15, cfiShift: -10, hriShift: 15, aciShift: -15, sdiShift: 20 },
+    'CH': { gmiShift: 15, cfiShift: -10, hriShift: 15, aciShift: -15, sdiShift: 20 },
+    'SG': { gmiShift: 15, cfiShift: -5, hriShift: 15, aciShift: -10, sdiShift: 20 },
+    'ID': { gmiShift: 5, cfiShift: 10, hriShift: 5, aciShift: 15, sdiShift: 0 },
+    'TH': { gmiShift: 0, cfiShift: 10, hriShift: 5, aciShift: 10, sdiShift: 5 },
+    'MY': { gmiShift: 10, cfiShift: 0, hriShift: 10, aciShift: 5, sdiShift: 10 },
   };
 
-  const variation = countryVariationMap[countryCode] || { gmiShift: 0, cfiShift: 0, hriShift: 0 };
+  const variation = countryVariationMap[countryCode] || { gmiShift: 0, cfiShift: 0, hriShift: 0, aciShift: 0, sdiShift: 0 };
 
   // Add randomness for realistic variation
   const randomGMI = (Math.random() - 0.5) * 20;
   const randomCFI = (Math.random() - 0.5) * 15;
   const randomHRI = (Math.random() - 0.5) * 15;
+  const randomACI = (Math.random() - 0.5) * 20;
+  const randomSDI = (Math.random() - 0.5) * 20;
 
   // Calculate final indices
   const gmi = Math.max(-100, Math.min(100, globalGMI + variation.gmiShift + randomGMI));
   const cfi = Math.max(0, Math.min(100, globalCFI + variation.cfiShift + randomCFI));
   const hri = Math.max(0, Math.min(100, globalHRI + variation.hriShift + randomHRI));
+  const aci = Math.max(0, Math.min(100, 50 + variation.aciShift + randomACI));
+  const sdi = Math.max(0, Math.min(100, 50 + variation.sdiShift + randomSDI));
 
   // Calculate confidence based on data consistency (0-1 range)
   const confidence = (70 + Math.random() * 25) / 100;
@@ -103,6 +109,8 @@ export function generateCountryEmotionData(
     gmi: Math.round(gmi),
     cfi: Math.round(cfi),
     hri: Math.round(hri),
+    aci: Math.round(aci),
+    sdi: Math.round(sdi),
     confidence,
   };
 }
