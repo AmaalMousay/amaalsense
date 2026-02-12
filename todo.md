@@ -3233,3 +3233,32 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - ✅ All systems compile successfully
 - ✅ Dev server running smoothly
 - ✅ All components production-ready
+
+
+## Critical Fixes (الإصلاحات الحرجة)
+
+### Phase 1: Frontend-Backend Integration
+- [ ] Wire NewFeaturesDashboard to tRPC endpoints
+- [ ] Connect StructuredResponseUI to analysis procedures
+- [ ] Connect FollowUpQuestionsUI to question system
+- [ ] Connect PredictionsRecommendationsUI to predictions
+- [ ] Connect WhatIfScenariosUI to scenario procedures
+- [ ] Integrate RealtimeNotificationSystem WebSocket
+- [ ] Test all tRPC calls from UI
+
+### Phase 2: Expand Historical Events Database
+- [ ] Add 50+ more historical events (Libya/MENA)
+- [ ] Add 30+ global economic events
+- [ ] Add 20+ climate/environment events
+- [ ] Implement historical event seeding script
+- [ ] Verify pattern discovery with expanded data
+- [ ] Test temporal comparisons
+
+### Phase 3: Redis Vector Database
+- [ ] Set up Redis connection
+- [ ] Implement RedisVectorStore class
+- [ ] Migrate EventVectors to Redis
+- [ ] Implement persistence layer
+- [ ] Add caching for API responses
+- [ ] Test vector search performance
+- [ ] Optimize for production scale
