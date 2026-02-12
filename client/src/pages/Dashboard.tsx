@@ -91,7 +91,16 @@ export default function Dashboard() {
             <span>{t.common.back}</span>
           </button>
           <h1 className="text-2xl font-bold gradient-text">{t.nav.dashboard}</h1>
-          <ExportButton type="global" timeRange="24h" />
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/chat')}
+            >
+              💬 Chat
+            </Button>
+            <ExportButton type="global" timeRange="24h" />
+          </div>
         </div>
       </nav>
 

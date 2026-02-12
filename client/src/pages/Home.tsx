@@ -382,6 +382,7 @@ export default function Home() {
   // Navigation links - Dashboard only for logged-in users via UserMenu
   const navLinks = [
     { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis' },
+    { href: '/chat', label: isRTL ? 'محادثة' : 'Chat' },
     { href: '/theory', label: t.nav.theory },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },

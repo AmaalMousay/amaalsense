@@ -6,6 +6,7 @@ import { z } from "zod";
 import { newFeaturesRouter } from "./newFeaturesRouter";
 import { realtimeDataRouter } from "./realtimeDataRouter";
 import { pipelineRouter } from "./pipelineRouter";
+import { chatAnalysisRouter } from "./chatAnalysisRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -13,6 +14,7 @@ export const appRouter = router({
   newFeatures: newFeaturesRouter,
   realtimeData: realtimeDataRouter,
   pipeline: pipelineRouter,
+  chatAnalysis: chatAnalysisRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

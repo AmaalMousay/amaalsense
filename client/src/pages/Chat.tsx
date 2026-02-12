@@ -1,10 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send, Trash2 } from 'lucide-react';
+import { Loader2, Send, Trash2, Search, Download, Share2, MessageSquare } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -23,33 +25,44 @@ interface ChatMessage {
   };
 }
 
+interface Conversation {
+  id: number;
+  title: string;
+  topic?: string;
+  createdAt: Date;
+  messageCount: number;
+  lastMessage?: string;
+  confidence?: number;
+}
+
 export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [conversations, setConversations] = useState<any[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterTopic, setFilterTopic] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'recent' | 'confidence' | 'topic'>('recent');
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
+  const [confidenceFilter, setConfidenceFilter] = useState<number>(0);
 
   // Fetch conversation history
-  const { data: history } = trpc.conversations.list.useQuery(
-    undefined
-  );
+  const { data: history, refetch: refetchHistory } = trpc.conversations.list.useQuery(undefined);
 
   // Create conversation mutation
-  const createMutation = trpc.conversations.create.useMutation();
+  const createMutation = trpc.conversations.create.useMutation({
+    onSuccess: () => refetchHistory()
+  });
 
   // Delete conversation mutation
-  const deleteMutation = trpc.conversations.delete.useMutation();
+  const deleteMutation = trpc.conversations.delete.useMutation({
+    onSuccess: () => refetchHistory()
+  });
 
-  // Get conversation details (using query instead of mutation)
-  const [selectedConvId, setSelectedConvId] = useState<number | null>(null);
-  const { data: selectedConvDetails } = trpc.conversations.get.useQuery(
-    { id: selectedConvId! },
-    { enabled: !!selectedConvId }
-  );
-
-  // Get daily trends for analysis
+  // Get daily trends for context
   const { data: trends } = trpc.analytics.getDailyTrends.useQuery({
     days: 7,
     countryCode: 'LY'
@@ -67,6 +80,44 @@ export default function Chat() {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+
+  // Filter and sort conversations
+  const getDateFilter = () => {
+    const now = new Date();
+    switch (dateFilter) {
+      case 'today':
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      case 'week':
+        const weekAgo = new Date(now);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return weekAgo;
+      case 'month':
+        const monthAgo = new Date(now);
+        monthAgo.setMonth(monthAgo.getMonth() - 1);
+        return monthAgo;
+      default:
+        return new Date(0);
+    }
+  };
+
+  const filteredConversations = conversations
+    .filter(conv => {
+      const matchesSearch = conv.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           conv.topic?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesTopic = filterTopic === 'all' || conv.topic === filterTopic;
+      const matchesDate = new Date(conv.createdAt) >= getDateFilter();
+      const matchesConfidence = (conv.confidence || 0) >= confidenceFilter;
+      return matchesSearch && matchesTopic && matchesDate && matchesConfidence;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'recent') {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      } else if (sortBy === 'confidence') {
+        return (b.confidence || 0) - (a.confidence || 0);
+      } else {
+        return (a.topic || '').localeCompare(b.topic || '');
+      }
+    });
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -87,22 +138,24 @@ export default function Chat() {
       // Get latest trends for context
       const latestTrend = trends?.[trends.length - 1];
 
-      // Create assistant response based on trends
+      // Create assistant response
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content: `Analysis of "${input}": Based on current global emotional data, the collective mood shows ${
           latestTrend?.sentiment || 50
-        }% positive sentiment. The Global Mood Index (GMI) is at ${Math.round(
-          latestTrend?.gmi || 50
-        )}%, indicating ${
+        }% positive sentiment. The Global Mood Index (GMI) is at ${
+          Math.round(latestTrend?.gmi || 50)
+        }%, indicating ${
           (latestTrend?.gmi || 50) > 60 ? 'optimistic' : 'cautious'
-        } outlook. Confidence in this analysis is high.`,
+        } outlook. Confidence in this analysis is ${
+          Math.round(latestTrend?.cfi || 50)
+        }%.`,
         timestamp: new Date(),
-        confidence: Math.round((latestTrend?.cfi || 50) / 100 * 100),
+        confidence: Math.round(latestTrend?.cfi || 50),
         metadata: {
           region: 'Global',
-          topic: input,
+          topic: 'General Analysis',
           indices: {
             GMI: Math.round(latestTrend?.gmi || 50),
             CFI: Math.round(latestTrend?.cfi || 50),
@@ -113,158 +166,278 @@ export default function Chat() {
 
       setMessages(prev => [...prev, assistantMessage]);
 
-      // Save to conversation history
-      await createMutation.mutateAsync({
-        topic: input,
-        initialAnalysis: {
-          gmi: Math.round(latestTrend?.gmi || 50),
-          cfi: Math.round(latestTrend?.cfi || 50),
-          hri: Math.round(latestTrend?.hri || 50),
-          dominantEmotion: 'neutral',
-          aiResponse: assistantMessage.content
-        }
-      });
+      // Save conversation
+      if (messages.length === 0) {
+        await createMutation.mutateAsync({
+          topic: 'General Analysis',
+          countryCode: 'LY'
+        });
+      }
     } catch (error) {
-      console.error('Error:', error);
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 2).toString(),
-        type: 'assistant',
-        content: 'Sorry, there was an error processing your request.',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      console.error('Error sending message:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDeleteConversation = async (conversationId: number) => {
+  const handleDeleteConversation = async (id: number) => {
     if (confirm('Are you sure you want to delete this conversation?')) {
-      await deleteMutation.mutateAsync({ id: conversationId });
-      setConversations(prev => prev.filter(c => c.id !== conversationId));
-      if (selectedConversation === conversationId.toString()) {
-        setSelectedConversation(null);
-        setMessages([]);
-      }
+      await deleteMutation.mutateAsync({ id });
     }
   };
 
-  useEffect(() => {
-    if (selectedConvDetails) {
-      // Convert stored messages to ChatMessage format
-      const chatMessages: ChatMessage[] = (selectedConvDetails.messages || []).map((msg: any) => ({
-        id: msg.id.toString(),
-        type: msg.role as 'user' | 'assistant',
-        content: msg.content,
-        timestamp: new Date(msg.createdAt),
-        metadata: msg.analysisData ? JSON.parse(msg.analysisData) : undefined
-      }));
-      setMessages(chatMessages);
-    }
-  }, [selectedConvDetails]);
-
-  const handleLoadConversation = (conversation: any) => {
-    setSelectedConversation(conversation.id.toString());
-    setSelectedConvId(conversation.id);
+  const handleExportChat = () => {
+    const chatData = {
+      messages,
+      exportedAt: new Date().toISOString(),
+      messageCount: messages.length
+    };
+    const dataStr = JSON.stringify(chatData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `chat-export-${Date.now()}.json`;
+    link.click();
   };
 
-  const t = (key: string, fallback: string) => fallback;
+  const uniqueTopics = Array.from(new Set(conversations.map(c => c.topic).filter(Boolean)));
 
   return (
     <div className="flex h-screen bg-background">
-      {/* Sidebar - Conversation History */}
-      <div className="w-64 border-r border-border bg-card">
-        <div className="p-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-foreground">{t('conversations', 'Conversations')}</h2>
-        </div>
-        <ScrollArea className="h-[calc(100vh-80px)]">
-          <div className="p-4 space-y-2">
-            {conversations.map(conversation => (
-              <div
-                key={conversation.id}
-                className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                  selectedConversation === conversation.id.toString()
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-background hover:bg-muted text-foreground'
-                }`}
+      {/* Sidebar */}
+      <div className={`${showSidebar ? 'w-80' : 'w-0'} border-r border-border transition-all duration-300 overflow-hidden`}>
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="p-4 border-b border-border">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Conversations</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSidebar(false)}
               >
-                <div onClick={() => handleLoadConversation(conversation)}>
-                  <p className="text-sm font-medium truncate">{conversation.topic || 'Untitled'}</p>
-                  <p className="text-xs opacity-70">
-                    {new Date(conversation.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleDeleteConversation(conversation.id)}
-                    className="h-6 w-6 p-0 text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                ✕
+              </Button>
+            </div>
+
+            {/* New Chat Button */}
+            <Button
+              className="w-full mb-4"
+              onClick={() => {
+                setMessages([]);
+                setSelectedConversation(null);
+              }}
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              New Chat
+            </Button>
+
+            {/* Search */}
+            <div className="relative mb-4">
+              <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search conversations..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {/* Filters */}
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="text-sm font-medium">Topic</label>
+                <select
+                  className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+                  value={filterTopic}
+                  onChange={(e) => setFilterTopic(e.target.value)}
+                >
+                  <option value="all">All Topics</option>
+                  {uniqueTopics.map(topic => (
+                    <option key={topic} value={topic}>{topic}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Date Range</label>
+                <select
+                  className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value as any)}
+                >
+                  <option value="all">All Time</option>
+                  <option value="today">Today</option>
+                  <option value="week">Last 7 Days</option>
+                  <option value="month">Last 30 Days</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Min Confidence</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={confidenceFilter}
+                    onChange={(e) => setConfidenceFilter(Number(e.target.value))}
+                    className="flex-1"
+                  />
+                  <span className="text-xs font-medium min-w-[2rem]">{confidenceFilter}%</span>
                 </div>
               </div>
-            ))}
+
+              <div>
+                <label className="text-sm font-medium">Sort By</label>
+                <select
+                  className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                >
+                  <option value="recent">Most Recent</option>
+                  <option value="confidence">Highest Confidence</option>
+                  <option value="topic">By Topic</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </ScrollArea>
+
+          {/* Conversation List */}
+          <ScrollArea className="flex-1">
+            <div className="p-4 space-y-2">
+              {filteredConversations.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    No conversations found
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {searchQuery || filterTopic !== 'all' || dateFilter !== 'all' || confidenceFilter > 0
+                      ? 'Try adjusting your filters'
+                      : 'Start a new conversation to begin'}
+                  </p>
+                </div>
+              ) : (
+                filteredConversations.map(conv => (
+                  <Card
+                    key={conv.id}
+                    className={`p-3 cursor-pointer transition-colors ${
+                      selectedConversation === conv.id.toString()
+                        ? 'bg-primary text-primary-foreground'
+                        : 'hover:bg-muted'
+                    }`}
+                    onClick={() => setSelectedConversation(conv.id.toString())}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate text-sm">{conv.title}</p>
+                        {conv.topic && (
+                          <p className="text-xs opacity-70">{conv.topic}</p>
+                        )}
+                        <p className="text-xs opacity-50 mt-1">
+                          {new Date(conv.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteConversation(conv.id);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </div>
+          </ScrollArea>
+        </div>
       </div>
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Messages */}
-        <ScrollArea className="flex-1 p-6">
-          <div className="space-y-4 max-w-3xl mx-auto">
+        {/* Top Bar */}
+        <div className="border-b border-border p-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {!showSidebar && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSidebar(true)}
+              >
+                ☰
+              </Button>
+            )}
+            <h1 className="text-xl font-semibold">
+              {selectedConversation ? 'Conversation' : 'New Chat'}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportChat}
+              disabled={messages.length === 0}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={messages.length === 0}
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Share
+            </Button>
+          </div>
+        </div>
+
+        {/* Messages Area */}
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-4 max-w-4xl mx-auto">
             {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-96">
-                <div className="text-center">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    Start a Conversation
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Ask about global emotions, trends, or specific events
-                  </p>
-                </div>
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <MessageSquare className="w-12 h-12 text-muted-foreground mb-4" />
+                <h2 className="text-2xl font-semibold mb-2">Start a Conversation</h2>
+                <p className="text-muted-foreground mb-8 max-w-md">
+                  Ask about global emotions, trends, or get analysis on any topic
+                </p>
               </div>
             ) : (
-              messages.map(message => (
+              messages.map(msg => (
                 <div
-                  key={message.id}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  key={msg.id}
+                  className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <Card
-                    className={`max-w-xl p-4 ${
-                      message.type === 'user'
+                    className={`max-w-2xl p-4 ${
+                      msg.type === 'user'
                         ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-foreground'
+                        : 'bg-muted'
                     }`}
                   >
-                    <p className="text-sm">{message.content}</p>
-                    {message.metadata && (
-                      <div className="mt-3 pt-3 border-t border-current border-opacity-20 space-y-2">
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div>
-                            <p className="opacity-70">GMI</p>
-                            <p className="font-semibold">{message.metadata.indices?.GMI}%</p>
-                          </div>
-                          <div>
-                            <p className="opacity-70">CFI</p>
-                            <p className="font-semibold">{message.metadata.indices?.CFI}%</p>
-                          </div>
-                          <div>
-                            <p className="opacity-70">HRI</p>
-                            <p className="font-semibold">{message.metadata.indices?.HRI}%</p>
-                          </div>
-                        </div>
-                        {message.confidence && (
-                          <p className="text-xs opacity-70">
-                            Confidence: {message.confidence}%
-                          </p>
+                    <p className="text-sm">{msg.content}</p>
+                    {msg.metadata && (
+                      <div className="mt-3 pt-3 border-t border-current border-opacity-20 text-xs space-y-1">
+                        {msg.metadata.topic && (
+                          <p>📌 Topic: {msg.metadata.topic}</p>
+                        )}
+                        {msg.metadata.indices && (
+                          <p>📊 GMI: {msg.metadata.indices.GMI}% | CFI: {msg.metadata.indices.CFI}% | HRI: {msg.metadata.indices.HRI}%</p>
+                        )}
+                        {msg.confidence && (
+                          <p>✓ Confidence: {msg.confidence}%</p>
                         )}
                       </div>
                     )}
                     <p className="text-xs opacity-50 mt-2">
-                      {message.timestamp.toLocaleTimeString()}
+                      {msg.timestamp.toLocaleTimeString()}
                     </p>
                   </Card>
                 </div>
@@ -275,25 +448,25 @@ export default function Chat() {
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="border-t border-border p-6 bg-card">
-          <div className="max-w-3xl mx-auto flex gap-2">
+        <div className="border-t border-border p-4">
+          <div className="max-w-4xl mx-auto flex gap-2">
             <Input
+              placeholder="Ask about global emotions, trends, or any topic..."
               value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyPress={e => {
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   handleSendMessage();
                 }
               }}
-              placeholder="Ask about global emotions, trends, or events..."
               disabled={isLoading}
               className="flex-1"
             />
             <Button
               onClick={handleSendMessage}
               disabled={isLoading || !input.trim()}
-              size="lg"
+              size="sm"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
