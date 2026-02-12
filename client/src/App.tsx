@@ -45,6 +45,7 @@ import SmartAnalysis from "./pages/SmartAnalysis";
 import MetacognitionDashboard from "./pages/MetacognitionDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
+import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
 
 function Router() {
   return (
@@ -56,6 +57,7 @@ function Router() {
       {/* Results Pages */}
       <Route path={"/analysis-results"} component={TopicAnalysisResults} />
       <Route path={"/country/:code"} component={CountryResults} />
+      <Route path={"/new-features"} component={NewFeaturesDashboard} />
       
       {/* Information Pages */}
       <Route path={"/theory"} component={Theory} />
