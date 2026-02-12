@@ -46,8 +46,10 @@ import MetacognitionDashboard from "./pages/MetacognitionDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
+import Chat from "./pages/Chat";
 
 function Router() {
+  // Routes will be added here
   return (
     <Switch>
       <Route path={"/"} component={Home} />
@@ -58,6 +60,7 @@ function Router() {
       <Route path={"/analysis-results"} component={TopicAnalysisResults} />
       <Route path={"/country/:code"} component={CountryResults} />
       <Route path={"/new-features"} component={NewFeaturesDashboard} />
+      <Route path={"/chat"} component={Chat} />
       
       {/* Information Pages */}
       <Route path={"/theory"} component={Theory} />
