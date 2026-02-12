@@ -14,23 +14,37 @@ import { Button } from '@/components/ui/button';
 export function NewFeaturesDashboard() {
   const [selectedRegion, setSelectedRegion] = useState<'global' | 'mena' | 'europe' | 'asia' | 'americas' | 'africa' | 'oceania'>('global');
   const [selectedQuestion, setSelectedQuestion] = useState<string>('is_world_dangerous');
+  const [activeTab, setActiveTab] = useState<'weather' | 'questions' | 'explanation' | 'predictions'>('weather');
 
   // Fetch Daily Weather
-  const weatherQuery = trpc.newFeatures.getDailyWeather.useQuery({ region: selectedRegion });
+  const weatherQuery = trpc.newFeatures.getDailyWeather.useQuery(
+    { region: selectedRegion },
+    { enabled: activeTab === 'weather' }
+  );
 
   // Fetch Universal Questions
-  const questionsQuery = trpc.newFeatures.getAvailableQuestions.useQuery();
+  const questionsQuery = trpc.newFeatures.getAvailableQuestions.useQuery(
+    undefined,
+    { enabled: activeTab === 'questions' }
+  );
 
   // Fetch Answer
-  const answerQuery = trpc.newFeatures.answerQuestion.useQuery({ 
-    question: selectedQuestion as any 
-  });
+  const answerQuery = trpc.newFeatures.answerQuestion.useQuery(
+    { question: selectedQuestion as any },
+    { enabled: activeTab === 'questions' && !!selectedQuestion }
+  );
 
   // Fetch Quick Explanation
-  const explanationQuery = trpc.newFeatures.getQuickExplanation.useQuery();
+  const explanationQuery = trpc.newFeatures.getQuickExplanation.useQuery(
+    undefined,
+    { enabled: activeTab === 'explanation' }
+  );
 
   // Fetch Aggregated Metrics
-  const metricsQuery = trpc.newFeatures.getAggregatedMetrics.useQuery({ region: selectedRegion });
+  const metricsQuery = trpc.newFeatures.getAggregatedMetrics.useQuery(
+    { region: selectedRegion },
+    { enabled: true }
+  );
 
   const regions = ['global', 'mena', 'europe', 'asia', 'americas', 'africa', 'oceania'] as const;
 
@@ -64,11 +78,12 @@ export function NewFeaturesDashboard() {
       </Card>
 
       {/* Main Tabs */}
-      <Tabs defaultValue="weather" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="weather">Weather</TabsTrigger>
           <TabsTrigger value="questions">Q&A</TabsTrigger>
           <TabsTrigger value="explanation">What's Happening</TabsTrigger>
+          <TabsTrigger value="predictions">Predictions</TabsTrigger>
         </TabsList>
 
         {/* Daily Emotional Weather Tab */}
