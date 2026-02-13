@@ -47,6 +47,8 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
 import Chat from "./pages/Chat";
+import Weather from "./pages/Weather";
+import Indices from "./pages/Indices";
 
 function Router() {
   // Routes will be added here
@@ -61,6 +63,8 @@ function Router() {
       <Route path={"/country/:code"} component={CountryResults} />
       <Route path={"/new-features"} component={NewFeaturesDashboard} />
       <Route path={"/chat"} component={Chat} />
+      <Route path={"/weather"} component={Weather} />
+      <Route path={"/indices"} component={Indices} />
       
       {/* Information Pages */}
       <Route path={"/theory"} component={Theory} />
