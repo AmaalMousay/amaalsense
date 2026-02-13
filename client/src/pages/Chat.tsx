@@ -1,12 +1,10 @@
-'use client';
-
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send, Trash2, Search, Download, Share2, MessageSquare } from 'lucide-react';
+import { Loader2, Send, Download, Share2, Trash2, Menu } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -18,54 +16,41 @@ interface ChatMessage {
     region?: string;
     topic?: string;
     indices?: {
-      GMI: number;
-      CFI: number;
-      HRI: number;
+      GMI?: number;
+      CFI?: number;
+      HRI?: number;
     };
+    emotions?: Record<string, number>;
+    severity?: string;
   };
 }
 
-interface Conversation {
-  id: number;
-  title: string;
-  topic?: string;
-  createdAt: Date;
-  messageCount: number;
-  lastMessage?: string;
-  confidence?: number;
-}
-
 export default function Chat() {
+  const { t } = useLanguage();
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterTopic, setFilterTopic] = useState<string>('all');
+  const [filterTopic, setFilterTopic] = useState('all');
   const [sortBy, setSortBy] = useState<'recent' | 'confidence' | 'topic'>('recent');
-  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
-  const [confidenceFilter, setConfidenceFilter] = useState<number>(0);
+  const [confidenceFilter, setConfidenceFilter] = useState(0);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Fetch conversation history
   const { data: history, refetch: refetchHistory } = trpc.conversations.list.useQuery(undefined);
-
-  // Create conversation mutation
-  const createMutation = trpc.conversations.create.useMutation({
-    onSuccess: () => refetchHistory()
-  });
-
-  // Delete conversation mutation
-  const deleteMutation = trpc.conversations.delete.useMutation({
-    onSuccess: () => refetchHistory()
-  });
-
-  // Get daily trends for context
   const { data: trends } = trpc.analytics.getDailyTrends.useQuery({
     days: 7,
-    countryCode: 'LY'
+  });
+
+  const createMutation = trpc.conversations.create.useMutation({
+    onSuccess: () => refetchHistory(),
+  });
+
+  const deleteMutation = trpc.conversations.delete.useMutation({
+    onSuccess: () => refetchHistory(),
   });
 
   useEffect(() => {
@@ -75,29 +60,17 @@ export default function Chat() {
   }, [history]);
 
   useEffect(() => {
-    // Auto-scroll to bottom
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Filter and sort conversations
   const getDateFilter = () => {
     const now = new Date();
-    switch (dateFilter) {
-      case 'today':
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      case 'week':
-        const weekAgo = new Date(now);
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        return weekAgo;
-      case 'month':
-        const monthAgo = new Date(now);
-        monthAgo.setMonth(monthAgo.getMonth() - 1);
-        return monthAgo;
-      default:
-        return new Date(0);
-    }
+    const filterMap: Record<string, Date> = {
+      today: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+      week: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+      month: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+    };
+    return filterMap['month'] || new Date(0);
   };
 
   const filteredConversations = conversations
@@ -122,11 +95,13 @@ export default function Chat() {
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
+    const userInput = input;
+    
     // Add user message
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: 'user',
-      content: input,
+      content: userInput,
       timestamp: new Date()
     };
 
@@ -135,46 +110,70 @@ export default function Chat() {
     setIsLoading(true);
 
     try {
-      // Get latest trends for context
-      const latestTrend = trends?.[trends.length - 1];
+      // Use Graph Pipeline for intelligent analysis
+      const analysisResult = await trpc.graphPipeline.completeAnalysis.useMutation().mutateAsync({
+        input: userInput.trim(),
+      });
 
-      // Create assistant response
+      if (!analysisResult.success) {
+        throw new Error(analysisResult.error || 'Analysis failed');
+      }
+
+      // Extract EventVector and analysis
+      const eventVector = analysisResult.eventVector;
+      const analysis = analysisResult.analysis || 'Analysis processing...';
+
+      // Create assistant response with full EventVector data
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `Analysis of "${input}": Based on current global emotional data, the collective mood shows ${
-          latestTrend?.sentiment || 50
-        }% positive sentiment. The Global Mood Index (GMI) is at ${
-          Math.round(latestTrend?.gmi || 50)
-        }%, indicating ${
-          (latestTrend?.gmi || 50) > 60 ? 'optimistic' : 'cautious'
-        } outlook. Confidence in this analysis is ${
-          Math.round(latestTrend?.cfi || 50)
-        }%.`,
+        content: analysis,
         timestamp: new Date(),
-        confidence: Math.round(latestTrend?.cfi || 50),
-        metadata: {
-          region: 'Global',
-          topic: 'General Analysis',
+        confidence: eventVector ? Math.round(eventVector.topicConfidence * 100) : 50,
+        metadata: eventVector ? {
+          region: eventVector.region || 'Global',
+          topic: eventVector.topic,
           indices: {
-            GMI: Math.round(latestTrend?.gmi || 50),
-            CFI: Math.round(latestTrend?.cfi || 50),
-            HRI: Math.round(latestTrend?.hri || 50)
-          }
-        }
+            GMI: Math.round(eventVector.impactScore * 100),
+            CFI: Math.round((eventVector.emotions.fear || 0) * 100),
+            HRI: Math.round((eventVector.emotions.hope || 0) * 100)
+          },
+          emotions: Object.entries(eventVector.emotions).reduce(
+            (acc, [key, value]) => ({
+              ...acc,
+              [key]: Math.round((value as number) * 100),
+            }),
+            {} as Record<string, number>
+          ),
+          severity: eventVector.severity,
+        } : undefined
       };
 
       setMessages(prev => [...prev, assistantMessage]);
 
       // Save conversation
-      if (messages.length === 0) {
+      if (messages.length === 0 && eventVector) {
         await createMutation.mutateAsync({
-          topic: 'General Analysis',
-          countryCode: 'LY'
+          topic: eventVector.topic || userInput.substring(0, 50),
+          countryCode: 'LY',
+          initialAnalysis: {
+            gmi: Math.round(eventVector.impactScore * 100),
+            cfi: Math.round((eventVector.emotions.fear || 0) * 100),
+            hri: Math.round((eventVector.emotions.hope || 0) * 100),
+            dominantEmotion: eventVector.dominantEmotion,
+            aiResponse: analysis,
+          }
         });
       }
     } catch (error) {
       console.error('Error sending message:', error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 2).toString(),
+        type: 'assistant',
+        content: `Error: ${error instanceof Error ? error.message : 'Analysis failed'}`,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -201,277 +200,216 @@ export default function Chat() {
     link.click();
   };
 
-  const uniqueTopics = Array.from(new Set(conversations.map(c => c.topic).filter(Boolean)));
-
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <div className={`${showSidebar ? 'w-80' : 'w-0'} border-r border-border transition-all duration-300 overflow-hidden`}>
-        <div className="h-full flex flex-col">
-          {/* Header */}
-          <div className="p-4 border-b border-border">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Conversations</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSidebar(false)}
-              >
-                ✕
-              </Button>
-            </div>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 border-r border-border overflow-hidden flex flex-col`}>
+        <div className="p-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground">Chat History</h2>
+        </div>
 
-            {/* New Chat Button */}
-            <Button
-              className="w-full mb-4"
-              onClick={() => {
-                setMessages([]);
-                setSelectedConversation(null);
-              }}
-            >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              New Chat
-            </Button>
+        <div className="p-4 space-y-3 flex-1 overflow-y-auto">
+          {/* Search */}
+          <Input
+            placeholder='Search...'
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full"
+          />
 
-            {/* Search */}
-            <div className="relative mb-4">
-              <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search conversations..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+          {/* Filters */}
+          <select
+            value={filterTopic}
+            onChange={(e) => setFilterTopic(e.target.value)}
+            className="w-full px-3 py-2 bg-background border border-border rounded-md text-sm"
+          >
+            <option value="all">All Topics</option>
+            <option value="politics">Politics</option>
+            <option value="economy">Economy</option>
+            <option value="health">Health</option>
+            <option value="technology">Technology</option>
+          </select>
 
-            {/* Filters */}
-            <div className="space-y-3 mb-4">
-              <div>
-                <label className="text-sm font-medium">Topic</label>
-                <select
-                  className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-                  value={filterTopic}
-                  onChange={(e) => setFilterTopic(e.target.value)}
-                >
-                  <option value="all">All Topics</option>
-                  {uniqueTopics.map(topic => (
-                    <option key={topic} value={topic}>{topic}</option>
-                  ))}
-                </select>
-              </div>
+          {/* Sort */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="w-full px-3 py-2 bg-background border border-border rounded-md text-sm"
+          >
+            <option value="recent">Most Recent</option>
+            <option value="confidence">Highest Confidence</option>
+            <option value="topic">By Topic</option>
+          </select>
 
-              <div>
-                <label className="text-sm font-medium">Date Range</label>
-                <select
-                  className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-                  value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value as any)}
-                >
-                  <option value="all">All Time</option>
-                  <option value="today">Today</option>
-                  <option value="week">Last 7 Days</option>
-                  <option value="month">Last 30 Days</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Min Confidence</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={confidenceFilter}
-                    onChange={(e) => setConfidenceFilter(Number(e.target.value))}
-                    className="flex-1"
-                  />
-                  <span className="text-xs font-medium min-w-[2rem]">{confidenceFilter}%</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Sort By</label>
-                <select
-                  className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                >
-                  <option value="recent">Most Recent</option>
-                  <option value="confidence">Highest Confidence</option>
-                  <option value="topic">By Topic</option>
-                </select>
-              </div>
-            </div>
+          {/* Confidence Filter */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">
+              Min Confidence: {confidenceFilter}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={confidenceFilter}
+              onChange={(e) => setConfidenceFilter(Number(e.target.value))}
+              className="w-full"
+            />
           </div>
 
-          {/* Conversation List */}
-          <ScrollArea className="flex-1">
-            <div className="p-4 space-y-2">
-              {filteredConversations.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    No conversations found
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {searchQuery || filterTopic !== 'all' || dateFilter !== 'all' || confidenceFilter > 0
-                      ? 'Try adjusting your filters'
-                      : 'Start a new conversation to begin'}
-                  </p>
-                </div>
-              ) : (
-                filteredConversations.map(conv => (
-                  <Card
-                    key={conv.id}
-                    className={`p-3 cursor-pointer transition-colors ${
-                      selectedConversation === conv.id.toString()
-                        ? 'bg-primary text-primary-foreground'
-                        : 'hover:bg-muted'
-                    }`}
-                    onClick={() => setSelectedConversation(conv.id.toString())}
+          {/* Conversations List */}
+          <div className="space-y-2">
+            {filteredConversations.map((conv) => (
+              <div
+                key={conv.id}
+                className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                  selectedConversation === conv.id
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+                onClick={() => setSelectedConversation(conv.id)}
+              >
+                <div className="font-medium truncate text-sm">{conv.title}</div>
+                <div className="text-xs opacity-75 mt-1">{conv.topic}</div>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-xs">{conv.confidence}% confidence</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteConversation(conv.id);
+                    }}
+                    className="text-xs hover:opacity-75"
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate text-sm">{conv.title}</p>
-                        {conv.topic && (
-                          <p className="text-xs opacity-70">{conv.topic}</p>
-                        )}
-                        <p className="text-xs opacity-50 mt-1">
-                          {new Date(conv.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteConversation(conv.id);
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </Card>
-                ))
-              )}
-            </div>
-          </ScrollArea>
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
+        {/* Header */}
         <div className="border-b border-border p-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {!showSidebar && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSidebar(true)}
-              >
-                ☰
-              </Button>
-            )}
-            <h1 className="text-xl font-semibold">
-              {selectedConversation ? 'Conversation' : 'New Chat'}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 hover:bg-muted rounded-lg"
+          >
+            <Menu size={20} />
+          </button>
+          <h1 className="text-xl font-semibold text-foreground">Emotional Intelligence Chat</h1>
+          <div className="flex gap-2">
+            <button
               onClick={handleExportChat}
-              disabled={messages.length === 0}
+              className="p-2 hover:bg-muted rounded-lg"
+              title="Export chat"
             >
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={messages.length === 0}
+              <Download size={20} />
+            </button>
+            <button
+              className="p-2 hover:bg-muted rounded-lg"
+              title="Share chat"
             >
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
-            </Button>
+              <Share2 size={20} />
+            </button>
           </div>
         </div>
 
-        {/* Messages Area */}
-        <ScrollArea className="flex-1 p-4">
-          <div className="space-y-4 max-w-4xl mx-auto">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <MessageSquare className="w-12 h-12 text-muted-foreground mb-4" />
-                <h2 className="text-2xl font-semibold mb-2">Start a Conversation</h2>
-                <p className="text-muted-foreground mb-8 max-w-md">
-                  Ask about global emotions, trends, or get analysis on any topic
-                </p>
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.length === 0 && (
+            <div className="flex items-center justify-center h-full text-center text-muted-foreground">
+              <div>
+                <h2 className="text-2xl font-semibold mb-2">{'Welcome to Chat'}</h2>
+                <p>{'Start analyzing emotional data...'}</p>
               </div>
-            ) : (
-              messages.map(msg => (
-                <div
-                  key={msg.id}
-                  className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <Card
-                    className={`max-w-2xl p-4 ${
-                      msg.type === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                    }`}
-                  >
-                    <p className="text-sm">{msg.content}</p>
-                    {msg.metadata && (
-                      <div className="mt-3 pt-3 border-t border-current border-opacity-20 text-xs space-y-1">
-                        {msg.metadata.topic && (
-                          <p>📌 Topic: {msg.metadata.topic}</p>
-                        )}
-                        {msg.metadata.indices && (
-                          <p>📊 GMI: {msg.metadata.indices.GMI}% | CFI: {msg.metadata.indices.CFI}% | HRI: {msg.metadata.indices.HRI}%</p>
-                        )}
-                        {msg.confidence && (
-                          <p>✓ Confidence: {msg.confidence}%</p>
-                        )}
+            </div>
+          )}
+
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <Card className={`max-w-2xl p-4 ${
+                msg.type === 'user'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-foreground'
+              }`}>
+                <p className="text-sm mb-2">{msg.content}</p>
+                
+                {msg.metadata && (
+                  <div className="text-xs opacity-75 space-y-1 mt-3 pt-3 border-t border-current/20">
+                    <div><strong>Topic:</strong> {msg.metadata.topic}</div>
+                    <div><strong>Region:</strong> {msg.metadata.region}</div>
+                    {msg.confidence && <div><strong>Confidence:</strong> {msg.confidence}%</div>}
+                    
+                    {msg.metadata.indices && (
+                      <div className="mt-2">
+                        <strong>Indices:</strong>
+                        <div className="grid grid-cols-3 gap-2 mt-1">
+                          <div>GMI: {msg.metadata.indices.GMI}%</div>
+                          <div>CFI: {msg.metadata.indices.CFI}%</div>
+                          <div>HRI: {msg.metadata.indices.HRI}%</div>
+                        </div>
                       </div>
                     )}
-                    <p className="text-xs opacity-50 mt-2">
-                      {msg.timestamp.toLocaleTimeString()}
-                    </p>
-                  </Card>
-                </div>
-              ))
-            )}
-            <div ref={scrollRef} />
-          </div>
-        </ScrollArea>
 
-        {/* Input Area */}
+                    {msg.metadata.emotions && (
+                      <div className="mt-2">
+                        <strong>Emotions:</strong>
+                        <div className="grid grid-cols-2 gap-1 mt-1 text-xs">
+                          {Object.entries(msg.metadata.emotions).map(([emotion, value]) => (
+                            <div key={emotion}>{emotion}: {value}%</div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="text-xs opacity-50 mt-2">
+                  {msg.timestamp.toLocaleTimeString()}
+                </div>
+              </Card>
+            </div>
+          ))}
+
+          {isLoading && (
+            <div className="flex justify-start">
+              <Card className="bg-muted p-4">
+                <div className="flex items-center gap-2">
+                  <Loader2 size={16} className="animate-spin" />
+                  <span className="text-sm">{'Analyzing...'}</span>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input */}
         <div className="border-t border-border p-4">
-          <div className="max-w-4xl mx-auto flex gap-2">
+          <div className="flex gap-2">
             <Input
-              placeholder="Ask about global emotions, trends, or any topic..."
+              placeholder={'Enter your message...'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               disabled={isLoading}
               className="flex-1"
             />
             <Button
               onClick={handleSendMessage}
               disabled={isLoading || !input.trim()}
-              size="sm"
+              className="gap-2"
             >
               {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 size={16} className="animate-spin" />
               ) : (
-                <Send className="w-4 h-4" />
+                <Send size={16} />
               )}
             </Button>
           </div>

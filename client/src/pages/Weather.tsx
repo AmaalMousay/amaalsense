@@ -10,6 +10,7 @@
 
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/i18n';
+import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';

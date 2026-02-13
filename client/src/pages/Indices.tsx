@@ -11,6 +11,7 @@
 
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/i18n';
+import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { TrendingUp, TrendingDown, Activity, Heart, Shield, Zap } from 'lucide-react';
