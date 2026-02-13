@@ -6,8 +6,9 @@ import { de } from "./de";
 import { ru } from "./ru";
 import { es } from "./es";
 import { zh } from "./zh";
+import { ja } from "./ja";
 
-export type Language = "en" | "ar" | "fr" | "de" | "ru" | "es" | "zh";
+export type Language = "en" | "ar" | "fr" | "de" | "ru" | "es" | "zh" | "ja";
 
 export const translations: Record<Language, TranslationKeys> = {
   en,
@@ -17,6 +18,7 @@ export const translations: Record<Language, TranslationKeys> = {
   ru,
   es,
   zh,
+  ja,
 };
 
 // Languages that use RTL direction
@@ -38,5 +40,5 @@ export const I18nContext = createContext<I18nContextType>({
 
 export const useI18n = () => useContext(I18nContext);
 
-export { en, ar, fr, de, ru, es, zh };
+export { en, ar, fr, de, ru, es, zh, ja };
 export type { TranslationKeys };

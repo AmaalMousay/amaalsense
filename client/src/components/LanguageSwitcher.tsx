@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Globe, Check } from "lucide-react";
-import { useI18n, Language } from "@/i18n";
+import { useI18n, type Language } from "@/i18n";
 
 interface LanguageSwitcherProps {
   variant?: "default" | "outline" | "ghost";
@@ -30,6 +30,7 @@ export function LanguageSwitcher({
     { code: "es", label: "Spanish", nativeLabel: "Español", flag: "🇪🇸" },
     { code: "ru", label: "Russian", nativeLabel: "Русский", flag: "🇷🇺" },
     { code: "zh", label: "Chinese", nativeLabel: "中文", flag: "🇨🇳" },
+    { code: "ja", label: "Japanese", nativeLabel: "日本語", flag: "🇯🇵" },
   ];
 
   const currentLang = languages.find(l => l.code === language);
