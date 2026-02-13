@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean as mysqlBoolean } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -1075,9 +1075,9 @@ export const conversations = mysqlTable("conversations", {
   /** Last message timestamp */
   lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
   /** Archived status */
-  isArchived: boolean("isArchived").default(false).notNull(),
+  isArchived: mysqlBoolean("isArchived").default(false).notNull(),
   /** Pinned status */
-  isPinned: boolean("isPinned").default(false).notNull(),
+  isPinned: mysqlBoolean("isPinned").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
