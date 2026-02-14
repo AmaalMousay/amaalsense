@@ -3620,3 +3620,12 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 ✅ All features integrated end-to-end
 ✅ Production-ready architecture
 ✅ Ready for public deployment
+
+
+## Phase 67: CRITICAL BUG FIX - Generic Responses Instead of Real Analysis
+
+- [x] Fix reasoningEngine to receive original user input
+- [x] Update completePipeline to pass input text to reasoningEngine
+- [x] Update Groq prompt to include actual question context (with specific instructions)
+- [x] Create reasoningEngine.test.ts with 4 test cases (all passing)
+- [x] Verify responses are specific to the topic, not generic templates

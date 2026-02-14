@@ -354,23 +354,29 @@ export async function graphPipeline(input: string): Promise<EventVector> {
  * Takes EventVector and generates final response
  * This replaces the old "LLM everywhere" approach
  */
-export async function reasoningEngine(eventVector: EventVector): Promise<string> {
+export async function reasoningEngine(eventVector: EventVector, originalInput?: string): Promise<string> {
   try {
     const { invokeGroqLLM } = await import('./groqIntegration');
     
     const prompt = `
-Analyze this event vector and provide insights:
+You are analyzing collective emotional sentiment about: "${originalInput || eventVector.topic}"
 
-Topic: ${eventVector.topic} (confidence: ${(eventVector.topicConfidence * 100).toFixed(0)}%)
-Emotions: ${Object.entries(eventVector.emotions)
+Analysis Results:
+- Topic: ${eventVector.topic} (confidence: ${(eventVector.topicConfidence * 100).toFixed(0)}%)
+- Emotions: ${Object.entries(eventVector.emotions)
   .map(([e, v]) => `${e}: ${((v as number) * 100).toFixed(0)}%`)
   .join(', ')}
-Dominant Emotion: ${eventVector.dominantEmotion}
-Region: ${eventVector.region} (confidence: ${(eventVector.regionConfidence * 100).toFixed(0)}%)
-Impact Score: ${(eventVector.impactScore * 100).toFixed(0)}%
-Severity: ${eventVector.severity}
+- Dominant Emotion: ${eventVector.dominantEmotion}
+- Region: ${eventVector.region} (confidence: ${(eventVector.regionConfidence * 100).toFixed(0)}%)
+- Impact Score: ${(eventVector.impactScore * 100).toFixed(0)}%
+- Severity: ${eventVector.severity}
 
-Provide a concise analysis with key insights and recommendations.
+Based on this emotional analysis, provide:
+1. Why people feel this way (specific to the topic)
+2. What this means for society
+3. Key recommendations or implications
+
+Be specific and contextual - not generic. Reference the actual topic and emotions detected.
     `;
     
     const response = await invokeGroqLLM({
@@ -404,8 +410,8 @@ export async function completePipeline(input: string): Promise<{
   // Step 1: Run graph pipeline to get EventVector
   const eventVector = await graphPipeline(input);
   
-  // Step 2: Run reasoning engine (single LLM pass)
-  const analysis = await reasoningEngine(eventVector);
+  // Step 2: Run reasoning engine (single LLM pass) with original input
+  const analysis = await reasoningEngine(eventVector, input);
   
   return {
     eventVector,
