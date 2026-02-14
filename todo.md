@@ -3541,3 +3541,15 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [x] Chat.tsx already uses EventVector correctly
 - [x] All 4 engines properly merge in Fusion Engine
 - [x] EventVector passed to Groq (not raw data)
+
+
+## Phase 65: Critical Fix - EventVector Data Preservation & Vector Conversion
+
+- [x] Keep ALL data in EventVector (don't reduce size)
+- [x] Convert data to vectors/numbers format for Groq understanding
+- [x] Create dataToVectorConverter.ts for numerical representation (30-dimensional vectors)
+- [x] Create eventVectorToGroqVectors.ts to use vectors instead of JSON
+- [x] Add 5th indicator to Indices page (Stability + Confidence now in chart)
+- [ ] Fix language-aware responses (currently returns Arabic for all languages)
+- [ ] Implement WebSocket streaming for real-time responses
+- [ ] Test complete flow with all 5 indicators

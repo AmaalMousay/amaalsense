@@ -31,6 +31,7 @@ interface HistoricalData {
   cfi: number;
   hri: number;
   stability: number;
+  confidence: number;
 }
 
 export default function Indices() {
@@ -61,6 +62,7 @@ export default function Indices() {
         cfi: 30 + Math.random() * 10,
         hri: 70 + Math.random() * 10,
         stability: 62 + Math.random() * 10,
+        confidence: 80 + Math.random() * 15,
       });
     }
 
@@ -273,6 +275,14 @@ export default function Indices() {
                         <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                       </linearGradient>
+                      <linearGradient id="colorStability" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="colorConfidence" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                      </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                     <XAxis dataKey="time" stroke="#94a3b8" />
@@ -308,6 +318,22 @@ export default function Indices() {
                       fillOpacity={1}
                       fill="url(#colorHRI)"
                       name="HRI"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="stability"
+                      stroke="#8b5cf6"
+                      fillOpacity={1}
+                      fill="url(#colorStability)"
+                      name="Stability"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="confidence"
+                      stroke="#f59e0b"
+                      fillOpacity={1}
+                      fill="url(#colorConfidence)"
+                      name="Confidence"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
