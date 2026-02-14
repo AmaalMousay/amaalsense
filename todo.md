@@ -3390,3 +3390,154 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [x] Update Indices.tsx to use live tRPC data
 - [x] Fix all TypeScript errors (Zero errors)
 - [x] Verify all connections work end-to-end
+
+
+## Phase 57: WebSocket Real-time Updates
+- [ ] Create WebSocket server in server/_core/websocket.ts
+- [ ] Implement real-time data streaming for Weather page
+- [ ] Implement real-time data streaming for Indices page
+- [ ] Implement real-time data streaming for Dashboard
+- [ ] Add WebSocket client hook (useRealtimeData)
+- [ ] Update Weather.tsx to use WebSocket
+- [ ] Update Indices.tsx to use WebSocket
+- [ ] Add connection status indicator in UI
+- [ ] Handle reconnection logic
+- [ ] Write WebSocket integration tests
+
+## Phase 58: Store EventVector in Conversations
+- [ ] Extend aiConversationMessages schema to include eventVector
+- [ ] Extend aiConversationMessages schema to include groqAnalysis
+- [ ] Extend aiConversationMessages schema to include confidence
+- [ ] Extend aiConversationMessages schema to include indices
+- [ ] Update Chat.tsx to save EventVector with messages
+- [ ] Create procedure to retrieve full message history with EventVector
+- [ ] Create procedure to export conversation with all EventVector data
+- [ ] Write tests for EventVector storage and retrieval
+
+## Phase 59: Create Alerts & Notifications System
+- [ ] Create alerts table in database schema
+- [ ] Create alert thresholds configuration (CFI, GMI, HRI)
+- [ ] Create alertsRouter with CRUD procedures
+- [ ] Implement alert checking logic (background job)
+- [ ] Create user alert preferences table
+- [ ] Create AlertsPage component
+- [ ] Add alert notifications to Dashboard
+- [ ] Implement email notifications for critical alerts
+- [ ] Create alert history view
+- [ ] Write alert system tests
+
+## Phase 60: Add Conversation Export with Analysis
+- [ ] Create export procedure in conversationsRouter
+- [ ] Implement PDF export format
+- [ ] Implement JSON export format
+- [ ] Include EventVector results in export
+- [ ] Include Groq reasoning in export
+- [ ] Include timeline of index changes in export
+- [ ] Add export button to Chat page
+- [ ] Create ExportDialog component
+- [ ] Write export tests
+
+## Phase 61: Implement Regional Breakdown
+- [ ] Create RegionalWeather page component
+- [ ] Create RegionalIndices page component
+- [ ] Add region selection dropdown
+- [ ] Implement region-specific data queries
+- [ ] Create region comparison view
+- [ ] Add routes for /regional/weather and /regional/indices
+- [ ] Update navigation to include regional pages
+- [ ] Create region-specific alerts
+- [ ] Write regional breakdown tests
+
+## Phase 62: Final Testing & Deployment
+- [ ] Run all feature tests (WebSocket, EventVector, Alerts, Export, Regional)
+- [ ] Test end-to-end data flow
+- [ ] Test all 7 languages
+- [ ] Performance testing
+- [ ] Security testing
+- [ ] Browser compatibility testing
+- [ ] Create final checkpoint
+- [ ] Deploy to production
+
+
+## Phase 63: Critical Fixes (Priority)
+
+### Language-Aware Responses
+- [ ] Detect input language in Chat
+- [ ] Pass language parameter to Groq
+- [ ] Ensure response matches input language (not UI language)
+- [ ] Test: English input → English response
+- [ ] Test: French input → French response
+- [ ] Test: Arabic input → Arabic response
+
+### News Compression Layer
+- [ ] Create newsCompressionLayer.ts
+- [ ] Implement summarization for each news item
+- [ ] Reduce 100 news → 20 summaries
+- [ ] Integrate into Graph Pipeline
+- [ ] Test: Reduce tokens by 80%
+
+### Payload Size & Token Limits
+- [ ] Fix 413 Payload Too Large error
+- [ ] Implement chunking for large inputs
+- [ ] Add token counting before sending to LLM
+- [ ] Validate payload < 6000 tokens
+- [ ] Add error handling for oversized payloads
+
+### Query Builder Improvements
+- [ ] Fix multi-term query building
+- [ ] Detect language of query
+- [ ] Maintain language in search terms
+- [ ] Test: "global food prices" stays English
+- [ ] Test: "أسعار الغذاء" stays Arabic
+
+### JSON Prompt Issues
+- [ ] Add "Respond in JSON format only" to system prompts
+- [ ] Fix llmInterpreter.ts prompts
+- [ ] Fix makeEmotionalDecision() prompts
+- [ ] Test: JSON responses without errors
+- [ ] Validate JSON parsing
+
+### Temporal Data & Database
+- [ ] Fix temporal comparison (vs previous)
+- [ ] Implement getPreviousIndex() function
+- [ ] Calculate proper percentage changes
+- [ ] Fix confidence rounding (44.99999 → 45.00)
+- [ ] Connect temporalAnalyzer.ts to database
+- [ ] Test: Historical data retrieval
+
+### Fusion Engine Integration
+- [ ] Pass complete EventVector to LLM
+- [ ] Fix "Neutral" emotion detection
+- [ ] Resolve contradictions (Positive + High Fear)
+- [ ] Test: Coherent analysis results
+
+### API Configuration
+- [ ] Configure Twitter API keys
+- [ ] Configure Bluesky API keys
+- [ ] Test: Social media data retrieval
+- [ ] Handle missing API gracefully
+
+### Error Handling
+- [ ] Fix "Cannot read properties of undefined (reading 'nameAr')"
+- [ ] Add null checks for all properties
+- [ ] Implement proper error boundaries
+- [ ] Test: No 500 errors on edge cases
+
+
+## Phase 64: Architectural Fixes - EventVector & Fusion Engine (COMPLETED)
+
+- [x] Audit complete data flow (DATA_FLOW_AUDIT.md created)
+- [x] Create proper Fusion Engine with emotion averaging
+- [x] Replace weak Fusion Engine with correct implementation
+- [x] Create EventVector to Groq wrapper (eventVectorToGroq.ts)
+- [x] Fix Analyzer input fields (z-index removed, cursor-text added)
+- [x] Create comprehensive integration tests (15/15 passing)
+- [x] Verify EventVector size: 60 tokens (vs 51,406 original) = 99.88% reduction
+- [x] Language-aware response handler (languageAwareHandler.ts)
+- [x] Improved query builder (improvedQueryBuilder.ts)
+- [x] Temporal data handler (temporalDataHandler.ts)
+- [x] Payload validator (payloadValidator.ts)
+- [x] Zero TypeScript errors
+- [x] Chat.tsx already uses EventVector correctly
+- [x] All 4 engines properly merge in Fusion Engine
+- [x] EventVector passed to Groq (not raw data)

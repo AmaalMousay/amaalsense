@@ -471,7 +471,7 @@ export default function Analyzer() {
                       onChange={(e) => setHeadline(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAnalyze()}
                       placeholder={t.analyzer.placeholder}
-                      className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all placeholder:text-gray-400 relative z-50"
+                      className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all placeholder:text-gray-400 cursor-text"
                       disabled={isLoading}
                       dir={isRTL ? 'rtl' : 'ltr'}
                       autoComplete="off"
@@ -796,7 +796,7 @@ export default function Analyzer() {
                       onChange={(e) => setTopic(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleTopicAnalysis()}
                       placeholder={language === 'ar' ? 'مثال: أسعار الوقود، الانتخابات، كأس العالم...' : 'e.g., Fuel prices, Elections, World Cup...'}
-                      className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all placeholder:text-gray-400 relative z-50"
+                      className="w-full h-14 px-4 text-base text-white bg-slate-800/80 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all placeholder:text-gray-400 cursor-text"
                       disabled={isTopicLoading}
                       dir={isRTL ? 'rtl' : 'ltr'}
                       autoComplete="off"

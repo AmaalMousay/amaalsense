@@ -204,29 +204,100 @@ export async function impactEngine(input: string): Promise<PartialEventVector> {
 
 /**
  * Fusion Engine - Combines all partial results into unified EventVector
- * This is the key component that transforms linear to graph pipeline
+ * Properly merges emotions, topics, regions, and impact scores
  */
 export async function fusionEngine(
   input: string,
   partialResults: PartialEventVector[]
 ): Promise<EventVector> {
-  // Merge all partial results
-  const merged: PartialEventVector = {};
-  
-  for (const partial of partialResults) {
-    Object.assign(merged, partial);
+  if (partialResults.length === 0) {
+    throw new Error('No partial results to fuse');
   }
   
-  // Create unified EventVector with defaults
+  // 1. MERGE EMOTIONS WITH AVERAGING
+  const emotionMap: Record<string, number[]> = {};
+  
+  for (const partial of partialResults) {
+    if (partial.emotions) {
+      for (const [emotion, value] of Object.entries(partial.emotions)) {
+        if (!emotionMap[emotion]) {
+          emotionMap[emotion] = [];
+        }
+        emotionMap[emotion].push(value);
+      }
+    }
+  }
+  
+  // Calculate average emotions
+  const mergedEmotions: Record<string, number> = {};
+  for (const [emotion, values] of Object.entries(emotionMap)) {
+    const average = values.reduce((a, b) => a + b, 0) / values.length;
+    mergedEmotions[emotion] = Math.round(average * 100) / 100;
+  }
+  
+  // 2. SELECT DOMINANT EMOTION
+  let dominantEmotion = 'neutral';
+  let maxValue = 0;
+  for (const [emotion, value] of Object.entries(mergedEmotions)) {
+    if (value > maxValue) {
+      maxValue = value;
+      dominantEmotion = emotion;
+    }
+  }
+  
+  // 3. SELECT STRONGEST TOPIC
+  let topic = 'General';
+  let topicConfidence = 0.5;
+  for (const partial of partialResults) {
+    if (partial.topic && (partial.topicConfidence || 0) > topicConfidence) {
+      topic = partial.topic;
+      topicConfidence = partial.topicConfidence || 0.5;
+    }
+  }
+  
+  // 4. MERGE REGIONS
+  const regions = new Set<string>();
+  let regionConfidence = 0;
+  for (const partial of partialResults) {
+    if (partial.region) {
+      regions.add(partial.region);
+    }
+    if (partial.regionConfidence) {
+      regionConfidence = Math.max(regionConfidence, partial.regionConfidence);
+    }
+  }
+  const mergedRegion = Array.from(regions).join(', ') || 'Global';
+  
+  // 5. CALCULATE IMPACT SCORE
+  let impactScore = 0;
+  let impactCount = 0;
+  for (const partial of partialResults) {
+    if (partial.impactScore !== undefined) {
+      impactScore += partial.impactScore;
+      impactCount++;
+    }
+  }
+  impactScore = impactCount > 0 ? impactScore / impactCount : 0.5;
+  impactScore = Math.round(impactScore * 100) / 100;
+  
+  // 6. DETERMINE SEVERITY
+  let severity: 'low' | 'medium' | 'high' = 'medium';
+  if (impactScore < 0.33) {
+    severity = 'low';
+  } else if (impactScore > 0.66) {
+    severity = 'high';
+  }
+  
+  // 7. CREATE UNIFIED EVENTVECTOR
   const eventVector: EventVector = {
-    topic: merged.topic || 'General',
-    topicConfidence: merged.topicConfidence || 0.5,
-    emotions: merged.emotions || { 'neutral': 1 },
-    dominantEmotion: merged.dominantEmotion || 'neutral',
-    region: merged.region || 'Global',
-    regionConfidence: merged.regionConfidence || 0.5,
-    impactScore: merged.impactScore || 0.5,
-    severity: merged.severity || 'medium',
+    topic,
+    topicConfidence,
+    emotions: mergedEmotions,
+    dominantEmotion,
+    region: mergedRegion,
+    regionConfidence,
+    impactScore,
+    severity,
     timestamp: new Date(),
     sourceId: `event-${Date.now()}`,
   };
