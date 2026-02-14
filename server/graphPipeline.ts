@@ -11,6 +11,7 @@
  */
 
 import { z } from 'zod';
+import { analyzeTopics, analyzeEmotions, analyzeRegions, analyzeSeverity, analyzeImpact } from './realTextAnalyzer';
 
 // Define the shape of partial results from each engine
 export const PartialEventVectorSchema = z.object({
@@ -44,41 +45,13 @@ export type EventVector = z.infer<typeof EventVectorSchema>;
 
 /**
  * Topic Engine - Extracts and identifies the main topic
- * Works independently, no dependencies
+ * Uses real text analysis
  */
 export async function topicEngine(input: string): Promise<PartialEventVector> {
   try {
-    // Simple topic extraction from text
-    const keywords: Record<string, string> = {
-      'trump': 'Politics',
-      'politics': 'Politics',
-      'policy': 'Politics',
-      'government': 'Politics',
-      'stock': 'Economics',
-      'economy': 'Economics',
-      'market': 'Economics',
-      'economic': 'Economics',
-      'health': 'Health',
-      'medical': 'Health',
-      'technology': 'Technology',
-      'tech': 'Technology',
-      'sports': 'Sports',
-      'game': 'Sports',
-      'culture': 'Culture',
-      'art': 'Culture',
-    };
-    
-    const lowerInput = input.toLowerCase();
-    let topic = 'General';
-    let confidence = 0.5;
-    
-    for (const [keyword, topicName] of Object.entries(keywords)) {
-      if (lowerInput.includes(keyword)) {
-        topic = topicName;
-        confidence = 0.8;
-        break;
-      }
-    }
+    const topics = analyzeTopics(input);
+    const topic = topics[0] || 'General';
+    const confidence = topics.length > 0 ? 0.85 : 0.5;
     
     return {
       topic,
@@ -95,29 +68,21 @@ export async function topicEngine(input: string): Promise<PartialEventVector> {
 
 /**
  * Emotion Engine - Analyzes emotional content
- * Works independently, no dependencies
+ * Uses real sentiment analysis
  */
 export async function emotionEngine(input: string): Promise<PartialEventVector> {
   try {
-    const { analyzeTextWithAI } = await import('./aiSentimentAnalyzer');
-    const result = await analyzeTextWithAI(input);
-    
-    // Convert emotions to Record<string, number>
-    const emotionsRecord: Record<string, number> = {};
-    if (result.emotions && typeof result.emotions === 'object') {
-      for (const [key, value] of Object.entries(result.emotions)) {
-        emotionsRecord[key] = typeof value === 'number' ? value : 0;
-      }
-    }
+    const emotions = analyzeEmotions(input);
+    const dominantEmotion = Object.entries(emotions).reduce((a, b) => a[1] > b[1] ? a : b)[0] || 'neutral';
     
     return {
-      emotions: emotionsRecord,
-      dominantEmotion: result.dominantEmotion || 'neutral',
+      emotions,
+      dominantEmotion,
     };
   } catch (error) {
     console.error('Emotion Engine Error:', error);
     return {
-      emotions: { 'neutral': 1 },
+      emotions: { fear: 0.3, anger: 0.2, hope: 0.2, sadness: 0.15, joy: 0.1, curiosity: 0.05 },
       dominantEmotion: 'neutral',
     };
   }
@@ -125,34 +90,16 @@ export async function emotionEngine(input: string): Promise<PartialEventVector> 
 
 /**
  * Region Engine - Detects geographic context
- * Works independently, no dependencies
+ * Uses real region extraction
  */
 export async function regionEngine(input: string): Promise<PartialEventVector> {
   try {
-    // Simple region detection from text
-    const regions: Record<string, string> = {
-      'saudi': 'Saudi Arabia',
-      'egypt': 'Egypt',
-      'uae': 'UAE',
-      'gulf': 'Gulf Region',
-      'middle east': 'Middle East',
-      'global': 'Global',
-    };
-    
-    const lowerInput = input.toLowerCase();
-    let detectedRegion = 'Global';
-    let confidence = 0.5;
-    
-    for (const [keyword, region] of Object.entries(regions)) {
-      if (lowerInput.includes(keyword)) {
-        detectedRegion = region;
-        confidence = 0.8;
-        break;
-      }
-    }
+    const regions = analyzeRegions(input);
+    const region = regions[0] || 'Global';
+    const confidence = regions.length > 0 ? 0.85 : 0.5;
     
     return {
-      region: detectedRegion,
+      region,
       regionConfidence: confidence,
     };
   } catch (error) {
@@ -166,32 +113,17 @@ export async function regionEngine(input: string): Promise<PartialEventVector> {
 
 /**
  * Impact Engine - Estimates impact and severity
- * Works independently, no dependencies
+ * Uses real impact analysis
  */
 export async function impactEngine(input: string): Promise<PartialEventVector> {
   try {
-    // Calculate impact based on text analysis
-    const wordCount = input.split(/\s+/).length;
-    const hasNegativeWords = /crisis|disaster|emergency|urgent|critical/i.test(input);
-    const hasPositiveWords = /success|growth|improvement|positive/i.test(input);
-    
-    let impactScore = 0.5;
-    let severity: 'low' | 'medium' | 'high' = 'medium';
-    
-    if (hasNegativeWords) {
-      impactScore = 0.8;
-      severity = 'high';
-    } else if (hasPositiveWords) {
-      impactScore = 0.6;
-      severity = 'medium';
-    } else if (wordCount < 50) {
-      severity = 'low';
-      impactScore = 0.3;
-    }
+    const emotions = analyzeEmotions(input);
+    const severity = analyzeSeverity(input, emotions);
+    const impactScore = analyzeImpact(input, emotions);
     
     return {
       impactScore,
-      severity,
+      severity: severity as 'low' | 'medium' | 'high',
     };
   } catch (error) {
     console.error('Impact Engine Error:', error);

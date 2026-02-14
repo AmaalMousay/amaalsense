@@ -3629,3 +3629,42 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 - [x] Update Groq prompt to include actual question context (with specific instructions)
 - [x] Create reasoningEngine.test.ts with 4 test cases (all passing)
 - [x] Verify responses are specific to the topic, not generic templates
+
+
+## Phase 68: CRITICAL FIXES - Real Data & Analysis
+
+### Phase 68.1: Real News Data Integration
+- [ ] Create newsDataFetcher.ts to fetch from NewsAPI/GNews
+- [ ] Integrate with Chat analyzer
+- [ ] Replace mock data with real headlines
+- [ ] Add caching to avoid rate limits
+
+### Phase 68.2: Fix Graph Pipeline Analysis
+- [ ] Fix topicAnalyzer to use NLP (not random)
+- [ ] Fix emotionAnalyzer to detect emotions from text (not random)
+- [ ] Fix regionAnalyzer to extract regions (not guess)
+- [ ] Fix impactAnalyzer to calculate from data (not random)
+
+### Phase 68.3: Enhanced Groq Prompts
+- [ ] Add regional context to prompts
+- [ ] Add comparative analysis instructions
+- [ ] Add specific vs generic analysis guidance
+- [ ] Add historical context when available
+
+### Phase 68.4: Conversation Memory
+- [ ] Create conversationHistory table
+- [ ] Store chat messages with context
+- [ ] Pass history to Groq for follow-ups
+- [ ] Enable "ماذا لو" scenarios
+
+### Phase 68.5: Real-time Updates
+- [ ] Create scheduled job for hourly news fetch
+- [ ] Update indices in real-time
+- [ ] Push updates via WebSocket
+- [ ] Add refresh button to pages
+
+### Phase 68.6: Testing
+- [ ] Test with real Arabic queries
+- [ ] Test with different regions
+- [ ] Test conversation memory
+- [ ] Performance testing
