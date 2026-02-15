@@ -11,6 +11,7 @@ import { graphPipelineRouter } from "./graphPipelineRouter";
 import { weatherRouter } from "./weatherRouter";
 import { indicesRouter } from "./indicesRouter";
 import { unifiedConsciousnessRouter } from "./unifiedConsciousnessRouter";
+import { predictionRouter } from "./predictionRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -23,6 +24,7 @@ export const appRouter = router({
   weather: weatherRouter,
   indices: indicesRouter,
   consciousness: unifiedConsciousnessRouter,
+  prediction: predictionRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -2800,3 +2802,6 @@ Please verify the payment and confirm in the admin panel.
 });
 
 export type AppRouter = typeof appRouter;
+
+// Export prediction router for standalone use if needed
+export { predictionRouter } from "./predictionRouter";

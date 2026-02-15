@@ -67,8 +67,8 @@ export default function SmartAnalysis() {
   const [currentConversationId, setCurrentConversationId] = useState<number | undefined>();
   
   // tRPC mutations
-  const analyzeWithAI = trpc.conversationalAI.analyzeWithAI.useMutation();
-  const askFollowUp = trpc.conversationalAI.askFollowUp.useMutation();
+  const analyzeWithAI = trpc.consciousness.analyze.useMutation();
+  const askFollowUp = trpc.consciousness.analyze.useMutation();
   const createConversation = trpc.conversations.create.useMutation();
   const addMessage = trpc.conversations.addMessage.useMutation();
   const getConversation = trpc.conversations.get.useQuery(
@@ -98,15 +98,32 @@ export default function SmartAnalysis() {
     setCurrentConversationId(undefined);
     
     try {
-      const result = await analyzeWithAI.mutateAsync({ topic });
+      const result = await analyzeWithAI.mutateAsync({ question: topic });
       
-      setContext(result.context);
-      setAnalysisData(result.analysis);
+      if (!result.success) {
+        throw new Error(result.error || 'Analysis failed');
+      }
+      
+      const details = result.details || {};
+      const indices = details.indices || {};
+      const emotions = details.emotions || {};
+      
+      setContext({
+        topic: details.detectedTopic || topic,
+        gmi: indices.gmi || 0,
+        cfi: indices.cfi || 0,
+        hri: indices.hri || 0,
+        dominantEmotion: details.detectedTopic || 'unknown',
+        emotionVector: emotions,
+        confidence: Math.round((details.confidence || 0) * 100),
+        detectedCountry: details.eventVector?.region || 'Global',
+      });
+      setAnalysisData(result);
       
       // Add AI's initial response to conversation
       setConversation([{
         role: 'assistant',
-        content: result.aiResponse as string,
+        content: result.answer || 'Analysis processing...',
         timestamp: Date.now(),
       }]);
       
@@ -115,14 +132,14 @@ export default function SmartAnalysis() {
       // Save conversation to database
       try {
         const conv = await createConversation.mutateAsync({
-          topic,
-          countryCode: result.context.detectedCountry,
+          topic: details.detectedTopic || topic,
+          countryCode: details.eventVector?.region || 'LY',
           initialAnalysis: {
-            gmi: result.context.gmi,
-            cfi: result.context.cfi,
-            hri: result.context.hri,
-            dominantEmotion: result.context.dominantEmotion,
-            aiResponse: result.aiResponse as string,
+            gmi: indices.gmi || 0,
+            cfi: indices.cfi || 0,
+            hri: indices.hri || 0,
+            dominantEmotion: details.detectedTopic || 'unknown',
+            aiResponse: result.answer || '',
           },
         });
         setCurrentConversationId(conv.id);
@@ -160,15 +177,17 @@ export default function SmartAnalysis() {
     try {
       const result = await askFollowUp.mutateAsync({
         question,
-        context,
-        conversationHistory: conversation,
       });
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to process question');
+      }
       
       // Add AI response to conversation
       setConversation(prev => [...prev, {
         role: 'assistant',
-        content: result.aiResponse as string,
-        timestamp: result.timestamp,
+        content: result.answer || 'Processing...',
+        timestamp: Date.now(),
       }]);
     } catch (error) {
       console.error('Follow-up failed:', error);
