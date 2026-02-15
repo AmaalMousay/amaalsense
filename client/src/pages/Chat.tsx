@@ -4,7 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Loader2, Send, Download, Share2, Trash2, Menu } from 'lucide-react';
+import { Loader2, Send, Download, Share2, Trash2, Menu, Plus, Settings, Copy, CheckCircle } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -27,7 +27,6 @@ interface ChatMessage {
 
 export default function Chat() {
   const { t } = useLanguage();
-
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +37,7 @@ export default function Chat() {
   const [filterTopic, setFilterTopic] = useState('all');
   const [sortBy, setSortBy] = useState<'recent' | 'confidence' | 'topic'>('recent');
   const [confidenceFilter, setConfidenceFilter] = useState(0);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: history, refetch: refetchHistory } = trpc.conversations.list.useQuery(undefined);
@@ -91,6 +91,12 @@ export default function Chat() {
         return (a.topic || '').localeCompare(b.topic || '');
       }
     });
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
