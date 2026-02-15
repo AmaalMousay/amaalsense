@@ -110,24 +110,27 @@ export default function Chat() {
     setIsLoading(true);
 
     try {
-      // Use Graph Pipeline for intelligent analysis
-      const analysisResult = await trpc.graphPipeline.completeAnalysis.useMutation().mutateAsync({
-        input: userInput.trim(),
+      // Use Unified Consciousness Engine for intelligent analysis
+      const analysisResult = await trpc.consciousness.analyze.useMutation().mutateAsync({
+        question: userInput.trim(),
       });
 
       if (!analysisResult.success) {
         throw new Error(analysisResult.error || 'Analysis failed');
       }
 
-      // Extract EventVector and analysis
-      const eventVector = analysisResult.eventVector;
-      const analysis = analysisResult.analysis || 'Analysis processing...';
+      // Extract answer and details from unified result
+      const answer = analysisResult.answer || 'Analysis processing...';
+      const details = analysisResult.details || {};
+      const eventVector = details.eventVector;
+      const emotions = details.emotions;
+      const indices = details.indices;
 
       // Create assistant response with full EventVector data
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: analysis,
+        content: answer,
         timestamp: new Date(),
         confidence: eventVector ? Math.round(eventVector.topicConfidence * 100) : 50,
         metadata: eventVector ? {
@@ -161,7 +164,7 @@ export default function Chat() {
             cfi: Math.round((eventVector.emotions.fear || 0) * 100),
             hri: Math.round((eventVector.emotions.hope || 0) * 100),
             dominantEmotion: eventVector.dominantEmotion,
-            aiResponse: analysis,
+            aiResponse: answer,
           }
         });
       }

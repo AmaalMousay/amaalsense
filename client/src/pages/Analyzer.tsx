@@ -247,7 +247,7 @@ export default function Analyzer() {
   // Mutation to save classified analysis
   const saveClassifiedAnalysis = trpc.classification.saveAnalysis.useMutation();
 
-  const analyzeHeadline = trpc.emotion.analyzeHeadline.useMutation({
+  const analyzeHeadline = trpc.consciousness.analyze.useMutation({
     onSuccess: (data) => {
       setResult(data);
       setIsLoading(false);
@@ -258,26 +258,28 @@ export default function Analyzer() {
         const domainConfig = getDomainConfig(contentDomain);
         if (!domainConfig) return;
         
-        // Calculate emotional risk score based on negative emotions
-        const emotionalRiskScore = Math.round(
-          (data.emotions.fear + data.emotions.anger + data.emotions.sadness) / 3
-        );
+      // Calculate emotional risk score based on negative emotions
+      const emotions = data.details?.emotions || {};
+      const emotionalRiskScore = Math.round(
+        ((emotions.fear || 0) + (emotions.anger || 0) + (emotions.sadness || 0)) / 3
+      );
         
+        const indices = data.details?.indices || {};
         saveClassifiedAnalysis.mutate({
           headline: headline,
           domain: contentDomain,
           sensitivity: domainConfig.sensitivity,
           emotionalRiskScore,
-          joy: data.emotions.joy,
-          fear: data.emotions.fear,
-          anger: data.emotions.anger,
-          sadness: data.emotions.sadness,
-          hope: data.emotions.hope,
-          curiosity: data.emotions.curiosity,
-          dominantEmotion: data.dominantEmotion,
-          confidence: data.confidence,
-          dcftWeight: data.fusion?.dcftContribution ? Math.round(data.fusion.dcftContribution * 100) : 70,
-          aiWeight: data.fusion?.aiContribution ? Math.round(data.fusion.aiContribution * 100) : 30,
+          joy: Math.round((emotions.joy || 0) * 100),
+          fear: Math.round((emotions.fear || 0) * 100),
+          anger: Math.round((emotions.anger || 0) * 100),
+          sadness: Math.round((emotions.sadness || 0) * 100),
+          hope: Math.round((emotions.hope || 0) * 100),
+          curiosity: Math.round((emotions.curiosity || 0) * 100),
+          dominantEmotion: data.details?.detectedTopic || 'unknown',
+          confidence: Math.round((data.details?.confidence || 0) * 100),
+          dcftWeight: 70,
+          aiWeight: 30,
         });
       }
     },
@@ -311,7 +313,7 @@ export default function Analyzer() {
     }
 
     setIsLoading(true);
-    analyzeHeadline.mutate({ headline });
+    analyzeHeadline.mutate({ question: headline });
   };
 
   const handleTopicAnalysis = async () => {
