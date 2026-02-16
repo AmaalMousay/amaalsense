@@ -40,7 +40,7 @@ export async function invokeGroqLLM(input: {
       throw new Error('GROQ_API_KEY environment variable not set');
     }
 
-    const model = input.model || 'mixtral-8x7b-32768';
+    const model = input.model || 'llama-3.1-70b-versatile';
     const temperature = input.temperature ?? 0.7;
     const maxTokens = input.maxTokens ?? 1024;
 
@@ -99,7 +99,7 @@ export async function invokeGroqLLMStreaming(
       throw new Error('GROQ_API_KEY environment variable not set');
     }
 
-    const model = input.model || 'mixtral-8x7b-32768';
+    const model = input.model || 'llama-3.1-70b-versatile';
     const temperature = input.temperature ?? 0.7;
     const maxTokens = input.maxTokens ?? 1024;
 
@@ -182,7 +182,7 @@ export async function invokeGroqLLMBatch(
       inputs.map(input =>
         invokeGroqLLM({
           ...input,
-          model: 'mixtral-8x7b-32768',
+          model: 'llama-3.1-70b-versatile',
         })
       )
     );
