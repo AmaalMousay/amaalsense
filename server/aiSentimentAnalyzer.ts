@@ -92,9 +92,9 @@ export async function analyzeTextWithAI(text: string): Promise<SentimentAnalysis
                         englishDeathKeywords.some(word => text.toLowerCase().includes(word));
     
     // Calculate indices with post-processing for death news
-    let adjustedJoy = Math.min(100, Math.max(0, analysis.joy));
-    let adjustedSadness = Math.min(100, Math.max(0, analysis.sadness));
-    let adjustedHope = Math.min(100, Math.max(0, analysis.hope));
+    let adjustedJoy = Math.min(100, Math.max(0, analysis.joy || 20));
+    let adjustedSadness = Math.min(100, Math.max(0, analysis.sadness || 50));
+    let adjustedHope = Math.min(100, Math.max(0, analysis.hope || 30));
     let dominantEmotion = analysis.dominantEmotion;
     let sentiment = analysis.sentiment;
     
@@ -117,11 +117,11 @@ export async function analyzeTextWithAI(text: string): Promise<SentimentAnalysis
     
     const emotions: EmotionVector = {
       joy: adjustedJoy,
-      fear: Math.min(100, Math.max(0, analysis.fear)),
-      anger: Math.min(100, Math.max(0, analysis.anger)),
+      fear: Math.min(100, Math.max(0, analysis.fear || 25)),
+      anger: Math.min(100, Math.max(0, analysis.anger || 20)),
       sadness: adjustedSadness,
       hope: adjustedHope,
-      curiosity: Math.min(100, Math.max(0, analysis.curiosity)),
+      curiosity: Math.min(100, Math.max(0, analysis.curiosity || 15)),
     };
 
     const gmi = calculateGMI(emotions);
