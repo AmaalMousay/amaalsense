@@ -78,7 +78,7 @@ export interface QuestionUnderstandingResult {
 const KEYWORD_PATTERNS = {
   // أسئلة تحتاج تحليل عاطفي
   [QuestionType.EMOTIONAL_ANALYSIS]: {
-    ar: ['شعور', 'مشاعر', 'عاطفة', 'يشعر', 'كيف يشعر', 'ما شعور', 'ردة فعل', 'تفاعل'],
+    ar: ['شعور', 'مشاعر', 'عاطفة', 'يشعر', 'كيف يشعر', 'ما شعور', 'ردة فعل', 'تفاعل', 'موت', 'وفاة', 'اغتيال', 'أسباب', 'تأثير', 'تأثيرات'],
     en: ['feel', 'feeling', 'emotion', 'sentiment', 'mood', 'how people feel', 'reaction'],
   },
   
@@ -217,7 +217,7 @@ function calculateConfidence(questionType: QuestionType, text: string): number {
   
   // أسئلة أخرى
   if (questionType !== QuestionType.UNCLEAR) {
-    return 0.75;
+    return 0.60;
   }
   
   // غير واضحة
