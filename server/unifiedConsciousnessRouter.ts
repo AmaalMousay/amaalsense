@@ -29,13 +29,15 @@ export const unifiedConsciousnessRouter = router({
    */
   analyze: publicProcedure
     .input(z.object({
-      question: z.string().min(1).max(5000),
+      question: z.string().min(1, 'Question is required').max(5000, 'Question too long'),
       topic: z.string().optional(),
       country: z.string().optional(),
       previousMessages: z.array(z.any()).optional(),
     }))
     .mutation(async ({ input }) => {
       try {
+        console.log('[UnifiedConsciousnessRouter] Received input:', JSON.stringify(input));
+        
         // تشغيل المحرك الموحد
         const result = await unifiedAnalyze(input.question, {
           topic: input.topic,
@@ -72,9 +74,11 @@ export const unifiedConsciousnessRouter = router({
         };
       } catch (error) {
         console.error('[UnifiedConsciousnessRouter] Error:', error);
+        console.error('[UnifiedConsciousnessRouter] Error Stack:', error instanceof Error ? error.stack : 'No stack trace');
         return {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error occurred',
+          errorDetails: error instanceof Error ? error.stack : undefined,
         };
       }
     }),

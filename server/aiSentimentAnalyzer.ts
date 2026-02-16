@@ -46,31 +46,11 @@ export async function analyzeTextWithAI(text: string): Promise<SentimentAnalysis
       messages: [
         {
           role: 'system',
-          content: `You are an expert emotion analyst specializing in Arabic and Middle Eastern cultural context. Analyze the given text and extract emotion scores.
-
-IMPORTANT CONTEXT RULES:
-1. Arabic death/funeral keywords MUST trigger high sadness: موت, وفاة, توفي, رحيل, فقدان, استشهد, شهيد, مقتل, قتل, ضحية, ضحايا, جنازة, دفن, death, died, killed, funeral
-2. News about someone's death should NEVER have high joy - sadness should dominate
-3. War/conflict news should have high fear and anger, low joy
-4. Economic growth/success news can have high hope and joy
-5. Consider the ACTUAL meaning, not just individual words
-
-Return a JSON object with these exact fields:
-- joy: number (0-100) - happiness, celebration, success (MUST be LOW for death/tragedy news)
-- fear: number (0-100) - anxiety, worry, threat
-- anger: number (0-100) - frustration, outrage, conflict
-- sadness: number (0-100) - loss, grief, disappointment (MUST be HIGH for death/tragedy news)
-- hope: number (0-100) - optimism, future potential, solutions
-- curiosity: number (0-100) - interest, discovery, questions
-- dominantEmotion: string - the strongest emotion (should be "sadness" for death news)
-- sentiment: "positive" | "negative" | "neutral" (death news = negative)
-- confidence: number (0-100) - how confident you are in this analysis
-
-Be accurate and consider Arabic/Middle Eastern cultural context. Death and tragedy news should ALWAYS have sadness as dominant emotion.`,
+          content: `Analyze emotions: joy, fear, anger, sadness, hope, curiosity (0-100). Return JSON with dominantEmotion, sentiment, confidence.`,
         },
         {
           role: 'user',
-          content: `Analyze the emotions in this text: "${text}"`,
+          content: `Analyze: ${text.substring(0, 200)}`,
         },
       ],
       response_format: {

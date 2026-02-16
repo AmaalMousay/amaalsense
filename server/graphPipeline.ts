@@ -288,6 +288,7 @@ export async function graphPipeline(input: string): Promise<EventVector> {
  */
 export async function reasoningEngine(eventVector: EventVector, originalInput?: string): Promise<string> {
   try {
+    console.log('[ReasoningEngine] Starting Groq reasoning for topic:', eventVector.topic);
     const { invokeGroqLLM } = await import('./groqIntegration');
     
     const prompt = `
@@ -311,6 +312,7 @@ Based on this emotional analysis, provide:
 Be specific and contextual - not generic. Reference the actual topic and emotions detected.
     `;
     
+    console.log('[ReasoningEngine] Calling Groq API...');
     const response = await invokeGroqLLM({
       messages: [
         {
@@ -324,9 +326,11 @@ Be specific and contextual - not generic. Reference the actual topic and emotion
       ],
     });
     
-    return response.content || 'Analysis complete';
+    console.log('[ReasoningEngine] Groq response received');
+    const result = response.content || response.text || 'Analysis complete';
+    return result;
   } catch (error) {
-    console.error('Reasoning Engine Error:', error);
+    console.error('[ReasoningEngine] Error:', error);
     return 'Unable to generate analysis at this time';
   }
 }

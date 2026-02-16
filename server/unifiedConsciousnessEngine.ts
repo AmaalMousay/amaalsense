@@ -235,7 +235,24 @@ export async function unifiedAnalyze(
     
   } catch (error) {
     console.error(`[UnifiedEngine] Analysis Error:`, error);
-    throw error;
+    // Return a safe result with what we have so far
+    analysisTime = Date.now() - step4Start;
+    return {
+      questionUnderstanding,
+      analysis: analysis || {},
+      performance: {
+        totalProcessingTime: Date.now() - startTime,
+        questionUnderstandingTime,
+        analysisTime: analysisTime > 0 ? analysisTime : undefined,
+        systemsUsed,
+      },
+      metadata: {
+        timestamp: new Date(),
+        language: questionUnderstanding.language,
+        confidence: questionUnderstanding.confidence,
+        processingStrategy: 'Partial Analysis - Some Systems Failed',
+      },
+    };
   }
   
   // ============================================
