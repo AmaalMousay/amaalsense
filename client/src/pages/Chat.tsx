@@ -53,6 +53,8 @@ export default function Chat() {
     onSuccess: () => refetchHistory(),
   });
 
+  const analyzeMutation = trpc.consciousness.analyze.useMutation();
+
   useEffect(() => {
     if (history) {
       setConversations(history);
@@ -117,7 +119,7 @@ export default function Chat() {
 
     try {
       // Use Unified Consciousness Engine for intelligent analysis
-      const analysisResult = await trpc.consciousness.analyze.useMutation().mutateAsync({
+      const analysisResult = await analyzeMutation.mutateAsync({
         question: userInput.trim(),
       });
 
