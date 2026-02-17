@@ -1135,3 +1135,98 @@ export const messages = mysqlTable("messages", {
 
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = typeof messages.$inferInsert;
+
+
+/**
+ * User Conversations Table - stores user questions and responses (Layer 12)
+ * Enables personal memory and conversation history
+ */
+export const userConversations = mysqlTable("user_conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to user */
+  userId: int("userId").notNull().references(() => users.id),
+  /** User's question */
+  question: text("question").notNull(),
+  /** Question type: factual, emotional, predictive, etc. */
+  questionType: varchar("questionType", { length: 32 }).notNull(),
+  /** Detected topics */
+  detectedTopics: text("detectedTopics"), // JSON array
+  /** Detected countries */
+  detectedCountries: text("detectedCountries"), // JSON array
+  /** AI response */
+  response: text("response").notNull(),
+  /** Emotion analysis */
+  emotionJoy: int("emotionJoy").default(0),
+  emotionHope: int("emotionHope").default(0),
+  emotionSadness: int("emotionSadness").default(0),
+  emotionAnger: int("emotionAnger").default(0),
+  emotionFear: int("emotionFear").default(0),
+  emotionCuriosity: int("emotionCuriosity").default(0),
+  /** Language of the question */
+  language: varchar("language", { length: 10 }).default("ar").notNull(),
+  /** Confidence score */
+  confidence: int("confidence").default(75),
+  /** Processing time in ms */
+  processingTimeMs: int("processingTimeMs"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserConversation = typeof userConversations.$inferSelect;
+export type InsertUserConversation = typeof userConversations.$inferInsert;
+
+/**
+ * User Profiles Table - stores user preferences and interests (Layer 12)
+ * Tracks user behavior for personalization
+ */
+
+/**
+ * Knowledge Cache Table - stores cached knowledge queries (Layer 13)
+ * Improves performance by caching knowledge retrieval results
+ */
+export const knowledgeCache = mysqlTable("knowledge_cache", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Query/topic */
+  query: varchar("query", { length: 500 }).notNull().unique(),
+  /** Cached knowledge as JSON */
+  knowledge: text("knowledge").notNull(), // JSON
+  /** Source type: factual, historical, statistical, definition */
+  sourceType: varchar("sourceType", { length: 32 }).notNull(),
+  /** Confidence score */
+  confidence: int("confidence").default(75),
+  /** Cache hit count */
+  hitCount: int("hitCount").default(0),
+  /** Last accessed timestamp */
+  lastAccessed: timestamp("lastAccessed").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // For cache expiration
+});
+
+export type KnowledgeCache = typeof knowledgeCache.$inferSelect;
+export type InsertKnowledgeCache = typeof knowledgeCache.$inferInsert;
+
+/**
+ * Response Cache Table - stores cached AI responses (Layer 14)
+ * Improves performance by caching personalized responses
+ */
+export const responseCache = mysqlTable("response_cache", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to user */
+  userId: int("userId").notNull().references(() => users.id),
+  /** Question hash for quick lookup */
+  questionHash: varchar("questionHash", { length: 64 }).notNull(),
+  /** Original question */
+  question: varchar("question", { length: 1000 }).notNull(),
+  /** Cached response */
+  response: text("response").notNull(),
+  /** Quality score */
+  qualityScore: int("qualityScore").default(75),
+  /** Cache hit count */
+  hitCount: int("hitCount").default(0),
+  /** Last accessed timestamp */
+  lastAccessed: timestamp("lastAccessed").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // For cache expiration
+});
+
+export type ResponseCache = typeof responseCache.$inferSelect;
+export type InsertResponseCache = typeof responseCache.$inferInsert;
