@@ -679,12 +679,13 @@ export default function SmartAnalysis() {
                   onChange={(e) => setUserQuestion(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask a follow-up question..."
-                  disabled={!analysisComplete || isAskingFollowUp}
+                  disabled={isAskingFollowUp}
                   className="flex-1"
+                  autoFocus
                 />
                 <Button
                   onClick={() => handleAskQuestion()}
-                  disabled={!userQuestion.trim() || !analysisComplete || isAskingFollowUp}
+                  disabled={!userQuestion.trim() || isAskingFollowUp}
                   className="glow-button text-white"
                 >
                   {isAskingFollowUp ? (
