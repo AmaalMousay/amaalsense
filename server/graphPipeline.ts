@@ -290,6 +290,11 @@ export async function reasoningEngine(eventVector: EventVector, originalInput?: 
   try {
     console.log('[ReasoningEngine] Starting Groq reasoning for topic:', eventVector.topic);
     const { invokeGroqLLM } = await import('./groqIntegration');
+    const { calculateDynamicEmotionFallback } = await import('./dynamicEmotionFallback');
+    
+    // Calculate dynamic emotions based on the question content
+    const dynamicEmotions = calculateDynamicEmotionFallback(originalInput || eventVector.topic, 'emotional_analysis');
+    console.log('[ReasoningEngine] Dynamic emotions calculated:', dynamicEmotions);
     
     const prompt = `
 You are analyzing collective emotional sentiment about: "${originalInput || eventVector.topic}"
@@ -303,6 +308,14 @@ Analysis Results:
 - Region: ${eventVector.region} (confidence: ${(eventVector.regionConfidence * 100).toFixed(0)}%)
 - Impact Score: ${(eventVector.impactScore * 100).toFixed(0)}%
 - Severity: ${eventVector.severity}
+
+Dynamic Emotion Context (based on content analysis):
+- Joy: ${(dynamicEmotions.joy * 100).toFixed(0)}%
+- Hope: ${(dynamicEmotions.hope * 100).toFixed(0)}%
+- Sadness: ${(dynamicEmotions.sadness * 100).toFixed(0)}%
+- Anger: ${(dynamicEmotions.anger * 100).toFixed(0)}%
+- Fear: ${(dynamicEmotions.fear * 100).toFixed(0)}%
+- Curiosity: ${(dynamicEmotions.curiosity * 100).toFixed(0)}%
 
 Based on this emotional analysis, provide:
 1. Why people feel this way (specific to the topic)
@@ -331,7 +344,9 @@ Be specific and contextual - not generic. Reference the actual topic and emotion
     return result;
   } catch (error) {
     console.error('[ReasoningEngine] Error:', error);
-    return 'Unable to generate analysis at this time';
+    // Return a meaningful fallback message instead of generic text
+    const fallbackMessage = `Analysis of "${originalInput || eventVector.topic}" shows dominant emotion of ${eventVector.dominantEmotion} with ${(eventVector.impactScore * 100).toFixed(0)}% impact. This suggests significant collective sentiment that warrants attention.`;
+    return fallbackMessage;
   }
 }
 
