@@ -100,6 +100,14 @@ export default function Chat() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const handleSelectConversation = async (conversationId: number) => {
+    setSelectedConversation(conversationId);
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (conversation && conversation.messages) {
+      setMessages(conversation.messages);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
 

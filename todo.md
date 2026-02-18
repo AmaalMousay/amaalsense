@@ -3816,3 +3816,36 @@ User Question → AmalSense Response → User Feedback + Self-Eval
 
 **آخر تحديث:** 15 فبراير 2026
 **الحالة:** جاهز للاختبار والتحسين
+
+
+---
+
+## 🔴 CURRENT BUGS TO FIX (URGENT)
+
+### Bug #1: Empty Response Error
+- [ ] Fix "Sorry, I encountered an error" when asking questions
+- [ ] Debug responseEnhancementPipeline for null/empty responses
+- [ ] Add fallback error handling in unifiedRouters
+- [ ] Ensure responses are never empty
+- [ ] Test with real questions
+
+### Bug #2: Emotional Weather Page Redesign
+- [ ] Simplify Emotional Weather page (remove complexity)
+- [ ] Add "Current Mood" section (main focus - 3 seconds to understand)
+- [ ] Add emotion distribution chart (simple pie/bar)
+- [ ] Add "Why" section (top 3 factors only)
+- [ ] Add 48-hour forecast (simple predictions)
+- [ ] Add stability indicator (62% = mood stability)
+- [ ] Use human-like language ("المزاج العالمي قلق معتدل")
+- [ ] Add visual indicators (↑ ↓ arrows)
+- [ ] Target both regular users AND journalists/researchers
+
+
+### Feature #3: Chat Page Improvements
+- [ ] Display all previous conversations in sidebar
+- [ ] Show conversation preview (first message)
+- [ ] Add ability to select and continue conversation
+- [ ] Load conversation history when selected
+- [ ] Add delete conversation option
+- [ ] Add search for conversations
+- [ ] Show last updated time for each conversation

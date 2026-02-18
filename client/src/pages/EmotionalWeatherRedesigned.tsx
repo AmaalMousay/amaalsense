@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/i18n';
 import { Card } from '@/components/ui/card';
@@ -15,7 +17,7 @@ interface ForecastItem {
   probability: number;
 }
 
-export default function EmotionalWeather() {
+export default function EmotionalWeatherRedesigned() {
   const { t, language } = useI18n();
   const [currentMood, setCurrentMood] = useState('معتدل');
   const [moodTrend, setMoodTrend] = useState('stable');
