@@ -1,5 +1,28 @@
 # Amaalsense Engine - Project TODO
 
+## 🔴 CURRENT PRIORITY: High-Priority Features Implementation
+
+### Phase 90: Question Clarification Layer (HIGH PRIORITY)
+- [x] Create questionClarificationLayer.ts for ambiguous question detection
+- [x] Implement clarification request generation
+- [ ] Add clarification dialog component in UI
+- [x] Write comprehensive unit tests (19/24 passing)
+- [ ] Integrate with aiQuestionUnderstandingLayer
+
+### Phase 91: Similarity Matching for Questions (HIGH PRIORITY)
+- [x] Create questionSimilarityMatcher.ts for question comparison
+- [x] Implement semantic similarity algorithm (cosine, levenshtein, semantic)
+- [x] Add cache lookup for similar questions
+- [x] Write comprehensive unit tests (19/24 passing)
+- [ ] Integrate with cachingLayer
+
+### Phase 92: Confidence Indicators (HIGH PRIORITY)
+- [x] Create confidenceScorer.ts for confidence calculation
+- [x] Implement 5-level confidence system (🟢 very high, 🟡 high, 🟠 medium, 🔴 low, ⚫ very low)
+- [ ] Add confidence display component in UI
+- [x] Write comprehensive unit tests (19/24 passing)
+- [ ] Integrate with responseEnhancementPipeline
+
 ## Phase 84: Fix Bug #1 - Duplicate Data and Indices (HIGH PRIORITY)
 - [x] Create deduplication engine with duplicate detection
 - [x] Implement topic-specific variations system
