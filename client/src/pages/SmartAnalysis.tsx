@@ -67,8 +67,8 @@ export default function SmartAnalysis() {
   const [currentConversationId, setCurrentConversationId] = useState<number | undefined>();
   
   // tRPC mutations
-  const analyzeWithAI = trpc.consciousness.analyze.useMutation();
-  const askFollowUp = trpc.consciousness.analyze.useMutation();
+  const analyzeWithAI = trpc.unified.analyzeQuestion.useMutation();
+  const askFollowUp = trpc.unified.analyzeQuestion.useMutation();
   const createConversation = trpc.conversations.create.useMutation();
   const addMessage = trpc.conversations.addMessage.useMutation();
   const getConversation = trpc.conversations.get.useQuery(
@@ -98,14 +98,17 @@ export default function SmartAnalysis() {
     setCurrentConversationId(undefined);
     
     try {
-      const result = await analyzeWithAI.mutateAsync({ question: topic });
+      const result = await analyzeWithAI.mutateAsync({ 
+        question: topic,
+        language: 'ar'
+      });
       
       if (!result.success) {
         throw new Error(result.error || 'Analysis failed');
       }
       
       // Extract response and metadata from the correct structure
-      const response = result.answer || 'Analysis processing...';
+      const response = result.data?.response || 'Analysis processing...';
       
       // Set context with available data
       setContext({
@@ -668,6 +671,30 @@ export default function SmartAnalysis() {
                     {q.label}
                   </Button>
                 ))}
+              </div>
+            )}
+            
+            {/* Smart Suggestions from AI */}
+            {analysisData?.data?.humanIntelligence?.proactiveSuggestions && analysisData.data.humanIntelligence.proactiveSuggestions.length > 0 && (
+              <div className="mb-4 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                <h3 className="text-xs font-semibold text-primary mb-2 flex items-center gap-2">
+                  <Sparkles className="w-3 h-3" />
+                  Smart Suggestions
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {analysisData.data.humanIntelligence.proactiveSuggestions.map((suggestion: string, idx: number) => (
+                    <Button
+                      key={idx}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs gap-1 hover:bg-primary/20 hover:border-primary/50 bg-primary/10"
+                      onClick={() => handleAskQuestion(suggestion)}
+                    >
+                      <Lightbulb className="w-3 h-3" />
+                      {suggestion.substring(0, 30)}...
+                    </Button>
+                  ))}
+                </div>
               </div>
             )}
             
