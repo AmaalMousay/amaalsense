@@ -14,6 +14,9 @@ import {
 } from 'lucide-react';
 import { StockStyleIndicator } from '@/components/StockStyleIndicator';
 import { LogoIcon } from '@/components/Logo';
+import { EmotionalIntelligenceCard } from '@/components/EmotionalIntelligenceCard';
+import { QuestionClarificationDialog } from '@/components/QuestionClarificationDialog';
+import { ContextualUnderstandingCard } from '@/components/ContextualUnderstandingCard';
 import { Streamdown } from 'streamdown';
 
 // Types for conversation
@@ -604,7 +607,15 @@ export default function SmartAnalysis() {
                   </p>
                 </div>
               ) : (
-                conversation.map((msg, index) => (
+                <>
+                  <ContextualUnderstandingCard 
+                    contextual={analysisData?.data?.humanIntelligence?.contextualUnderstanding}
+                  />
+                  <EmotionalIntelligenceCard 
+                    emotional={analysisData?.data?.humanIntelligence?.emotionalIntelligence}
+                    confidence={analysisData?.data?.confidence}
+                  />
+                  {conversation.map((msg, index) => (
                   <div 
                     key={index} 
                     className={`flex items-start gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
@@ -637,7 +648,8 @@ export default function SmartAnalysis() {
                       </span>
                     </div>
                   </div>
-                ))
+                ))}
+                </>
               )}
               
               {/* Loading indicator for follow-up */}
