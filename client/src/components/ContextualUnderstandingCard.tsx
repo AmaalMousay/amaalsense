@@ -17,7 +17,7 @@ export function ContextualUnderstandingCard({ contextual }: ContextualUnderstand
   if (!contextual) return null;
 
   return (
-    <Card className="p-4 mb-4 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20">
+    <Card className="p-4 mb-4 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 animate-card-slide-in">
       <h3 className="text-sm font-semibold text-emerald-400 mb-3 flex items-center gap-2">
         <Eye className="w-4 h-4" />
         Contextual Understanding

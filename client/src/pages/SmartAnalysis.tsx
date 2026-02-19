@@ -5,6 +5,7 @@ import { ConversationSidebar } from '@/components/ConversationSidebar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useMemo, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
 import { 
   Brain, Send, Loader2, ArrowLeft, TrendingUp, TrendingDown,
@@ -64,6 +65,11 @@ export default function SmartAnalysis() {
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [chatHeight, setChatHeight] = useState(50); // percentage
   
+  // Question Clarification Dialog state
+  const [showClarificationDialog, setShowClarificationDialog] = useState(false);
+  const [clarificationOptions, setClarificationOptions] = useState<Array<{ id: string; text: string; confidence?: number }>>([]);
+  const [originalQuestion, setOriginalQuestion] = useState('');
+  
   const chatContainerRef = useRef<HTMLDivElement>(null);
   
   // Conversation ID for saving
@@ -93,7 +99,7 @@ export default function SmartAnalysis() {
     }
   }, [topic]);
   
-  const runAnalysis = async () => {
+  const runAnalysis = useCallback(async () => {
     if (!topic) return;
     
     setIsAnalyzing(true);
@@ -154,21 +160,55 @@ export default function SmartAnalysis() {
       }
     } catch (error) {
       console.error('Analysis failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const userFriendlyMessage = errorMessage.includes('timeout')
+        ? 'The analysis took too long. Please try with a simpler topic.'
+        : errorMessage.includes('network')
+        ? 'Network error. Please check your connection.'
+        : errorMessage.includes('not found')
+        ? 'Topic not found. Please try a different topic.'
+        : 'Sorry, I encountered an error while analyzing this topic. Please try again.';
+      
       setConversation([{
         role: 'assistant',
-        content: 'Sorry, I encountered an error while analyzing this topic. Please try again.',
+        content: userFriendlyMessage,
         timestamp: Date.now(),
       }]);
+      setAnalysisComplete(false);
     } finally {
       setIsAnalyzing(false);
     }
+  }, [topic, analyzeWithAI, createConversation]);
+  
+  const handleClarificationSelect = (clarificationId: string) => {
+    const selectedClarification = clarificationOptions.find(opt => opt.id === clarificationId);
+    if (selectedClarification) {
+      handleAskQuestion(selectedClarification.text);
+    }
+    setShowClarificationDialog(false);
   };
   
-  const handleAskQuestion = async (questionText?: string) => {
+  const handleAskQuestion = useCallback(async (questionText?: string) => {
     const question = questionText || userQuestion.trim();
     if (!question || !context || isAskingFollowUp) return;
     
     setUserQuestion('');
+    
+    // Check if we need to show clarification dialog
+    if (analysisData?.data?.questionUnderstanding?.needsClarification && 
+        analysisData?.data?.questionUnderstanding?.clarifications &&
+        !questionText) {
+      setOriginalQuestion(question);
+      setClarificationOptions(
+        analysisData.data.questionUnderstanding.clarifications.map((clarif: any, idx: number) => ({
+          id: `clarif-${idx}`,
+          text: clarif.text || clarif,
+          confidence: clarif.confidence,
+        }))
+      );
+      setShowClarificationDialog(true);
+      return;
+    }
     
     // Add user message to conversation
     const userMessage: ConversationMessage = {
@@ -197,15 +237,22 @@ export default function SmartAnalysis() {
       }]);
     } catch (error) {
       console.error('Follow-up failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const userFriendlyMessage = errorMessage.includes('timeout') 
+        ? 'The request took too long. Please try again with a shorter question.'
+        : errorMessage.includes('network')
+        ? 'Network error. Please check your connection and try again.'
+        : 'Sorry, I had trouble processing your question. Please try again.';
+      
       setConversation(prev => [...prev, {
         role: 'assistant',
-        content: 'Sorry, I had trouble processing your question. Please try again.',
+        content: userFriendlyMessage,
         timestamp: Date.now(),
       }]);
     } finally {
       setIsAskingFollowUp(false);
     }
-  };
+  }, [context, userQuestion, analysisData, askFollowUp, isAskingFollowUp]);
   
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -322,6 +369,16 @@ export default function SmartAnalysis() {
 
   return (
     <>
+      {/* Question Clarification Dialog */}
+      <QuestionClarificationDialog
+        isOpen={showClarificationDialog}
+        originalQuestion={originalQuestion}
+        clarifications={clarificationOptions}
+        onSelect={handleClarificationSelect}
+        onCancel={() => setShowClarificationDialog(false)}
+        isLoading={isAskingFollowUp}
+      />
+      
       {/* Conversation Sidebar */}
       <ConversationSidebar
         currentConversationId={currentConversationId}

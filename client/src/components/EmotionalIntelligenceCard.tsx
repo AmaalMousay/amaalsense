@@ -23,7 +23,7 @@ export function EmotionalIntelligenceCard({ emotional, confidence }: EmotionalIn
     <>
       {/* Emotional Intelligence Display */}
       {emotional && (
-        <Card className="p-4 mb-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+        <Card className="p-4 mb-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 animate-card-slide-in">
           <h3 className="text-sm font-semibold text-purple-400 mb-3 flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
             Emotional Intelligence Analysis
@@ -55,7 +55,7 @@ export function EmotionalIntelligenceCard({ emotional, confidence }: EmotionalIn
       
       {/* Confidence Indicator */}
       {confidence && (
-        <Card className="p-4 mb-4 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20">
+        <Card className="p-4 mb-4 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 animate-card-slide-in">
           <h3 className="text-sm font-semibold text-blue-400 mb-3 flex items-center gap-2">
             <Activity className="w-4 h-4" />
             Confidence Score

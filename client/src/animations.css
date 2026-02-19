@@ -231,3 +231,140 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(59, 130, 246, 0.7);
 }
+
+/* Card and Dialog Animations */
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dialogOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogContent {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes messageSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes indicatorPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes progressFill {
+  from {
+    width: 0;
+  }
+}
+
+/* Utility Classes for Cards and Dialogs */
+.animate-card-slide-in {
+  animation: cardSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-dialog-overlay {
+  animation: dialogOverlay 0.2s ease-out;
+}
+
+.animate-dialog-content {
+  animation: dialogContent 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-message-slide-in {
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+.animate-message-slide-in-right {
+  animation: messageSlideInRight 0.3s ease-out;
+}
+
+.animate-indicator-pulse {
+  animation: indicatorPulse 2s ease-in-out infinite;
+}
+
+.animate-progress-fill {
+  animation: progressFill 0.6s ease-out forwards;
+}
+
+/* Stagger Animation for Multiple Elements */
+.animate-stagger > * {
+  animation: fadeIn 0.3s ease-out;
+  opacity: 0;
+}
+
+.animate-stagger > *:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.animate-stagger > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.animate-stagger > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.animate-stagger > *:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.animate-stagger > *:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+/* Smooth Transitions for Interactive Elements */
+.transition-interactive {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-interactive:hover {
+  transform: translateY(-1px);
+}
+
+.transition-interactive:active {
+  transform: translateY(0);
+}
