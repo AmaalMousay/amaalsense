@@ -1,345 +1,403 @@
 /**
- * Multi-Language Support System
- * 
- * Handles Arabic and English language support with culturally-aware emotional interpretation
+ * Multi-language Support System
+ * Supports 12 languages with culturally-aware emotional interpretation
  */
 
-export type Language = 'ar' | 'en';
+export type SupportedLanguage = 
+  | 'ar' | 'en' | 'fr' | 'es' | 'de' | 'zh' | 'ja' 
+  | 'ko' | 'ru' | 'pt' | 'tr' | 'it';
 
-export interface LanguageContext {
-  language: Language;
-  culturalRegion: string;
-  emotionalBaseline: Record<string, number>;
-  intensityMultiplier: number;
+export interface LanguageConfig {
+  code: SupportedLanguage;
+  name: string;
+  nativeName: string;
+  direction: 'ltr' | 'rtl';
+  emotionalContext: Record<string, string>;
 }
 
-export interface MultilingualResponse {
-  ar: string;
-  en: string;
-  language: Language;
-  culturalContext: string;
+// Language configurations with cultural context
+const LANGUAGE_CONFIGS: Record<SupportedLanguage, LanguageConfig> = {
+  ar: {
+    code: 'ar',
+    name: 'Arabic',
+    nativeName: 'العربية',
+    direction: 'rtl',
+    emotionalContext: {
+      hope: 'أمل',
+      fear: 'خوف',
+      joy: 'فرح',
+      sadness: 'حزن',
+      anger: 'غضب',
+    },
+  },
+  en: {
+    code: 'en',
+    name: 'English',
+    nativeName: 'English',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'hope',
+      fear: 'fear',
+      joy: 'joy',
+      sadness: 'sadness',
+      anger: 'anger',
+    },
+  },
+  fr: {
+    code: 'fr',
+    name: 'French',
+    nativeName: 'Français',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'espoir',
+      fear: 'peur',
+      joy: 'joie',
+      sadness: 'tristesse',
+      anger: 'colère',
+    },
+  },
+  es: {
+    code: 'es',
+    name: 'Spanish',
+    nativeName: 'Español',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'esperanza',
+      fear: 'miedo',
+      joy: 'alegría',
+      sadness: 'tristeza',
+      anger: 'ira',
+    },
+  },
+  de: {
+    code: 'de',
+    name: 'German',
+    nativeName: 'Deutsch',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'Hoffnung',
+      fear: 'Angst',
+      joy: 'Freude',
+      sadness: 'Traurigkeit',
+      anger: 'Wut',
+    },
+  },
+  zh: {
+    code: 'zh',
+    name: 'Chinese',
+    nativeName: '中文',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: '希望',
+      fear: '恐惧',
+      joy: '喜悦',
+      sadness: '悲伤',
+      anger: '愤怒',
+    },
+  },
+  ja: {
+    code: 'ja',
+    name: 'Japanese',
+    nativeName: '日本語',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: '希望',
+      fear: '恐怖',
+      joy: '喜び',
+      sadness: '悲しみ',
+      anger: '怒り',
+    },
+  },
+  ko: {
+    code: 'ko',
+    name: 'Korean',
+    nativeName: '한국어',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: '희망',
+      fear: '두려움',
+      joy: '기쁨',
+      sadness: '슬픔',
+      anger: '분노',
+    },
+  },
+  ru: {
+    code: 'ru',
+    name: 'Russian',
+    nativeName: 'Русский',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'надежда',
+      fear: 'страх',
+      joy: 'радость',
+      sadness: 'грусть',
+      anger: 'гнев',
+    },
+  },
+  pt: {
+    code: 'pt',
+    name: 'Portuguese',
+    nativeName: 'Português',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'esperança',
+      fear: 'medo',
+      joy: 'alegria',
+      sadness: 'tristeza',
+      anger: 'ira',
+    },
+  },
+  tr: {
+    code: 'tr',
+    name: 'Turkish',
+    nativeName: 'Türkçe',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'umut',
+      fear: 'korku',
+      joy: 'sevinç',
+      sadness: 'üzüntü',
+      anger: 'öfke',
+    },
+  },
+  it: {
+    code: 'it',
+    name: 'Italian',
+    nativeName: 'Italiano',
+    direction: 'ltr',
+    emotionalContext: {
+      hope: 'speranza',
+      fear: 'paura',
+      joy: 'gioia',
+      sadness: 'tristezza',
+      anger: 'rabbia',
+    },
+  },
+};
+
+/**
+ * Get all supported languages
+ */
+export function getSupportedLanguages(): LanguageConfig[] {
+  return Object.values(LANGUAGE_CONFIGS);
 }
 
 /**
- * Emotional intensity multipliers by language and culture
- * 
- * Arabic (especially MENA region) tends to use more emotionally intense language
- * English tends to be more reserved and analytical
+ * Get language config by code
  */
-const EMOTIONAL_INTENSITY: Record<Language, Record<string, number>> = {
-  ar: {
-    fear: 1.3,      // Arabic expresses fear more intensely
-    hope: 1.2,      // Hope is expressed more optimistically
-    anger: 1.25,    // Anger is expressed more passionately
-    sadness: 1.2,   // Sadness is more dramatically expressed
-    joy: 1.15,      // Joy is celebrated more openly
-    curiosity: 1.0, // Curiosity is neutral
-  },
-  en: {
-    fear: 0.9,      // English is more measured
-    hope: 0.95,     // Hope is expressed more cautiously
-    anger: 0.85,    // Anger is more controlled
-    sadness: 0.9,   // Sadness is more subdued
-    joy: 0.95,      // Joy is more restrained
-    curiosity: 1.0, // Curiosity is neutral
-  },
-};
+export function getLanguageConfig(code: SupportedLanguage): LanguageConfig | null {
+  return LANGUAGE_CONFIGS[code] || null;
+}
 
 /**
- * Cultural context multipliers
+ * Detect language from text
  */
-const CULTURAL_CONTEXT_MULTIPLIERS: Record<string, Record<string, number>> = {
-  'MENA': {
-    fear: 1.2,
-    hope: 0.9,
-    anger: 1.15,
-    sadness: 1.1,
-  },
-  'Africa': {
-    fear: 1.1,
-    hope: 1.0,
-    anger: 1.0,
-    sadness: 1.0,
-  },
-  'Europe': {
-    fear: 0.8,
-    hope: 1.1,
-    anger: 0.9,
-    sadness: 0.85,
-  },
-  'Asia': {
-    fear: 0.95,
-    hope: 1.05,
-    anger: 0.9,
-    sadness: 0.95,
-  },
-  'Americas': {
-    fear: 0.85,
-    hope: 1.15,
-    anger: 0.95,
-    sadness: 0.9,
-  },
-};
+export function detectLanguage(text: string): SupportedLanguage {
+  // Simple language detection based on character ranges
+  const arabicRegex = /[\u0600-\u06FF]/;
+  const chineseRegex = /[\u4E00-\u9FFF]/;
+  const japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF]/;
+  const koreanRegex = /[\uAC00-\uD7AF]/;
+  const cyrillicRegex = /[\u0400-\u04FF]/;
+
+  if (arabicRegex.test(text)) return 'ar';
+  if (chineseRegex.test(text)) return 'zh';
+  if (japaneseRegex.test(text)) return 'ja';
+  if (koreanRegex.test(text)) return 'ko';
+  if (cyrillicRegex.test(text)) return 'ru';
+
+  // Default to English
+  return 'en';
+}
 
 /**
- * Emotional intensity descriptions in different languages
+ * Translate emotional context to target language
  */
-const INTENSITY_DESCRIPTIONS: Record<Language, Record<string, string[]>> = {
-  ar: {
-    veryLow: ['ضعيف جداً', 'بالكاد ملحوظ', 'شبه معدوم'],
-    low: ['ضعيف', 'محدود', 'طفيف'],
-    moderate: ['متوسط', 'معتدل', 'متوازن'],
-    high: ['عالي', 'قوي', 'ملحوظ'],
-    veryHigh: ['عالي جداً', 'شديد', 'غالب'],
-    extreme: ['متطرف', 'قاسي', 'حاد'],
-  },
-  en: {
-    veryLow: ['very low', 'barely noticeable', 'minimal'],
-    low: ['low', 'limited', 'slight'],
-    moderate: ['moderate', 'balanced', 'average'],
-    high: ['high', 'strong', 'notable'],
-    veryHigh: ['very high', 'intense', 'dominant'],
-    extreme: ['extreme', 'severe', 'acute'],
-  },
-};
+export function translateEmotionalContext(
+  emotion: string,
+  targetLanguage: SupportedLanguage
+): string {
+  const config = LANGUAGE_CONFIGS[targetLanguage];
+  if (!config) return emotion;
+
+  return config.emotionalContext[emotion] || emotion;
+}
 
 /**
- * Trend descriptions in different languages
+ * Format text based on language direction
  */
-const TREND_DESCRIPTIONS: Record<Language, Record<string, string>> = {
-  ar: {
-    increasing: 'في ارتفاع',
-    decreasing: 'في انخفاض',
-    stable: 'مستقر',
-    improving: 'يتحسن',
-    worsening: 'يتدهور',
-    volatile: 'متقلب',
-  },
-  en: {
-    increasing: 'increasing',
-    decreasing: 'decreasing',
-    stable: 'stable',
-    improving: 'improving',
-    worsening: 'worsening',
-    volatile: 'volatile',
-  },
-};
-
-/**
- * Get language context
- */
-export function getLanguageContext(language: Language, culturalRegion: string = 'MENA'): LanguageContext {
-  const emotionalBaseline = CULTURAL_CONTEXT_MULTIPLIERS[culturalRegion] || CULTURAL_CONTEXT_MULTIPLIERS['MENA'];
-  const intensityMultiplier = EMOTIONAL_INTENSITY[language].fear; // Use fear as reference
+export function formatTextByLanguage(
+  text: string,
+  language: SupportedLanguage
+): { text: string; direction: 'ltr' | 'rtl' } {
+  const config = LANGUAGE_CONFIGS[language];
   
   return {
-    language,
-    culturalRegion,
-    emotionalBaseline,
-    intensityMultiplier,
+    text,
+    direction: config?.direction || 'ltr',
   };
 }
 
 /**
- * Adjust emotional values based on language and culture
+ * Get language-specific greeting
  */
-export function adjustEmotionalValues(
-  emotions: Record<string, number>,
-  language: Language,
-  culturalRegion: string = 'MENA'
-): Record<string, number> {
-  const adjusted: Record<string, number> = {};
-  const langMultipliers = EMOTIONAL_INTENSITY[language];
-  const culturalMultipliers = CULTURAL_CONTEXT_MULTIPLIERS[culturalRegion] || CULTURAL_CONTEXT_MULTIPLIERS['MENA'];
-  
-  for (const [emotion, value] of Object.entries(emotions)) {
-    const langFactor = langMultipliers[emotion] || 1.0;
-    const culturalFactor = culturalMultipliers[emotion] || 1.0;
-    adjusted[emotion] = value * langFactor * culturalFactor;
-  }
-  
-  return adjusted;
-}
-
-/**
- * Get intensity description
- */
-export function getIntensityDescription(value: number, language: Language = 'en'): string {
-  const descriptions = INTENSITY_DESCRIPTIONS[language];
-  
-  if (value < 10) return descriptions.veryLow[0];
-  if (value < 30) return descriptions.low[0];
-  if (value < 50) return descriptions.moderate[0];
-  if (value < 70) return descriptions.high[0];
-  if (value < 90) return descriptions.veryHigh[0];
-  return descriptions.extreme[0];
-}
-
-/**
- * Get trend description
- */
-export function getTrendDescription(trend: string, language: Language = 'en'): string {
-  return TREND_DESCRIPTIONS[language][trend] || trend;
-}
-
-/**
- * Translate emotional index names
- */
-const INDEX_NAMES: Record<Language, Record<string, string>> = {
-  ar: {
-    gmi: 'مؤشر المزاج العام',
-    cfi: 'مؤشر الخوف الجماعي',
-    hri: 'مؤشر الأمل والمرونة',
-    aci: 'مؤشر الغضب والأزمة',
-    sdi: 'مؤشر الحزن واليأس',
-  },
-  en: {
-    gmi: 'Global Mood Index',
-    cfi: 'Collective Fear Index',
-    hri: 'Hope & Resilience Index',
-    aci: 'Anger & Crisis Index',
-    sdi: 'Sadness & Despair Index',
-  },
-};
-
-/**
- * Get index name in specified language
- */
-export function getIndexName(index: string, language: Language = 'en'): string {
-  return INDEX_NAMES[language][index] || index;
-}
-
-/**
- * Format emotional analysis for display in different languages
- */
-export function formatEmotionalAnalysis(
-  emotions: Record<string, number>,
-  language: Language = 'en',
-  culturalRegion: string = 'MENA'
-): MultilingualResponse {
-  const adjusted = adjustEmotionalValues(emotions, language, culturalRegion);
-  
-  const ar = `
-## تحليل المشاعر
-
-**السياق الثقافي:** ${culturalRegion}
-
-${Object.entries(adjusted).map(([emotion, value]) => 
-  `- **${emotion}:** ${getIntensityDescription(value, 'ar')} (${Math.round(value)}%)`
-).join('\n')}
-
-**الملاحظات:**
-- تم تعديل القيم بناءً على السياق الثقافي والمنطقة الجغرافية
-- اللغة العربية تميل إلى التعبير العاطفي الأكثر كثافة
-- يتم احترام الفروقات الثقافية في التفسير العاطفي
-  `;
-  
-  const en = `
-## Emotional Analysis
-
-**Cultural Context:** ${culturalRegion}
-
-${Object.entries(adjusted).map(([emotion, value]) => 
-  `- **${emotion}:** ${getIntensityDescription(value, 'en')} (${Math.round(value)}%)`
-).join('\n')}
-
-**Notes:**
-- Values adjusted based on cultural context and geographic region
-- Arabic language tends to express emotions more intensely
-- Cultural differences in emotional interpretation are respected
-  `;
-  
-  return {
-    ar,
-    en,
-    language,
-    culturalContext: culturalRegion,
+export function getGreeting(language: SupportedLanguage): string {
+  const greetings: Record<SupportedLanguage, string> = {
+    ar: 'مرحباً بك في AmalSense',
+    en: 'Welcome to AmalSense',
+    fr: 'Bienvenue sur AmalSense',
+    es: 'Bienvenido a AmalSense',
+    de: 'Willkommen bei AmalSense',
+    zh: '欢迎来到 AmalSense',
+    ja: 'AmalSenseへようこそ',
+    ko: 'AmalSense에 오신 것을 환영합니다',
+    ru: 'Добро пожаловать в AmalSense',
+    pt: 'Bem-vindo ao AmalSense',
+    tr: 'AmalSense\'e Hoş Geldiniz',
+    it: 'Benvenuto in AmalSense',
   };
+
+  return greetings[language] || greetings.en;
 }
 
 /**
- * Translate analysis results to different language
+ * Get language-specific UI strings
  */
-export function translateAnalysisResults(
-  results: Record<string, any>,
-  targetLanguage: Language
-): Record<string, any> {
-  const translated: Record<string, any> = { ...results };
-  
-  // Translate index names
-  if (translated.indices) {
-    for (const [key] of Object.entries(translated.indices)) {
-      translated[`${key}_name`] = getIndexName(key, targetLanguage);
-    }
-  }
-  
-  // Translate trend descriptions
-  if (translated.trends) {
-    for (const [key, trend] of Object.entries(translated.trends)) {
-      if (typeof trend === 'object' && trend !== null && 'trend' in trend) {
-        (trend as any).trend_description = getTrendDescription((trend as any).trend, targetLanguage);
-      }
-    }
-  }
-  
-  return translated;
+export function getUIStrings(language: SupportedLanguage) {
+  const strings: Record<SupportedLanguage, Record<string, string>> = {
+    ar: {
+      search: 'بحث',
+      analyze: 'تحليل',
+      feedback: 'تقييم',
+      settings: 'الإعدادات',
+      logout: 'تسجيل الخروج',
+    },
+    en: {
+      search: 'Search',
+      analyze: 'Analyze',
+      feedback: 'Feedback',
+      settings: 'Settings',
+      logout: 'Logout',
+    },
+    fr: {
+      search: 'Rechercher',
+      analyze: 'Analyser',
+      feedback: 'Retour',
+      settings: 'Paramètres',
+      logout: 'Déconnexion',
+    },
+    es: {
+      search: 'Buscar',
+      analyze: 'Analizar',
+      feedback: 'Comentarios',
+      settings: 'Configuración',
+      logout: 'Cerrar sesión',
+    },
+    de: {
+      search: 'Suchen',
+      analyze: 'Analysieren',
+      feedback: 'Feedback',
+      settings: 'Einstellungen',
+      logout: 'Abmelden',
+    },
+    zh: {
+      search: '搜索',
+      analyze: '分析',
+      feedback: '反馈',
+      settings: '设置',
+      logout: '登出',
+    },
+    ja: {
+      search: '検索',
+      analyze: '分析',
+      feedback: 'フィードバック',
+      settings: '設定',
+      logout: 'ログアウト',
+    },
+    ko: {
+      search: '검색',
+      analyze: '분석',
+      feedback: '피드백',
+      settings: '설정',
+      logout: '로그아웃',
+    },
+    ru: {
+      search: 'Поиск',
+      analyze: 'Анализ',
+      feedback: 'Обратная связь',
+      settings: 'Настройки',
+      logout: 'Выход',
+    },
+    pt: {
+      search: 'Pesquisar',
+      analyze: 'Analisar',
+      feedback: 'Feedback',
+      settings: 'Configurações',
+      logout: 'Sair',
+    },
+    tr: {
+      search: 'Ara',
+      analyze: 'Analiz Et',
+      feedback: 'Geri Bildirim',
+      settings: 'Ayarlar',
+      logout: 'Çıkış Yap',
+    },
+    it: {
+      search: 'Cerca',
+      analyze: 'Analizza',
+      feedback: 'Feedback',
+      settings: 'Impostazioni',
+      logout: 'Esci',
+    },
+  };
+
+  return strings[language] || strings.en;
+}
+
+/**
+ * Initialize multi-language support
+ */
+export function initializeMultiLanguageSupport() {
+  console.log('✅ Multi-language support initialized');
+  console.log(`📚 Supported languages: ${getSupportedLanguages().length}`);
+  getSupportedLanguages().forEach(lang => {
+    console.log(`   - ${lang.nativeName} (${lang.code})`);
+  });
 }
 
 /**
  * Get culturally-aware emotional interpretation
  */
 export function getCulturallyAwareInterpretation(
-  gmi: number,
-  cfi: number,
-  hri: number,
-  culturalRegion: string = 'MENA',
-  language: Language = 'ar'
+  emotionalMetrics: any,
+  contextualFactors: any,
+  historicalIndicators: any,
+  country: string,
+  language: SupportedLanguage
 ): string {
-  const context = getLanguageContext(language, culturalRegion);
+  // This function provides culturally-aware interpretation of emotions
+  // based on the country and language context
   
-  let interpretation = '';
+  const config = LANGUAGE_CONFIGS[language];
+  if (!config) return 'Unable to provide interpretation';
+
+  // Build interpretation based on metrics and cultural context
+  let interpretation = `Emotional Analysis for ${country} (${config.nativeName}): `;
   
-  if (language === 'ar') {
-    if (gmi > 50) {
-      interpretation += 'المزاج العام إيجابي وتفاؤلي. ';
-    } else if (gmi < -50) {
-      interpretation += 'المزاج العام سلبي وقاتم. ';
-    } else {
-      interpretation += 'المزاج العام متوازن ومحايد. ';
-    }
-    
-    if (cfi > 70) {
-      interpretation += 'مستويات الخوف عالية جداً وتثير القلق. ';
-    } else if (cfi > 50) {
-      interpretation += 'هناك مستويات معتدلة من الخوف والقلق. ';
-    }
-    
-    if (hri > 70) {
-      interpretation += 'الأمل والمرونة قويان والمجتمع متفائل. ';
-    } else if (hri < 30) {
-      interpretation += 'الأمل والمرونة ضعيفان والمجتمع متشائم. ';
-    }
+  if (emotionalMetrics?.intensity > 7) {
+    interpretation += `High emotional intensity detected. `;
+  } else if (emotionalMetrics?.intensity > 4) {
+    interpretation += `Moderate emotional intensity. `;
   } else {
-    if (gmi > 50) {
-      interpretation += 'Overall mood is positive and optimistic. ';
-    } else if (gmi < -50) {
-      interpretation += 'Overall mood is negative and pessimistic. ';
-    } else {
-      interpretation += 'Overall mood is balanced and neutral. ';
-    }
-    
-    if (cfi > 70) {
-      interpretation += 'Fear levels are very high and concerning. ';
-    } else if (cfi > 50) {
-      interpretation += 'There are moderate levels of fear and anxiety. ';
-    }
-    
-    if (hri > 70) {
-      interpretation += 'Hope and resilience are strong and the community is optimistic. ';
-    } else if (hri < 30) {
-      interpretation += 'Hope and resilience are weak and the community is pessimistic. ';
-    }
+    interpretation += `Low emotional intensity. `;
   }
-  
+
+  // Add culturally-aware context
+  if (language === 'ar') {
+    interpretation += 'تحليل يأخذ في الاعتبار السياق الثقافي والاجتماعي.';
+  } else if (language === 'en') {
+    interpretation += 'Analysis considers cultural and social context.';
+  }
+
   return interpretation;
 }
