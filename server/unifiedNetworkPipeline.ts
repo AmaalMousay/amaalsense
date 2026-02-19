@@ -244,7 +244,8 @@ export async function executeUnifiedNetworkPipeline(
         ]
       });
 
-      context.generatedResponse.text = llmResponse.choices[0].message.content || "Unable to generate response";
+      const responseContent = llmResponse.choices[0].message.content as any;
+      context.generatedResponse.text = (typeof responseContent === 'string' ? responseContent : JSON.stringify(responseContent)) || "Unable to generate response";
       context.generatedResponse.sources = [];
       context.generatedResponse.evidence = [];
       context.analytics.layersExecuted.push("Layer 16: Response Generation");
@@ -263,8 +264,8 @@ export async function executeUnifiedNetworkPipeline(
     context.humanIntelligence.contextualUnderstanding = `السياق: ${context.layer1.output.questionType}`;
     
     // Emotional Intelligence
-    const emotionDetected = "neutral"; // Placeholder for emotion detection
-    context.humanIntelligence.emotionalIntelligence.detectedEmotion = emotionDetected;
+    const emotionDetected: string = "neutral"; // Placeholder for emotion detection
+    context.humanIntelligence.emotionalIntelligence.detectedEmotion = emotionDetected as any;
     context.humanIntelligence.emotionalIntelligence.adaptedTone = emotionDetected === "sad" ? "empathetic" : 
                                                                    emotionDetected === "angry" ? "calm" : "professional";
     
@@ -331,11 +332,12 @@ export async function executeUnifiedNetworkPipeline(
         ]
       });
 
-      const suggestionsText = suggestionsResponse.choices[0].message.content || "[]";
+      const suggestionsContent = suggestionsResponse.choices[0].message.content as any;
+      const suggestionsText = typeof suggestionsContent === 'string' ? suggestionsContent : JSON.stringify(suggestionsContent) || "[]";
       try {
         context.humanIntelligence.proactiveSuggestions = JSON.parse(suggestionsText);
-      } catch {
-        context.humanIntelligence.proactiveSuggestions = [suggestionsText];
+      } catch (e) {
+        context.humanIntelligence.proactiveSuggestions = [];
       }
     } catch (error) {
       console.error("Suggestions generation failed:", error);
