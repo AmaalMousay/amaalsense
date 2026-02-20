@@ -232,7 +232,7 @@ export default function SmartAnalysis() {
       // Add AI response to conversation
       setConversation(prev => [...prev, {
         role: 'assistant',
-        content: result.answer || 'Processing...',
+        content: (result.data?.response || 'Processing...') as string,
         timestamp: Date.now(),
       }]);
     } catch (error) {

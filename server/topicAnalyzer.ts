@@ -15,7 +15,7 @@ import { calculateIndices, CalculationInput, validateCalculation } from './indic
 import { calculateDCFTIndices, DCFTInput, EmotionVector } from './dcftCalculationEngine';
 import { analyzeTemporalTrends, TemporalDataPoint } from './temporalAnalysisEngine';
 import { generateSourceAttribution, createSourceInfo } from './sourceAttributionSystem';
-import { getLanguageContext, getCulturallyAwareInterpretation } from './multiLanguageSupport';
+import { getLanguageConfig } from './multiLanguageSupport';
 import {
   checkForDuplicates,
   registerAnalysis,
@@ -434,13 +434,16 @@ export async function analyzeTopicInCountry(
   );
   
   // ✅ Phase 76: Multi-language Support
-  const multilingualInterpretation = getCulturallyAwareInterpretation(
-    dcftResult.gmi,
-    dcftResult.cfi,
-    dcftResult.hri,
-    countryName,
-    options?.language === 'en' ? 'en' : 'ar'
-  );
+  const languageConfig = getLanguageConfig(options?.language === 'en' ? 'en' : 'ar');
+  const multilingualInterpretation = languageConfig ? {
+    language: languageConfig.code,
+    culturalContext: languageConfig.emotionalContext,
+    emotionalNuances: languageConfig.emotionalContext,
+  } : {
+    language: 'ar',
+    culturalContext: { hope: 'hope' },
+    emotionalNuances: {},
+  };
   
   // Use the intelligent response from UnifiedPipeline if available
   const intelligentResponse = pipelineResult.answer;
@@ -506,7 +509,7 @@ export async function analyzeTopicInCountry(
     // ✅ Phase 76: Multi-language Support
     multilingualInterpretation: {
       ar: multilingualInterpretation,
-      en: getCulturallyAwareInterpretation(dcftResult.gmi, dcftResult.cfi, dcftResult.hri, countryName, 'en'),
+      en: multilingualInterpretation,
       culturalContext: countryName,
     },
   };

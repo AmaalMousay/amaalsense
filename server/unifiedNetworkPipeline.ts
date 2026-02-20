@@ -299,7 +299,10 @@ export async function executeUnifiedNetworkPipeline(
         ]
       });
         
-        context.languageEnforced.finalResponse = translationResponse.choices[0].message.content || context.personalVoice.adaptedResponse;
+        const translatedContent = translationResponse.choices[0].message.content;
+        context.languageEnforced.finalResponse = typeof translatedContent === 'string' 
+          ? translatedContent 
+          : context.personalVoice.adaptedResponse;
         context.languageEnforced.translated = true;
       } catch (error) {
         console.error("Translation failed:", error);

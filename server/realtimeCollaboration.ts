@@ -1,5 +1,3 @@
-import { db } from './db';
-
 /**
  * Real-time Collaboration System
  * Enables multiple users to analyze the same topic together

@@ -131,7 +131,7 @@ export class AdvancedCacheManager {
     let currentMemory = 0;
 
     // Calculate current memory usage
-    for (const entry of this.memoryCache.values()) {
+    for (const entry of Array.from(this.memoryCache.values())) {
       currentMemory += JSON.stringify(entry.value).length;
     }
 
