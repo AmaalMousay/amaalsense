@@ -46,6 +46,7 @@ import MetacognitionDashboard from "./pages/MetacognitionDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import Chat from "./pages/Chat";
 import Weather from "./pages/Weather";
 import Indices from "./pages/Indices";
@@ -66,9 +67,9 @@ function Router() {
       <Route path={"/country/:code"} component={CountryResults} />
       <Route path={"/new-features"} component={NewFeaturesDashboard} />
       <Route path={"/chat"} component={Chat} />
-       <Route path={"weather"} component={Weather} />
-      <Route path={"emotional-weather"} component={EmotionalWeather} />
-      <Route path={"indices"} component={Indices} />
+       <Route path={"/weather"} component={Weather} />
+      <Route path={"/emotional-weather"} component={EmotionalWeather} />
+      <Route path={"/indices"} component={Indices} />
       
       {/* Information Pages */}
       <Route path={"/theory"} component={Theory} />
@@ -130,21 +131,23 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="dark"
-        switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-          {showTour && (
-            <OnboardingTour
-              onComplete={() => setShowTour(false)}
-              language="en"
-            />
-          )}
-        </TooltipProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider
+          defaultTheme="dark"
+          switchable
+        >
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+            {showTour && (
+              <OnboardingTour
+                onComplete={() => setShowTour(false)}
+                language="en"
+              />
+            )}
+          </TooltipProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }

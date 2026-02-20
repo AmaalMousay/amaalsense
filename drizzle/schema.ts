@@ -1173,8 +1173,3 @@ export const userConversations = mysqlTable("user_conversations", {
 
 export type UserConversation = typeof userConversations.$inferSelect;
 export type InsertUserConversation = typeof userConversations.$inferInsert;
-
-/**
- * Knowledge Cache Table - stores cached knowledge queries (Layer 13)
- * Improves performance by caching knowledge retrieval results
- */
