@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import { ContextMenu } from '@/components/ContextMenu';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useLocation, useSearch } from 'wouter';
+import { ContextMenu } from '@/components/ContextMenu';
 import { ConversationSidebar } from '@/components/ConversationSidebar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useMemo, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
+import { skipToken } from '@tanstack/react-query';
 import { 
   Brain, Send, Loader2, ArrowLeft, TrendingUp, TrendingDown,
   AlertTriangle, Lightbulb, Target, MessageSquare, Sparkles,
@@ -81,7 +81,7 @@ export default function SmartAnalysis() {
   const createConversation = trpc.conversations.create.useMutation();
   const addMessage = trpc.conversations.addMessage.useMutation();
   const getConversation = trpc.conversations.get.useQuery(
-    { id: currentConversationId! },
+    currentConversationId ? { id: currentConversationId } : skipToken,
     { enabled: !!currentConversationId && !topic }
   );
   

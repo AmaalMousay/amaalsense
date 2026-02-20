@@ -10,7 +10,8 @@ import {
   TrendingUp, Zap, Heart, Menu, X, 
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
-  LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap, Search, ArrowRight
+  LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap, Search, ArrowRight,
+  MessageCircle, Cloud
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -381,8 +382,9 @@ export default function Home() {
 
   // Navigation links - Dashboard only for logged-in users via UserMenu
   const navLinks = [
-    { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis' },
-    { href: '/chat', label: isRTL ? 'محادثة' : 'Chat' },
+    { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis', icon: <Brain className="w-4 h-4" /> },
+    { href: '/chat', label: isRTL ? 'محادثة' : 'Chat', icon: <MessageCircle className="w-4 h-4" /> },
+    { href: '/emotional-weather', label: isRTL ? 'طقس العاطفي' : 'Emotional Weather', icon: <Cloud className="w-4 h-4" /> },
     { href: '/theory', label: t.nav.theory },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
@@ -409,7 +411,8 @@ export default function Home() {
           <div className="hidden lg:flex items-center gap-4">
             {navLinks.slice(0, 6).map((link) => (
               <Link key={link.href} href={link.href}>
-                <span className="text-sm hover:text-accent transition-colors cursor-pointer">
+                <span className="text-sm hover:text-accent transition-colors cursor-pointer flex items-center gap-1">
+                  {link.icon && link.icon}
                   {link.label}
                 </span>
               </Link>
@@ -474,9 +477,10 @@ export default function Home() {
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
                   <span 
-                    className="block py-2 text-sm hover:text-accent transition-colors cursor-pointer"
+                    className="flex items-center gap-2 py-2 text-sm hover:text-accent transition-colors cursor-pointer"
                     onClick={() => setMobileMenuOpen(false)}
                   >
+                    {link.icon && link.icon}
                     {link.label}
                   </span>
                 </Link>

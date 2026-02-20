@@ -4109,9 +4109,16 @@ All systems are properly connected, tested, and ready for production use.
 - [ ] Test language switching functionality
 
 ## Phase 142: Add Emotional Weather Page to Navigation
-- [ ] Add weather icon to main navigation
-- [ ] Create proper route for EmotionalWeatherPage
-- [ ] Test navigation to weather page
+- [x] Add weather icon to main navigation
+- [x] Create proper route for EmotionalWeatherPage
+- [x] Test navigation to weather page
+
+## Phase 146: Add Navigation Icons
+- [x] Add Brain icon for Smart Analysis
+- [x] Add MessageCircle icon for Chat
+- [x] Add Cloud icon for Emotional Weather
+- [x] Update Desktop Navigation to display icons
+- [x] Update Mobile Navigation to display icons
 
 ## Phase 143: Fix Frontend-Backend Integration
 - [ ] Verify all tRPC calls are working
