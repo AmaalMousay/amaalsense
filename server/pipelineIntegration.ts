@@ -5,7 +5,7 @@
  * يدمج جميع الطبقات مع النظام الحالي
  */
 
-import { executeUnifiedNetworkPipeline, UnifiedPipelineContext } from "./unifiedNetworkPipeline";
+import { executeUnifiedNetworkPipelineOptimized, UnifiedPipelineContext } from "./unifiedNetworkPipelineOptimized";
 import { getDb } from "./db";
 import { storagePut } from "./storage";
 
@@ -22,8 +22,8 @@ export async function executePipelineWithStorage(
   success: boolean;
 }> {
   try {
-    // تنفيذ Pipeline الموحد
-    const context = await executeUnifiedNetworkPipeline(userId, question, language);
+    // تنفيذ Pipeline الموحد المحسّن
+    const context = await executeUnifiedNetworkPipelineOptimized(userId, question, language);
 
     // حفظ النتائج في قاعدة البيانات
     if (context.status === "completed") {
