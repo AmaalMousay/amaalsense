@@ -2,126 +2,85 @@
  * PIPELINE INTEGRATION
  * 
  * يربط Unified Network Pipeline مع الـ tRPC routers الموجودة
- * يدمج جميع الطبقات مع النظام الحالي
+ * يستخدم TinyLlama 1.1B المحلي بدون حد استخدام
  */
 
-import { executeUnifiedNetworkPipelineOptimized, UnifiedPipelineContext } from "./unifiedNetworkPipelineOptimized";
-import { getDb } from "./db";
-import { storagePut } from "./storage";
+import { runUnifiedPipelineWithTinyLlama, PipelineOutput } from "./unifiedNetworkPipelineWithTinyLlama";
 
 /**
- * تنفيذ Pipeline كامل مع حفظ النتائج
+ * تنفيذ Pipeline كامل مع TinyLlama
  */
-export async function executePipelineWithStorage(
+export async function executePipelineWithTinyLlama(
   userId: string,
   question: string,
-  language: string = "ar"
+  language: "ar" | "en" = "ar"
 ): Promise<{
-  context: UnifiedPipelineContext;
-  responseId: string;
+  output: PipelineOutput;
   success: boolean;
+  error?: string;
 }> {
   try {
-    // تنفيذ Pipeline الموحد المحسّن
-    const context = await executeUnifiedNetworkPipelineOptimized(userId, question, language);
+    console.log(`[Pipeline Integration] Processing question for user ${userId}`);
+    
+    const output = await runUnifiedPipelineWithTinyLlama({
+      question,
+      language,
+      userId,
+      conversationId: `conv-${Date.now()}`
+    });
 
-    // حفظ النتائج في قاعدة البيانات
-    if (context.status === "completed") {
-      // حفظ المحادثة
-      const conversationRecord = {
-        userId,
-        question,
-        response: context.languageEnforced.finalResponse,
-        language,
-        confidence: context.confidence.overall,
-        qualityScore: context.qualityAssessment.score,
-        processingTime: context.analytics.processingTime,
-        timestamp: new Date()
-      };
-
-      // حفظ في قاعدة البيانات (إذا كانت موجودة)
-      // const result = await db.userConversations.create(conversationRecord);
-
-      return {
-        context,
-        responseId: context.requestId,
-        success: true
-      };
-    } else {
-      return {
-        context,
-        responseId: context.requestId,
-        success: false
-      };
-    }
+    return {
+      output,
+      success: true
+    };
   } catch (error) {
-    console.error("Pipeline execution error:", error);
-    throw error;
+    console.error("[Pipeline Integration] Error:", error);
+    return {
+      output: {} as PipelineOutput,
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
   }
 }
 
 /**
- * تحويل Pipeline Context إلى صيغة API Response
+ * تحويل Pipeline Output إلى صيغة API Response
  */
-export function formatPipelineResponse(context: UnifiedPipelineContext): {
+export function formatPipelineResponse(output: PipelineOutput): {
   response: string;
   confidence: {
     level: string;
     percentage: number;
-    factors: {
-      dataQuality: number;
-      modelCertainty: number;
-      sourceReliability: number;
-      contextClarity: number;
-    };
   };
-  quality: {
-    score: number;
-    metrics: {
-      relevance: number;
-      accuracy: number;
-      completeness: number;
-      clarity: number;
-    };
+  emotionalIntelligence: {
+    dominant: string;
+    secondary: string[];
+    intensity: number;
   };
-  emotionalIntelligence?: {
-    detectedEmotions: Record<string, number>;
-    dominantEmotion: string;
-    emotionalContext: string;
-  };
+  followUpQuestions: string[];
   metadata: {
     processingTime: number;
-    language: string;
-    clarificationNeeded: boolean;
+    model: string;
     cached: boolean;
   };
 } {
+  // تحديد مستوى الثقة
+  let confidenceLevel = "low";
+  if (output.confidence >= 80) confidenceLevel = "high";
+  else if (output.confidence >= 60) confidenceLevel = "medium";
+
   return {
-    response: context.languageEnforced.finalResponse,
+    response: output.response,
     confidence: {
-      level: context.confidence.level,
-      percentage: context.confidence.overall,
-      factors: {
-        dataQuality: context.confidence.factors.dataQuality,
-        modelCertainty: context.confidence.factors.modelCertainty,
-        sourceReliability: context.confidence.factors.sourceReliability,
-        contextClarity: context.confidence.factors.contextClarity
-      }
+      level: confidenceLevel,
+      percentage: output.confidence
     },
-    quality: {
-      score: context.qualityAssessment.score,
-      metrics: context.qualityAssessment.metrics
-    },
-    emotionalIntelligence: {
-      detectedEmotions: context.analysisEngines.emotionAnalysis?.emotions || {},
-      dominantEmotion: context.analysisEngines.emotionAnalysis?.dominantEmotion || 'neutral',
-      emotionalContext: context.analysisEngines.emotionAnalysis?.context || ''
-    },
+    emotionalIntelligence: output.emotionalIntelligence,
+    followUpQuestions: output.followUpQuestions,
     metadata: {
-      processingTime: context.analytics.processingTime,
-      language: context.languageEnforced.language,
-      clarificationNeeded: context.clarification.needed,
-      cached: context.caching.cached
+      processingTime: output.processingTime,
+      model: "tinyllama:1.1b",
+      cached: output.cached
     }
   };
 }
@@ -129,17 +88,13 @@ export function formatPipelineResponse(context: UnifiedPipelineContext): {
 /**
  * معالج الأخطاء الموحد
  */
-export function handlePipelineError(
-  error: Error,
-  context?: Partial<UnifiedPipelineContext>
-): {
+export function handlePipelineError(error: Error): {
   error: string;
   code: string;
   details?: string;
 } {
-  console.error("Pipeline Error:", error);
+  console.error("[Pipeline Error]:", error);
 
-  // تحديد نوع الخطأ
   if (error.message.includes("timeout")) {
     return {
       error: "Request timeout - analysis took too long",
@@ -152,10 +107,10 @@ export function handlePipelineError(
       code: "NETWORK_ERROR",
       details: error.message
     };
-  } else if (error.message.includes("not found")) {
+  } else if (error.message.includes("model")) {
     return {
-      error: "Resource not found",
-      code: "NOT_FOUND",
+      error: "Model error - TinyLlama is not available",
+      code: "MODEL_ERROR",
       details: error.message
     };
   } else {

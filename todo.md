@@ -4186,3 +4186,24 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Verified Frontend displays responses properly
 - [x] Confidence Score displays correctly (79%)
 - [x] Follow-up buttons working (ما التوصية؟، ما المخاطر؟، التوقعات، ماذا لو؟)
+
+
+## Phase 152: Implement Free LLM (OpenRouter)
+- [ ] Add OpenRouter API key to environment
+- [ ] Create OpenRouter integration module
+- [ ] Replace Groq with OpenRouter in Pipeline
+- [ ] Implement dynamic response generation
+- [ ] Test with multiple questions
+- [ ] Verify responses are unique per question
+- [ ] Ensure Arabic language support
+
+
+## Phase 152: Train Custom GPT-OSS Swallow 20B Model (NEW)
+- [ ] Download GPT-OSS Swallow 20B from Hugging Face
+- [ ] Install and configure Ollama for the new model
+- [ ] Prepare training data for collective emotions
+- [ ] Fine-tune the model on emotion analysis data
+- [ ] Integrate custom model with AmalSense
+- [ ] Test comprehensive system with custom model
+- [ ] Verify Arabic language support
+- [ ] Benchmark performance vs default models
