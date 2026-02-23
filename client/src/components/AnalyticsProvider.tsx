@@ -46,7 +46,7 @@ export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
     trackUserBehavior({
       type: "page_view",
       page: location,
-      userId: user?.id,
+      userId: user?.id ? String(user.id) : undefined,
     });
   }, [location, user?.id]);
 

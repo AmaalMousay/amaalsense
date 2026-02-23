@@ -89,7 +89,7 @@ export function DCFTTrendChart({
                 label={{ value: 'Score (0-100)', angle: -90, position: 'insideLeft' }}
               />
               <Tooltip 
-                formatter={(value) => value.toFixed(2)}
+                formatter={(value) => typeof value === 'number' ? value.toFixed(2) : String(value)}
                 labelFormatter={(label) => `الوقت: ${label}`}
               />
               <Legend 

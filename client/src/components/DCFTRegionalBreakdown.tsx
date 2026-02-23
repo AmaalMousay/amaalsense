@@ -78,7 +78,7 @@ export function DCFTRegionalBreakdown({
                   domain={[0, 100]} 
                   tick={{ fontSize: 12 }}
                 />
-                <Tooltip formatter={(value) => value.toFixed(2)} />
+                <Tooltip formatter={(value) => typeof value === 'number' ? value.toFixed(2) : String(value)} />
                 <Bar dataKey="gmi" fill="#3B82F6" name="GMI" />
               </BarChart>
             </ResponsiveContainer>
