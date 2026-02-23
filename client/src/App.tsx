@@ -55,6 +55,7 @@ import SystemHealth from "./pages/SystemHealth";
 import EmotionalWeather from "./pages/EmotionalWeather";
 import NotificationsPage from "./pages/NotificationsPage";
 import { DCFTPage } from "./pages/DCFTPage";
+import { EventVectorPage } from "./pages/EventVectorPage";
 
 function Router() {
   // Routes will be added here
@@ -90,6 +91,7 @@ function Router() {
       <Route path={"/admin/dashboard"} component={AdminDashboard} />
       <Route path={"/notifications"} component={NotificationsPage} />
       <Route path={"/dcft"} component={DCFTPage} />
+      <Route path={"/event-vectors"} component={EventVectorPage} />
       <Route path={"/notification-settings"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/terms"} component={Terms} />
