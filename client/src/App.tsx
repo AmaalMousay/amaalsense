@@ -52,6 +52,7 @@ import Weather from "./pages/Weather";
 import Indices from "./pages/Indices";
 import SystemHealth from "./pages/SystemHealth";
 import EmotionalWeather from "./pages/EmotionalWeather";
+import NotificationsPage from "./pages/NotificationsPage";
 
 function Router() {
   // Routes will be added here
@@ -85,7 +86,8 @@ function Router() {
       {/* User Pages */}
       <Route path={"/admin"} component={Admin} />
       <Route path={"/admin/dashboard"} component={AdminDashboard} />
-      <Route path={"/notifications"} component={NotificationSettings} />
+      <Route path={"/notifications"} component={NotificationsPage} />
+      <Route path={"/notification-settings"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/terms"} component={Terms} />
       <Route path={"/privacy"} component={Privacy} />

@@ -11,7 +11,7 @@
  */
 
 import React, { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +24,6 @@ import {
   Trash2,
   LogOut,
   ChevronRight,
-  Toggle,
   Mail,
   Smartphone,
   Eye,
@@ -420,7 +419,7 @@ function PrivacySecuritySettings() {
               </div>
 
               <button className="p-2 hover:bg-slate-700/50 rounded transition">
-                <Toggle className="h-5 w-5 text-muted-foreground" />
+                <div className="h-5 w-5 bg-slate-600 rounded-full" />
               </button>
             </div>
           ))}

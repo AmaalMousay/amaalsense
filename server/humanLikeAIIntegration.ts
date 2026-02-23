@@ -662,7 +662,7 @@ export async function applyAllHumanLikeAIFeatures(
           100,
           Math.round(
             (confidence +
-              emotionalResult.responseAdaptation.includeSupport ? 10 : 0 +
+              (emotionalResult.responseAdaptation.includeSupport ? 10 : 0) +
               (suggestionsResult.followUpQuestions.length > 0 ? 5 : 0)) /
               1.15
           )

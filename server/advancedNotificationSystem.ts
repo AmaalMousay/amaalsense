@@ -22,8 +22,8 @@ export interface NotificationTrigger {
 
 export interface NotificationEvent {
   id: string;
-  userId: string;
-  type: "indicator_change" | "trend_alert" | "anomaly_detected" | "milestone_reached";
+  userId?: string;
+  type: "indicator_change" | "trend_alert" | "anomaly_detected" | "milestone_reached" | "emotion_shift" | "trending_topic";
   title: string;
   message: string;
   severity: "low" | "medium" | "high" | "critical";
@@ -178,7 +178,7 @@ export class NotificationManager {
    */
   async sendNotification(
     userId: string,
-    event: Omit<NotificationEvent, "id" | "timestamp" | "read">
+    event: Omit<NotificationEvent, "id" | "timestamp" | "read" | "userId">
   ): Promise<NotificationEvent> {
     const preferences = this.userPreferences.get(userId);
     if (!preferences) {
@@ -444,7 +444,7 @@ export async function triggerHighImpact(
 ): Promise<void> {
   if (impactScore > 0.85) {
     await manager.sendNotification(userId, {
-      type: "indicator_change",
+      type: "milestone_reached",
       title: "حدث ذو تأثير عالي جداً",
       message: `اكتشفنا حدثاً عن "${topic}" بدرجة تأثير ${(impactScore * 100).toFixed(0)}%`,
       severity: "critical",
@@ -465,7 +465,7 @@ export async function triggerTrendingTopic(
 ): Promise<void> {
   if (trendScore > 0.8) {
     await manager.sendNotification(userId, {
-      type: "trending_topic",
+      type: "trend_alert",
       title: "موضوع جديد متجه للانتشار",
       message: `موضوع "${topic}" يتجه للانتشار في ${regions.join(", ")} بدرجة ${(trendScore * 100).toFixed(0)}%`,
       severity: trendScore > 0.9 ? "high" : "medium",
