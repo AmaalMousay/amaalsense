@@ -229,7 +229,7 @@ function FeatureCard({ icon, title, description, color }: FeatureCardProps) {
 // ============================================================================
 
 export default function HomePage() {
-  const { user, isLoading } = useAuth();
+  const { user, isFetching } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -254,7 +254,7 @@ export default function HomePage() {
     // router.push(`/search?q=${encodeURIComponent(query)}`);
   };
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center space-y-4">

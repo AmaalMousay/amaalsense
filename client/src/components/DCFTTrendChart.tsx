@@ -139,7 +139,7 @@ export function DCFTTrendChart({
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">الحالي:</span>
-                <span className="font-semibold">{stats.gmi.current.toFixed(1)}</span>
+                <span className="font-semibold">{Number(stats.gmi.current).toFixed(1)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">المتوسط:</span>
