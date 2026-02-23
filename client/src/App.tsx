@@ -47,6 +47,7 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import Chat from "./pages/Chat";
 import Weather from "./pages/Weather";
 import Indices from "./pages/Indices";
@@ -133,23 +134,25 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <ThemeProvider
-          defaultTheme="dark"
-          switchable
-        >
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-            {showTour && (
-              <OnboardingTour
-                onComplete={() => setShowTour(false)}
-                language="en"
-              />
-            )}
-          </TooltipProvider>
-        </ThemeProvider>
-      </LanguageProvider>
+      <AnalyticsProvider>
+        <LanguageProvider>
+          <ThemeProvider
+            defaultTheme="dark"
+            switchable
+          >
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+              {showTour && (
+                <OnboardingTour
+                  onComplete={() => setShowTour(false)}
+                  language="en"
+                />
+              )}
+            </TooltipProvider>
+          </ThemeProvider>
+        </LanguageProvider>
+      </AnalyticsProvider>
     </ErrorBoundary>
   );
 }
