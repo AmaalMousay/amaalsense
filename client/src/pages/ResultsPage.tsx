@@ -348,8 +348,7 @@ export default function ResultsPage() {
     answer:
       "المؤشرات العالمية تظهر حالة من التفاؤل المتزايد مع بعض المخاوف الإقليمية. الشرق الأوسط يشهد ارتفاعاً في المشاعر الإيجابية بنسبة 12%، بينما تظهر أوروبا علامات قلق متزايدة.",
     humanLikeAI: {
-      contextualUnderstanding: {
-        context: {
+      context: {
           immediateContext: ["سؤال سابق 1", "سؤال سابق 2"],
           expandedContext: ["سياق موسع 1", "سياق موسع 2"],
           personalContext: {
@@ -363,9 +362,8 @@ export default function ResultsPage() {
             culturalNorms: ["احترام", "تعاون"],
           },
         },
-        contextualInsights:
-          "المستخدم مهتم بالتحليلات الإقليمية والمؤشرات العالمية",
-      },
+      contextualInsights:
+        "المستخدم مهتم بالتحليلات الإقليمية والمؤشرات العالمية",
       emotionalAdaptation: {
         detectedEmotion: {
           primary: "curious",
@@ -412,10 +410,10 @@ export default function ResultsPage() {
       },
       uncertainty: {
         confidence: 82,
-        acknowledgment: "",
-        alternatives: [],
-        missingInformation: [],
-        recommendedActions: [],
+        acknowledgment: "البيانات المعروضة تستند إلى عينات قد تختلف عن المجتمع الكامل",
+        alternatives: ["تحليل بديل باستخدام مصادر أخرى"],
+        missingInformation: ["بيانات من مناطق جغرافية محددة"],
+        recommendedActions: ["التحقق من المصادر الأولية"],
       },
       ethicalAssessment: {
         isSensitive: false,
