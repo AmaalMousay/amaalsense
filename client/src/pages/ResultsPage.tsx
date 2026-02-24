@@ -18,6 +18,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ComprehensiveHumanLikeAIDisplay,
 } from "@/components/HumanLikeAIDisplay";
+import { EmotionalToneAdapter } from "@/components/EmotionalToneAdapter";
+import { SuggestionCards } from "@/components/SuggestionCards";
+import { ConfidenceIndicator } from "@/components/ConfidenceIndicator";
 import {
   TrendingUp,
   Heart,
@@ -343,6 +346,9 @@ function InsightsSection() {
 
 export default function ResultsPage() {
   const [isSaved, setIsSaved] = useState(false);
+  const [showEmotionalAdapter, setShowEmotionalAdapter] = useState(true);
+  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showConfidence, setShowConfidence] = useState(true);
 
   const mockResponse = {
     answer:
@@ -546,8 +552,74 @@ export default function ResultsPage() {
             </Card>
 
             {/* Human-like AI Features */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold">ميزات الذكاء الإنساني</h2>
+              
+              {/* Emotional Tone Adapter */}
+              {showEmotionalAdapter && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">تكييف النبرة العاطفية</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowEmotionalAdapter(!showEmotionalAdapter)}
+                    >
+                      إخفاء
+                    </Button>
+                  </div>
+                  <EmotionalToneAdapter
+                    emotion={mockResponse.humanLikeAI.emotionalAdaptation.detectedEmotion}
+                    responseText={mockResponse.answer}
+                  />
+                </div>
+              )}
+              
+              {/* Confidence Indicator */}
+              {showConfidence && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">مؤشر الثقة والموثوقية</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowConfidence(!showConfidence)}
+                    >
+                      إخفاء
+                    </Button>
+                  </div>
+                  <ConfidenceIndicator
+                    confidence={mockResponse.humanLikeAI.uncertainty.confidence}
+                    alternatives={mockResponse.humanLikeAI.uncertainty.alternatives}
+                    needsMoreInfo={mockResponse.humanLikeAI.uncertainty.missingInformation}
+                    disclaimers={mockResponse.humanLikeAI.ethicalAssessment.balancedPerspectives}
+                  />
+                </div>
+              )}
+              
+              {/* Suggestion Cards */}
+              {showSuggestions && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">الاقتراحات والمتابعة</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowSuggestions(!showSuggestions)}
+                    >
+                      إخفاء
+                    </Button>
+                  </div>
+                  <SuggestionCards
+                    followUpQuestions={mockResponse.humanLikeAI.suggestions.followUpQuestions}
+                    relatedTopics={mockResponse.humanLikeAI.suggestions.relatedTopics}
+                    importantWarnings={mockResponse.humanLikeAI.suggestions.importantWarnings}
+                    onSuggestionClick={(suggestion) => console.log("Suggestion clicked:", suggestion)}
+                  />
+                </div>
+              )}
+              
+              {/* Main Human-like AI Display */}
               <ComprehensiveHumanLikeAIDisplay
                 response={mockResponse.humanLikeAI}
                 onQuestionClick={(q) => console.log("New question:", q)}
