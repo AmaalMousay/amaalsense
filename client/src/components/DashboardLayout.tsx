@@ -35,6 +35,7 @@ const menuItems = [
   { icon: Heart, label: "Emotion Analysis", path: "/emotion-analysis" },
   { icon: Globe, label: "Region Analysis", path: "/region-analysis" },
   { icon: Activity, label: "Impact Analysis", path: "/impact-analysis" },
+  { icon: Zap, label: "Fusion Analysis", path: "/fusion-analysis" },
   { icon: Users, label: "Settings", path: "/settings" },
 ];
 
