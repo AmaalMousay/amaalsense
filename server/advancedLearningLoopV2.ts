@@ -98,7 +98,7 @@ export class SmartStorage {
     const cutoffTime = Date.now() - daysOld * 24 * 60 * 60 * 1000;
     let deletedCount = 0;
 
-    for (const [id, interaction] of this.interactions.entries()) {
+    for (const [id, interaction] of Array.from(this.interactions.entries())) {
       if (interaction.timestamp < cutoffTime) {
         this.interactions.delete(id);
         deletedCount++;

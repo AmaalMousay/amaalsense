@@ -58,6 +58,7 @@ import { DCFTPage } from "./pages/DCFTPage";
 import { EventVectorPage } from "./pages/EventVectorPage";
 import { TopicAnalysisPage } from "./pages/TopicAnalysisPage";
 import EmotionAnalysisPage from "./pages/EmotionAnalysisPage";
+import RegionAnalysisPage from "./pages/RegionAnalysisPage";
 
 function Router() {
   // Routes will be added here
@@ -96,6 +97,7 @@ function Router() {
       <Route path={"/event-vectors"} component={EventVectorPage} />
       <Route path={"/topic-analysis"} component={TopicAnalysisPage} />
       <Route path={"/emotion-analysis"} component={EmotionAnalysisPage} />
+      <Route path={"/region-analysis"} component={RegionAnalysisPage} />
       <Route path={"/notification-settings"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/terms"} component={Terms} />
