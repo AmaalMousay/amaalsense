@@ -21,6 +21,11 @@ import {
 import { EmotionalToneAdapter } from "@/components/EmotionalToneAdapter";
 import { SuggestionCards } from "@/components/SuggestionCards";
 import { ConfidenceIndicator } from "@/components/ConfidenceIndicator";
+import { DCFTAnalysisChart } from "@/components/DCFTAnalysisChart";
+import { EmotionDistributionChart } from "@/components/EmotionDistributionChart";
+import { TopicCloud } from "@/components/TopicCloud";
+import { ImpactPredictionTimeline } from "@/components/ImpactPredictionTimeline";
+import { RelatedEventsPanel } from "@/components/RelatedEventsPanel";
 import {
   TrendingUp,
   Heart,
@@ -344,12 +349,49 @@ function InsightsSection() {
 // MAIN RESULTS PAGE
 // ============================================================================
 
-export default function ResultsPage() {
+interface ResultsPageProps {
+  data?: {
+    response: string;
+    confidence: {
+      level: string;
+      percentage: number;
+      alternatives?: string[];
+      missingInformation?: string[];
+    };
+    emotionalIntelligence: {
+      detectedEmotions: Record<string, number>;
+      dominantEmotion: string;
+      adaptedTone: string;
+      emotionIntensity: number;
+    };
+    humanLikeAI: {
+      contextualUnderstanding: string;
+      proactiveSuggestions: {
+        followUpQuestions: Array<{
+          question: string;
+          relevance: number;
+          expectedValue: string;
+        }>;
+        relatedTopics: string[];
+        importantWarnings: string[];
+      };
+      uncertaintyAcknowledgment: {
+        confidence: number;
+        alternatives: string[];
+        needsMoreInfo: string[];
+        disclaimers: string[];
+      };
+    };
+  };
+}
+
+export default function ResultsPage({ data }: ResultsPageProps) {
   const [isSaved, setIsSaved] = useState(false);
   const [showEmotionalAdapter, setShowEmotionalAdapter] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [showConfidence, setShowConfidence] = useState(true);
 
+  // Use real data if available, otherwise fallback to mock
   const mockResponse = {
     answer:
       "المؤشرات العالمية تظهر حالة من التفاؤل المتزايد مع بعض المخاوف الإقليمية. الشرق الأوسط يشهد ارتفاعاً في المشاعر الإيجابية بنسبة 12%، بينما تظهر أوروبا علامات قلق متزايدة.",
@@ -569,8 +611,11 @@ export default function ResultsPage() {
                     </Button>
                   </div>
                   <EmotionalToneAdapter
-                    emotion={mockResponse.humanLikeAI.emotionalAdaptation.detectedEmotion}
-                    responseText={mockResponse.answer}
+                    emotion={{
+                      primary: data?.emotionalIntelligence.dominantEmotion || mockResponse.humanLikeAI.emotionalAdaptation.detectedEmotion.primary,
+                      intensity: data?.emotionalIntelligence.emotionIntensity ? data.emotionalIntelligence.emotionIntensity * 100 : mockResponse.humanLikeAI.emotionalAdaptation.detectedEmotion.intensity
+                    }}
+                    responseText={data?.response || mockResponse.answer}
                   />
                 </div>
               )}
@@ -589,10 +634,10 @@ export default function ResultsPage() {
                     </Button>
                   </div>
                   <ConfidenceIndicator
-                    confidence={mockResponse.humanLikeAI.uncertainty.confidence}
-                    alternatives={mockResponse.humanLikeAI.uncertainty.alternatives}
-                    needsMoreInfo={mockResponse.humanLikeAI.uncertainty.missingInformation}
-                    disclaimers={mockResponse.humanLikeAI.ethicalAssessment.balancedPerspectives}
+                    confidence={data?.humanLikeAI.uncertaintyAcknowledgment.confidence || mockResponse.humanLikeAI.uncertainty.confidence}
+                    alternatives={data?.humanLikeAI.uncertaintyAcknowledgment.alternatives || mockResponse.humanLikeAI.uncertainty.alternatives}
+                    needsMoreInfo={data?.humanLikeAI.uncertaintyAcknowledgment.needsMoreInfo || mockResponse.humanLikeAI.uncertainty.missingInformation}
+                    disclaimers={data?.humanLikeAI.uncertaintyAcknowledgment.disclaimers || mockResponse.humanLikeAI.ethicalAssessment.balancedPerspectives}
                   />
                 </div>
               )}
@@ -611,9 +656,9 @@ export default function ResultsPage() {
                     </Button>
                   </div>
                   <SuggestionCards
-                    followUpQuestions={mockResponse.humanLikeAI.suggestions.followUpQuestions}
-                    relatedTopics={mockResponse.humanLikeAI.suggestions.relatedTopics}
-                    importantWarnings={mockResponse.humanLikeAI.suggestions.importantWarnings}
+                    followUpQuestions={data?.humanLikeAI.proactiveSuggestions.followUpQuestions || mockResponse.humanLikeAI.suggestions.followUpQuestions}
+                    relatedTopics={data?.humanLikeAI.proactiveSuggestions.relatedTopics || mockResponse.humanLikeAI.suggestions.relatedTopics}
+                    importantWarnings={data?.humanLikeAI.proactiveSuggestions.importantWarnings || mockResponse.humanLikeAI.suggestions.importantWarnings}
                     onSuggestionClick={(suggestion) => console.log("Suggestion clicked:", suggestion)}
                   />
                 </div>
@@ -638,7 +683,35 @@ export default function ResultsPage() {
           </TabsContent>
 
           {/* Insights Tab */}
-          <TabsContent value="insights">
+          <TabsContent value="insights" className="space-y-6">
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* DCFT Analysis */}
+              <DCFTAnalysisChart 
+                currentScore={data?.confidence.percentage || 65}
+                trend="up"
+              />
+              
+              {/* Emotion Distribution */}
+              <EmotionDistributionChart 
+                emotions={data?.emotionalIntelligence.detectedEmotions}
+                dominantEmotion={data?.emotionalIntelligence.dominantEmotion}
+              />
+            </div>
+
+            {/* Topic Cloud */}
+            <TopicCloud 
+              onTopicClick={(topic) => console.log('Topic clicked:', topic)}
+            />
+
+            {/* Impact Prediction Timeline */}
+            <ImpactPredictionTimeline />
+
+            {/* Related Events */}
+            <RelatedEventsPanel 
+              onEventClick={(eventId) => console.log('Event clicked:', eventId)}
+            />
+
+            {/* Original Insights Section */}
             <InsightsSection />
           </TabsContent>
         </Tabs>

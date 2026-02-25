@@ -74,6 +74,8 @@ export function formatPipelineResponse(context: UnifiedPipelineContext): {
       sourceReliability: number;
       contextClarity: number;
     };
+    alternatives?: string[];
+    missingInformation?: string[];
   };
   quality: {
     score: number;
@@ -84,10 +86,30 @@ export function formatPipelineResponse(context: UnifiedPipelineContext): {
       clarity: number;
     };
   };
-  emotionalIntelligence?: {
+  emotionalIntelligence: {
     detectedEmotions: Record<string, number>;
     dominantEmotion: string;
     emotionalContext: string;
+    adaptedTone: string;
+    emotionIntensity: number;
+  };
+  humanLikeAI: {
+    contextualUnderstanding: string;
+    proactiveSuggestions: {
+      followUpQuestions: Array<{
+        question: string;
+        relevance: number;
+        expectedValue: string;
+      }>;
+      relatedTopics: string[];
+      importantWarnings: string[];
+    };
+    uncertaintyAcknowledgment: {
+      confidence: number;
+      alternatives: string[];
+      needsMoreInfo: string[];
+      disclaimers: string[];
+    };
   };
   metadata: {
     processingTime: number;
@@ -96,6 +118,42 @@ export function formatPipelineResponse(context: UnifiedPipelineContext): {
     cached: boolean;
   };
 } {
+  // Parse proactive suggestions if they're in string format
+  let parsedSuggestions: any[] = [];
+  try {
+    if (typeof context.humanIntelligence.proactiveSuggestions === 'string') {
+      parsedSuggestions = JSON.parse(context.humanIntelligence.proactiveSuggestions as any);
+    } else if (Array.isArray(context.humanIntelligence.proactiveSuggestions)) {
+      parsedSuggestions = context.humanIntelligence.proactiveSuggestions;
+    }
+  } catch (e) {
+    parsedSuggestions = [];
+  }
+
+  // Extract follow-up questions, related topics, and warnings from suggestions
+  const followUpQuestions = parsedSuggestions
+    .filter((s: any) => s.type === 'question')
+    .map((s: any) => ({
+      question: s.text || s.question || '',
+      relevance: s.relevance || 0.7,
+      expectedValue: s.expectedValue || 'معلومات إضافية'
+    }));
+
+  const relatedTopics = parsedSuggestions
+    .filter((s: any) => s.type === 'topic')
+    .map((s: any) => s.text || s.topic || '');
+
+  const importantWarnings = parsedSuggestions
+    .filter((s: any) => s.type === 'warning')
+    .map((s: any) => s.text || s.warning || '');
+
+  // Calculate emotion intensity
+  const emotions = context.analysisEngines.emotionAnalysis?.emotions || {};
+  const emotionValues = Object.values(emotions) as number[];
+  const emotionIntensity = emotionValues.length > 0
+    ? Math.max(...emotionValues)
+    : 0;
+
   return {
     response: context.languageEnforced.finalResponse,
     confidence: {
@@ -106,16 +164,37 @@ export function formatPipelineResponse(context: UnifiedPipelineContext): {
         modelCertainty: context.confidence.factors.modelCertainty,
         sourceReliability: context.confidence.factors.sourceReliability,
         contextClarity: context.confidence.factors.contextClarity
-      }
+      },
+      alternatives: context.confidence.alternatives || [],
+      missingInformation: context.confidence.missingInformation || []
     },
     quality: {
       score: context.qualityAssessment.score,
       metrics: context.qualityAssessment.metrics
     },
     emotionalIntelligence: {
-      detectedEmotions: context.analysisEngines.emotionAnalysis?.emotions || {},
+      detectedEmotions: emotions,
       dominantEmotion: context.analysisEngines.emotionAnalysis?.dominantEmotion || 'neutral',
-      emotionalContext: context.analysisEngines.emotionAnalysis?.context || ''
+      emotionalContext: context.analysisEngines.emotionAnalysis?.context || '',
+      adaptedTone: context.humanIntelligence.emotionalIntelligence.adaptedTone || 'professional',
+      emotionIntensity
+    },
+    humanLikeAI: {
+      contextualUnderstanding: context.humanIntelligence.contextualUnderstanding || '',
+      proactiveSuggestions: {
+        followUpQuestions,
+        relatedTopics,
+        importantWarnings
+      },
+      uncertaintyAcknowledgment: {
+        confidence: context.confidence.overall,
+        alternatives: context.confidence.alternatives || [],
+        needsMoreInfo: context.confidence.missingInformation || [],
+        disclaimers: [
+          'هذا التحليل مبني على البيانات المتاحة حالياً',
+          'قد تتغير النتائج مع توفر معلومات جديدة'
+        ]
+      }
     },
     metadata: {
       processingTime: context.analytics.processingTime,
