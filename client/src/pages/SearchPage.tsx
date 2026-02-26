@@ -15,6 +15,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { AdvancedFilters } from "@/components/AdvancedFilters";
+import { SearchSuggestions as SearchSuggestionsComponent } from "@/components/SearchSuggestions";
+import { SearchHistory } from "@/components/SearchHistory";
+import { TrendChart } from "@/components/TrendChart";
+import { ComparisonChart } from "@/components/ComparisonChart";
 import {
   Select,
   SelectContent,
@@ -332,7 +337,7 @@ interface SearchSuggestionsProps {
   onSuggestionClick: (suggestion: string) => void;
 }
 
-function SearchSuggestions({ onSuggestionClick }: SearchSuggestionsProps) {
+function SearchSuggestionsOld({ onSuggestionClick }: SearchSuggestionsProps) {
   return (
     <div className="space-y-4">
       <h3 className="font-semibold text-sm">الاقتراحات الشهيرة</h3>
