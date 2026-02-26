@@ -21,6 +21,9 @@ import {
 import { EmotionalToneAdapter } from "@/components/EmotionalToneAdapter";
 import { SuggestionCards } from "@/components/SuggestionCards";
 import { ConfidenceIndicator } from "@/components/ConfidenceIndicator";
+import { ContextualInsightsPanel } from "@/components/ContextualInsightsPanel";
+import { EthicalAssessmentPanel } from "@/components/EthicalAssessmentPanel";
+import { PersonalityProfileCard } from "@/components/PersonalityProfileCard";
 import { DCFTAnalysisChart } from "@/components/DCFTAnalysisChart";
 import { EmotionDistributionChart } from "@/components/EmotionDistributionChart";
 import { TopicCloud } from "@/components/TopicCloud";
@@ -663,6 +666,31 @@ export default function ResultsPage({ data }: ResultsPageProps) {
                   />
                 </div>
               )}
+              
+              {/* Contextual Insights Panel */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">فهم السياق الشامل</h3>
+                <ContextualInsightsPanel
+                  context={mockResponse.humanLikeAI.contextualUnderstanding}
+                  contextualUnderstanding={mockResponse.humanLikeAI.contextualInsights}
+                />
+              </div>
+
+              {/* Ethical Assessment Panel */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">التقييم الأخلاقي</h3>
+                <EthicalAssessmentPanel
+                  assessment={mockResponse.humanLikeAI.ethicalAssessment}
+                />
+              </div>
+
+              {/* Personality Profile Card */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">ملف الشخصية</h3>
+                <PersonalityProfileCard
+                  personality={mockResponse.humanLikeAI.personalityConsistency}
+                />
+              </div>
               
               {/* Main Human-like AI Display */}
               <ComprehensiveHumanLikeAIDisplay
