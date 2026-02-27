@@ -19,6 +19,8 @@ import { EmotionalIntelligenceCard } from '@/components/EmotionalIntelligenceCar
 import { QuestionClarificationDialog } from '@/components/QuestionClarificationDialog';
 import { ContextualUnderstandingCard } from '@/components/ContextualUnderstandingCard';
 import { Streamdown } from 'streamdown';
+import ResultsPage from './ResultsPage';
+import { useState } from 'react';
 
 // Types for conversation
 interface ConversationMessage {
@@ -64,6 +66,7 @@ export default function SmartAnalysis() {
   // Chat expansion state
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [chatHeight, setChatHeight] = useState(50); // percentage
+  const [showResultsPage, setShowResultsPage] = useState(false);
   
   // Question Clarification Dialog state
   const [showClarificationDialog, setShowClarificationDialog] = useState(false);
@@ -140,6 +143,7 @@ export default function SmartAnalysis() {
       }]);
       
       setAnalysisComplete(true);
+      setShowResultsPage(true); // Show comprehensive results page
       
       // Save conversation to database
       try {
