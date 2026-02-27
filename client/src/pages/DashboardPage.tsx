@@ -16,6 +16,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dashboard } from "@/components/Dashboard";
+import { TrendChart } from "@/components/TrendChart";
+import { ComparisonChart } from "@/components/ComparisonChart";
+import { RefreshCw, Download } from "lucide-react";
 import {
   LineChart,
   Line,
