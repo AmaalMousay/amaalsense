@@ -4285,3 +4285,37 @@ All systems are properly connected, tested, and ready for production use.
 - [ ] Final bug fixes
 - [ ] Documentation updates
 - [ ] Deployment preparation
+
+
+## Phase 160: Connect Map System to Real Data (CURRENT)
+- [ ] Create API endpoint for emotion map data (EmotionGoogleMap)
+- [ ] Create API endpoint for regional heatmap data (RegionalHeatMap)
+- [ ] Create API endpoint for world map data (WorldMap)
+- [ ] Update EmotionGoogleMap component to use real data from API
+- [ ] Update RegionalHeatMap component to use real data from API
+- [ ] Update WorldMap component to use real data from API
+- [ ] Update Map component to integrate all three map types
+- [ ] Test map rendering with real geographic data
+- [ ] Verify emotion visualization on maps
+
+## Phase 161: Connect Advanced Analysis System to Real Data
+- [ ] Create API endpoint for topic analysis data (TopicAnalysisDisplay)
+- [ ] Create API endpoint for DCFT visualization data (DCFTVisualization)
+- [ ] Create API endpoint for event vector data (EventVectorDisplay)
+- [ ] Update TopicAnalysisDisplay component to use real data
+- [ ] Update DCFTVisualization component to use real data
+- [ ] Update EventVectorDisplay component to use real data
+- [ ] Implement dynamic calculation formulas for indicators
+- [ ] Test advanced analysis rendering with real data
+- [ ] Verify all visualizations display correctly
+
+## Phase 162: Connect Response and Explainability System to Real Data
+- [ ] Create API endpoint for response explainability data (ResponseExplainability)
+- [ ] Create API endpoint for response feedback data (ResponseFeedback)
+- [ ] Create API endpoint for structured response data (StructuredResponseUI)
+- [ ] Update ResponseExplainability component to use real data
+- [ ] Update ResponseFeedback component to use real data
+- [ ] Update StructuredResponseUI component to use real data
+- [ ] Implement feedback collection mechanism
+- [ ] Test response explanation rendering
+- [ ] Verify feedback submission and storage
