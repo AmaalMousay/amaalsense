@@ -53,11 +53,11 @@ export function RegionalHeatMapConnected({
   };
 
   const getIntensityColor = (intensity: number) => {
-    if (intensity >= 80) return '#000000'; // Black for very high
-    if (intensity >= 60) return '#333333'; // Dark gray
-    if (intensity >= 40) return '#666666'; // Medium gray
-    if (intensity >= 20) return '#999999'; // Light gray
-    return '#CCCCCC'; // Very light gray
+    if (intensity >= 80) return '#000000';
+    if (intensity >= 60) return '#333333';
+    if (intensity >= 40) return '#666666';
+    if (intensity >= 20) return '#999999';
+    return '#CCCCCC';
   };
 
   const getTrendIcon = (trend: string) => {
@@ -106,12 +106,10 @@ export function RegionalHeatMapConnected({
     );
   }
 
-  // Sort regions by intensity
   const sortedRegions = [...regions].sort((a, b) => b.intensity - a.intensity);
 
   return (
     <div className="w-full space-y-4">
-      {/* Heatmap Grid */}
       <Card className="w-full p-6 bg-white border border-gray-200">
         <div className="mb-4">
           <h3 className="text-lg font-bold text-gray-900 mb-2">الخريطة الحرارية الإقليمية</h3>
@@ -120,7 +118,6 @@ export function RegionalHeatMapConnected({
           </p>
         </div>
 
-        {/* Grid View */}
         <div className="grid grid-cols-4 gap-2 mb-6">
           {sortedRegions.map((region, index) => (
             <div
@@ -141,7 +138,6 @@ export function RegionalHeatMapConnected({
           ))}
         </div>
 
-        {/* Intensity Scale */}
         <div className="flex items-center justify-between text-xs mb-4 px-2">
           <span className="text-gray-600">منخفضة</span>
           <div className="flex gap-1">
@@ -158,7 +154,6 @@ export function RegionalHeatMapConnected({
         </div>
       </Card>
 
-      {/* Regions List */}
       <Card className="w-full p-6 bg-white border border-gray-200">
         <h4 className="text-lg font-bold text-gray-900 mb-4">تفاصيل المناطق</h4>
         
@@ -195,7 +190,6 @@ export function RegionalHeatMapConnected({
                 </div>
               </div>
 
-              {/* Emotion breakdown */}
               <div className="grid grid-cols-6 gap-1">
                 {Object.entries(region.emotionBreakdown).map(([emotion, value]) => (
                   <div key={emotion} className="flex flex-col items-center gap-1">
@@ -217,7 +211,6 @@ export function RegionalHeatMapConnected({
         </div>
       </Card>
 
-      {/* Selected Region Details */}
       {selectedRegion && (
         <Card className="w-full p-6 bg-white border border-gray-200">
           <h4 className="text-lg font-bold text-gray-900 mb-4">
@@ -246,7 +239,6 @@ export function RegionalHeatMapConnected({
             </div>
           </div>
 
-          {/* Emotion breakdown */}
           <div className="space-y-3">
             <h5 className="font-semibold text-gray-900">توزيع العواطف</h5>
             {Object.entries(selectedRegion.emotionBreakdown).map(([emotion, value]) => (
