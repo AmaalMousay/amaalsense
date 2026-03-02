@@ -196,7 +196,13 @@ export const regionalRouter = router({
     .query(async ({ input }) => {
       try {
         const now = Date.now();
-        const trends = [];
+        const trends: Array<{
+          date: Date;
+          gmi: number;
+          cfi: number;
+          hri: number;
+          stability: number;
+        }> = [];
 
         // Generate trend data
         for (let i = 7; i >= 0; i--) {
@@ -207,7 +213,7 @@ export const regionalRouter = router({
             cfi: 50 + Math.random() * 20 - 10,
             hri: 50 + Math.random() * 20 - 10,
             stability: 50 + Math.random() * 20 - 10,
-          });
+          } as any);
         }
 
         return {

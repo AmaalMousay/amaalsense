@@ -180,7 +180,7 @@ export async function streamLongReport(
     res.setHeader("Connection", "keep-alive");
 
     const report = JSON.stringify(data);
-    const chunks = [];
+    const chunks: string[] = [];
 
     // تقسيم التقرير إلى أجزاء
     for (let i = 0; i < report.length; i += chunkSize) {

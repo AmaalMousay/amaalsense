@@ -71,7 +71,11 @@ export const unifiedRouter = router({
     .mutation(async ({ input }) => {
       try {
         const userId = "anonymous";
-        const results = [];
+        const results: Array<{
+          question: string;
+          response: any;
+          error: any;
+        }> = [];
 
         for (const question of input.questions) {
           const result = await executePipelineWithStorage(
@@ -84,14 +88,14 @@ export const unifiedRouter = router({
             question,
             response: result.success ? formatPipelineResponse(result.context) : null,
             error: !result.success ? result.context.error : null
-          });
+          } as any);
         }
 
         return {
           success: true,
-          data: results,
+          data: results as any,
           total: results.length,
-          successful: results.filter(r => r.response).length
+          successful: results.filter((r: any) => r.response).length
         };
       } catch (error) {
         const errorResponse = handlePipelineError(error as Error);
