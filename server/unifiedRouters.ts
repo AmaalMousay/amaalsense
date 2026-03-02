@@ -171,7 +171,13 @@ export const unifiedRouter = router({
 
       const questions = testQuestions[input.testType];
       const startTime = Date.now();
-      const results = [];
+      const results: Array<{
+        question: string;
+        success: boolean;
+        processingTime?: number;
+        qualityScore?: number;
+        error?: string;
+      }> = [];
 
       for (const question of questions) {
         try {
@@ -181,13 +187,13 @@ export const unifiedRouter = router({
             success: result.success,
             processingTime: result.context.analytics.processingTime,
             qualityScore: result.context.qualityAssessment.score
-          });
+          } as any);
         } catch (error) {
           results.push({
             question,
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
-          });
+          } as any);
         }
       }
 
@@ -197,11 +203,17 @@ export const unifiedRouter = router({
         testType: input.testType,
         totalTime,
         averageTime: totalTime / questions.length,
-        results,
+        results: results as Array<{
+          question: string;
+          success: boolean;
+          processingTime?: number;
+          qualityScore?: number;
+          error?: string;
+        }>,
         summary: {
           total: results.length,
-          successful: results.filter(r => r.success).length,
-          failed: results.filter(r => !r.success).length
+          successful: results.filter((r: any) => r.success).length,
+          failed: results.filter((r: any) => !r.success).length
         }
       };
     })

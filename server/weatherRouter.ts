@@ -145,7 +145,15 @@ export const weatherRouter = router({
       });
 
       // Generate forecast for next 7 days
-      const forecast = [];
+      const forecast: Array<{
+        date: string;
+        hope: number;
+        fear: number;
+        stability: number;
+        condition: 'sunny' | 'cloudy' | 'rainy' | 'stormy' | 'calm' | 'turbulent';
+        riskLevel: 'low' | 'moderate' | 'high' | 'critical';
+        recommendation: string;
+      }> = [];
       const today = new Date();
 
       for (let i = 0; i < 7; i++) {
