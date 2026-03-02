@@ -248,7 +248,7 @@ export const weatherRouter = router({
         .orderBy(desc(emotionIndices.createdAt))
         .limit(1);
 
-      const alerts = [];
+      const alerts: Array<{ type: 'critical' | 'high' | 'moderate' | 'low'; title: string; message: string; timestamp: string }> = [];
 
       if (latest) {
         // Check for critical conditions

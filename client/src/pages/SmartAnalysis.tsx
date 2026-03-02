@@ -20,7 +20,6 @@ import { QuestionClarificationDialog } from '@/components/QuestionClarificationD
 import { ContextualUnderstandingCard } from '@/components/ContextualUnderstandingCard';
 import { Streamdown } from 'streamdown';
 import ResultsPage from './ResultsPage';
-import { useState } from 'react';
 
 // Types for conversation
 interface ConversationMessage {

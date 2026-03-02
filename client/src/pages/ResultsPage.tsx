@@ -29,6 +29,14 @@ import { EmotionDistributionChart } from "@/components/EmotionDistributionChart"
 import { TopicCloud } from "@/components/TopicCloud";
 import { ImpactPredictionTimeline } from "@/components/ImpactPredictionTimeline";
 import { RelatedEventsPanel } from "@/components/RelatedEventsPanel";
+import { EmotionGoogleMapConnected } from "@/components/EmotionGoogleMapConnected";
+import { RegionalHeatMapConnected } from "@/components/RegionalHeatMapConnected";
+import { WorldMapConnected } from "@/components/WorldMapConnected";
+import { TopicAnalysisDisplayConnected } from "@/components/TopicAnalysisDisplayConnected";
+import { DCFTVisualizationConnected } from "@/components/DCFTVisualizationConnected";
+import { EventVectorDisplayConnected } from "@/components/EventVectorDisplayConnected";
+import { ResponseExplainabilityConnected } from "@/components/ResponseExplainabilityConnected";
+import { ResponseFeedbackConnected } from "@/components/ResponseFeedbackConnected";
 import {
   TrendingUp,
   Heart,
@@ -712,35 +720,68 @@ export default function ResultsPage({ data }: ResultsPageProps) {
 
           {/* Insights Tab */}
           <TabsContent value="insights" className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* DCFT Analysis */}
-              <DCFTAnalysisChart 
-                currentScore={data?.confidence.percentage || 65}
-                trend="up"
-              />
-              
-              {/* Emotion Distribution */}
-              <EmotionDistributionChart 
-                emotions={data?.emotionalIntelligence.detectedEmotions}
-                dominantEmotion={data?.emotionalIntelligence.dominantEmotion}
-              />
+            {/* Map System - Phase 160 */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold">نظام الخرائط والتوزيع الجغرافي</h3>
+              <div className="grid lg:grid-cols-3 gap-6">
+                <EmotionGoogleMapConnected topic="global emotions" />
+                <RegionalHeatMapConnected country="global" />
+                <WorldMapConnected />
+              </div>
             </div>
 
-            {/* Topic Cloud */}
-            <TopicCloud 
-              onTopicClick={(topic) => console.log('Topic clicked:', topic)}
-            />
+            {/* Advanced Analysis System - Phase 161 */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold">نظام التحليل المتقدم</h3>
+              <div className="grid lg:grid-cols-2 gap-6">
+                <TopicAnalysisDisplayConnected topic="global emotions" />
+                <DCFTVisualizationConnected topic="global emotions" />
+              </div>
+              <EventVectorDisplayConnected topic="global emotions" />
+            </div>
 
-            {/* Impact Prediction Timeline */}
-            <ImpactPredictionTimeline />
+            {/* Response Explainability System - Phase 162 */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold">نظام شرح الاستجابة والتقييم</h3>
+              <div className="grid lg:grid-cols-2 gap-6">
+                <ResponseExplainabilityConnected responseId="response-001" />
+                <ResponseFeedbackConnected responseId="response-001" />
+              </div>
+            </div>
 
-            {/* Related Events */}
-            <RelatedEventsPanel 
-              onEventClick={(eventId) => console.log('Event clicked:', eventId)}
-            />
+            {/* Original Analysis Components */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold">التحليلات الأساسية</h3>
+              <div className="grid lg:grid-cols-2 gap-6">
+                {/* DCFT Analysis */}
+                <DCFTAnalysisChart 
+                  currentScore={data?.confidence.percentage || 65}
+                  trend="up"
+                />
+                
+                {/* Emotion Distribution */}
+                <EmotionDistributionChart 
+                  emotions={data?.emotionalIntelligence.detectedEmotions}
+                  dominantEmotion={data?.emotionalIntelligence.dominantEmotion}
+                />
+              </div>
 
-            {/* Original Insights Section */}
-            <InsightsSection />
+              {/* Topic Cloud */}
+              <TopicCloud 
+                onTopicClick={(topic) => console.log('Topic clicked:', topic)}
+              />
+
+              {/* Impact Prediction Timeline */}
+              <ImpactPredictionTimeline />
+
+              {/* Related Events */}
+              <RelatedEventsPanel 
+                onEventClick={(eventId) => console.log('Event clicked:', eventId)}
+              />
+
+              {/* Original Insights Section */}
+              <InsightsSection />
+            </div>
           </TabsContent>
         </Tabs>
 
