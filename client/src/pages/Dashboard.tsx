@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { IndexCard } from '@/components/IndexCard';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
+import { useAnalysisData } from '@/hooks/useAnalysisData';
 import { ArrowLeft, ArrowRight, TrendingUp, Zap, Heart, Calendar, Download } from 'lucide-react';
 import { 
   EMOTION_COLORS, 
@@ -34,6 +35,12 @@ export default function Dashboard() {
   const [chartData, setChartData] = useState<any[]>([]);
   const { t, isRTL } = useI18n();
 
+  // Fetch analysis data using unified hook
+  const { data: analysisData, isLoading: analysisLoading, refetch: refetchAnalysis } = useAnalysisData({
+    autoFetch: true,
+    timeframe: 'week'
+  });
+
   // Fetch latest indices
   const { data: latestIndices } = trpc.emotion.getLatestIndices.useQuery();
 
@@ -44,14 +51,21 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    if (latestIndices) {
+    // Use analysisData if available, otherwise use latestIndices
+    if (analysisData) {
+      setIndices({
+        gmi: analysisData.gmi || 0,
+        cfi: analysisData.cfi || 50,
+        hri: analysisData.hri || 50,
+      });
+    } else if (latestIndices) {
       setIndices({
         gmi: latestIndices.gmi || 0,
         cfi: latestIndices.cfi || 50,
         hri: latestIndices.hri || 50,
       });
     }
-  }, [latestIndices]);
+  }, [analysisData, latestIndices]);
 
   useEffect(() => {
     if (historicalIndices && historicalIndices.length > 0) {
