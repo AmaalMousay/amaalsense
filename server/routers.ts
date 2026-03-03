@@ -18,6 +18,7 @@ import { unifiedRouter } from "./unifiedRouters";
 import { mapDataRouter } from "./mapDataRouter";
 import { analysisDataRouter } from "./analysisDataRouter";
 import { explainabilityRouter } from "./explainabilityRouter";
+import { notificationRouter } from "./notificationRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -37,6 +38,7 @@ export const appRouter = router({
   mapData: mapDataRouter,
   analysisData: analysisDataRouter,
   explainability: explainabilityRouter,
+  notification: notificationRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
