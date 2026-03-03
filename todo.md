@@ -4319,3 +4319,20 @@ All systems are properly connected, tested, and ready for production use.
 - [ ] Implement feedback collection mechanism
 - [ ] Test response explanation rendering
 - [ ] Verify feedback submission and storage
+
+
+## Phase 163: Comparison & Scenarios System (NEW - IN PROGRESS)
+
+### Components
+- [x] CompareCountries - مكون مقارنة الدول والمناطق
+- [x] WhatIfScenariosUI - مكون السيناريوهات الافتراضية
+- [x] TemporalComparison - مكون المقارنة الزمنية
+
+### API Routers
+- [ ] comparisonRouter - API endpoints للمقارنات
+- [ ] scenariosRouter - API endpoints للسيناريوهات
+
+### Integration
+- [ ] دمج المكونات في Dashboard
+- [ ] دمج المكونات في ResultsPage
+- [ ] اختبار البيانات الحقيقية
