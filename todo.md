@@ -4336,3 +4336,24 @@ All systems are properly connected, tested, and ready for production use.
 - [ ] دمج المكونات في Dashboard
 - [ ] دمج المكونات في ResultsPage
 - [ ] اختبار البيانات الحقيقية
+
+
+## Phase 164: Tracking & Favorites System (NEW - COMPLETED)
+
+### Components
+- [x] FollowedTopics - مكون الموضوعات المتابعة
+- [x] Saved Searches - مكون البحوث المحفوظة
+- [x] User Preferences - مكون تفضيلات المستخدم
+
+### Database Schema
+- [ ] Create followed_topics table
+- [ ] Create saved_searches table
+- [ ] Create user_preferences table
+
+### API Routers
+- [ ] preferencesRouter - API endpoints للتفضيلات والمتابعة
+
+### Integration
+- [ ] دمج المكونات في Dashboard
+- [ ] دمج المكونات في Profile/Settings
+- [ ] اختبار البيانات الحقيقية
