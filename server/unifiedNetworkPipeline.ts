@@ -123,6 +123,119 @@ export interface UnifiedPipelineContext {
     proactiveSuggestions: string[];
   };
   
+  // HumanLikeAI Data Structure
+  humanLikeAI: {
+    explanationText: string;
+    reasoningSteps: string[];
+    confidenceLevels: number[];
+    alternativePerspectives: string[];
+    nuancedToneAnalysis: {
+      primaryTone: string;
+      secondaryTones: string[];
+      emotionalNuance: string;
+    };
+  };
+  
+  // Regional Distribution Data
+  regionalDistribution: {
+    countryLevelSentiment: {
+      [country: string]: {
+        sentiment: number;
+        emotionDistribution: { [emotion: string]: number };
+        confidence: number;
+      };
+    };
+    regionalEmotionDistribution: {
+      [region: string]: {
+        primaryEmotion: string;
+        secondaryEmotions: string[];
+        intensity: number;
+      };
+    };
+    geographicHotspots: {
+      location: string;
+      intensity: number;
+      type: string;
+      timestamp: Date;
+    }[];
+    crossBorderSentimentFlows: {
+      from: string;
+      to: string;
+      sentiment: number;
+      volume: number;
+    }[];
+    regionalTrendAnalysis: {
+      region: string;
+      trend: string;
+      direction: "up" | "down" | "stable";
+      velocity: number;
+    }[];
+  };
+  
+  // Real-time Event Data
+  realtimeEvents: {
+    breakingNews: {
+      headline: string;
+      source: string;
+      timestamp: Date;
+      impactScore: number;
+    }[];
+    eventImpactScores: {
+      eventId: string;
+      impact: number;
+      affectedRegions: string[];
+    }[];
+    eventTimeline: {
+      timestamp: Date;
+      event: string;
+      sentiment: number;
+    }[];
+    eventSourceAttribution: {
+      event: string;
+      sources: { name: string; credibility: number }[];
+    }[];
+    eventVerificationStatus: {
+      event: string;
+      verified: boolean;
+      confidence: number;
+      sources: string[];
+    }[];
+  };
+  
+  // Suggestion Engine
+  suggestionEngine: {
+    actionableRecommendations: string[];
+    riskMitigationSuggestions: string[];
+    opportunityIdentification: string[];
+    followUpQuestionSuggestions: string[];
+    relatedTopicSuggestions: string[];
+  };
+  
+  // Confidence Scores
+  confidenceScores: {
+    overallConfidence: number; // 0-100
+    perEngineConfidence: { [engine: string]: number };
+    dataQualityScore: number;
+    sourceCredibilityScores: { [source: string]: number };
+    temporalConfidenceDecay: number; // How confidence decreases over time
+  };
+  
+  // Ethical Assessment Data
+  ethicalAssessment: {
+    biasDetectionResults: {
+      detected: boolean;
+      types: string[];
+      severity: "low" | "medium" | "high";
+    };
+    fairnessAssessment: {
+      score: number; // 0-100
+      issues: string[];
+    };
+    transparencyScore: number; // 0-100
+    accountabilityMeasures: string[];
+    ethicalRecommendations: string[];
+  };
+  
   status: "pending" | "processing" | "completed" | "error";
   error?: string;
 }
@@ -214,6 +327,59 @@ export async function executeUnifiedNetworkPipeline(
         adaptedTone: ""
       },
       proactiveSuggestions: []
+    },
+    humanLikeAI: {
+      explanationText: "",
+      reasoningSteps: [],
+      confidenceLevels: [],
+      alternativePerspectives: [],
+      nuancedToneAnalysis: {
+        primaryTone: "",
+        secondaryTones: [],
+        emotionalNuance: ""
+      }
+    },
+    regionalDistribution: {
+      countryLevelSentiment: {},
+      regionalEmotionDistribution: {},
+      geographicHotspots: [],
+      crossBorderSentimentFlows: [],
+      regionalTrendAnalysis: []
+    },
+    realtimeEvents: {
+      breakingNews: [],
+      eventImpactScores: [],
+      eventTimeline: [],
+      eventSourceAttribution: [],
+      eventVerificationStatus: []
+    },
+    suggestionEngine: {
+      actionableRecommendations: [],
+      riskMitigationSuggestions: [],
+      opportunityIdentification: [],
+      followUpQuestionSuggestions: [],
+      relatedTopicSuggestions: []
+    },
+    confidenceScores: {
+      overallConfidence: 0,
+      perEngineConfidence: {},
+      dataQualityScore: 0,
+      sourceCredibilityScores: {},
+      temporalConfidenceDecay: 0
+    },
+    ethicalAssessment: {
+      biasDetectionResults: {
+        detected: false,
+        types: [],
+        severity: "low"
+      },
+      fairnessAssessment: {
+        score: 0,
+        issues: []
+      },
+      transparencyScore: 0,
+      accountabilityMeasures: [],
+      ethicalRecommendations: []
     },
     status: "processing"
   };
