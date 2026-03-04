@@ -32,7 +32,7 @@ export const notificationRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         notificationSystem.subscribe(
-          ctx.user.id,
+          String(ctx.user.id),
           input.thresholds,
           input.country,
           input.topic
@@ -54,7 +54,7 @@ export const notificationRouter = router({
   unsubscribe: protectedProcedure
     .mutation(async ({ ctx }) => {
       try {
-        notificationSystem.unsubscribe(ctx.user.id);
+        notificationSystem.unsubscribe(String(ctx.user.id));
 
         return {
           success: true,
@@ -77,7 +77,7 @@ export const notificationRouter = router({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const alerts = notificationSystem.getAlertHistory(ctx.user.id, input.limit);
+        const alerts = notificationSystem.getAlertHistory(String(ctx.user.id), input.limit);
 
         return {
           success: true,
@@ -96,7 +96,7 @@ export const notificationRouter = router({
   getThresholds: protectedProcedure
     .query(async ({ ctx }) => {
       try {
-        const thresholds = notificationSystem.getSubscriberThresholds(ctx.user.id);
+        const thresholds = notificationSystem.getSubscriberThresholds(String(ctx.user.id));
 
         return {
           success: true,
@@ -129,7 +129,7 @@ export const notificationRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const success = notificationSystem.updateSubscriberThresholds(ctx.user.id, input);
+        const success = notificationSystem.updateSubscriberThresholds(String(ctx.user.id), input);
 
         if (!success) {
           throw new Error('المستخدم غير مشترك في التنبيهات');
@@ -151,7 +151,7 @@ export const notificationRouter = router({
   clearAlertHistory: protectedProcedure
     .mutation(async ({ ctx }) => {
       try {
-        notificationSystem.clearAlertHistory(ctx.user.id);
+        notificationSystem.clearAlertHistory(String(ctx.user.id));
 
         return {
           success: true,
