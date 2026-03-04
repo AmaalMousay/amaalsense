@@ -131,7 +131,7 @@ describe('reasoningEngine with Original Input', () => {
       region: 'Middle East',
       regionConfidence: 0.88,
       impactScore: 0.9,
-      severity: 'critical',
+      severity: 'high' as const,
       timestamp: new Date(),
       sourceId: 'test-004',
     };

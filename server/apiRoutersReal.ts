@@ -5,8 +5,9 @@
  * Provides all required endpoints with real database integration
  */
 
-import { router, publicProcedure } from "./trpc";
+import { router, publicProcedure } from "./_core/trpc";
 import { z } from "zod";
+import { executeEnhancedUnifiedNetworkPipeline } from "./unifiedNetworkPipelineEnhanced";
 import {
   getLatestGlobalEmotions,
   getEmotionHistory,
