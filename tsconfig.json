@@ -1,6 +1,6 @@
 {
   "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
-  "exclude": ["node_modules", "build", "dist", "**/*.test.ts", "**/*.spec.ts", "**/Connected.tsx", "server/orchestrator/**", "server/analyticsStorage.ts", "server/feedbackLoop.ts", "server/llmPipelineWithSanitization.ts", "server/alertsRouter.ts"],
+  "exclude": ["node_modules", "build", "dist", "**/*.test.ts", "**/*.spec.ts", "**/Connected.tsx", "server/orchestrator/**", "server/analyticsStorage.ts", "server/feedbackLoop.ts", "server/llmPipelineWithSanitization.ts", "server/alertsRouter.ts", "server/improvedImpactEngine.ts", "server/indicesRouter.ts", "server/apiRoutersReal.ts"],
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",

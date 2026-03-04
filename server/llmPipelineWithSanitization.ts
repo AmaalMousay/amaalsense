@@ -181,7 +181,7 @@ export async function batchInvokeLLM(
   prompts: string[],
   systemPrompt: string = 'You are a helpful assistant.'
 ): Promise<Array<{ success: boolean; content: string; error?: string }>> {
-  const results = [];
+  const results: Array<{ success: boolean; content: string; error?: string }> = [];
   
   for (const prompt of prompts) {
     const result = await invokeLLMWithSanitization({

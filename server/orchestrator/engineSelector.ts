@@ -452,7 +452,7 @@ async function executeHistoricalEngine(
   const now = Date.now();
   const dayMs = 24 * 60 * 60 * 1000;
   
-  const dataPoints = [];
+  const dataPoints: Array<{ date: string; gmi: number; cfi: number; hri: number }> = [];
   for (let i = 7; i >= 0; i--) {
     const date = new Date(now - i * dayMs);
     dataPoints.push({
