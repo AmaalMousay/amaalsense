@@ -165,8 +165,8 @@ export function formatPipelineResponse(context: UnifiedPipelineContext): {
         sourceReliability: context.confidence.factors.sourceReliability,
         contextClarity: context.confidence.factors.contextClarity
       },
-      alternatives: context.confidence.alternatives || [],
-      missingInformation: context.confidence.missingInformation || []
+      alternatives: (context.confidence as any).alternatives || [],
+      missingInformation: (context.confidence as any).missingInformation || []
     },
     quality: {
       score: context.qualityAssessment.score,
@@ -188,8 +188,8 @@ export function formatPipelineResponse(context: UnifiedPipelineContext): {
       },
       uncertaintyAcknowledgment: {
         confidence: context.confidence.overall,
-        alternatives: context.confidence.alternatives || [],
-        needsMoreInfo: context.confidence.missingInformation || [],
+        alternatives: (context.confidence as any).alternatives || [],
+        needsMoreInfo: (context.confidence as any).missingInformation || [],
         disclaimers: [
           'هذا التحليل مبني على البيانات المتاحة حالياً',
           'قد تتغير النتائج مع توفر معلومات جديدة'

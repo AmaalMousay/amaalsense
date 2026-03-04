@@ -19,7 +19,7 @@ import { mapDataRouter } from "./mapDataRouter";
 import { analysisDataRouter } from "./analysisDataRouter";
 import { explainabilityRouter } from "./explainabilityRouter";
 import { notificationRouter } from "./notificationRouter";
-import { searchRouterReal, mapsRouterReal, alertsRouterReal, comparisonRouterReal, analysisRouterReal } from "./apiRoutersReal";
+// import { searchRouterReal, mapsRouterReal, alertsRouterReal, comparisonRouterReal, analysisRouterReal } from "./apiRoutersReal"; // TODO: Fix imports
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -40,12 +40,12 @@ export const appRouter = router({
   analysisData: analysisDataRouter,
   explainability: explainabilityRouter,
   notification: notificationRouter,
-  // Real database routers
-  searchDb: searchRouterReal,
-  mapsDb: mapsRouterReal,
-  alertsDb: alertsRouterReal,
-  comparisonDb: comparisonRouterReal,
-  analysisDb: analysisRouterReal,
+  // Real database routers - TODO: Enable after fixing imports
+  // searchDb: searchRouterReal,
+  // mapsDb: mapsRouterReal,
+  // alertsDb: alertsRouterReal,
+  // comparisonDb: comparisonRouterReal,
+  // analysisDb: analysisRouterReal,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

@@ -42,7 +42,7 @@ describe('reasoningEngine with Original Input', () => {
       region: 'Libya',
       regionConfidence: 0.9,
       impactScore: 0.75,
-      severity: 'high',
+      severity: 'high' as const,
       timestamp: new Date(),
       sourceId: 'test-001',
     };
@@ -72,7 +72,7 @@ describe('reasoningEngine with Original Input', () => {
       region: 'Global',
       regionConfidence: 0.7,
       impactScore: 0.6,
-      severity: 'medium',
+      severity: 'medium' as const,
       timestamp: new Date(),
       sourceId: 'test-002',
     };
@@ -102,7 +102,7 @@ describe('reasoningEngine with Original Input', () => {
       region: 'Unknown',
       regionConfidence: 0.5,
       impactScore: 0.5,
-      severity: 'medium',
+      severity: 'medium' as const,
       timestamp: new Date(),
       sourceId: 'test-003',
     };
