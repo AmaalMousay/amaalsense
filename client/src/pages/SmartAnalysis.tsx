@@ -674,10 +674,10 @@ export default function SmartAnalysis() {
               ) : (
                 <>
                   <ContextualUnderstandingCard 
-                    contextual={analysisData?.data?.humanIntelligence?.contextualUnderstanding}
+                    contextual={analysisData?.data?.humanLikeAI?.contextualUnderstanding || analysisData?.data?.humanIntelligence?.contextualUnderstanding}
                   />
                   <EmotionalIntelligenceCard 
-                    emotional={analysisData?.data?.humanIntelligence?.emotionalIntelligence}
+                    emotional={analysisData?.data?.emotionalIntelligence || analysisData?.data?.humanLikeAI?.emotionalIntelligence || analysisData?.data?.humanIntelligence?.emotionalIntelligence}
                     confidence={analysisData?.data?.confidence}
                   />
                   {conversation.map((msg, index) => (
@@ -743,9 +743,9 @@ export default function SmartAnalysis() {
             )}
 
             {/* Follow-up Questions */}
-            {analysisComplete && analysisData?.data?.humanIntelligence?.proactiveSuggestions && (
+            {analysisComplete && (analysisData?.data?.humanLikeAI?.proactiveSuggestions?.followUpQuestions || analysisData?.data?.humanIntelligence?.proactiveSuggestions) && (
               <FollowUpQuestionsUI 
-                initialQuestions={analysisData.data.humanIntelligence.proactiveSuggestions.map((s: string) => ({ id: Math.random().toString(), text: s, category: 'suggestion' as const }))}
+                initialQuestions={(analysisData.data.humanLikeAI?.proactiveSuggestions?.followUpQuestions || analysisData.data.humanIntelligence?.proactiveSuggestions || []).map((s: any) => ({ id: Math.random().toString(), text: typeof s === 'string' ? s : s.question || '', category: 'suggestion' as const }))}
                 onAskQuestion={async (question: string) => { await handleAskQuestion(question); return ''; }}
                 isLoading={isAskingFollowUp}
               />
@@ -799,23 +799,23 @@ export default function SmartAnalysis() {
             )}
             
             {/* Smart Suggestions from AI */}
-            {analysisData?.data?.humanIntelligence?.proactiveSuggestions && analysisData.data.humanIntelligence.proactiveSuggestions.length > 0 && (
+            {((analysisData?.data?.humanLikeAI?.proactiveSuggestions?.followUpQuestions?.length > 0) || (analysisData?.data?.humanIntelligence?.proactiveSuggestions?.length > 0)) && (
               <div className="mb-4 p-3 bg-primary/5 border border-primary/20 rounded-lg">
                 <h3 className="text-xs font-semibold text-primary mb-2 flex items-center gap-2">
                   <Sparkles className="w-3 h-3" />
                   Smart Suggestions
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {analysisData.data.humanIntelligence.proactiveSuggestions.map((suggestion: string, idx: number) => (
+                  {(analysisData.data.humanLikeAI?.proactiveSuggestions?.followUpQuestions || analysisData.data.humanIntelligence?.proactiveSuggestions || []).map((suggestion: any, idx: number) => (
                     <Button
                       key={idx}
                       variant="outline"
                       size="sm"
                       className="text-xs gap-1 hover:bg-primary/20 hover:border-primary/50 bg-primary/10"
-                      onClick={() => handleAskQuestion(suggestion)}
+                      onClick={() => handleAskQuestion(typeof suggestion === 'string' ? suggestion : suggestion.question || '')}
                     >
                       <Lightbulb className="w-3 h-3" />
-                      {suggestion.substring(0, 30)}...
+                      {(typeof suggestion === 'string' ? suggestion : suggestion.question || '').substring(0, 30)}...
                     </Button>
                   ))}
                 </div>
