@@ -23,6 +23,11 @@ import {
   getCacheStats,
 } from './deduplicationEngine';
 
+// Import real data fetching services
+import { fetchNewsArticles } from './newsDataFetcher';
+import { searchGNews } from './gnewsService';
+import { fetchAllSocialMedia } from './socialMediaService';
+
 /**
  * Calculate credibility score for a news source
  */
@@ -229,47 +234,109 @@ export interface TopicAnalysisResult {
 }
 
 /**
- * Fetch real news data for a topic
+ * Fetch real news and social media data for a topic
+ * Uses multiple real data sources: NewsAPI, GNews, Reddit, Mastodon, Bluesky, YouTube, Telegram
  */
 async function fetchRealNews(
   topic: string,
   countryName: string,
-  limit: number = 5
-): Promise<Array<{ title: string; content: string; url: string; publishedAt: string }>> {
+  limit: number = 10
+): Promise<Array<{ title: string; content: string; url: string; publishedAt: string; source?: string; platform?: string; isReal?: boolean }>> {
+  const allResults: Array<{ title: string; content: string; url: string; publishedAt: string; source?: string; platform?: string; isReal?: boolean }> = [];
+
+  // 1. Fetch from NewsAPI
   try {
-    // Try to fetch from GNews API if available
-    const newsApiKey = process.env.GNEWS_API_KEY;
-    if (newsApiKey) {
-      const response = await fetch(
-        `https://gnews.io/api/v4/search?q=${encodeURIComponent(topic)}+${encodeURIComponent(countryName)}&lang=ar&token=${newsApiKey}&max=${limit}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        return (data.articles || []).map((article: any) => ({
+    const newsArticles = await fetchNewsArticles({
+      query: `${topic} ${countryName}`,
+      language: 'ar',
+      limit: Math.ceil(limit / 3),
+    });
+    if (newsArticles && newsArticles.length > 0) {
+      console.log(`[TopicAnalyzer] Fetched ${newsArticles.length} articles from NewsAPI`);
+      allResults.push(
+        ...newsArticles.map((article: any) => ({
           title: article.title,
           content: article.description || article.content || article.title,
           url: article.url,
-          publishedAt: article.publishedAt,
-        }));
-      }
+          publishedAt: article.publishedAt || new Date().toISOString(),
+          source: article.source || 'NewsAPI',
+          platform: 'news',
+          isReal: true,
+        }))
+      );
     }
   } catch (error) {
-    console.error('Error fetching news:', error);
+    console.error('[TopicAnalyzer] NewsAPI error:', error);
   }
-  
-  // Fallback: Return simulated news data
+
+  // 2. Fetch from GNews API
+  try {
+    const gNewsArticles = await searchGNews({
+      query: `${topic} ${countryName}`,
+      language: 'ar',
+      max: Math.ceil(limit / 3),
+    });
+    if (gNewsArticles && gNewsArticles.length > 0) {
+      console.log(`[TopicAnalyzer] Fetched ${gNewsArticles.length} articles from GNews`);
+      allResults.push(
+        ...gNewsArticles.map((article: any) => ({
+          title: article.title,
+          content: article.description || article.content || article.title,
+          url: article.url,
+          publishedAt: article.publishedAt || new Date().toISOString(),
+          source: article.source || 'GNews',
+          platform: 'gnews',
+          isReal: true,
+        }))
+      );
+    }
+  } catch (error) {
+    console.error('[TopicAnalyzer] GNews error:', error);
+  }
+
+  // 3. Fetch from Social Media (Reddit, Mastodon, Bluesky, YouTube, Telegram)
+  try {
+    const socialResults = await fetchAllSocialMedia({
+      query: topic,
+      limit: Math.ceil(limit / 3),
+      language: 'ar',
+      country: countryName,
+    });
+    if (socialResults && socialResults.posts && socialResults.posts.length > 0) {
+      console.log(`[TopicAnalyzer] Fetched ${socialResults.posts.length} social media posts (${socialResults.realPosts} real)`);
+      allResults.push(
+        ...socialResults.posts.map((post: any) => ({
+          title: post.text?.slice(0, 120) || 'Social Media Post',
+          content: post.text || '',
+          url: post.url || '',
+          publishedAt: post.publishedAt ? new Date(post.publishedAt).toISOString() : new Date().toISOString(),
+          source: `${post.platform}/${post.author || 'unknown'}`,
+          platform: post.platform,
+          isReal: post.isReal !== false,
+        }))
+      );
+    }
+  } catch (error) {
+    console.error('[TopicAnalyzer] Social media error:', error);
+  }
+
+  // If we got real data, return it
+  if (allResults.length > 0) {
+    console.log(`[TopicAnalyzer] Total real data fetched: ${allResults.length} items from ${new Set(allResults.map(r => r.platform)).size} platforms`);
+    return allResults.slice(0, limit);
+  }
+
+  // Fallback only if ALL sources failed
+  console.warn('[TopicAnalyzer] All real data sources failed, using fallback data');
   return [
     {
-      title: `تطورات جديدة حول ${topic} في ${countryName}`,
-      content: `تقارير حديثة تشير إلى تطورات مهمة بشأن ${topic}. المحللون يرون أن هناك تأثيرات إيجابية وسلبية متوازنة.`,
+      title: `\u062a\u0637\u0648\u0631\u0627\u062a \u062c\u062f\u064a\u062f\u0629 \u062d\u0648\u0644 ${topic} \u0641\u064a ${countryName}`,
+      content: `\u062a\u0642\u0627\u0631\u064a\u0631 \u062d\u062f\u064a\u062b\u0629 \u062a\u0634\u064a\u0631 \u0625\u0644\u0649 \u062a\u0637\u0648\u0631\u0627\u062a \u0645\u0647\u0645\u0629 \u0628\u0634\u0623\u0646 ${topic}`,
       url: `https://news.example.com/${topic}`,
       publishedAt: new Date().toISOString(),
-    },
-    {
-      title: `تحليل متعمق: ${topic} والمجتمع`,
-      content: `دراسة جديدة تكشف عن العلاقة بين ${topic} والحالة النفسية للمجتمع. الخبراء يؤكدون على أهمية الفهم الشامل.`,
-      url: `https://news.example.com/${topic}-analysis`,
-      publishedAt: new Date().toISOString(),
+      source: 'Simulated',
+      platform: 'fallback',
+      isReal: false,
     },
   ];
 }

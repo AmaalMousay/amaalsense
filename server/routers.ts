@@ -19,6 +19,7 @@ import { mapDataRouter } from "./mapDataRouter";
 import { analysisDataRouter } from "./analysisDataRouter";
 import { explainabilityRouter } from "./explainabilityRouter";
 import { notificationRouter } from "./notificationRouter";
+import { searchRouter } from "./searchRouter";
 // import { searchRouterReal, mapsRouterReal, alertsRouterReal, comparisonRouterReal, analysisRouterReal } from "./apiRoutersReal"; // TODO: Fix imports
 
 export const appRouter = router({
@@ -40,6 +41,7 @@ export const appRouter = router({
   analysisData: analysisDataRouter,
   explainability: explainabilityRouter,
   notification: notificationRouter,
+  search: searchRouter,
   // Real database routers - TODO: Enable after fixing imports
   // searchDb: searchRouterReal,
   // mapsDb: mapsRouterReal,
