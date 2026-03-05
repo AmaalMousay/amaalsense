@@ -4710,3 +4710,12 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Test end-to-end: Libya 12 sources, Egypt 12 sources, 16/47 countries with real data
 - [x] Write unit tests for countryNewsAnalyzer (13 tests passing)
 - [x] All existing tests passing (auth: 1/1, apiHealthMonitor: 16/16, countryNewsAnalyzer: 13/13)
+
+### Architecture Refactoring: Unified Engine + Event Vector
+- [x] Audit current architecture: 3 separate engines found (UnifiedPipeline, CountryNewsAnalyzer, TopicAnalyzer), no shared cache, EventVector exists but disconnected
+- [x] Create Event Vector Engine - compress raw news data into vectorized format for LLM
+- [x] Create Unified Analysis Engine - single entry point for all analysis types
+- [x] Route results to different views: map colors, emotional weather, smart analysis
+- [x] Connect all pages (Map, EmotionalWeather, Weather, SmartAnalysis, CountryResults) to unified engine
+- [x] Write unit tests for Event Vector and Unified Engine (32 tests passing)
+- [x] Verify end-to-end: one engine → different views per page (0 TS errors)

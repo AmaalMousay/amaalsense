@@ -22,8 +22,8 @@ export default function Weather() {
   const [, navigate] = useLocation();
   const isAr = language === 'ar';
 
-  // Fetch REAL data from all countries
-  const { data: countries, isLoading, error } = trpc.map.getAllCountriesEmotions.useQuery();
+  // Fetch data from Unified Engine
+  const { data: countries, isLoading, error } = trpc.engine.getMapData.useQuery();
 
   // Compute weather from real data
   const weatherData = useMemo(() => {

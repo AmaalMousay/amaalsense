@@ -1,0 +1,176 @@
+/**
+ * UNIFIED ENGINE ROUTER
+ * 
+ * tRPC router that exposes the Unified Analysis Engine to the frontend.
+ * All pages call these procedures instead of separate endpoints.
+ */
+
+import { publicProcedure, router } from './_core/trpc';
+import { z } from 'zod';
+import {
+  analyzeForMap,
+  analyzeForWeather,
+  analyzeForCountryDetail,
+  analyzeForSmartAnalysis,
+  analyzeCountriesBatch,
+  getGlobalMood,
+  getEngineStats,
+  clearAllCaches,
+} from './unifiedAnalysisEngine';
+
+// Country metadata for batch operations
+const PRIORITY_COUNTRIES = [
+  { code: 'LY', name: 'Libya' },
+  { code: 'EG', name: 'Egypt' },
+  { code: 'SA', name: 'Saudi Arabia' },
+  { code: 'AE', name: 'UAE' },
+  { code: 'US', name: 'United States' },
+  { code: 'GB', name: 'United Kingdom' },
+  { code: 'PS', name: 'Palestine' },
+  { code: 'SY', name: 'Syria' },
+  { code: 'IQ', name: 'Iraq' },
+  { code: 'SD', name: 'Sudan' },
+  { code: 'YE', name: 'Yemen' },
+  { code: 'LB', name: 'Lebanon' },
+  { code: 'TR', name: 'Turkey' },
+  { code: 'RU', name: 'Russia' },
+  { code: 'CN', name: 'China' },
+  { code: 'JP', name: 'Japan' },
+  { code: 'FR', name: 'France' },
+  { code: 'DE', name: 'Germany' },
+  { code: 'IN', name: 'India' },
+  { code: 'BR', name: 'Brazil' },
+  { code: 'MA', name: 'Morocco' },
+  { code: 'TN', name: 'Tunisia' },
+  { code: 'DZ', name: 'Algeria' },
+  { code: 'JO', name: 'Jordan' },
+  { code: 'KW', name: 'Kuwait' },
+  { code: 'QA', name: 'Qatar' },
+  { code: 'BH', name: 'Bahrain' },
+  { code: 'OM', name: 'Oman' },
+];
+
+// All countries (including non-priority with default data)
+const ALL_COUNTRIES = [
+  ...PRIORITY_COUNTRIES,
+  { code: 'CA', name: 'Canada' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'IT', name: 'Italy' },
+  { code: 'ES', name: 'Spain' },
+  { code: 'KR', name: 'South Korea' },
+  { code: 'MX', name: 'Mexico' },
+  { code: 'NG', name: 'Nigeria' },
+  { code: 'ZA', name: 'South Africa' },
+  { code: 'PK', name: 'Pakistan' },
+  { code: 'ID', name: 'Indonesia' },
+  { code: 'TH', name: 'Thailand' },
+  { code: 'PH', name: 'Philippines' },
+  { code: 'VN', name: 'Vietnam' },
+  { code: 'MY', name: 'Malaysia' },
+  { code: 'SG', name: 'Singapore' },
+  { code: 'AR', name: 'Argentina' },
+  { code: 'CL', name: 'Chile' },
+  { code: 'CO', name: 'Colombia' },
+  { code: 'PE', name: 'Peru' },
+];
+
+export const unifiedEngineRouter = router({
+  /**
+   * GET MAP DATA: All countries with indices for map coloring
+   * Used by: Map page, EmotionalWeather page
+   */
+  getMapData: publicProcedure.query(async () => {
+    // Analyze priority countries with real data
+    const priorityResults = await analyzeCountriesBatch(PRIORITY_COUNTRIES, 4);
+    
+    // Build map of results
+    const resultMap = new Map(priorityResults.map(r => [r.countryCode, r]));
+    
+    // Return all countries (priority with real data, others with defaults)
+    return ALL_COUNTRIES.map(country => {
+      const result = resultMap.get(country.code);
+      if (result) return result;
+      
+      return {
+        countryCode: country.code,
+        countryName: country.name,
+        gmi: 0,
+        cfi: 50,
+        hri: 50,
+        dominantEmotion: 'neutral',
+        isRealData: false,
+        confidence: 0,
+      };
+    });
+  }),
+
+  /**
+   * GET WEATHER DATA: Detailed emotion breakdown for a country
+   * Used by: EmotionalWeather page, Weather page
+   */
+  getWeatherData: publicProcedure
+    .input(z.object({
+      countryCode: z.string().length(2),
+      countryName: z.string().min(1),
+    }))
+    .query(async ({ input }) => {
+      return await analyzeForWeather(input.countryCode, input.countryName);
+    }),
+
+  /**
+   * GET COUNTRY DETAIL: Full analysis with categorized news
+   * Used by: CountryResults page
+   */
+  getCountryDetail: publicProcedure
+    .input(z.object({
+      countryCode: z.string().length(2),
+      countryName: z.string().min(1),
+      includeAISummary: z.boolean().default(false),
+      language: z.string().default('ar'),
+    }))
+    .query(async ({ input }) => {
+      return await analyzeForCountryDetail(
+        input.countryCode,
+        input.countryName,
+        input.includeAISummary,
+        input.language
+      );
+    }),
+
+  /**
+   * SMART ANALYSIS: AI-powered Q&A with emotion context
+   * Used by: SmartAnalysis page
+   */
+  smartAnalyze: publicProcedure
+    .input(z.object({
+      query: z.string().min(1).max(500),
+      language: z.string().default('ar'),
+    }))
+    .mutation(async ({ input }) => {
+      return await analyzeForSmartAnalysis(input.query, input.language);
+    }),
+
+  /**
+   * GLOBAL MOOD: Current global emotion indices
+   * Used by: Dashboard, Home page
+   */
+  getGlobalMood: publicProcedure.query(async () => {
+    return await getGlobalMood();
+  }),
+
+  /**
+   * ENGINE STATS: Cache and performance metrics
+   * Used by: Admin/debug
+   */
+  getStats: publicProcedure.query(() => {
+    return getEngineStats();
+  }),
+
+  /**
+   * CLEAR CACHES: Force refresh all data
+   */
+  clearCaches: publicProcedure.mutation(() => {
+    clearAllCaches();
+    return { success: true, message: 'All caches cleared' };
+  }),
+});

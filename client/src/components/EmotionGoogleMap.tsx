@@ -171,8 +171,8 @@ interface CountryData {
   gmi: number;
   cfi: number;
   hri: number;
-  aci: number;
-  sdi: number;
+  dominantEmotion: string;
+  isRealData: boolean;
   confidence: number;
 }
 

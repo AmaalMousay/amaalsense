@@ -169,9 +169,9 @@ export default function CountryResults() {
   const urlName = searchParams.get('name');
   const countryInfo = COUNTRY_NAMES[countryCode] || { en: urlName || countryCode, ar: urlName || countryCode };
 
-  // Fetch REAL country data from countryNewsAnalyzer
-  const { data: countryData, isLoading, error, refetch, isRefetching } = trpc.map.getCountryEmotions.useQuery(
-    { countryCode },
+  // Fetch country data from Unified Engine
+  const { data: countryData, isLoading, error, refetch, isRefetching } = trpc.engine.getCountryDetail.useQuery(
+    { countryCode, countryName: countryInfo.en, includeAISummary: true, language: isRTL ? 'ar' : 'en' },
     { 
       enabled: !!countryCode && countryCode.length === 2,
       retry: 1,
@@ -265,7 +265,7 @@ export default function CountryResults() {
   const economicNews = countryData?.news?.economic || [];
   const socialNews = countryData?.news?.social || [];
   const allNews = [...politicalNews, ...economicNews, ...socialNews];
-  const trendingTopics = countryData?.trendingTopics || [];
+  const trendingTopics = countryData?.trendingKeywords || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -376,7 +376,7 @@ export default function CountryResults() {
         </section>
 
         {/* Summary */}
-        {(countryData?.summary || countryData?.summaryAr) && (
+        {countryData?.aiSummary && (
           <section>
             <Card className={`${moodStatus.bgColor} border ${moodStatus.borderColor}`}>
               <CardContent className="pt-6">
@@ -385,12 +385,12 @@ export default function CountryResults() {
                   {isRTL ? 'ملخص التحليل' : 'Analysis Summary'}
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  {isRTL ? (countryData?.summaryAr || countryData?.summary) : (countryData?.summary || countryData?.summaryAr)}
+                  {countryData?.aiSummary}
                 </p>
                 <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Newspaper className="w-3 h-3" />
-                    {countryData?.totalSources || allNews.length} {isRTL ? 'مصدر' : 'sources'}
+                    {countryData?.sourceCount || allNews.length} {isRTL ? 'مصدر' : 'sources'}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />

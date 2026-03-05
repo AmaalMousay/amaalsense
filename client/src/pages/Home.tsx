@@ -335,19 +335,19 @@ export default function Home() {
     navigate(`/smart-analysis?topic=${encodeURIComponent(analysisTopic)}`);
   };
 
-  // Fetch latest indices with auto-refresh every 30 seconds
-  const { data: latestIndices, isLoading: indicesLoading } = trpc.emotion.getLatestIndices.useQuery(
+  // Fetch global mood from Unified Engine
+  const { data: latestIndices, isLoading: indicesLoading } = trpc.engine.getGlobalMood.useQuery(
     undefined,
     { refetchInterval: 30000 }
   );
 
-  // Fetch all countries emotion data with auto-refresh every 30 seconds
-  const { data: countriesData, isLoading: countriesLoading } = trpc.map.getAllCountriesEmotions.useQuery(
+  // Fetch all countries emotion data from Unified Engine
+  const { data: countriesData, isLoading: countriesLoading } = trpc.engine.getMapData.useQuery(
     undefined,
     { refetchInterval: 30000 }
   );
 
-  // Fetch historical data for sparklines
+  // Fetch historical data for sparklines (keep using emotion router as it has DB history)
   const { data: historicalIndices } = trpc.emotion.getHistoricalIndices.useQuery(
     { hoursBack: 6 },
     { refetchInterval: 60000 }

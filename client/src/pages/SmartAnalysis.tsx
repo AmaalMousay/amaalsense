@@ -83,9 +83,9 @@ export default function SmartAnalysis() {
   // Conversation ID for saving
   const [currentConversationId, setCurrentConversationId] = useState<number | undefined>();
   
-  // tRPC mutations
-  const analyzeWithAI = trpc.unified.analyzeQuestion.useMutation();
-  const askFollowUp = trpc.unified.analyzeQuestion.useMutation();
+  // tRPC mutations - using unified engine
+  const analyzeWithAI = trpc.engine.smartAnalyze.useMutation();
+  const askFollowUp = trpc.engine.smartAnalyze.useMutation();
   const createConversation = trpc.conversations.create.useMutation();
   const addMessage = trpc.conversations.addMessage.useMutation();
   const getConversation = trpc.conversations.get.useQuery(
@@ -116,16 +116,12 @@ export default function SmartAnalysis() {
     
     try {
       const result = await analyzeWithAI.mutateAsync({ 
-        question: topic,
+        query: topic,
         language: 'ar'
       });
       
-      if (!result.success) {
-        throw new Error(result.error || 'Analysis failed');
-      }
-      
-      // Extract response and metadata from the correct structure
-      const response = result.data?.response || 'Analysis processing...';
+      // Extract response and metadata from the unified engine
+      const response = result.response || 'Analysis processing...';
       
       // Set context with available data
       setContext({
@@ -252,17 +248,14 @@ export default function SmartAnalysis() {
     
     try {
       const result = await askFollowUp.mutateAsync({
-        question,
+        query: question,
+        language: 'ar',
       });
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to process question');
-      }
       
       // Add AI response to conversation
       setConversation(prev => [...prev, {
         role: 'assistant',
-        content: (result.data?.response || 'Processing...') as string,
+        content: result.response || 'Processing...',
         timestamp: Date.now(),
       }]);
     } catch (error) {
