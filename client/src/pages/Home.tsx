@@ -11,7 +11,7 @@ import {
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
   LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap, Search, ArrowRight,
-  MessageCircle, Cloud, Map, Activity, LineChart, AlertTriangle, Settings, Compass, Microscope, Layers
+  MessageCircle, Cloud, Map, Activity, LineChart, AlertTriangle, Settings, Compass, Microscope, Layers, Gauge
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -396,6 +396,7 @@ export default function Home() {
     { href: '/compare', label: isRTL ? 'مقارنة الدول' : 'Compare Countries', icon: <Compass className="w-4 h-4" /> },
     { href: '/theory', label: t.nav.theory, icon: <Microscope className="w-4 h-4" /> },
     { href: '/dcft', label: isRTL ? 'نظرية DCFT' : 'DCFT Theory', icon: <Layers className="w-4 h-4" /> },
+    { href: '/engine-dashboard', label: isRTL ? 'لوحة المحرك' : 'Engine Dashboard', icon: <Gauge className="w-4 h-4" /> },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
   ];

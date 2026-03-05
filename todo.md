@@ -4737,3 +4737,8 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Verify DCFT theory is still in the codebase (confirmed: server/dcft/ with 15 files)
 - [x] Implement Learning Loop - integrated into NetworkEngine (records every analysis, runs learning cycles, evaluates predictions)
 - [x] Implement Engine Dashboard - real-time layer performance visualization (EngineDashboard.tsx + /engine-dashboard route)
+
+## Phase: Three Suggestions Implementation
+- [x] Fix I18nProvider - file was synced from GitHub, 0 TS errors now
+- [x] Clean up old unused files - rewired unifiedRouters.ts to use networkEngine (removed old pipeline dependency, 0 TS errors)
+- [x] Add Engine Dashboard link to the main navigation menu (added to navLinks in Home.tsx with Gauge icon)
