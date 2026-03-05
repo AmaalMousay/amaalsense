@@ -1,358 +1,339 @@
 /**
- * Emotional Weather Page
+ * Emotional Weather Page (Detailed View)
  * 
- * Displays global emotional climate with:
- * - Current conditions (Hope, Fear, Stability)
- * - Forecast for next 7 days
- * - Risk levels and recommendations
- * - Multi-language support
+ * Displays global emotional climate using REAL data from country analysis:
+ * - Current conditions computed from real news sentiment
+ * - Country breakdown with real fear/hope indices
+ * - Risk assessment based on actual data
  */
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useI18n } from '@/i18n';
 import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Cloud, CloudRain, Sun, Wind, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
-
-interface WeatherData {
-  date: string;
-  hope: number;
-  fear: number;
-  stability: number;
-  condition: 'sunny' | 'cloudy' | 'stormy' | 'rainy' | 'calm' | 'turbulent';
-  riskLevel: 'low' | 'moderate' | 'high' | 'critical';
-  recommendation: string;
-}
+import { Button } from '@/components/ui/button';
+import { Cloud, CloudRain, Sun, Wind, AlertTriangle, TrendingUp } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 export default function Weather() {
   const { t, language } = useI18n();
-  const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null);
-  const [forecast, setForecast] = useState<WeatherData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, navigate] = useLocation();
+  const isAr = language === 'ar';
 
-  useEffect(() => {
-    // Simulate fetching weather data
-    const mockCurrent: WeatherData = {
-      date: new Date().toISOString().split('T')[0],
-      hope: 72,
-      fear: 28,
-      stability: 65,
-      condition: 'sunny',
-      riskLevel: 'low',
-      recommendation: 'Positive global sentiment. Good time for initiatives.',
+  // Fetch REAL data from all countries
+  const { data: countries, isLoading, error } = trpc.map.getAllCountriesEmotions.useQuery();
+
+  // Compute weather from real data
+  const weatherData = useMemo(() => {
+    if (!countries || countries.length === 0) return null;
+    
+    const real = countries.filter((c: any) => c.isRealData);
+    if (real.length === 0) return null;
+
+    const avgGmi = Math.round(real.reduce((s: number, c: any) => s + c.gmi, 0) / real.length);
+    const avgCfi = Math.round(real.reduce((s: number, c: any) => s + c.cfi, 0) / real.length);
+    const avgHri = Math.round(real.reduce((s: number, c: any) => s + c.hri, 0) / real.length);
+    
+    // Determine condition from real data
+    const hopeLevel = Math.round((avgGmi + 100) / 2);
+    const condition = hopeLevel > 65 ? 'sunny' as const : hopeLevel > 50 ? 'cloudy' as const : hopeLevel > 35 ? 'rainy' as const : 'stormy' as const;
+    
+    // Risk level from real data
+    const riskLevel = avgCfi > 70 ? 'critical' as const : avgCfi > 50 ? 'high' as const : avgCfi > 30 ? 'moderate' as const : 'low' as const;
+    
+    // Stability from variance
+    const variance = real.reduce((s: number, c: any) => s + Math.pow(c.gmi - avgGmi, 2), 0) / real.length;
+    const stability = Math.max(10, Math.min(95, Math.round(100 - Math.sqrt(variance))));
+
+    // Sort countries by different metrics
+    const mostFearful = [...real].sort((a: any, b: any) => b.cfi - a.cfi).slice(0, 6);
+    const mostHopeful = [...real].sort((a: any, b: any) => b.hri - a.hri).slice(0, 6);
+    const mostNegative = [...real].sort((a: any, b: any) => a.gmi - b.gmi).slice(0, 6);
+
+    return {
+      hope: hopeLevel,
+      fear: avgCfi,
+      stability,
+      condition,
+      riskLevel,
+      avgGmi,
+      avgCfi,
+      avgHri,
+      mostFearful,
+      mostHopeful,
+      mostNegative,
+      totalReal: real.length,
+      totalCountries: countries.length,
     };
-
-    const mockForecast: WeatherData[] = [
-      {
-        date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-        hope: 70,
-        fear: 30,
-        stability: 63,
-        condition: 'cloudy',
-        riskLevel: 'low',
-        recommendation: 'Slight uncertainty expected.',
-      },
-      {
-        date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
-        hope: 65,
-        fear: 35,
-        stability: 58,
-        condition: 'rainy',
-        riskLevel: 'moderate',
-        recommendation: 'Monitor for potential volatility.',
-      },
-      {
-        date: new Date(Date.now() + 259200000).toISOString().split('T')[0],
-        hope: 68,
-        fear: 32,
-        stability: 61,
-        condition: 'cloudy',
-        riskLevel: 'moderate',
-        recommendation: 'Stabilizing trend expected.',
-      },
-      {
-        date: new Date(Date.now() + 345600000).toISOString().split('T')[0],
-        hope: 75,
-        fear: 25,
-        stability: 70,
-        condition: 'sunny',
-        riskLevel: 'low',
-        recommendation: 'Strong positive indicators.',
-      },
-      {
-        date: new Date(Date.now() + 432000000).toISOString().split('T')[0],
-        hope: 73,
-        fear: 27,
-        stability: 68,
-        condition: 'calm',
-        riskLevel: 'low',
-        recommendation: 'Stable conditions continue.',
-      },
-      {
-        date: new Date(Date.now() + 518400000).toISOString().split('T')[0],
-        hope: 70,
-        fear: 30,
-        stability: 65,
-        condition: 'cloudy',
-        riskLevel: 'low',
-        recommendation: 'Minor fluctuations expected.',
-      },
-      {
-        date: new Date(Date.now() + 604800000).toISOString().split('T')[0],
-        hope: 72,
-        fear: 28,
-        stability: 67,
-        condition: 'sunny',
-        riskLevel: 'low',
-        recommendation: 'Positive week ahead.',
-      },
-    ];
-
-    setCurrentWeather(mockCurrent);
-    setForecast(mockForecast);
-    setLoading(false);
-  }, []);
+  }, [countries]);
 
   const getWeatherIcon = (condition: string) => {
     switch (condition) {
-      case 'sunny':
-        return <Sun className="w-8 h-8 text-yellow-400" />;
-      case 'cloudy':
-        return <Cloud className="w-8 h-8 text-gray-400" />;
-      case 'rainy':
-        return <CloudRain className="w-8 h-8 text-blue-400" />;
-      case 'stormy':
-        return <AlertTriangle className="w-8 h-8 text-red-400" />;
-      case 'calm':
-        return <Wind className="w-8 h-8 text-blue-300" />;
-      case 'turbulent':
-        return <AlertTriangle className="w-8 h-8 text-orange-400" />;
-      default:
-        return <Cloud className="w-8 h-8" />;
+      case 'sunny': return <Sun className="w-8 h-8 text-yellow-400" />;
+      case 'cloudy': return <Cloud className="w-8 h-8 text-gray-400" />;
+      case 'rainy': return <CloudRain className="w-8 h-8 text-blue-400" />;
+      case 'stormy': return <AlertTriangle className="w-8 h-8 text-red-400" />;
+      default: return <Cloud className="w-8 h-8" />;
     }
+  };
+
+  const getConditionText = (condition: string) => {
+    const texts: Record<string, { ar: string; en: string }> = {
+      sunny: { ar: 'مشمس - تفاؤل عالي', en: 'Sunny - High Optimism' },
+      cloudy: { ar: 'غائم - قلق معتدل', en: 'Cloudy - Moderate Concern' },
+      rainy: { ar: 'ماطر - قلق متزايد', en: 'Rainy - Rising Concern' },
+      stormy: { ar: 'عاصف - قلق عالي', en: 'Stormy - High Concern' },
+    };
+    return isAr ? texts[condition]?.ar || condition : texts[condition]?.en || condition;
   };
 
   const getRiskColor = (level: string) => {
     switch (level) {
-      case 'low':
-        return 'bg-green-500/10 text-green-700 border-green-200';
-      case 'moderate':
-        return 'bg-yellow-500/10 text-yellow-700 border-yellow-200';
-      case 'high':
-        return 'bg-orange-500/10 text-orange-700 border-orange-200';
-      case 'critical':
-        return 'bg-red-500/10 text-red-700 border-red-200';
-      default:
-        return 'bg-gray-500/10 text-gray-700 border-gray-200';
+      case 'low': return 'bg-green-500/10 text-green-400 border-green-500/30';
+      case 'moderate': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30';
+      case 'high': return 'bg-orange-500/10 text-orange-400 border-orange-500/30';
+      case 'critical': return 'bg-red-500/10 text-red-400 border-red-500/30';
+      default: return 'bg-gray-500/10 text-gray-400 border-gray-500/30';
     }
   };
 
-  const getIndicatorColor = (value: number) => {
-    if (value >= 70) return 'text-green-500';
-    if (value >= 50) return 'text-yellow-500';
-    return 'text-red-500';
+  const getRiskText = (level: string) => {
+    const texts: Record<string, { ar: string; en: string }> = {
+      low: { ar: 'منخفض', en: 'Low' },
+      moderate: { ar: 'متوسط', en: 'Moderate' },
+      high: { ar: 'مرتفع', en: 'High' },
+      critical: { ar: 'حرج', en: 'Critical' },
+    };
+    return isAr ? texts[level]?.ar || level : texts[level]?.en || level;
   };
 
-  if (loading) {
+  const getRecommendation = () => {
+    if (!weatherData) return '';
+    if (weatherData.riskLevel === 'low') return isAr ? 'المزاج العالمي إيجابي. وقت مناسب للمبادرات والمشاريع.' : 'Positive global sentiment. Good time for initiatives.';
+    if (weatherData.riskLevel === 'moderate') return isAr ? 'قلق معتدل في بعض المناطق. يُنصح بمراقبة التطورات.' : 'Moderate concern in some regions. Monitor developments.';
+    if (weatherData.riskLevel === 'high') return isAr ? 'مستوى قلق مرتفع. يُنصح بالحذر ومتابعة الأخبار.' : 'High concern level. Exercise caution and follow news.';
+    return isAr ? 'وضع حرج. قلق عالمي واسع النطاق.' : 'Critical situation. Widespread global concern.';
+  };
+
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-          <p>{t.common.loading}</p>
+          <p className="text-slate-400">{isAr ? 'جاري تحليل المشاعر العالمية...' : 'Analyzing global sentiment...'}</p>
         </div>
       </div>
     );
   }
 
+  if (error || !weatherData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <Card className="bg-slate-800 border-slate-600 p-8 text-center max-w-md">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h2 className="text-xl font-bold text-white mb-2">{isAr ? 'تعذر تحميل البيانات' : 'Failed to load data'}</h2>
+          <Button onClick={() => window.location.reload()} className="mt-4">{isAr ? 'إعادة المحاولة' : 'Retry'}</Button>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 ${isAr ? 'rtl' : 'ltr'}`}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2">{t.weather.title}</h1>
-        <p className="text-slate-400">{t.weather.subtitle}</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">{t.weather?.title || (isAr ? '🌦️ الطقس العاطفي' : '🌦️ Emotional Weather')}</h1>
+            <p className="text-slate-400">
+              {isAr 
+                ? `بيانات حقيقية من ${weatherData.totalReal} دولة`
+                : `Real data from ${weatherData.totalReal} countries`}
+            </p>
+          </div>
+          <Button variant="outline" className="border-slate-600 text-slate-300" onClick={() => navigate('/')}>
+            {isAr ? '← العودة' : '← Back'}
+          </Button>
         </div>
 
         <Tabs defaultValue="current" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="current">{t.weather.currentConditions}</TabsTrigger>
-            <TabsTrigger value="forecast">{t.weather.forecast}</TabsTrigger>
-            <TabsTrigger value="alerts">{t.weather.alerts}</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-slate-800">
+            <TabsTrigger value="current">{t.weather?.currentConditions || (isAr ? 'الحالة الحالية' : 'Current')}</TabsTrigger>
+            <TabsTrigger value="countries">{isAr ? 'تفاصيل الدول' : 'Countries'}</TabsTrigger>
+            <TabsTrigger value="alerts">{t.weather?.alerts || (isAr ? 'التنبيهات' : 'Alerts')}</TabsTrigger>
           </TabsList>
 
-          {/* Current Conditions */}
+          {/* Current Conditions - REAL DATA */}
           <TabsContent value="current" className="space-y-6">
-            {currentWeather && (
-              <>
-                {/* Main Weather Card */}
-                <Card className="bg-slate-800 border-slate-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
-                      {getWeatherIcon(currentWeather.condition)}
-                      <span className="capitalize">{currentWeather.condition}</span>
-                    </CardTitle>
-                    <CardDescription>
-                      {currentWeather.date}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Indicators Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* Hope */}
-                      <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-slate-300">{t.weather.hopeLevel}</span>
-                          <TrendingUp className="w-5 h-5 text-green-400" />
-                        </div>
-                        <div className="text-3xl font-bold text-white mb-2">
-                          {currentWeather.hope}%
-                        </div>
-                        <div className="w-full bg-slate-600 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"
-                            style={{ width: `${currentWeather.hope}%` }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Fear */}
-                      <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-slate-300">{t.weather.fearLevel}</span>
-                          <AlertTriangle className="w-5 h-5 text-red-400" />
-                        </div>
-                        <div className="text-3xl font-bold text-white mb-2">
-                          {currentWeather.fear}%
-                        </div>
-                        <div className="w-full bg-slate-600 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-red-400 to-rose-500 h-2 rounded-full"
-                            style={{ width: `${currentWeather.fear}%` }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Stability */}
-                      <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-slate-300">{t.weather.stabilityIndex}</span>
-                          <Wind className="w-5 h-5 text-blue-400" />
-                        </div>
-                        <div className="text-3xl font-bold text-white mb-2">
-                          {currentWeather.stability}%
-                        </div>
-                        <div className="w-full bg-slate-600 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-blue-400 to-cyan-500 h-2 rounded-full"
-                            style={{ width: `${currentWeather.stability}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Risk Level */}
-                    <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-slate-300 font-medium">{t.weather.riskLevel}</span>
-                        <Badge className={getRiskColor(currentWeather.riskLevel)}>
-                          {currentWeather.riskLevel}
-                        </Badge>
-                      </div>
-                      <p className="text-slate-300">{currentWeather.recommendation}</p>
-                    </div>
-
-                    {/* Global Mood */}
-                    <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-lg p-4 border border-cyan-500/20">
-                      <h3 className="text-lg font-semibold text-white mb-2">{t.weather.globalMood}</h3>
-                      <p className="text-slate-300">
-                        Global emotional climate analysis showing hope at {currentWeather.hope}%, fear at {currentWeather.fear}%, and stability at {currentWeather.stability}%.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
-          </TabsContent>
-
-          {/* 7-Day Forecast */}
-          <TabsContent value="forecast" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {forecast.map((day, index) => (
-                <Card key={index} className="bg-slate-800 border-slate-700">
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <div className="flex justify-center mb-3">
-                        {getWeatherIcon(day.condition)}
-                      </div>
-                      <p className="text-sm text-slate-400 mb-3">{day.date}</p>
-                      
-                      <div className="space-y-2 mb-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Hope</span>
-                          <span className={`font-semibold ${getIndicatorColor(day.hope)}`}>
-                            {day.hope}%
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Fear</span>
-                          <span className={`font-semibold ${getIndicatorColor(100 - day.fear)}`}>
-                            {day.fear}%
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Stability</span>
-                          <span className={`font-semibold ${getIndicatorColor(day.stability)}`}>
-                            {day.stability}%
-                          </span>
-                        </div>
-                      </div>
-
-                      <Badge className={getRiskColor(day.riskLevel)}>
-                        {day.riskLevel}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* Alerts */}
-          <TabsContent value="alerts">
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle>{t.weather.alerts}</CardTitle>
+                <CardTitle className="flex items-center gap-3 text-white">
+                  {getWeatherIcon(weatherData.condition)}
+                  <span>{getConditionText(weatherData.condition)}</span>
+                </CardTitle>
+                <CardDescription className="text-slate-400">
+                  {new Date().toLocaleDateString(isAr ? 'ar-LY' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <AlertTriangle className="w-5 h-5 text-yellow-500 mt-0.5" />
-                      <div>
-                        <h4 className="font-semibold text-yellow-200 mb-1">Moderate Volatility Expected</h4>
-                        <p className="text-sm text-yellow-100/80">
-                          Day 3 forecast shows increased uncertainty. Recommend monitoring key indicators.
-                        </p>
-                      </div>
+              <CardContent className="space-y-6">
+                {/* Indicators Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-slate-300">{t.weather?.hopeLevel || (isAr ? 'مستوى الأمل' : 'Hope Level')}</span>
+                      <TrendingUp className="w-5 h-5 text-green-400" />
+                    </div>
+                    <div className="text-3xl font-bold text-white mb-2">{weatherData.hope}%</div>
+                    <div className="w-full bg-slate-600 rounded-full h-2">
+                      <div className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full" style={{ width: `${weatherData.hope}%` }} />
                     </div>
                   </div>
 
-                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <TrendingUp className="w-5 h-5 text-green-500 mt-0.5" />
-                      <div>
-                        <h4 className="font-semibold text-green-200 mb-1">Positive Trend Detected</h4>
-                        <p className="text-sm text-green-100/80">
-                          Hope levels trending upward. Stability improving across all regions.
-                        </p>
-                      </div>
+                  <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-slate-300">{t.weather?.fearLevel || (isAr ? 'مستوى الخوف' : 'Fear Level')}</span>
+                      <AlertTriangle className="w-5 h-5 text-red-400" />
+                    </div>
+                    <div className="text-3xl font-bold text-white mb-2">{weatherData.fear}%</div>
+                    <div className="w-full bg-slate-600 rounded-full h-2">
+                      <div className="bg-gradient-to-r from-red-400 to-rose-500 h-2 rounded-full" style={{ width: `${weatherData.fear}%` }} />
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-slate-300">{t.weather?.stabilityIndex || (isAr ? 'مؤشر الاستقرار' : 'Stability')}</span>
+                      <Wind className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div className="text-3xl font-bold text-white mb-2">{weatherData.stability}%</div>
+                    <div className="w-full bg-slate-600 rounded-full h-2">
+                      <div className="bg-gradient-to-r from-blue-400 to-cyan-500 h-2 rounded-full" style={{ width: `${weatherData.stability}%` }} />
                     </div>
                   </div>
                 </div>
+
+                {/* Risk Level */}
+                <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-slate-300 font-medium">{t.weather?.riskLevel || (isAr ? 'مستوى المخاطر' : 'Risk Level')}</span>
+                    <Badge className={getRiskColor(weatherData.riskLevel)}>{getRiskText(weatherData.riskLevel)}</Badge>
+                  </div>
+                  <p className="text-slate-300">{getRecommendation()}</p>
+                </div>
+
+                {/* Real Data Badge */}
+                <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-lg p-4 border border-cyan-500/20">
+                  <h3 className="text-lg font-semibold text-white mb-2">{isAr ? 'تحليل حقيقي' : 'Real Analysis'}</h3>
+                  <p className="text-slate-300">
+                    {isAr 
+                      ? `تم تحليل أخبار ${weatherData.totalReal} دولة عبر Google News و NewsAPI. مؤشر المزاج العام: ${weatherData.avgGmi} (من -100 إلى +100).`
+                      : `Analyzed news from ${weatherData.totalReal} countries via Google News & NewsAPI. Global Mood Index: ${weatherData.avgGmi} (-100 to +100).`
+                    }
+                  </p>
+                </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Countries Breakdown - REAL DATA */}
+          <TabsContent value="countries" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Most Fearful */}
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-red-400">{isAr ? '🔴 أكثر الدول قلقاً' : '🔴 Most Concerned'}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {weatherData.mostFearful.map((c: any, i: number) => (
+                    <div 
+                      key={c.countryCode}
+                      className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-600/50 transition-colors"
+                      onClick={() => navigate(`/country/${c.countryCode}`)}
+                    >
+                      <span className="text-lg font-bold text-slate-500 w-6">{i + 1}</span>
+                      <div className="flex-1">
+                        <span className="text-white">{isAr ? (c.nameAr || c.countryName) : c.countryName}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-red-400 font-bold">{c.cfi}%</div>
+                        <div className="text-xs text-slate-500">{isAr ? 'خوف' : 'Fear'}</div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Most Hopeful */}
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-green-400">{isAr ? '🟢 أكثر الدول تفاؤلاً' : '🟢 Most Hopeful'}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {weatherData.mostHopeful.map((c: any, i: number) => (
+                    <div 
+                      key={c.countryCode}
+                      className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-600/50 transition-colors"
+                      onClick={() => navigate(`/country/${c.countryCode}`)}
+                    >
+                      <span className="text-lg font-bold text-slate-500 w-6">{i + 1}</span>
+                      <div className="flex-1">
+                        <span className="text-white">{isAr ? (c.nameAr || c.countryName) : c.countryName}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-green-400 font-bold">{c.hri}%</div>
+                        <div className="text-xs text-slate-500">{isAr ? 'أمل' : 'Hope'}</div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Alerts - REAL DATA */}
+          <TabsContent value="alerts" className="space-y-4">
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white">{isAr ? 'تنبيهات المشاعر' : 'Sentiment Alerts'}</CardTitle>
+                <CardDescription className="text-slate-400">
+                  {isAr ? 'الدول ذات أعلى مؤشر سلبي' : 'Countries with highest negative sentiment'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {weatherData.mostNegative.map((c: any) => (
+                  <div 
+                    key={c.countryCode}
+                    className="flex items-center gap-4 p-4 bg-slate-700/50 rounded-lg border border-slate-600 cursor-pointer hover:bg-slate-600/50 transition-colors"
+                    onClick={() => navigate(`/country/${c.countryCode}`)}
+                  >
+                    <AlertTriangle className={`w-6 h-6 ${c.gmi < -20 ? 'text-red-400' : c.gmi < -10 ? 'text-orange-400' : 'text-yellow-400'}`} />
+                    <div className="flex-1">
+                      <div className="text-white font-medium">{isAr ? (c.nameAr || c.countryName) : c.countryName}</div>
+                      <div className="text-sm text-slate-400">
+                        {isAr ? `مؤشر المزاج: ${c.gmi}` : `Mood Index: ${c.gmi}`} | {isAr ? `المشاعر: ${c.dominantEmotion}` : `Emotion: ${c.dominantEmotion}`}
+                      </div>
+                    </div>
+                    <Badge className={getRiskColor(c.cfi > 50 ? 'high' : c.cfi > 30 ? 'moderate' : 'low')}>
+                      {c.cfi > 50 ? (isAr ? 'مرتفع' : 'High') : c.cfi > 30 ? (isAr ? 'متوسط' : 'Moderate') : (isAr ? 'منخفض' : 'Low')}
+                    </Badge>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Data Source */}
+            <div className="p-4 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-700/50 flex items-center justify-between">
+              <p className="text-slate-300 text-sm">
+                {isAr
+                  ? `📡 بيانات حقيقية من ${weatherData.totalReal} دولة - تحليل مشاعر بالذكاء الاصطناعي`
+                  : `📡 Real data from ${weatherData.totalReal} countries - AI sentiment analysis`}
+              </p>
+              <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs rounded-full font-medium">
+                {isAr ? 'بيانات حقيقية' : 'REAL DATA'}
+              </span>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

@@ -378,8 +378,8 @@ export default function Home() {
   }, [latestIndices]);
 
   const handleCountryClick = (code: string, name: string) => {
-    // Navigate to Smart Analysis with country context
-    navigate(`/smart-analysis?topic=${encodeURIComponent(name + ' economy and politics')}`);
+    // Navigate to Country Detail page with real news and analysis
+    navigate(`/country/${code}?name=${encodeURIComponent(name)}`);
   };
 
   // Navigation links - Dashboard only for logged-in users via UserMenu

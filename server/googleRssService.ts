@@ -6,7 +6,7 @@
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js';
 
-interface NewsItem {
+export interface NewsItem {
   title: string;
   description: string;
   link: string;

@@ -1,36 +1,37 @@
 /**
- * Country Results Page
- * عرض بيانات الدولة العاطفية + 5 مواضيع ترند ساخنة
+ * Country Results Page - REAL DATA VERSION
+ * عرض بيانات الدولة العاطفية + أخبار حقيقية مصنفة (سياسية، اقتصادية، اجتماعية)
+ * يستخدم countryNewsAnalyzer لجلب أخبار حقيقية وتحليل المشاعر بالـ Groq LLM
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useI18n } from "@/i18n";
+import { AnalysisSkeleton } from "@/components/AnalysisSkeleton";
 import { 
   ArrowLeft, 
   TrendingUp, 
   TrendingDown, 
   Minus,
-  MapPin, 
   BarChart3, 
   Brain, 
-  Heart, 
-  Smile, 
-  Frown, 
-  AlertTriangle, 
-  Zap, 
-  Shield, 
-  HelpCircle,
+  Newspaper,
+  Landmark,
+  Banknote,
+  Users,
+  ExternalLink,
+  Globe,
+  RefreshCw,
+  AlertTriangle,
   Flame,
-  ThumbsUp,
-  ThumbsDown,
-  MessageSquare,
-  Globe
+  Clock,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 
 // Country names mapping
@@ -63,131 +64,132 @@ const COUNTRY_NAMES: Record<string, { en: string; ar: string }> = {
   BH: { en: "Bahrain", ar: "البحرين" },
   OM: { en: "Oman", ar: "عُمان" },
   YE: { en: "Yemen", ar: "اليمن" },
+  CA: { en: "Canada", ar: "كندا" },
+  AU: { en: "Australia", ar: "أستراليا" },
+  KR: { en: "South Korea", ar: "كوريا الجنوبية" },
+  MX: { en: "Mexico", ar: "المكسيك" },
+  ZA: { en: "South Africa", ar: "جنوب أفريقيا" },
+  NG: { en: "Nigeria", ar: "نيجيريا" },
+  KE: { en: "Kenya", ar: "كينيا" },
+  ID: { en: "Indonesia", ar: "إندونيسيا" },
+  PK: { en: "Pakistan", ar: "باكستان" },
+  AR: { en: "Argentina", ar: "الأرجنتين" },
+  CO: { en: "Colombia", ar: "كولومبيا" },
+  IT: { en: "Italy", ar: "إيطاليا" },
+  ES: { en: "Spain", ar: "إسبانيا" },
 };
 
-// Emotion configuration
-const EMOTION_CONFIG: Record<string, { color: string; icon: string; label: string; labelAr: string }> = {
-  joy: { color: "#22c55e", icon: "😊", label: "Joy", labelAr: "فرح" },
-  hope: { color: "#2A9D8F", icon: "🌟", label: "Hope", labelAr: "أمل" },
-  curiosity: { color: "#E9C46A", icon: "🤔", label: "Curiosity", labelAr: "فضول" },
-  fear: { color: "#F4A261", icon: "😨", label: "Fear", labelAr: "خوف" },
-  anger: { color: "#E63946", icon: "😠", label: "Anger", labelAr: "غضب" },
-  sadness: { color: "#8D5CF6", icon: "😢", label: "Sadness", labelAr: "حزن" },
-};
-
-// Trending topics type
-interface TrendingTopic {
-  topic: string;
-  topicAr: string;
-  category: string;
-  categoryAr: string;
-  heat: number; // 0-100 how hot/trending
-  gmi: number;
-  cfi: number;
-  hri: number;
-  dominantEmotion: string;
-  emotionIntensity: number;
-  sources: number;
-  change24h: number; // percentage change
+// Country flag emojis
+function getCountryFlag(code: string): string {
+  const flags: Record<string, string> = {
+    LY: "🇱🇾", EG: "🇪🇬", SA: "🇸🇦", AE: "🇦🇪", US: "🇺🇸", GB: "🇬🇧",
+    FR: "🇫🇷", DE: "🇩🇪", JP: "🇯🇵", CN: "🇨🇳", IN: "🇮🇳", BR: "🇧🇷",
+    RU: "🇷🇺", TR: "🇹🇷", PS: "🇵🇸", IQ: "🇮🇶", SY: "🇸🇾", JO: "🇯🇴",
+    LB: "🇱🇧", MA: "🇲🇦", DZ: "🇩🇿", TN: "🇹🇳", SD: "🇸🇩", QA: "🇶🇦",
+    KW: "🇰🇼", BH: "🇧🇭", OM: "🇴🇲", YE: "🇾🇪", CA: "🇨🇦", AU: "🇦🇺",
+    KR: "🇰🇷", MX: "🇲🇽", ZA: "🇿🇦", NG: "🇳🇬", KE: "🇰🇪", ID: "🇮🇩",
+    PK: "🇵🇰", AR: "🇦🇷", CO: "🇨🇴", IT: "🇮🇹", ES: "🇪🇸",
+  };
+  return flags[code] || "🏳️";
 }
 
-// Helper functions
-function roundToOneDecimal(num: number): string {
-  return (Math.round(num * 10) / 10).toFixed(1);
+// Mood helpers
+function getMoodStatus(gmi: number) {
+  if (gmi >= 50) return { label: "Very Positive", labelAr: "إيجابي جداً", color: "text-green-500", bgColor: "bg-green-500/10", borderColor: "border-green-500/30" };
+  if (gmi >= 20) return { label: "Positive", labelAr: "إيجابي", color: "text-green-400", bgColor: "bg-green-400/10", borderColor: "border-green-400/30" };
+  if (gmi >= -20) return { label: "Neutral", labelAr: "محايد", color: "text-yellow-500", bgColor: "bg-yellow-500/10", borderColor: "border-yellow-500/30" };
+  if (gmi >= -50) return { label: "Negative", labelAr: "سلبي", color: "text-orange-500", bgColor: "bg-orange-500/10", borderColor: "border-orange-500/30" };
+  return { label: "Very Negative", labelAr: "سلبي جداً", color: "text-red-500", bgColor: "bg-red-500/10", borderColor: "border-red-500/30" };
 }
 
-function getMoodStatus(gmi: number): { label: string; labelAr: string; color: string; emoji: string } {
-  if (gmi >= 50) return { label: "Very Positive", labelAr: "إيجابي جداً", color: "text-green-500", emoji: "🟢" };
-  if (gmi >= 20) return { label: "Positive", labelAr: "إيجابي", color: "text-green-400", emoji: "🟢" };
-  if (gmi >= -20) return { label: "Neutral", labelAr: "محايد", color: "text-yellow-500", emoji: "🟡" };
-  if (gmi >= -50) return { label: "Negative", labelAr: "سلبي", color: "text-orange-500", emoji: "🟠" };
-  return { label: "Very Negative", labelAr: "سلبي جداً", color: "text-red-500", emoji: "🔴" };
+function getSentimentBadge(sentiment: string, isRTL: boolean) {
+  switch (sentiment) {
+    case 'positive':
+      return <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle className="w-3 h-3 mr-1" />{isRTL ? 'إيجابي' : 'Positive'}</Badge>;
+    case 'negative':
+      return <Badge className="bg-red-500/20 text-red-400 border-red-500/30"><XCircle className="w-3 h-3 mr-1" />{isRTL ? 'سلبي' : 'Negative'}</Badge>;
+    default:
+      return <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30"><Minus className="w-3 h-3 mr-1" />{isRTL ? 'محايد' : 'Neutral'}</Badge>;
+  }
 }
 
-function getHeatLevel(heat: number): { label: string; color: string; icon: any } {
-  if (heat >= 80) return { label: "🔥🔥🔥 ساخن جداً", color: "text-red-500", icon: Flame };
-  if (heat >= 60) return { label: "🔥🔥 ساخن", color: "text-orange-500", icon: Flame };
-  if (heat >= 40) return { label: "🔥 دافئ", color: "text-yellow-500", icon: TrendingUp };
-  return { label: "عادي", color: "text-gray-500", icon: Minus };
+function getCategoryIcon(category: string) {
+  switch (category) {
+    case 'political': return <Landmark className="w-4 h-4" />;
+    case 'economic': return <Banknote className="w-4 h-4" />;
+    case 'social': return <Users className="w-4 h-4" />;
+    default: return <Newspaper className="w-4 h-4" />;
+  }
+}
+
+// News item component
+function NewsItem({ item, isRTL }: { item: any; isRTL: boolean }) {
+  return (
+    <div className="p-4 rounded-lg border border-border/50 hover:border-border transition-colors bg-card/50">
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <h4 className="font-semibold text-sm leading-relaxed flex-1">{item.title}</h4>
+        {getSentimentBadge(item.sentiment, isRTL)}
+      </div>
+      {item.description && (
+        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{item.description}</p>
+      )}
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1">
+            <Globe className="w-3 h-3" />
+            {item.source || (isRTL ? 'مصدر غير معروف' : 'Unknown source')}
+          </span>
+          {item.publishedAt && (
+            <span className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {new Date(item.publishedAt).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US', { month: 'short', day: 'numeric' })}
+            </span>
+          )}
+        </div>
+        {item.url && (
+          <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
+            <ExternalLink className="w-3 h-3" />
+            {isRTL ? 'المصدر' : 'Source'}
+          </a>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function CountryResults() {
   const [, navigate] = useLocation();
   const [, params] = useRoute("/country/:code");
-  const countryCode = params?.code || "";
-  
-  const [countryData, setCountryData] = useState<any>(null);
-  const [trendingTopics, setTrendingTopics] = useState<TrendingTopic[]>([]);
-  const [selectedTopic, setSelectedTopic] = useState<TrendingTopic | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [topicAnalysis, setTopicAnalysis] = useState<any>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const countryCode = (params?.code || "").toUpperCase();
+  const { isRTL } = useI18n();
+  const [activeTab, setActiveTab] = useState("all");
 
-  // Get country name
-  const countryInfo = COUNTRY_NAMES[countryCode] || { en: countryCode, ar: countryCode };
+  // Get country name from URL params or mapping
+  const searchParams = new URLSearchParams(window.location.search);
+  const urlName = searchParams.get('name');
+  const countryInfo = COUNTRY_NAMES[countryCode] || { en: urlName || countryCode, ar: urlName || countryCode };
 
-  // Fetch country emotion data
-  const countryEmotionQuery = trpc.map.getCountryEmotions.useQuery(
+  // Fetch REAL country data from countryNewsAnalyzer
+  const { data: countryData, isLoading, error, refetch, isRefetching } = trpc.map.getCountryEmotions.useQuery(
     { countryCode },
-    { enabled: !!countryCode }
+    { 
+      enabled: !!countryCode && countryCode.length === 2,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    }
   );
 
-  // Analyze topic mutation
-  const analyzeTopicMutation = trpc.topic.analyzeTopicInCountry.useMutation();
-
-  // Generate trending topics for the country
-  useEffect(() => {
-    if (countryCode) {
-      // Simulate trending topics based on country
-      const topics = generateTrendingTopics(countryCode);
-      setTrendingTopics(topics);
-    }
-  }, [countryCode]);
-
-  // Set country data when loaded
-  useEffect(() => {
-    if (countryEmotionQuery.data) {
-      setCountryData(countryEmotionQuery.data);
-      setIsLoading(false);
-    } else if (countryEmotionQuery.isError) {
-      // Generate mock data if not found
-      setCountryData(generateMockCountryData(countryCode));
-      setIsLoading(false);
-    }
-  }, [countryEmotionQuery.data, countryEmotionQuery.isError, countryCode]);
-
-  // Analyze selected topic
-  const handleAnalyzeTopic = async (topic: TrendingTopic) => {
-    setSelectedTopic(topic);
-    setIsAnalyzing(true);
-    
-    try {
-      const result = await analyzeTopicMutation.mutateAsync({
-        topic: topic.topic,
-        countryCode,
-        countryName: countryInfo.ar,
-        timeRange: "week"
-      });
-      setTopicAnalysis(result);
-    } catch (error) {
-      console.error("Analysis error:", error);
-      // Generate mock analysis
-      setTopicAnalysis(generateMockTopicAnalysis(topic));
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
+  // No country code
   if (!countryCode) {
     return (
       <div className="container py-8">
         <Card className="text-center py-12">
           <CardContent>
             <Globe className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground mb-4">لم يتم تحديد دولة</p>
+            <p className="text-muted-foreground mb-4">{isRTL ? 'لم يتم تحديد دولة' : 'No country selected'}</p>
             <Button onClick={() => navigate("/")}>
               <ArrowLeft className="ml-2 h-4 w-4" />
-              العودة للخريطة
+              {isRTL ? 'العودة للخريطة' : 'Back to Map'}
             </Button>
           </CardContent>
         </Card>
@@ -195,20 +197,75 @@ export default function CountryResults() {
     );
   }
 
+  // Loading state with skeleton
   if (isLoading) {
     return (
-      <div className="container py-8">
-        <Card className="text-center py-12">
-          <CardContent>
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">جاري تحميل بيانات {countryInfo.ar}...</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-background">
+        <div className="border-b bg-card/50">
+          <div className="container py-6">
+            <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">
+              <ArrowLeft className="ml-2 h-4 w-4" />
+              {isRTL ? 'العودة للخريطة' : 'Back to Map'}
+            </Button>
+            <div className="flex items-center gap-4">
+              <div className="text-6xl">{getCountryFlag(countryCode)}</div>
+              <div>
+                <h1 className="text-3xl font-bold">{countryInfo.ar}</h1>
+                <p className="text-muted-foreground">{countryInfo.en}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container py-8">
+          <AnalysisSkeleton variant="full" />
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="border-b bg-card/50">
+          <div className="container py-6">
+            <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">
+              <ArrowLeft className="ml-2 h-4 w-4" />
+              {isRTL ? 'العودة للخريطة' : 'Back to Map'}
+            </Button>
+          </div>
+        </div>
+        <div className="container py-8">
+          <Card className="text-center py-12">
+            <CardContent>
+              <AlertTriangle className="h-16 w-16 mx-auto mb-4 text-yellow-500" />
+              <h3 className="text-xl font-bold mb-2">{isRTL ? 'حدث خطأ في التحليل' : 'Analysis Error'}</h3>
+              <p className="text-muted-foreground mb-4">
+                {isRTL ? 'لم نتمكن من جلب بيانات هذه الدولة. يرجى المحاولة مرة أخرى.' : 'Could not fetch data for this country. Please try again.'}
+              </p>
+              <div className="flex gap-3 justify-center">
+                <Button onClick={() => refetch()}>
+                  <RefreshCw className="ml-2 h-4 w-4" />
+                  {isRTL ? 'إعادة المحاولة' : 'Retry'}
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/")}>
+                  <ArrowLeft className="ml-2 h-4 w-4" />
+                  {isRTL ? 'العودة للخريطة' : 'Back to Map'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
 
   const moodStatus = getMoodStatus(countryData?.gmi || 0);
+  const politicalNews = countryData?.news?.political || [];
+  const economicNews = countryData?.news?.economic || [];
+  const socialNews = countryData?.news?.social || [];
+  const allNews = [...politicalNews, ...economicNews, ...socialNews];
+  const trendingTopics = countryData?.trendingTopics || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -217,331 +274,253 @@ export default function CountryResults() {
         <div className="container py-6">
           <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">
             <ArrowLeft className="ml-2 h-4 w-4" />
-            العودة للخريطة
+            {isRTL ? 'العودة للخريطة' : 'Back to Map'}
           </Button>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="text-6xl">{getCountryFlag(countryCode)}</div>
-            <div>
-              <h1 className="text-3xl font-bold">{countryInfo.ar}</h1>
-              <p className="text-muted-foreground">{countryInfo.en}</p>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold">{isRTL ? countryInfo.ar : countryInfo.en}</h1>
+              <p className="text-muted-foreground">{isRTL ? countryInfo.en : countryInfo.ar}</p>
             </div>
-            <Badge className={`ml-auto text-lg px-4 py-2 ${moodStatus.color}`}>
-              {moodStatus.emoji} {moodStatus.labelAr}
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Badge className={`text-lg px-4 py-2 ${moodStatus.bgColor} ${moodStatus.color} ${moodStatus.borderColor}`}>
+                {isRTL ? moodStatus.labelAr : moodStatus.label}
+              </Badge>
+              {countryData?.isRealData && (
+                <Badge variant="outline" className="text-green-500 border-green-500/30">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  {isRTL ? 'بيانات حقيقية' : 'Real Data'}
+                </Badge>
+              )}
+              <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>
+                <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="container py-8 space-y-8">
-        {/* Country Emotional State */}
+        {/* Indices Cards */}
         <section>
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
             <Brain className="h-6 w-6" />
-            الحالة العاطفية للدولة
+            {isRTL ? 'المؤشرات العاطفية' : 'Emotional Indicators'}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* GMI */}
-            <Card className="border-2" style={{ borderColor: moodStatus.color.includes('green') ? '#22c55e' : moodStatus.color.includes('red') ? '#ef4444' : '#eab308' }}>
+            <Card className={`border-2 ${moodStatus.borderColor}`}>
               <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">GMI - مؤشر المزاج العام</p>
+                    <p className="text-sm text-muted-foreground">GMI - {isRTL ? 'مؤشر المزاج العام' : 'Global Mood Index'}</p>
                     <div className="flex items-baseline gap-2">
-                      <p className="text-4xl font-bold">{roundToOneDecimal(countryData?.gmi || 0)}</p>
-                      <span className="text-muted-foreground">/ 100</span>
+                      <p className="text-4xl font-bold">{(countryData?.gmi ?? 0).toFixed(1)}</p>
+                      <span className="text-muted-foreground text-sm">/ 100</span>
                     </div>
                   </div>
-                  <span className="text-3xl">{moodStatus.emoji}</span>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${moodStatus.bgColor}`}>
+                    <span className={`text-2xl font-bold ${moodStatus.color}`}>
+                      {(countryData?.gmi ?? 0) >= 0 ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
+                    </span>
+                  </div>
                 </div>
-                <p className={`text-sm font-medium ${moodStatus.color}`}>
-                  {moodStatus.labelAr}
-                </p>
+                <p className={`text-sm font-medium ${moodStatus.color}`}>{isRTL ? moodStatus.labelAr : moodStatus.label}</p>
               </CardContent>
             </Card>
 
             {/* CFI */}
-            <Card>
+            <Card className={`border-2 ${(countryData?.cfi ?? 50) > 60 ? 'border-red-500/30' : (countryData?.cfi ?? 50) > 40 ? 'border-yellow-500/30' : 'border-green-500/30'}`}>
               <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">CFI - مؤشر الخوف الجماعي</p>
+                    <p className="text-sm text-muted-foreground">CFI - {isRTL ? 'مؤشر الخوف الجماعي' : 'Crisis Fear Index'}</p>
                     <div className="flex items-baseline gap-2">
-                      <p className="text-4xl font-bold">{roundToOneDecimal(countryData?.cfi || 50)}</p>
-                      <span className="text-muted-foreground">/ 100</span>
+                      <p className="text-4xl font-bold">{(countryData?.cfi ?? 50).toFixed(1)}</p>
+                      <span className="text-muted-foreground text-sm">/ 100</span>
                     </div>
                   </div>
-                  <span className="text-3xl">{(countryData?.cfi || 50) > 70 ? "🔴" : (countryData?.cfi || 50) > 30 ? "🟡" : "🟢"}</span>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${(countryData?.cfi ?? 50) > 60 ? 'bg-red-500/10' : 'bg-yellow-500/10'}`}>
+                    <AlertTriangle className={`w-6 h-6 ${(countryData?.cfi ?? 50) > 60 ? 'text-red-500' : 'text-yellow-500'}`} />
+                  </div>
                 </div>
+                <p className={`text-sm font-medium ${(countryData?.cfi ?? 50) > 60 ? 'text-red-500' : (countryData?.cfi ?? 50) > 40 ? 'text-yellow-500' : 'text-green-500'}`}>
+                  {(countryData?.cfi ?? 50) > 60 ? (isRTL ? 'مرتفع' : 'High') : (countryData?.cfi ?? 50) > 40 ? (isRTL ? 'متوسط' : 'Medium') : (isRTL ? 'منخفض' : 'Low')}
+                </p>
               </CardContent>
             </Card>
 
             {/* HRI */}
-            <Card>
+            <Card className={`border-2 ${(countryData?.hri ?? 50) > 60 ? 'border-green-500/30' : (countryData?.hri ?? 50) > 40 ? 'border-yellow-500/30' : 'border-red-500/30'}`}>
               <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">HRI - مؤشر الأمل والمرونة</p>
+                    <p className="text-sm text-muted-foreground">HRI - {isRTL ? 'مؤشر الأمل والمرونة' : 'Hope Resilience Index'}</p>
                     <div className="flex items-baseline gap-2">
-                      <p className="text-4xl font-bold">{roundToOneDecimal(countryData?.hri || 50)}</p>
-                      <span className="text-muted-foreground">/ 100</span>
+                      <p className="text-4xl font-bold">{(countryData?.hri ?? 50).toFixed(1)}</p>
+                      <span className="text-muted-foreground text-sm">/ 100</span>
                     </div>
                   </div>
-                  <span className="text-3xl">{(countryData?.hri || 50) > 70 ? "🟢" : (countryData?.hri || 50) > 30 ? "🟡" : "🔴"}</span>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${(countryData?.hri ?? 50) > 60 ? 'bg-green-500/10' : 'bg-yellow-500/10'}`}>
+                    <TrendingUp className={`w-6 h-6 ${(countryData?.hri ?? 50) > 60 ? 'text-green-500' : 'text-yellow-500'}`} />
+                  </div>
                 </div>
+                <p className={`text-sm font-medium ${(countryData?.hri ?? 50) > 60 ? 'text-green-500' : (countryData?.hri ?? 50) > 40 ? 'text-yellow-500' : 'text-red-500'}`}>
+                  {(countryData?.hri ?? 50) > 60 ? (isRTL ? 'مرتفع' : 'High') : (countryData?.hri ?? 50) > 40 ? (isRTL ? 'متوسط' : 'Medium') : (isRTL ? 'منخفض' : 'Low')}
+                </p>
               </CardContent>
             </Card>
           </div>
         </section>
 
+        {/* Summary */}
+        {(countryData?.summary || countryData?.summaryAr) && (
+          <section>
+            <Card className={`${moodStatus.bgColor} border ${moodStatus.borderColor}`}>
+              <CardContent className="pt-6">
+                <h3 className="font-bold mb-2 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5" />
+                  {isRTL ? 'ملخص التحليل' : 'Analysis Summary'}
+                </h3>
+                <p className="text-sm leading-relaxed">
+                  {isRTL ? (countryData?.summaryAr || countryData?.summary) : (countryData?.summary || countryData?.summaryAr)}
+                </p>
+                <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Newspaper className="w-3 h-3" />
+                    {countryData?.totalSources || allNews.length} {isRTL ? 'مصدر' : 'sources'}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {isRTL ? 'آخر تحديث: الآن' : 'Last updated: now'}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        )}
+
         {/* Trending Topics */}
+        {trendingTopics.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              <Flame className="h-6 w-6 text-orange-500" />
+              {isRTL ? 'المواضيع الساخنة' : 'Trending Topics'}
+              <Badge variant="secondary" className="ml-2">{trendingTopics.length}</Badge>
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {trendingTopics.map((topic: any, i: number) => (
+                <Card key={i} className="cursor-pointer hover:shadow-lg transition-all" onClick={() => navigate(`/smart-analysis?topic=${encodeURIComponent(topic.topic + ' ' + countryInfo.en)}`)}>
+                  <CardContent className="p-4 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500 font-bold text-sm">
+                      {topic.heat || i + 1}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{topic.topicAr || topic.topic}</p>
+                      <p className="text-xs text-muted-foreground">{topic.category}</p>
+                    </div>
+                    <Badge variant="outline" className="text-xs ml-2">
+                      {topic.sentiment === 'positive' ? '😊' : topic.sentiment === 'negative' ? '😟' : '😐'}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* News Section with Tabs */}
         <section>
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <Flame className="h-6 w-6 text-orange-500" />
-            المواضيع الساخنة في {countryInfo.ar}
-            <Badge variant="secondary" className="ml-2">5 مواضيع</Badge>
+            <Newspaper className="h-6 w-6" />
+            {isRTL ? 'الأخبار الحقيقية' : 'Real News'}
+            <Badge variant="secondary">{allNews.length} {isRTL ? 'خبر' : 'articles'}</Badge>
           </h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Topics List */}
-            <div className="space-y-3">
-              {trendingTopics.map((topic, index) => {
-                const heatLevel = getHeatLevel(topic.heat);
-                const emotionConfig = EMOTION_CONFIG[topic.dominantEmotion] || EMOTION_CONFIG.curiosity;
-                const isSelected = selectedTopic?.topic === topic.topic;
-                
-                return (
-                  <Card 
-                    key={topic.topic}
-                    className={`cursor-pointer transition-all hover:shadow-lg ${isSelected ? 'ring-2 ring-primary' : ''}`}
-                    onClick={() => handleAnalyzeTopic(topic)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        {/* Rank */}
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold">
-                          {index + 1}
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-bold truncate">{topic.topicAr}</h3>
-                            <Badge variant="outline" className="text-xs">{topic.categoryAr}</Badge>
-                          </div>
-                          
-                          <p className="text-sm text-muted-foreground mb-2">{topic.topic}</p>
-                          
-                          <div className="flex items-center gap-4 text-sm">
-                            <span className={heatLevel.color}>{heatLevel.label}</span>
-                            <span className="flex items-center gap-1">
-                              {emotionConfig.icon} {emotionConfig.labelAr}
-                            </span>
-                            <span className={topic.change24h >= 0 ? "text-green-500" : "text-red-500"}>
-                              {topic.change24h >= 0 ? <TrendingUp className="inline h-4 w-4" /> : <TrendingDown className="inline h-4 w-4" />}
-                              {Math.abs(topic.change24h)}%
-                            </span>
-                          </div>
-                        </div>
-                        
-                        {/* Heat indicator */}
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center" 
-                               style={{ backgroundColor: `rgba(239, 68, 68, ${topic.heat / 100})` }}>
-                            <span className="text-white font-bold">{topic.heat}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
 
-            {/* Topic Analysis Panel */}
-            <div>
-              {isAnalyzing ? (
-                <Card className="h-full flex items-center justify-center">
-                  <CardContent className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">جاري تحليل الموضوع...</p>
-                  </CardContent>
-                </Card>
-              ) : selectedTopic && topicAnalysis ? (
-                <Card className="h-full">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="h-5 w-5" />
-                      تحليل: {selectedTopic.topicAr}
-                    </CardTitle>
-                    <CardDescription>{selectedTopic.topic}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Indices */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="text-center p-3 bg-muted rounded-lg">
-                        <p className="text-2xl font-bold">{roundToOneDecimal(topicAnalysis.gmi || selectedTopic.gmi)}</p>
-                        <p className="text-xs text-muted-foreground">GMI</p>
-                      </div>
-                      <div className="text-center p-3 bg-muted rounded-lg">
-                        <p className="text-2xl font-bold">{roundToOneDecimal(topicAnalysis.cfi || selectedTopic.cfi)}</p>
-                        <p className="text-xs text-muted-foreground">CFI</p>
-                      </div>
-                      <div className="text-center p-3 bg-muted rounded-lg">
-                        <p className="text-2xl font-bold">{roundToOneDecimal(topicAnalysis.hri || selectedTopic.hri)}</p>
-                        <p className="text-xs text-muted-foreground">HRI</p>
-                      </div>
-                    </div>
+          {allNews.length === 0 ? (
+            <Card className="text-center py-12">
+              <CardContent>
+                <Newspaper className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground">
+                  {isRTL ? 'لا توجد أخبار متاحة حالياً لهذه الدولة' : 'No news currently available for this country'}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="mb-4">
+                <TabsTrigger value="all" className="flex items-center gap-2">
+                  <Newspaper className="w-4 h-4" />
+                  {isRTL ? 'الكل' : 'All'} ({allNews.length})
+                </TabsTrigger>
+                <TabsTrigger value="political" className="flex items-center gap-2">
+                  <Landmark className="w-4 h-4" />
+                  {isRTL ? 'سياسي' : 'Political'} ({politicalNews.length})
+                </TabsTrigger>
+                <TabsTrigger value="economic" className="flex items-center gap-2">
+                  <Banknote className="w-4 h-4" />
+                  {isRTL ? 'اقتصادي' : 'Economic'} ({economicNews.length})
+                </TabsTrigger>
+                <TabsTrigger value="social" className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  {isRTL ? 'اجتماعي' : 'Social'} ({socialNews.length})
+                </TabsTrigger>
+              </TabsList>
 
-                    {/* Emotion Distribution */}
-                    <div>
-                      <h4 className="font-semibold mb-3">توزيع المشاعر</h4>
-                      <div className="space-y-2">
-                        {Object.entries(topicAnalysis.emotions || generateMockEmotions()).slice(0, 4).map(([emotion, value]) => {
-                          const config = EMOTION_CONFIG[emotion];
-                          if (!config) return null;
-                          return (
-                            <div key={emotion} className="flex items-center gap-2">
-                              <span className="w-6">{config.icon}</span>
-                              <span className="w-16 text-sm">{config.labelAr}</span>
-                              <Progress value={Number(value)} className="flex-1" />
-                              <span className="w-12 text-sm text-right">{roundToOneDecimal(Number(value))}%</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
+              <TabsContent value="all">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {allNews.map((item: any, i: number) => (
+                    <NewsItem key={i} item={item} isRTL={isRTL} />
+                  ))}
+                </div>
+              </TabsContent>
 
-                    {/* Confidence */}
-                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                      <span className="text-sm">مستوى الثقة في التحليل</span>
-                      <Badge variant={topicAnalysis.confidence > 70 ? "default" : "secondary"}>
-                        {topicAnalysis.confidence || 75}%
-                      </Badge>
-                    </div>
+              <TabsContent value="political">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {politicalNews.length > 0 ? politicalNews.map((item: any, i: number) => (
+                    <NewsItem key={i} item={item} isRTL={isRTL} />
+                  )) : (
+                    <p className="text-muted-foreground col-span-2 text-center py-8">{isRTL ? 'لا توجد أخبار سياسية' : 'No political news'}</p>
+                  )}
+                </div>
+              </TabsContent>
 
-                    {/* Feedback Buttons */}
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <ThumbsUp className="h-4 w-4 ml-2" />
-                        دقيق
-                      </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <ThumbsDown className="h-4 w-4 ml-2" />
-                        غير دقيق
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-                    </div>
+              <TabsContent value="economic">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {economicNews.length > 0 ? economicNews.map((item: any, i: number) => (
+                    <NewsItem key={i} item={item} isRTL={isRTL} />
+                  )) : (
+                    <p className="text-muted-foreground col-span-2 text-center py-8">{isRTL ? 'لا توجد أخبار اقتصادية' : 'No economic news'}</p>
+                  )}
+                </div>
+              </TabsContent>
 
-                    {/* View Full Analysis */}
-                    <Button 
-                      className="w-full"
-                      onClick={() => navigate(`/analysis-results?topic=${encodeURIComponent(selectedTopic.topic)}&country=${countryCode}&countryName=${encodeURIComponent(countryInfo.ar)}`)}
-                    >
-                      عرض التحليل الكامل
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Card className="h-full flex items-center justify-center">
-                  <CardContent className="text-center py-12">
-                    <BarChart3 className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                    <p className="text-muted-foreground">اختر موضوعاً لعرض التحليل</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
+              <TabsContent value="social">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {socialNews.length > 0 ? socialNews.map((item: any, i: number) => (
+                    <NewsItem key={i} item={item} isRTL={isRTL} />
+                  )) : (
+                    <p className="text-muted-foreground col-span-2 text-center py-8">{isRTL ? 'لا توجد أخبار اجتماعية' : 'No social news'}</p>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+        </section>
+
+        {/* Analyze More Button */}
+        <section className="text-center pb-8">
+          <Button 
+            size="lg"
+            onClick={() => navigate(`/smart-analysis?topic=${encodeURIComponent(countryInfo.en + ' latest news and sentiment')}`)}
+          >
+            <Brain className="ml-2 h-5 w-5" />
+            {isRTL ? `تحليل معمّق لـ ${countryInfo.ar}` : `Deep Analysis for ${countryInfo.en}`}
+          </Button>
         </section>
       </div>
     </div>
   );
-}
-
-// Helper: Get country flag emoji
-function getCountryFlag(code: string): string {
-  const flags: Record<string, string> = {
-    LY: "🇱🇾", EG: "🇪🇬", SA: "🇸🇦", AE: "🇦🇪", US: "🇺🇸", GB: "🇬🇧",
-    FR: "🇫🇷", DE: "🇩🇪", JP: "🇯🇵", CN: "🇨🇳", IN: "🇮🇳", BR: "🇧🇷",
-    RU: "🇷🇺", TR: "🇹🇷", PS: "🇵🇸", IQ: "🇮🇶", SY: "🇸🇾", JO: "🇯🇴",
-    LB: "🇱🇧", MA: "🇲🇦", DZ: "🇩🇿", TN: "🇹🇳", SD: "🇸🇩", QA: "🇶🇦",
-    KW: "🇰🇼", BH: "🇧🇭", OM: "🇴🇲", YE: "🇾🇪",
-  };
-  return flags[code] || "🏳️";
-}
-
-// Helper: Generate trending topics for a country
-function generateTrendingTopics(countryCode: string): TrendingTopic[] {
-  const topicsByCountry: Record<string, TrendingTopic[]> = {
-    LY: [
-      { topic: "Oil Production Recovery", topicAr: "استئناف إنتاج النفط", category: "Economy", categoryAr: "اقتصاد", heat: 92, gmi: 45, cfi: 35, hri: 60, dominantEmotion: "hope", emotionIntensity: 72, sources: 156, change24h: 15 },
-      { topic: "National Reconciliation Talks", topicAr: "محادثات المصالحة الوطنية", category: "Politics", categoryAr: "سياسة", heat: 88, gmi: 25, cfi: 55, hri: 45, dominantEmotion: "curiosity", emotionIntensity: 65, sources: 234, change24h: 8 },
-      { topic: "Electricity Crisis", topicAr: "أزمة الكهرباء", category: "Infrastructure", categoryAr: "بنية تحتية", heat: 85, gmi: -35, cfi: 70, hri: 25, dominantEmotion: "anger", emotionIntensity: 78, sources: 189, change24h: -5 },
-      { topic: "Youth Employment Initiative", topicAr: "مبادرة توظيف الشباب", category: "Social", categoryAr: "اجتماعي", heat: 72, gmi: 55, cfi: 25, hri: 70, dominantEmotion: "hope", emotionIntensity: 68, sources: 98, change24h: 22 },
-      { topic: "Desert Festival Season", topicAr: "موسم مهرجانات الصحراء", category: "Culture", categoryAr: "ثقافة", heat: 65, gmi: 70, cfi: 15, hri: 75, dominantEmotion: "joy", emotionIntensity: 82, sources: 67, change24h: 35 },
-    ],
-    EG: [
-      { topic: "New Administrative Capital", topicAr: "العاصمة الإدارية الجديدة", category: "Development", categoryAr: "تنمية", heat: 90, gmi: 40, cfi: 40, hri: 55, dominantEmotion: "curiosity", emotionIntensity: 70, sources: 312, change24h: 12 },
-      { topic: "Suez Canal Revenue", topicAr: "إيرادات قناة السويس", category: "Economy", categoryAr: "اقتصاد", heat: 85, gmi: 50, cfi: 30, hri: 60, dominantEmotion: "hope", emotionIntensity: 65, sources: 245, change24h: 18 },
-      { topic: "Education Reform", topicAr: "إصلاح التعليم", category: "Education", categoryAr: "تعليم", heat: 78, gmi: 20, cfi: 45, hri: 50, dominantEmotion: "curiosity", emotionIntensity: 58, sources: 178, change24h: 5 },
-      { topic: "Tourism Recovery", topicAr: "انتعاش السياحة", category: "Tourism", categoryAr: "سياحة", heat: 75, gmi: 60, cfi: 25, hri: 65, dominantEmotion: "joy", emotionIntensity: 72, sources: 156, change24h: 25 },
-      { topic: "Food Prices", topicAr: "أسعار الغذاء", category: "Economy", categoryAr: "اقتصاد", heat: 70, gmi: -25, cfi: 60, hri: 35, dominantEmotion: "fear", emotionIntensity: 68, sources: 198, change24h: -8 },
-    ],
-    US: [
-      { topic: "AI Regulation Debate", topicAr: "نقاش تنظيم الذكاء الاصطناعي", category: "Technology", categoryAr: "تكنولوجيا", heat: 95, gmi: 15, cfi: 55, hri: 45, dominantEmotion: "curiosity", emotionIntensity: 75, sources: 567, change24h: 28 },
-      { topic: "Climate Action Plans", topicAr: "خطط العمل المناخي", category: "Environment", categoryAr: "بيئة", heat: 88, gmi: 30, cfi: 50, hri: 55, dominantEmotion: "hope", emotionIntensity: 62, sources: 423, change24h: 15 },
-      { topic: "Healthcare Costs", topicAr: "تكاليف الرعاية الصحية", category: "Health", categoryAr: "صحة", heat: 82, gmi: -20, cfi: 65, hri: 40, dominantEmotion: "anger", emotionIntensity: 70, sources: 356, change24h: -3 },
-      { topic: "Space Exploration", topicAr: "استكشاف الفضاء", category: "Science", categoryAr: "علوم", heat: 75, gmi: 65, cfi: 20, hri: 70, dominantEmotion: "joy", emotionIntensity: 78, sources: 234, change24h: 32 },
-      { topic: "Housing Market", topicAr: "سوق الإسكان", category: "Economy", categoryAr: "اقتصاد", heat: 70, gmi: -15, cfi: 55, hri: 35, dominantEmotion: "fear", emotionIntensity: 65, sources: 289, change24h: -12 },
-    ],
-  };
-
-  // Default topics for countries not in the list
-  const defaultTopics: TrendingTopic[] = [
-    { topic: "Economic Development", topicAr: "التنمية الاقتصادية", category: "Economy", categoryAr: "اقتصاد", heat: 85, gmi: 35, cfi: 40, hri: 55, dominantEmotion: "hope", emotionIntensity: 65, sources: 150, change24h: 10 },
-    { topic: "Political Stability", topicAr: "الاستقرار السياسي", category: "Politics", categoryAr: "سياسة", heat: 80, gmi: 20, cfi: 50, hri: 45, dominantEmotion: "curiosity", emotionIntensity: 60, sources: 120, change24h: 5 },
-    { topic: "Social Issues", topicAr: "القضايا الاجتماعية", category: "Social", categoryAr: "اجتماعي", heat: 75, gmi: 10, cfi: 45, hri: 50, dominantEmotion: "curiosity", emotionIntensity: 55, sources: 100, change24h: 8 },
-    { topic: "Technology Adoption", topicAr: "تبني التكنولوجيا", category: "Technology", categoryAr: "تكنولوجيا", heat: 70, gmi: 50, cfi: 30, hri: 60, dominantEmotion: "hope", emotionIntensity: 70, sources: 80, change24h: 15 },
-    { topic: "Cultural Events", topicAr: "الفعاليات الثقافية", category: "Culture", categoryAr: "ثقافة", heat: 65, gmi: 60, cfi: 20, hri: 65, dominantEmotion: "joy", emotionIntensity: 75, sources: 60, change24h: 20 },
-  ];
-
-  return topicsByCountry[countryCode] || defaultTopics;
-}
-
-// Helper: Generate mock country data
-function generateMockCountryData(countryCode: string) {
-  return {
-    code: countryCode,
-    gmi: Math.random() * 100 - 50,
-    cfi: Math.random() * 100,
-    hri: Math.random() * 100,
-    dominantEmotion: ["hope", "fear", "curiosity", "joy", "anger"][Math.floor(Math.random() * 5)],
-  };
-}
-
-// Helper: Generate mock topic analysis
-function generateMockTopicAnalysis(topic: TrendingTopic) {
-  return {
-    gmi: topic.gmi + (Math.random() * 10 - 5),
-    cfi: topic.cfi + (Math.random() * 10 - 5),
-    hri: topic.hri + (Math.random() * 10 - 5),
-    emotions: generateMockEmotions(),
-    confidence: 70 + Math.random() * 25,
-  };
-}
-
-// Helper: Generate mock emotions
-function generateMockEmotions() {
-  const total = 100;
-  const joy = Math.random() * 30;
-  const hope = Math.random() * 25;
-  const fear = Math.random() * 20;
-  const anger = Math.random() * 15;
-  const sadness = Math.random() * 10;
-  const curiosity = total - joy - hope - fear - anger - sadness;
-  
-  return { joy, hope, fear, anger, sadness, curiosity };
 }

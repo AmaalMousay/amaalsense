@@ -4698,3 +4698,15 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Update layer1QuestionUnderstanding.ts to use smartLLM (question_understanding with json_object format)
 - [x] Test the full analysis pipeline end-to-end (2 tests passed: AI question + Libya economics)
 - [x] Verify the analyzer produces real explanations (1591 chars, 1065 chars - real data-driven responses from 9 sources)
+
+### Critical: Convert Map & Emotional Weather to Real Data
+- [x] Audit all mock/static data in map components and emotional weather (found: mapDataRouter ALL mock, countryEmotionAnalyzer semi-mock, EmotionalWeather ALL mock, Weather.tsx ALL mock, CountryResults MOSTLY mock)
+- [x] Create countryNewsAnalyzer.ts - fetches real news (Google RSS + NewsAPI) + Groq sentiment analysis
+- [x] Replace map router with real data endpoints (getAllCountriesEmotions, getCountryEmotions)
+- [x] Create country detail page showing real news when clicking on map (CountryResults.tsx rewritten with trpc.map.getCountryEmotions)
+- [x] Remove all hardcoded/mock data from EmotionalWeather.tsx (now uses trpc.map.getAllCountriesEmotions)
+- [x] Remove all hardcoded/mock data from Weather.tsx (now uses trpc.map.getAllCountriesEmotions, 3 tabs)
+- [x] Home.tsx handleCountryClick now navigates to /country/:code
+- [x] Test end-to-end: Libya 12 sources, Egypt 12 sources, 16/47 countries with real data
+- [x] Write unit tests for countryNewsAnalyzer (13 tests passing)
+- [x] All existing tests passing (auth: 1/1, apiHealthMonitor: 16/16, countryNewsAnalyzer: 13/13)

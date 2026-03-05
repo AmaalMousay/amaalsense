@@ -195,45 +195,58 @@ export const appRouter = router({
   map: router({
     /**
      * Get all countries emotion data for world map
-     * Returns instant fallback data to avoid loading delays
+     * Uses REAL news data + LLM sentiment analysis for colors
+     * Returns cached data for instant rendering, real data when available
      */
     getAllCountriesEmotions: publicProcedure.query(async () => {
-      const { generateAllCountriesEmotionData, COUNTRIES } = await import("./countryEmotionAnalyzer");
-      const { getLatestEmotionIndices } = await import("./db");
-
-      // Get global indices for base values
-      const globalIndices = await getLatestEmotionIndices();
-      const baseGMI = globalIndices?.gmi || 15;
-      const baseCFI = globalIndices?.cfi || 45;
-      const baseHRI = globalIndices?.hri || 55;
+      const { getAllCountryCodes, quickCountryAnalysis, getCountryMeta } = await import("./countryNewsAnalyzer");
+      const codes = getAllCountryCodes();
       
-      // Generate instant country data with realistic variations
-      // This provides immediate response without waiting for external APIs
-      return generateAllCountriesEmotionData(baseGMI, baseCFI, baseHRI);
+      // Fetch quick analysis for a batch of important countries (parallel, keyword-only, no LLM)
+      const priorityCodes = ['LY', 'EG', 'SA', 'AE', 'US', 'GB', 'PS', 'SY', 'IQ', 'SD', 'YE', 'LB', 'TR', 'RU', 'CN', 'JP'];
+      const batchSize = 4;
+      const results: Record<string, { gmi: number; cfi: number; hri: number; dominantEmotion: string; isRealData: boolean }> = {};
+      
+      // Fetch priority countries first in small batches
+      for (let i = 0; i < priorityCodes.length; i += batchSize) {
+        const batch = priorityCodes.slice(i, i + batchSize);
+        const batchResults = await Promise.allSettled(batch.map(code => quickCountryAnalysis(code)));
+        batch.forEach((code, idx) => {
+          if (batchResults[idx].status === 'fulfilled') results[code] = batchResults[idx].value;
+        });
+      }
+      
+      return codes.map(code => {
+        const data = results[code];
+        const meta = getCountryMeta(code);
+        const gmi = data?.gmi ?? 0;
+        const cfi = data?.cfi ?? 50;
+        const hri = data?.hri ?? 50;
+        return {
+          countryCode: code,
+          countryName: meta?.nameEn || code,
+          nameAr: meta?.nameAr || code,
+          gmi,
+          cfi,
+          hri,
+          aci: Math.round((gmi + 100) / 2),
+          sdi: Math.round(Math.abs(gmi) * 0.7 + cfi * 0.3),
+          confidence: data?.isRealData ? 85 : 40,
+          dominantEmotion: data?.dominantEmotion || 'neutral',
+          isRealData: data?.isRealData ?? false,
+        };
+      });
     }),
 
     /**
-     * Get emotion data for a specific country
+     * Get REAL emotion data + news for a specific country
+     * Fetches live news + analyzes sentiment with Groq LLM
      */
     getCountryEmotions: publicProcedure
       .input(z.object({ countryCode: z.string().length(2) }))
       .query(async ({ input }) => {
-        const { COUNTRIES, generateCountryEmotionData } = await import("./countryEmotionAnalyzer");
-        const { getLatestEmotionIndices } = await import("./db");
-
-        const country = COUNTRIES.find((c) => c.code === input.countryCode);
-        if (!country) {
-          throw new Error(`Country code ${input.countryCode} not found`);
-        }
-
-        const globalIndices = await getLatestEmotionIndices();
-        return generateCountryEmotionData(
-          input.countryCode,
-          country.name,
-          globalIndices?.gmi || 0,
-          globalIndices?.cfi || 50,
-          globalIndices?.hri || 50
-        );
+        const { analyzeCountry } = await import("./countryNewsAnalyzer");
+        return await analyzeCountry(input.countryCode);
       }),
 
     /**
