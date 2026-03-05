@@ -64,6 +64,8 @@ import { createEventVector, eventVectorToPrompt, vectorToMapIndices, type EventV
 import { smartChat, smartJsonChat, smartInvokeLLM, type TaskType } from './smartLLM';
 import { analyzeEmotions, analyzeTopics as analyzeTextTopics } from './realTextAnalyzer';
 import { calculateConfidenceScore, type ConfidenceScore } from './confidenceScorer';
+import { applyEmotionBias, getEngineWeights, getLearningSummary, runLearningCycle, evaluatePrediction } from './engines/learningLoop';
+import { storeAnalysisRecord, type AnalysisRecord } from './engines/learningStore';
 
 // ============================================================
 // TYPES
@@ -694,6 +696,59 @@ export async function executeNetworkEngine(
     context.analytics.totalDurationMs = Date.now() - startTime;
     context.status = 'completed';
     
+    // ====== LEARNING INTEGRATION: Record this analysis ======
+    try {
+      const vector = context.collection.eventVector;
+      if (vector && vector.totalItems > 0) {
+        const indices = vectorToMapIndices(vector);
+        storeAnalysisRecord(
+          // question
+          {
+            topic: context.gate.searchQuery || question,
+            countryCode: context.gate.detectedCountry?.code || null,
+            countryName: context.gate.detectedCountry?.name || null,
+            userType: 'general',
+            language,
+            originalQuery: question,
+          },
+          // context
+          {
+            domain: context.gate.intent || 'general',
+            eventType: vector.categories[0] || 'general',
+            sensitivityLevel: 'normal',
+            timeRange: 'current',
+            sourcesUsed: Object.keys(vector.sourceBreakdown),
+            sourceCount: vector.totalItems,
+            dataQuality: Math.min(100, vector.totalItems * 10),
+          },
+          // result
+          {
+            gmi: indices.gmi,
+            cfi: indices.cfi,
+            hri: indices.hri,
+            dominantEmotion: vector.dominantEmotion,
+            emotionalIntensity: vector.emotions[vector.dominantEmotion] || 50,
+            valence: (indices.hri - 50) / 50,
+            affectiveVector: vector.emotions,
+            confidence: context.analysis.confidence.overall,
+            insights: vector.topHeadlines.slice(0, 3).map((h: any) => typeof h === 'string' ? h : h.title || String(h)),
+            drivers: vector.trendingKeywords.slice(0, 5),
+          },
+          // engineContributions (weight values 0-1)
+          {
+            contextClassification: 0.20,
+            emotionFusion: 0.25,
+            emotionalDynamics: 0.20,
+            driverDetection: 0.15,
+            explainableInsight: 0.20,
+          },
+        );
+      }
+    } catch (learnErr) {
+      // Learning is non-critical, don't fail the analysis
+      console.warn('[NetworkEngine] Learning record failed:', (learnErr as Error).message);
+    }
+    
   } catch (error) {
     context.status = 'error';
     context.analytics.errors.push((error as Error).message);
@@ -958,7 +1013,26 @@ export function getEngineStats() {
   return {
     networkCacheSize: networkCache.size,
     dataCacheStats: getCollectorCacheStats(),
+    learning: getLearningSummary(),
   };
+}
+
+/**
+ * LEARNING: Run a learning cycle to improve future analyses
+ */
+export function runEngineLearningCycle() {
+  return runLearningCycle();
+}
+
+/**
+ * LEARNING: Evaluate a past prediction against actual outcome
+ */
+export function evaluateEnginePrediction(
+  analysisId: string,
+  predicted: { dominantEmotion: string; gmi: number; trend: 'up' | 'down' | 'stable' },
+  actual: { dominantEmotion: string; gmi: number; trend: 'up' | 'down' | 'stable' },
+) {
+  return evaluatePrediction(analysisId, predicted, actual);
 }
 
 export function clearAllCaches() {

@@ -19,7 +19,10 @@ import {
   getEngineStats,
   clearAllCaches,
   executeNetworkEngine,
+  runEngineLearningCycle,
+  evaluateEnginePrediction,
 } from './networkEngine';
+import { getRecentAnalyses, submitAccuracyFeedback, getLearningState, getAdjustmentHistory } from './engines/learningStore';
 
 // Country metadata for batch operations
 const PRIORITY_COUNTRIES = [
@@ -209,5 +212,110 @@ export const unifiedEngineRouter = router({
   clearCaches: publicProcedure.mutation(() => {
     clearAllCaches();
     return { success: true, message: 'All caches cleared' };
+  }),
+
+  // ============================================================
+  // LEARNING & DASHBOARD ENDPOINTS
+  // ============================================================
+
+  /**
+   * LEARNING STATE: Get current learning metrics
+   */
+  getLearningState: publicProcedure.query(() => {
+    return getLearningState();
+  }),
+
+  /**
+   * RECENT ANALYSES: Get recent analysis records for the dashboard
+   */
+  getRecentAnalyses: publicProcedure
+    .input(z.object({ limit: z.number().min(1).max(100).default(20) }))
+    .query(({ input }) => {
+      const analyses = getRecentAnalyses(input.limit);
+      return analyses.map(a => ({
+        id: a.id,
+        timestamp: a.timestamp,
+        topic: a.question.topic,
+        country: a.question.countryName || 'Global',
+        dominantEmotion: a.result.dominantEmotion,
+        gmi: a.result.gmi,
+        confidence: a.result.confidence,
+        sourceCount: a.context.sourceCount,
+        verified: a.learningMeta.wasCorrect,
+      }));
+    }),
+
+  /**
+   * RUN LEARNING CYCLE: Trigger a learning cycle to improve the engine
+   */
+  runLearningCycle: publicProcedure.mutation(() => {
+    return runEngineLearningCycle();
+  }),
+
+  /**
+   * SUBMIT FEEDBACK: Mark an analysis as correct or incorrect
+   */
+  submitFeedback: publicProcedure
+    .input(z.object({
+      analysisId: z.string(),
+      rating: z.number().min(1).max(5),
+      comment: z.string().optional(),
+    }))
+    .mutation(({ input }) => {
+      submitAccuracyFeedback(input.analysisId, input.rating, input.comment || '');
+      return { success: true };
+    }),
+
+  /**
+   * ADJUSTMENT HISTORY: Get learning adjustments history
+   */
+  getAdjustmentHistory: publicProcedure
+    .input(z.object({ limit: z.number().min(1).max(100).default(50) }))
+    .query(({ input }) => {
+      return getAdjustmentHistory(input.limit);
+    }),
+
+  /**
+   * ENGINE DASHBOARD: Complete dashboard data in one call
+   */
+  getDashboardData: publicProcedure.query(async () => {
+    const stats = getEngineStats();
+    const learningState = getLearningState();
+    const recentAnalyses = getRecentAnalyses(10);
+    const adjustments = getAdjustmentHistory(10);
+    
+    return {
+      engine: {
+        cacheSize: stats.networkCacheSize,
+        dataCacheStats: stats.dataCacheStats,
+      },
+      learning: {
+        totalAnalyses: learningState.totalAnalyses,
+        verifiedAnalyses: learningState.verifiedAnalyses,
+        accuracyRate: learningState.accuracyRate,
+        totalFeedback: learningState.totalFeedback,
+        totalAdjustments: learningState.adjustmentsMade,
+        summary: stats.learning,
+      },
+      recentAnalyses: recentAnalyses.map(a => ({
+        id: a.id,
+        timestamp: a.timestamp,
+        topic: a.question.topic,
+        country: a.question.countryName || 'Global',
+        dominantEmotion: a.result.dominantEmotion,
+        gmi: a.result.gmi,
+        confidence: a.result.confidence,
+        verified: a.learningMeta.wasCorrect,
+      })),
+      adjustments: adjustments.map(a => ({
+        id: a.id,
+        timestamp: a.timestamp,
+        engine: a.targetEngine,
+        parameter: a.targetParameter,
+        oldValue: a.previousValue,
+        newValue: a.newValue,
+        reason: a.reason,
+      })),
+    };
   }),
 });

@@ -70,6 +70,7 @@ import EmotionAnalysisPage from "./pages/EmotionAnalysisPage";
 import RegionAnalysisPage from "./pages/RegionAnalysisPage";
 import ImpactAnalysisPage from "./pages/ImpactAnalysisPage";
 import FusionEngineAnalysisPage from "./pages/FusionEngineAnalysisPage";
+import EngineDashboard from "./pages/EngineDashboard";
 
 function Router() {
   // Routes will be added here
@@ -112,6 +113,7 @@ function Router() {
       <Route path={"/region-analysis"} component={RegionAnalysisPage} />
       <Route path={"/impact-analysis"} component={ImpactAnalysisPage} />
       <Route path={"/fusion-analysis"} component={FusionEngineAnalysisPage} />
+      <Route path={"/engine-dashboard"} component={EngineDashboard} />
       <Route path={"/notification-settings"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
       <Route path={"/terms"} component={Terms} />
