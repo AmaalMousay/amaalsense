@@ -66,6 +66,7 @@ import { analyzeEmotions, analyzeTopics as analyzeTextTopics } from './realTextA
 import { calculateConfidenceScore, type ConfidenceScore } from './confidenceScorer';
 import { applyEmotionBias, getEngineWeights, getLearningSummary, runLearningCycle, evaluatePrediction } from './engines/learningLoop';
 import { storeAnalysisRecord, type AnalysisRecord } from './engines/learningStore';
+import { MultiTurnContext } from './multiTurnContext';
 
 // ============================================================
 // TYPES
@@ -137,6 +138,15 @@ export interface NetworkContext {
       completeness: number;
       clarity: number;
     };
+  };
+
+  // Multi-turn Context
+  multiTurn: {
+    isFollowUp: boolean;
+    enrichedQuery: string;
+    contextSummary: string;
+    conversationTurns: number;
+    topicContinuity: boolean;
   };
 
   // Analytics
@@ -651,13 +661,30 @@ export async function executeNetworkEngine(
     collection: {} as NetworkContext['collection'],
     analysis: {} as NetworkContext['analysis'],
     generation: {} as NetworkContext['generation'],
+    multiTurn: { isFollowUp: false, enrichedQuery: question, contextSummary: '', conversationTurns: 0, topicContinuity: false },
     analytics: { totalDurationMs: 0, layerTraces: [], parallelGroups: 4, errors: [] },
     status: 'completed',
   };
   
   try {
+    // ====== MULTI-TURN CONTEXT ENRICHMENT ======
+    const conversationId = `user_${userId}`;
+    const contextResolution = MultiTurnContext.resolveReferences(conversationId, question);
+    const llmContext = MultiTurnContext.buildContextForLLM(conversationId, 5);
+    
+    // Use enriched question if context was applied
+    const effectiveQuestion = contextResolution.contextUsed ? contextResolution.resolvedQuestion : question;
+    
+    context.multiTurn = {
+      isFollowUp: contextResolution.contextUsed,
+      enrichedQuery: effectiveQuestion,
+      contextSummary: llmContext.summary,
+      conversationTurns: llmContext.conversationHistory.length,
+      topicContinuity: contextResolution.contextUsed && contextResolution.referencedEntities.length > 0,
+    };
+    
     // ====== GATE NETWORK (sequential - must run first) ======
-    const gateResult = await executeGateNetwork(question, language);
+    const gateResult = await executeGateNetwork(effectiveQuestion, language);
     context.gate = gateResult.gate;
     context.analytics.layerTraces.push(...gateResult.traces);
     
@@ -695,6 +722,32 @@ export async function executeNetworkEngine(
     
     context.analytics.totalDurationMs = Date.now() - startTime;
     context.status = 'completed';
+    
+    // ====== MULTI-TURN: Record this turn in conversation history ======
+    try {
+      const vector = context.collection.eventVector;
+      MultiTurnContext.addTurn(
+        conversationId,
+        'user',
+        question,
+        context.gate.intent,
+        context.gate.searchQuery,
+      );
+      MultiTurnContext.addTurn(
+        conversationId,
+        'assistant',
+        context.generation.languageEnforced?.finalResponse || context.generation.response || 'Analysis completed',
+        context.gate.intent,
+        context.gate.searchQuery,
+      );
+      // Update emotional state in conversation context
+      if (vector && vector.totalItems > 0) {
+        const indices = vectorToMapIndices(vector);
+        MultiTurnContext.updateEmotionalState(conversationId, indices.gmi, indices.cfi, indices.hri);
+      }
+    } catch (mtErr) {
+      console.warn('[NetworkEngine] Multi-turn recording failed:', (mtErr as Error).message);
+    }
     
     // ====== LEARNING INTEGRATION: Record this analysis ======
     try {

@@ -21,7 +21,7 @@ import { explainabilityRouter } from "./explainabilityRouter";
 import { notificationRouter } from "./notificationRouter";
 import { searchRouter } from "./searchRouter";
 import { unifiedEngineRouter } from "./unifiedEngineRouter";
-// import { searchRouterReal, mapsRouterReal, alertsRouterReal, comparisonRouterReal, analysisRouterReal } from "./apiRoutersReal"; // TODO: Fix imports
+// Old pipeline imports removed - now using networkEngine via unifiedRouters.ts
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -44,12 +44,7 @@ export const appRouter = router({
   notification: notificationRouter,
   search: searchRouter,
   engine: unifiedEngineRouter,
-  // Real database routers - TODO: Enable after fixing imports
-  // searchDb: searchRouterReal,
-  // mapsDb: mapsRouterReal,
-  // alertsDb: alertsRouterReal,
-  // comparisonDb: comparisonRouterReal,
-  // analysisDb: analysisRouterReal,
+  // Old pipeline routers removed - all analysis now goes through networkEngine
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
