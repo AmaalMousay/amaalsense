@@ -5,7 +5,7 @@
  */
 
 import { layer1QuestionUnderstanding, Layer1Output } from "./layer1QuestionUnderstanding";
-import { invokeLLM } from "./_core/llm";
+import { smartInvokeLLM } from "./smartLLM";
 import { detectAmbiguity, ClarificationRequest } from "./questionClarificationLayer";
 import { calculateQuestionSimilarity, SimilarityMatch } from "./questionSimilarityMatcher";
 import { calculateConfidenceScore, ConfidenceScore } from "./confidenceScorer";
@@ -576,18 +576,18 @@ export async function executeUnifiedNetworkPipeline(
       : "";
 
     try {
-      const llmResponse = await invokeLLM({
+      const llmResponse = await smartInvokeLLM({
         messages: [
           {
             role: "system",
-            content: `You are AmalSense, an advanced collective emotion analysis engine. You analyze real-time data from news and social media to provide deep emotional intelligence insights. Answer in ${language === "ar" ? "Arabic" : "English"} language. Base your analysis on the real data provided. Be specific, cite sources, and provide emotional context. If real data is available, derive your analysis from it rather than general knowledge.` as any
+            content: `You are AmalSense, an advanced collective emotion analysis engine. You analyze real-time data from news and social media to provide deep emotional intelligence insights. Answer in ${language === "ar" ? "Arabic" : "English"} language. Base your analysis on the real data provided. Be specific, cite sources, and provide emotional context. If real data is available, derive your analysis from it rather than general knowledge.`
           },
           {
             role: "user",
-            content: `${question}${dataContext}${emotionContext}` as any
+            content: `${question}${dataContext}${emotionContext}`
           }
         ]
-      });
+      }, 'response_generation');
 
       const responseContent = llmResponse.choices[0].message.content as any;
       context.generatedResponse.text = (typeof responseContent === 'string' ? responseContent : JSON.stringify(responseContent)) || "Unable to generate response";
@@ -631,18 +631,18 @@ export async function executeUnifiedNetworkPipeline(
     
     if (shouldTranslate) {
       try {
-      const translationResponse = await invokeLLM({
+      const translationResponse = await smartInvokeLLM({
         messages: [
           {
             role: "system",
-            content: `Translate the following text to ${language === "ar" ? "Arabic" : "English"}. Keep the meaning and tone intact.` as any
+            content: `Translate the following text to ${language === "ar" ? "Arabic" : "English"}. Keep the meaning and tone intact.`
           },
           {
             role: "user",
-            content: context.personalVoice.adaptedResponse as any
+            content: context.personalVoice.adaptedResponse
           }
         ]
-      });
+      }, 'translation');
         
         const translatedContent = translationResponse.choices[0].message.content;
         context.languageEnforced.finalResponse = typeof translatedContent === 'string' 
@@ -667,7 +667,7 @@ export async function executeUnifiedNetworkPipeline(
     // ============================================
     console.log(`[Pipeline] Generating Proactive Suggestions`);
     try {
-      const suggestionsResponse = await invokeLLM({
+      const suggestionsResponse = await smartInvokeLLM({
         messages: [
           {
             role: "system",
@@ -678,7 +678,7 @@ export async function executeUnifiedNetworkPipeline(
             content: `Question: ${question}\n\nResponse: ${context.languageEnforced.finalResponse}`
           }
         ]
-      });
+      }, 'suggestions');
 
       const suggestionsContent = suggestionsResponse.choices[0].message.content as any;
       const suggestionsText = typeof suggestionsContent === 'string' ? suggestionsContent : JSON.stringify(suggestionsContent) || "[]";

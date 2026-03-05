@@ -12,7 +12,7 @@
  * فقط تفهم السؤال وتستخرج المعلومات الأساسية
  */
 
-import { invokeLLM } from "./_core/llm";
+import { smartInvokeLLM } from "./smartLLM";
 
 export interface Layer1Output {
   // المعلومات الأساسية
@@ -86,7 +86,7 @@ export async function layer1QuestionUnderstanding(
 ): Promise<Layer1Output> {
   try {
     // استخدم LLM لفهم السؤال فقط
-    const response = await invokeLLM({
+    const response = await smartInvokeLLM({
       messages: [
         {
           role: "system",
@@ -98,59 +98,30 @@ export async function layer1QuestionUnderstanding(
 - أي معالجة أخرى
 
 فقط افهم السؤال واستخرج:
-1. نوع السؤال (sentiment, factual, opinion, trend, comparison, explanation, prediction, recommendation, other)
-2. الكيانات (مواضيع، أشخاص، أماكن، منظمات)
-3. هل يحتوي على خطأ معلوماتي؟
-4. هل يحتاج توضيح؟
-5. السياق الزمني والجغرافي
+1. نوع السؤال (questionType): أحد هذه القيم: sentiment, factual, opinion, trend, comparison, explanation, prediction, recommendation, other
+2. الكيانات (entities): كائن يحتوي على topics, people, locations, organizations (كل منها مصفوفة نصوص)
+3. hasFactualError: هل يحتوي على خطأ معلوماتي؟ (true/false)
+4. factualErrorDescription: وصف الخطأ (نص فارغ إذا لا يوجد)
+5. clarificationNeeded: هل يحتاج توضيح؟ (true/false)
+6. clarificationReason: سبب التوضيح (نص فارغ إذا لا يحتاج)
+7. timeContext: السياق الزمني (past/present/future)
+8. geographicContext: السياق الجغرافي
+9. isComparative: هل مقارنة؟ (true/false)
+10. isOpinionBased: هل رأي؟ (true/false)
+11. confidence: نسبة الثقة (0-100)
 
-أجب بـ JSON فقط.`
+أجب بـ JSON فقط بدون أي نص إضافي.`
         },
         {
           role: "user",
           content: `السؤال: "${question}"
 اللغة: ${language}
 
-استخرج المعلومات الأساسية عن هذا السؤال فقط.`
+استخرج المعلومات الأساسية عن هذا السؤال فقط. أجب بـ JSON.`
         }
       ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "question_analysis",
-          strict: true,
-          schema: {
-            type: "object",
-            properties: {
-              questionType: {
-                type: "string",
-                enum: ["sentiment", "factual", "opinion", "trend", "comparison", "explanation", "prediction", "recommendation", "other"]
-              },
-              entities: {
-                type: "object",
-                properties: {
-                  topics: { type: "array", items: { type: "string" } },
-                  people: { type: "array", items: { type: "string" } },
-                  locations: { type: "array", items: { type: "string" } },
-                  organizations: { type: "array", items: { type: "string" } }
-                },
-                required: ["topics", "people", "locations", "organizations"]
-              },
-              hasFactualError: { type: "boolean" },
-              factualErrorDescription: { type: "string" },
-              clarificationNeeded: { type: "boolean" },
-              clarificationReason: { type: "string" },
-              timeContext: { type: "string" },
-              geographicContext: { type: "string" },
-              isComparative: { type: "boolean" },
-              isOpinionBased: { type: "boolean" },
-              confidence: { type: "number" }
-            },
-            required: ["questionType", "entities", "hasFactualError", "clarificationNeeded", "confidence"]
-          }
-        }
-      }
-    });
+      response_format: { type: "json_object" } as any
+    }, 'question_understanding');
 
     // استخرج النتيجة من الرد
     const content = response.choices[0].message.content;

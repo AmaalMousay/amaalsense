@@ -4690,3 +4690,11 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Add streaming progress indicators during analysis (5-step progress with animated icons)
 - [x] Replace plain spinner with rich skeleton loading in SmartAnalysis (compact + chat variants)
 - [x] Add skeleton loading to TopicAnalysisResults (full variant with progress steps)
+
+### Critical Fix: Switch Pipeline to Groq LLM (Free + Working)
+- [x] Create smartLLM.ts - unified LLM provider with Groq primary + Forge fallback
+- [x] Configure model routing: Llama 3.1 8B for simple tasks, Llama 3.3 70B for main response
+- [x] Update unifiedNetworkPipeline.ts to use smartLLM instead of invokeLLM (3 call sites: response_generation, translation, suggestions)
+- [x] Update layer1QuestionUnderstanding.ts to use smartLLM (question_understanding with json_object format)
+- [x] Test the full analysis pipeline end-to-end (2 tests passed: AI question + Libya economics)
+- [x] Verify the analyzer produces real explanations (1591 chars, 1065 chars - real data-driven responses from 9 sources)
