@@ -22,6 +22,7 @@ import { FollowUpQuestionsUI } from '@/components/FollowUpQuestionsUI';
 import { WhatIfScenariosUI } from '@/components/WhatIfScenariosUI';
 import { PredictionsRecommendationsUI } from '@/components/PredictionsRecommendationsUI';
 import { StructuredResponseUI } from '@/components/StructuredResponseUI';
+import { AnalysisSkeleton } from '@/components/AnalysisSkeleton';
 import { FeedbackWidget } from '@/components/FeedbackWidget';
 import { Streamdown } from 'streamdown';
 import ResultsPage from './ResultsPage';
@@ -169,13 +170,34 @@ export default function SmartAnalysis() {
     } catch (error) {
       console.error('Analysis failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      const userFriendlyMessage = errorMessage.includes('timeout')
-        ? 'The analysis took too long. Please try with a simpler topic.'
-        : errorMessage.includes('network')
-        ? 'Network error. Please check your connection.'
-        : errorMessage.includes('not found')
-        ? 'Topic not found. Please try a different topic.'
-        : 'Sorry, I encountered an error while analyzing this topic. Please try again.';
+      const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
+      
+      let userFriendlyMessage: string;
+      if (errorMessage.includes('usage exhausted') || errorMessage.includes('412') || errorMessage.includes('precondition')) {
+        userFriendlyMessage = isRTL 
+          ? '\u26a0\ufe0f تم الوصول للحد الأقصى من استخدام الذكاء الاصطناعي مؤقتاً. يرجى المحاولة بعد قليل.'
+          : '\u26a0\ufe0f AI usage limit temporarily reached. Please try again shortly.';
+      } else if (errorMessage.includes('timeout') || errorMessage.includes('timed out')) {
+        userFriendlyMessage = isRTL
+          ? '\u23f0 استغرق التحليل وقتاً أطول من المتوقع. جرب موضوعاً أبسط أو أعد المحاولة.'
+          : '\u23f0 Analysis took longer than expected. Try a simpler topic or retry.';
+      } else if (errorMessage.includes('network') || errorMessage.includes('fetch') || errorMessage.includes('ECONNREFUSED')) {
+        userFriendlyMessage = isRTL
+          ? '\ud83d\udce1 خطأ في الاتصال. تحقق من اتصالك بالإنترنت وأعد المحاولة.'
+          : '\ud83d\udce1 Connection error. Check your internet and try again.';
+      } else if (errorMessage.includes('not found') || errorMessage.includes('404')) {
+        userFriendlyMessage = isRTL
+          ? '\ud83d\udd0d لم يتم العثور على بيانات كافية لهذا الموضوع. جرب موضوعاً مختلفاً.'
+          : '\ud83d\udd0d Not enough data found for this topic. Try a different one.';
+      } else if (errorMessage.includes('500') || errorMessage.includes('internal server')) {
+        userFriendlyMessage = isRTL
+          ? '\ud83d\udee0\ufe0f حدث خطأ في الخادم. فريقنا يعمل على حل المشكلة. أعد المحاولة لاحقاً.'
+          : '\ud83d\udee0\ufe0f Server error occurred. Our team is working on it. Try again later.';
+      } else {
+        userFriendlyMessage = isRTL
+          ? '\u274c عذراً، حدث خطأ أثناء التحليل. يرجى المحاولة مرة أخرى.'
+          : '\u274c Sorry, an error occurred during analysis. Please try again.';
+      }
       
       setConversation([{
         role: 'assistant',
@@ -246,11 +268,26 @@ export default function SmartAnalysis() {
     } catch (error) {
       console.error('Follow-up failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      const userFriendlyMessage = errorMessage.includes('timeout') 
-        ? 'The request took too long. Please try again with a shorter question.'
-        : errorMessage.includes('network')
-        ? 'Network error. Please check your connection and try again.'
-        : 'Sorry, I had trouble processing your question. Please try again.';
+      const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
+      
+      let userFriendlyMessage: string;
+      if (errorMessage.includes('usage exhausted') || errorMessage.includes('412') || errorMessage.includes('precondition')) {
+        userFriendlyMessage = isRTL
+          ? '\u26a0\ufe0f \u062a\u0645 \u0627\u0644\u0648\u0635\u0648\u0644 \u0644\u0644\u062d\u062f \u0627\u0644\u0623\u0642\u0635\u0649 \u0645\u0646 \u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0628\u0639\u062f \u0642\u0644\u064a\u0644.'
+          : '\u26a0\ufe0f AI usage limit reached. Please try again shortly.';
+      } else if (errorMessage.includes('timeout') || errorMessage.includes('timed out')) {
+        userFriendlyMessage = isRTL
+          ? '\u23f0 \u0627\u0633\u062a\u063a\u0631\u0642 \u0627\u0644\u0637\u0644\u0628 \u0648\u0642\u062a\u0627\u064b \u0637\u0648\u064a\u0644\u0627\u064b. \u062c\u0631\u0628 \u0633\u0624\u0627\u0644\u0627\u064b \u0623\u0642\u0635\u0631.'
+          : '\u23f0 Request took too long. Try a shorter question.';
+      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        userFriendlyMessage = isRTL
+          ? '\ud83d\udce1 \u062e\u0637\u0623 \u0641\u064a \u0627\u0644\u0627\u062a\u0635\u0627\u0644. \u062a\u062d\u0642\u0642 \u0645\u0646 \u0627\u0644\u0625\u0646\u062a\u0631\u0646\u062a \u0648\u0623\u0639\u062f \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629.'
+          : '\ud83d\udce1 Connection error. Check your internet and try again.';
+      } else {
+        userFriendlyMessage = isRTL
+          ? '\u274c \u0639\u0630\u0631\u0627\u064b\u060c \u062d\u062f\u062b \u062e\u0637\u0623 \u0641\u064a \u0645\u0639\u0627\u0644\u062c\u0629 \u0633\u0624\u0627\u0644\u0643. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.'
+          : '\u274c Sorry, I had trouble processing your question. Please try again.';
+      }
       
       setConversation(prev => [...prev, {
         role: 'assistant',
@@ -456,9 +493,8 @@ export default function SmartAnalysis() {
               </h2>
               
               {isAnalyzing ? (
-                <div className="flex flex-col items-center justify-center h-64 gap-4">
-                  <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                  <p className="text-muted-foreground">Analyzing collective emotions...</p>
+                <div className="space-y-4">
+                  <AnalysisSkeleton variant="compact" />
                 </div>
               ) : context ? (
                 <>
@@ -650,19 +686,7 @@ export default function SmartAnalysis() {
               className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent"
             >
               {isAnalyzing ? (
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <Brain className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <Card className="p-4 bg-primary/5 border-primary/20">
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-muted-foreground">Analyzing and preparing insights...</span>
-                      </div>
-                    </Card>
-                  </div>
-                </div>
+                <AnalysisSkeleton variant="chat" />
               ) : conversation.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
                   <Brain className="w-16 h-16 opacity-30" />

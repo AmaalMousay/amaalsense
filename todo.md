@@ -4673,3 +4673,20 @@ All systems are properly connected, tested, and ready for production use.
 ### Bug Fix: mainReasons TypeError Crash
 - [x] Fix TypeError: Cannot read properties of undefined (reading 'mainReasons') on map click and analyzer
 - [x] Add null safety checks for analysis response data (StructuredResponseUI + SmartAnalysis humanLikeAI/humanIntelligence)
+
+### Improvement 1: Custom Error Boundary
+- [x] Create PageErrorBoundary component with friendly Arabic/English messages (6 error types: LLM exhausted, timeout, network, server, data, unknown)
+- [x] Add retry button and navigation back to home (3 actions: retry, go home, reload)
+- [x] Wrap main pages with PageErrorBoundary in App.tsx (SmartAnalysis, TopicAnalysis, CountryResults, Chat, LiveAnalysis)
+
+### Improvement 2: Better LLM Error Messages
+- [x] Detect "usage exhausted" errors and show user-friendly message (bilingual AR/EN)
+- [x] Detect timeout errors and show appropriate message (bilingual AR/EN)
+- [x] Detect network errors and show connection message (bilingual AR/EN)
+- [x] Add error state UI to SmartAnalysis and TopicAnalysisResults (emoji icons, retry buttons, descriptive messages)
+
+### Improvement 3: Skeleton Loading for Smart Analysis
+- [x] Create AnalysisSkeleton component with animated placeholders (3 variants: full, compact, chat)
+- [x] Add streaming progress indicators during analysis (5-step progress with animated icons)
+- [x] Replace plain spinner with rich skeleton loading in SmartAnalysis (compact + chat variants)
+- [x] Add skeleton loading to TopicAnalysisResults (full variant with progress steps)

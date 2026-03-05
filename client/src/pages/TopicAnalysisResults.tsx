@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RegionalHeatMap } from "@/components/RegionalHeatMap";
+import { AnalysisSkeleton } from "@/components/AnalysisSkeleton";
 import { DCFTVisualization } from "@/components/DCFTVisualization";
 import { COUNTRIES, getCountryByCode } from "@/data/countries";
 import { 
@@ -267,37 +268,50 @@ export default function TopicAnalysisResults() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="text-center py-12 px-8 max-w-md">
-          <CardContent className="space-y-4">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary/30 border-t-primary mx-auto"></div>
-              <Brain className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary animate-pulse" />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg">جاري تحليل المشاعر الجماعية...</h3>
-              <p className="text-sm text-muted-foreground mt-2">
-                يتم جمع البيانات من مصادر متعددة وتحليلها بالذكاء الاصطناعي
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <AnalysisSkeleton variant="full" topic={topic} showSteps={true} />;
   }
 
   if (error) {
+    const errMsg = error?.message?.toLowerCase() || '';
+    const isLLMExhausted = errMsg.includes('usage exhausted') || errMsg.includes('412') || errMsg.includes('precondition');
+    const isTimeout = errMsg.includes('timeout') || errMsg.includes('timed out');
+    const isNetwork = errMsg.includes('network') || errMsg.includes('fetch');
+    
+    let errorTitle = 'حدث خطأ أثناء التحليل';
+    let errorDesc = 'نعتذر عن هذا الخطأ. يرجى المحاولة مرة أخرى.';
+    let errorEmoji = '⚠️';
+    
+    if (isLLMExhausted) {
+      errorTitle = 'تم استنفاد حصة الذكاء الاصطناعي مؤقتاً';
+      errorDesc = 'يرجى المحاولة بعد بضع دقائق. سيتم تجديد الحصة تلقائياً.';
+      errorEmoji = '🧠';
+    } else if (isTimeout) {
+      errorTitle = 'انتهت مهلة التحليل';
+      errorDesc = 'استغرق التحليل وقتاً أطول من المتوقع. جرب موضوعاً أبسط.';
+      errorEmoji = '⏰';
+    } else if (isNetwork) {
+      errorTitle = 'خطأ في الاتصال';
+      errorDesc = 'تحقق من اتصالك بالإنترنت وأعد المحاولة.';
+      errorEmoji = '📡';
+    }
+    
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="text-center py-12 px-8">
-          <CardContent>
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-            <p className="text-destructive mb-4">حدث خطأ أثناء التحليل</p>
-            <Button onClick={() => navigate("/")} variant="outline">
-              <ArrowLeft className="ml-2 h-4 w-4" />
-              العودة للرئيسية
-            </Button>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="text-center py-12 px-8 max-w-md w-full">
+          <CardContent className="space-y-4">
+            <div className="text-5xl mb-2">{errorEmoji}</div>
+            <h2 className="text-xl font-bold text-foreground">{errorTitle}</h2>
+            <p className="text-sm text-muted-foreground">{errorDesc}</p>
+            <div className="flex gap-3 justify-center pt-4">
+              <Button onClick={() => window.location.reload()} variant="default" className="gap-2">
+                <Activity className="h-4 w-4" />
+                إعادة المحاولة
+              </Button>
+              <Button onClick={() => navigate("/")} variant="outline" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                العودة للرئيسية
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

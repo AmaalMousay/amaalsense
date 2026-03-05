@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import PageErrorBoundary from "./components/PageErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 // Analyzer page removed - analysis now works directly from Home page
@@ -80,11 +81,11 @@ function Router() {
       <Route path={"/system-health"} component={SystemHealth} />
       <Route path={"/source-monitor"} component={SourceMonitor} />
       
-      {/* Results Pages */}
-      <Route path={"/analysis-results"} component={TopicAnalysisResults} />
-      <Route path={"/country/:code"} component={CountryResults} />
+      {/* Results Pages - wrapped with PageErrorBoundary */}
+      <Route path="/analysis-results">{() => <PageErrorBoundary pageName="TopicAnalysis"><TopicAnalysisResults /></PageErrorBoundary>}</Route>
+      <Route path="/country/:code">{(params) => <PageErrorBoundary pageName="CountryResults"><CountryResults /></PageErrorBoundary>}</Route>
       <Route path={"/new-features"} component={NewFeaturesDashboard} />
-      <Route path={"/chat"} component={Chat} />
+      <Route path="/chat">{() => <PageErrorBoundary pageName="Chat"><Chat /></PageErrorBoundary>}</Route>
        <Route path={"/weather"} component={Weather} />
       <Route path={"/emotional-weather"} component={EmotionalWeather} />
       <Route path={"/indices"} component={Indices} />
@@ -139,15 +140,15 @@ function Router() {
       <Route path={"/researcher"} component={ResearcherDashboard} />
       {/* Markets route removed - use Smart Analysis instead */}
       
-      {/* AI-Powered Smart Analysis */}
-      <Route path={"/smart-analysis"} component={SmartAnalysis} />
+      {/* AI-Powered Smart Analysis - wrapped with PageErrorBoundary */}
+      <Route path="/smart-analysis">{() => <PageErrorBoundary pageName="SmartAnalysis"><SmartAnalysis /></PageErrorBoundary>}</Route>
       
       {/* Search & Data Pages */}
       <Route path={"/search"} component={SearchPageBound} />
       <Route path={"/maps"} component={MapsBound} />
       <Route path={"/live-alerts"} component={AlertsBound} />
       <Route path={"/comparison"} component={ComparisonBound} />
-      <Route path={"/live-analysis"} component={LiveAnalysis} />
+      <Route path="/live-analysis">{() => <PageErrorBoundary pageName="LiveAnalysis"><LiveAnalysis /></PageErrorBoundary>}</Route>
       <Route path={"/markets"} component={Markets} />
       <Route path={"/settings"} component={SettingsPage} />
       
