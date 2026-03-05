@@ -1,8 +1,10 @@
 /**
  * UNIFIED ENGINE ROUTER
  * 
- * tRPC router that exposes the Unified Analysis Engine to the frontend.
+ * tRPC router that exposes the Network Engine to the frontend.
  * All pages call these procedures instead of separate endpoints.
+ * 
+ * Now powered by the NETWORK ENGINE (network topology, parallel execution).
  */
 
 import { publicProcedure, router } from './_core/trpc';
@@ -16,7 +18,8 @@ import {
   getGlobalMood,
   getEngineStats,
   clearAllCaches,
-} from './unifiedAnalysisEngine';
+  executeNetworkEngine,
+} from './networkEngine';
 
 // Country metadata for batch operations
 const PRIORITY_COUNTRIES = [
@@ -148,6 +151,40 @@ export const unifiedEngineRouter = router({
     }))
     .mutation(async ({ input }) => {
       return await analyzeForSmartAnalysis(input.query, input.language);
+    }),
+
+  /**
+   * FULL NETWORK EXECUTION: Run the complete network engine
+   * Used by: Advanced analysis, debugging, pipeline view
+   */
+  executeFullNetwork: publicProcedure
+    .input(z.object({
+      question: z.string().min(1).max(500),
+      language: z.string().default('ar'),
+    }))
+    .mutation(async ({ input }) => {
+      const ctx = await executeNetworkEngine('system', input.question, input.language);
+      return {
+        response: ctx.generation.languageEnforced.finalResponse || ctx.generation.response,
+        emotions: ctx.collection.eventVector.emotions,
+        dominantEmotion: ctx.collection.eventVector.dominantEmotion,
+        confidence: ctx.analysis.confidence.overall,
+        suggestions: ctx.generation.suggestions,
+        breakingNews: ctx.analysis.breakingNews,
+        quality: ctx.generation.quality,
+        analytics: {
+          totalDurationMs: ctx.analytics.totalDurationMs,
+          layerTraces: ctx.analytics.layerTraces,
+          parallelGroups: ctx.analytics.parallelGroups,
+          errors: ctx.analytics.errors,
+        },
+        gate: {
+          intent: ctx.gate.intent,
+          needsAnalysis: ctx.gate.needsAnalysis,
+          needsLLM: ctx.gate.needsLLM,
+          detectedCountry: ctx.gate.detectedCountry,
+        },
+      };
     }),
 
   /**

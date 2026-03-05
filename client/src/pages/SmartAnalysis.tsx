@@ -120,18 +120,18 @@ export default function SmartAnalysis() {
         language: 'ar'
       });
       
-      // Extract response and metadata from the unified engine
+      // Extract response and metadata from the network engine
       const response = result.response || 'Analysis processing...';
       
-      // Set context with available data
+      // Set context with real data from the network engine
       setContext({
         topic: topic,
-        gmi: 0, // Will be populated from real analysis
-        cfi: 50,
-        hri: 50,
-        dominantEmotion: 'neutral',
-        emotionVector: {},
-        confidence: 50,
+        gmi: result.gmi || 0,
+        cfi: result.cfi || 50,
+        hri: result.hri || 50,
+        dominantEmotion: result.dominantEmotion || 'neutral',
+        emotionVector: result.emotions || {},
+        confidence: result.confidence || 50,
         detectedCountry: 'Global',
       });
       setAnalysisData(result);
