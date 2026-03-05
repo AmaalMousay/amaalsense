@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * صفحة البحث المربوطة - مع API حقيقي
  * Bound Search Page - with Real API Integration

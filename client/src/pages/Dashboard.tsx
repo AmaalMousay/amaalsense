@@ -13,6 +13,11 @@ import {
   HRI_COLORS 
 } from '@shared/emotionColors';
 import { ExportButton } from '@/components/ExportButton';
+import { LiveDashboardPreview } from '@/components/LiveDashboardPreview';
+import { StatisticsSection } from '@/components/StatisticsSection';
+import UsageQuota from '@/components/UsageQuota';
+import { ExportData } from '@/components/ExportData';
+import { LiveAlertSystem } from '@/components/LiveAlertSystem';
 import { useI18n } from '@/i18n';
 import {
   LineChart,
@@ -31,7 +36,7 @@ import {
 export default function Dashboard() {
   const [, navigate] = useLocation();
   const [timeRange, setTimeRange] = useState(24);
-  const [indices, setIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
+  const [indices, setIndices] = useState({ gmi: 0, cfi: 0, hri: 0 });
   const [chartData, setChartData] = useState<any[]>([]);
   const { t, isRTL } = useI18n();
 
@@ -55,14 +60,14 @@ export default function Dashboard() {
     if (analysisData) {
       setIndices({
         gmi: analysisData.gmi || 0,
-        cfi: analysisData.cfi || 50,
-        hri: analysisData.hri || 50,
+        cfi: analysisData.cfi || 0,
+        hri: analysisData.hri || 0,
       });
     } else if (latestIndices) {
       setIndices({
         gmi: latestIndices.gmi || 0,
-        cfi: latestIndices.cfi || 50,
-        hri: latestIndices.hri || 50,
+        cfi: latestIndices.cfi || 0,
+        hri: latestIndices.hri || 0,
       });
     }
   }, [analysisData, latestIndices]);
@@ -311,6 +316,29 @@ export default function Dashboard() {
               <p className="text-muted-foreground">{t.common.loading}...</p>
             </Card>
           )}
+
+          {/* Live Dashboard Preview */}
+          <LiveDashboardPreview />
+
+          {/* Statistics Section */}
+          <StatisticsSection />
+
+          {/* Usage Quota */}
+          <div className="mt-6">
+            <UsageQuota compact={false} language="en" />
+          </div>
+
+          {/* Live Alert System */}
+          <div className="mt-6">
+            <LiveAlertSystem />
+          </div>
+
+          {/* Export Data */}
+          <div className="mt-6">
+            <ExportData 
+              title="Export Dashboard Data"
+            />
+          </div>
         </div>
       </div>
     </div>

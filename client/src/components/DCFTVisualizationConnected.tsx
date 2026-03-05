@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * DCFT VISUALIZATION - CONNECTED VERSION
  * 

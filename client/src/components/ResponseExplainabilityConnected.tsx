@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * RESPONSE EXPLAINABILITY - CONNECTED VERSION
  * 

@@ -17,16 +17,16 @@ export interface TextAnalysisResult {
 export function analyzeTopics(text: string): string[] {
   const topics: string[] = [];
   
-  // Arabic topic keywords
+  // Bilingual topic keywords (Arabic + English)
   const topicPatterns: Record<string, string[]> = {
-    'Economy': ['اقتصاد', 'اقتصادي', 'أسعار', 'تضخم', 'دعم', 'أجور', 'عملة', 'سعر الصرف'],
-    'Politics': ['سياسة', 'حكومة', 'انتخابات', 'برلمان', 'وزير', 'رئيس', 'حزب'],
-    'Security': ['أمن', 'أمني', 'عسكري', 'جيش', 'شرطة', 'جريمة', 'إرهاب', 'تفجير'],
-    'Health': ['صحة', 'طبي', 'مرض', 'وباء', 'لقاح', 'مستشفى', 'دواء', 'كورونا'],
-    'Education': ['تعليم', 'تعليمي', 'مدرسة', 'جامعة', 'طالب', 'معلم', 'دراسة'],
-    'Environment': ['بيئة', 'بيئي', 'تلوث', 'مناخ', 'طاقة', 'نفط', 'غاز'],
-    'Social': ['اجتماعي', 'مجتمع', 'عائلة', 'شباب', 'نساء', 'أطفال', 'حقوق'],
-    'Technology': ['تكنولوجيا', 'رقمي', 'إنترنت', 'هاتف', 'ذكاء اصطناعي', 'برنامج'],
+    'Economics': ['اقتصاد', 'اقتصادي', 'أسعار', 'تضخم', 'دعم', 'أجور', 'عملة', 'سعر الصرف', 'economy', 'economic', 'inflation', 'gdp', 'trade', 'market', 'finance', 'fiscal', 'monetary', 'budget'],
+    'Politics': ['سياسة', 'حكومة', 'انتخابات', 'برلمان', 'وزير', 'رئيس', 'حزب', 'politics', 'political', 'government', 'election', 'parliament', 'minister', 'president', 'party', 'policy', 'vote', 'democracy'],
+    'Security': ['أمن', 'أمني', 'عسكري', 'جيش', 'شرطة', 'جريمة', 'إرهاب', 'تفجير', 'security', 'military', 'army', 'police', 'crime', 'terrorism', 'war', 'conflict', 'defense'],
+    'Health': ['صحة', 'طبي', 'مرض', 'وباء', 'لقاح', 'مستشفى', 'دواء', 'كورونا', 'health', 'medical', 'disease', 'pandemic', 'vaccine', 'hospital', 'medicine', 'covid', 'virus'],
+    'Education': ['تعليم', 'تعليمي', 'مدرسة', 'جامعة', 'طالب', 'معلم', 'دراسة', 'education', 'school', 'university', 'student', 'teacher', 'learning', 'academic'],
+    'Environment': ['بيئة', 'بيئي', 'تلوث', 'مناخ', 'طاقة', 'نفط', 'غاز', 'environment', 'climate', 'pollution', 'energy', 'oil', 'gas', 'renewable', 'carbon', 'green'],
+    'Social': ['اجتماعي', 'مجتمع', 'عائلة', 'شباب', 'نساء', 'أطفال', 'حقوق', 'social', 'community', 'family', 'youth', 'women', 'children', 'rights', 'society'],
+    'Technology': ['تكنولوجيا', 'رقمي', 'إنترنت', 'هاتف', 'ذكاء اصطناعي', 'برنامج', 'technology', 'digital', 'internet', 'phone', 'ai', 'artificial intelligence', 'software', 'tech'],
   };
 
   const lowerText = text.toLowerCase();
@@ -100,15 +100,15 @@ export function analyzeRegions(text: string): string[] {
   const regions: string[] = [];
   
   const regionPatterns: Record<string, string[]> = {
-    'Libya': ['ليبيا', 'طرابلس', 'بنغازي', 'سرت', 'الجفرة', 'ليبي', 'ليبيين'],
-    'Egypt': ['مصر', 'القاهرة', 'الإسكندرية', 'الجيزة', 'مصري', 'مصريين'],
-    'Saudi Arabia': ['السعودية', 'الرياض', 'جدة', 'الدمام', 'سعودي', 'سعوديين'],
-    'UAE': ['الإمارات', 'دبي', 'أبوظبي', 'الشارقة', 'إماراتي', 'إماراتيين'],
-    'Morocco': ['المغرب', 'الرباط', 'الدار البيضاء', 'فاس', 'مغربي', 'مغاربة'],
-    'Tunisia': ['تونس', 'تونسي', 'تونسيين'],
-    'Algeria': ['الجزائر', 'جزائري', 'جزائريين'],
-    'Middle East': ['الشرق الأوسط', 'منطقة', 'الخليج', 'عربي', 'عرب'],
-    'Global': ['عالمي', 'عالم', 'دولي', 'دول', 'عالميا'],
+    'Libya': ['ليبيا', 'طرابلس', 'بنغازي', 'سرت', 'الجفرة', 'ليبي', 'ليبيين', 'libya', 'tripoli', 'benghazi', 'libyan'],
+    'Egypt': ['مصر', 'القاهرة', 'الإسكندرية', 'الجيزة', 'مصري', 'مصريين', 'egypt', 'cairo', 'egyptian'],
+    'Saudi Arabia': ['السعودية', 'الرياض', 'جدة', 'الدمام', 'سعودي', 'سعوديين', 'saudi', 'saudi arabia', 'riyadh', 'jeddah'],
+    'UAE': ['الإمارات', 'دبي', 'أبوظبي', 'الشارقة', 'إماراتي', 'إماراتيين', 'uae', 'dubai', 'abu dhabi', 'emirates', 'emirati'],
+    'Morocco': ['المغرب', 'الرباط', 'الدار البيضاء', 'فاس', 'مغربي', 'مغاربة', 'morocco', 'moroccan', 'rabat', 'casablanca'],
+    'Tunisia': ['تونس', 'تونسي', 'تونسيين', 'tunisia', 'tunisian', 'tunis'],
+    'Algeria': ['الجزائر', 'جزائري', 'جزائريين', 'algeria', 'algerian', 'algiers'],
+    'Middle East': ['الشرق الأوسط', 'منطقة', 'الخليج', 'عربي', 'عرب', 'middle east', 'gulf', 'arab', 'arabian'],
+    'Global': ['عالمي', 'عالم', 'دولي', 'دول', 'عالميا', 'global', 'world', 'international'],
   };
 
   const lowerText = text.toLowerCase();
@@ -132,13 +132,13 @@ export function analyzeSeverity(text: string, emotions: Record<string, number>):
   const lowerText = text.toLowerCase();
   
   // Critical severity indicators
-  const criticalKeywords = ['كارثة', 'فاجعة', 'حرب', 'إرهاب', 'انهيار', 'موت', 'قتل', 'مجزرة'];
+  const criticalKeywords = ['كارثة', 'فاجعة', 'حرب', 'إرهاب', 'انهيار', 'موت', 'قتل', 'مجزرة', 'catastrophe', 'disaster', 'war', 'terrorism', 'collapse', 'death', 'massacre', 'crisis'];
   if (criticalKeywords.some(kw => lowerText.includes(kw))) {
     return 'critical';
   }
 
   // High severity indicators
-  const highKeywords = ['أزمة', 'مخاطر', 'خطر', 'تهديد', 'فشل', 'انقطاع', 'غلق'];
+  const highKeywords = ['أزمة', 'مخاطر', 'خطر', 'تهديد', 'فشل', 'انقطاع', 'غلق', 'danger', 'threat', 'risk', 'failure', 'emergency', 'severe', 'critical'];
   if (highKeywords.some(kw => lowerText.includes(kw))) {
     return 'high';
   }
@@ -172,7 +172,7 @@ export function analyzeImpact(text: string, emotions: Record<string, number>): n
   impactScore += emotionIntensity * 0.3;
 
   // Urgency keywords
-  const urgencyKeywords = ['فوري', 'عاجل', 'حالا', 'الآن', 'فورا', 'ضروري', 'حتمي'];
+  const urgencyKeywords = ['فوري', 'عاجل', 'حالا', 'الآن', 'فورا', 'ضروري', 'حتمي', 'urgent', 'immediately', 'now', 'breaking', 'emergency', 'critical'];
   if (urgencyKeywords.some(kw => text.toLowerCase().includes(kw))) {
     impactScore += 0.2;
   }

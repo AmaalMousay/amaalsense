@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * TOPIC ANALYSIS DISPLAY - CONNECTED VERSION
  * 

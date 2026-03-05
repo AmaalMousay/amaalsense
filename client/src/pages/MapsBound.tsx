@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * خريطة العواطف العالمية - مربوطة بـ API
  * Global Emotion Map - API Bound

@@ -47,6 +47,13 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import SearchPageBound from "./pages/SearchPageBound";
+import MapsBound from "./pages/MapsBound";
+import AlertsBound from "./pages/AlertsBound";
+import ComparisonBound from "./pages/ComparisonBound";
+import LiveAnalysis from "./pages/LiveAnalysis";
+import Markets from "./pages/Markets";
+import SettingsPage from "./pages/SettingsPage";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import Chat from "./pages/Chat";
 import Weather from "./pages/Weather";
@@ -132,6 +139,15 @@ function Router() {
       
       {/* AI-Powered Smart Analysis */}
       <Route path={"/smart-analysis"} component={SmartAnalysis} />
+      
+      {/* Search & Data Pages */}
+      <Route path={"/search"} component={SearchPageBound} />
+      <Route path={"/maps"} component={MapsBound} />
+      <Route path={"/live-alerts"} component={AlertsBound} />
+      <Route path={"/comparison"} component={ComparisonBound} />
+      <Route path={"/live-analysis"} component={LiveAnalysis} />
+      <Route path={"/markets"} component={Markets} />
+      <Route path={"/settings"} component={SettingsPage} />
       
       {/* Metacognition Dashboard */}
       <Route path={"/metacognition"} component={MetacognitionDashboard} />

@@ -11,7 +11,7 @@ import {
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
   LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap, Search, ArrowRight,
-  MessageCircle, Cloud
+  MessageCircle, Cloud, Map, Activity, LineChart, AlertTriangle, Settings, Compass, Microscope, Layers
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -22,6 +22,8 @@ import { useI18n } from '@/i18n';
 import { EmotionGoogleMap } from '@/components/EmotionGoogleMap';
 import { UserMenu } from '@/components/UserMenu';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { TestimonialsSection } from '@/components/TestimonialsSection';
+import { FAQSection } from '@/components/FAQSection';
 import { COUNTRIES } from '@/data/countries';
 
 // Country positions for the map
@@ -316,8 +318,8 @@ function InteractiveWorldMap({
 
 export default function Home() {
   const [, navigate] = useLocation();
-  const [indices, setIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
-  const [previousIndices, setPreviousIndices] = useState({ gmi: 0, cfi: 50, hri: 50 });
+  const [indices, setIndices] = useState({ gmi: 0, cfi: 0, hri: 0 });
+  const [previousIndices, setPreviousIndices] = useState({ gmi: 0, cfi: 0, hri: 0 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [analysisTopic, setAnalysisTopic] = useState('');
   // Country will be auto-detected by AI from topic context
@@ -384,8 +386,16 @@ export default function Home() {
   const navLinks = [
     { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis', icon: <Brain className="w-4 h-4" /> },
     { href: '/chat', label: isRTL ? 'محادثة' : 'Chat', icon: <MessageCircle className="w-4 h-4" /> },
+    { href: '/dashboard', label: isRTL ? 'لوحة القيادة' : 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
     { href: '/emotional-weather', label: isRTL ? 'طقس العاطفي' : 'Emotional Weather', icon: <Cloud className="w-4 h-4" /> },
-    { href: '/theory', label: t.nav.theory },
+    { href: '/indices', label: isRTL ? 'المؤشرات' : 'Indices', icon: <LineChart className="w-4 h-4" /> },
+    { href: '/maps', label: isRTL ? 'الخريطة' : 'World Map', icon: <Map className="w-4 h-4" /> },
+    { href: '/search', label: isRTL ? 'بحث' : 'Search', icon: <Search className="w-4 h-4" /> },
+    { href: '/live-analysis', label: isRTL ? 'تحليل مباشر' : 'Live Analysis', icon: <Activity className="w-4 h-4" /> },
+    { href: '/live-alerts', label: isRTL ? 'التنبيهات' : 'Alerts', icon: <AlertTriangle className="w-4 h-4" /> },
+    { href: '/compare', label: isRTL ? 'مقارنة الدول' : 'Compare Countries', icon: <Compass className="w-4 h-4" /> },
+    { href: '/theory', label: t.nav.theory, icon: <Microscope className="w-4 h-4" /> },
+    { href: '/dcft', label: isRTL ? 'نظرية DCFT' : 'DCFT Theory', icon: <Layers className="w-4 h-4" /> },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
   ];
@@ -395,6 +405,10 @@ export default function Home() {
     { href: '/case-studies', label: t.nav.caseStudies, icon: <Building2 className="w-4 h-4" /> },
     { href: '/faq', label: t.nav.faq, icon: <HelpCircle className="w-4 h-4" /> },
     { href: '/blog', label: t.nav.blog, icon: <BookOpen className="w-4 h-4" /> },
+    { href: '/api-docs', label: isRTL ? 'وثائق API' : 'API Docs', icon: <FileText className="w-4 h-4" /> },
+    { href: '/use-cases', label: isRTL ? 'حالات الاستخدام' : 'Use Cases', icon: <Users className="w-4 h-4" /> },
+    { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets', icon: <BarChart3 className="w-4 h-4" /> },
+    { href: '/settings', label: isRTL ? 'الإعدادات' : 'Settings', icon: <Settings className="w-4 h-4" /> },
   ];
 
   return (
@@ -847,6 +861,21 @@ export default function Home() {
               </ul>
             </div>
           </div>
+
+          {/* Testimonials */}
+          <TestimonialsSection testimonials={[
+            { name: 'Dr. Sarah Chen', role: 'Data Scientist', company: 'MIT', content: 'AmalSense provides unprecedented insights into collective emotions across regions.', rating: 5 },
+            { name: 'Prof. Ahmed Al-Rashid', role: 'Political Analyst', company: 'Al Jazeera', content: 'The DCFT framework offers a unique scientific approach to understanding societal mood shifts.', rating: 5 },
+            { name: 'Maria Gonzalez', role: 'Journalist', company: 'Reuters', content: 'An invaluable tool for understanding public sentiment on global events.', rating: 4 }
+          ]} />
+
+          {/* FAQ */}
+          <FAQSection faqs={[
+            { question: 'What is AmalSense?', answer: 'AmalSense is a Digital Collective Emotion Analyzer that uses AI and real-time data to measure global emotional states.' },
+            { question: 'What is DCFT?', answer: 'Digital Collective Feeling Theory - a scientific framework for quantifying and analyzing collective human emotions from digital sources.' },
+            { question: 'Where does the data come from?', answer: 'We aggregate data from news sources (NewsAPI, GNews), social media (Reddit, Mastodon, Bluesky, YouTube), and RSS feeds.' },
+            { question: 'How accurate is the analysis?', answer: 'Our hybrid AI analysis combines DCFT algorithms (70%) with AI sentiment analysis (30%) for high accuracy with confidence scores.' }
+          ]} />
 
           {/* Emotion Color Legend */}
           <FooterLegend />

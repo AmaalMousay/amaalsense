@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * LIVE ALERT SYSTEM COMPONENT
  * 

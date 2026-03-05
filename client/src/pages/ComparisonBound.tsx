@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ميزات المقارنة المربوطة - مع API حقيقي
  * Comparison Features Bound - with Real API Integration

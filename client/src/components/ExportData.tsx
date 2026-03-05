@@ -97,7 +97,7 @@ export function ExportData({
       }
 
       // Create download link
-      const blob = new Blob([content], { mimeType: 'text/plain' });
+      const blob = new Blob([content], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

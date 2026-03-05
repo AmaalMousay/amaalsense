@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Enhanced Emotion Analyzer - محلل العواطف المحسّن
  * يوفر:

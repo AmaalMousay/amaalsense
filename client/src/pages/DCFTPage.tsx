@@ -5,6 +5,8 @@ import { DCFTTrendChart } from '@/components/DCFTTrendChart';
 import { DCFTRegionalBreakdown } from '@/components/DCFTRegionalBreakdown';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Download, Share2 } from 'lucide-react';
+import { DCFTResultsDisplay } from '@/components/DCFTResultsDisplay';
+import { TemporalComparison } from '@/components/TemporalComparison';
 
 export function DCFTPage() {
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | '90d'>('7d');
@@ -149,6 +151,28 @@ export function DCFTPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* DCFT Results Display */}
+      <DCFTResultsDisplay 
+        metrics={{
+          gmi: currentMetrics.gmi,
+          cfi: currentMetrics.cfi,
+          hri: currentMetrics.hri,
+          timestamp: new Date(),
+          trend: currentMetrics.gmi > 50 ? 'up' as const : currentMetrics.gmi < 50 ? 'down' as const : 'stable' as const
+        }}
+        isLoading={isLoading}
+      />
+
+      {/* Temporal Comparison */}
+      <TemporalComparison 
+        data={trendData.map(d => ({
+          timestamp: typeof d.timestamp === 'string' ? new Date(d.timestamp).getTime() : d.timestamp,
+          gmi: d.gmi,
+          cfi: d.cfi,
+          hri: d.hri
+        }))}
+      />
 
       {/* Footer */}
       <div className="text-center text-sm text-gray-500 border-t pt-4">

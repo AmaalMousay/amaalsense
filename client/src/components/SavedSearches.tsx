@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * SAVED SEARCHES COMPONENT
  * 

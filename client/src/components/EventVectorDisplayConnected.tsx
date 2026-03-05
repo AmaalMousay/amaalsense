@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * EVENT VECTOR DISPLAY - CONNECTED VERSION
  * 

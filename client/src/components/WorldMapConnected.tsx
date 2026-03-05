@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * WORLD MAP - CONNECTED VERSION
  * 

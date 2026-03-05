@@ -13,7 +13,7 @@ describe('Real Text Analyzer', () => {
     it('should detect economy topics in Arabic', () => {
       const text = 'هل رفع الدعم عن الوقود سيؤدي إلى اضطرابات اقتصادية؟';
       const topics = analyzeTopics(text);
-      expect(topics).toContain('Economy');
+      expect(topics).toContain('Economics');
     });
 
     it('should detect politics topics', () => {

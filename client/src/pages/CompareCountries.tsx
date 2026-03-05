@@ -178,7 +178,7 @@ export default function CompareCountries() {
     // Simulate fetching data (in real app, this would be an API call)
     setTimeout(() => {
       // Generate realistic data based on global mood with some variation
-      const baseMood = globalMoodQuery.data || { gmi: 50, cfi: 50, hri: 50 };
+      const baseMood = globalMoodQuery.data || { gmi: 0, cfi: 0, hri: 0 };
       
       setData1({
         gmi: Math.min(100, Math.max(0, baseMood.gmi + (Math.random() - 0.5) * 30)),

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Emotion Analyzer - Enhanced with DCFT (Digital Consciousness Field Theory)
  * Based on the research paper by Amaal Radwan

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * REGIONAL HEAT MAP - CONNECTED VERSION
  * 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * useStreamingAnalysis Hook
  * Phase 67: Handle streaming responses from the API

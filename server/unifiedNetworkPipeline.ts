@@ -9,6 +9,10 @@ import { invokeLLM } from "./_core/llm";
 import { detectAmbiguity, ClarificationRequest } from "./questionClarificationLayer";
 import { calculateQuestionSimilarity, SimilarityMatch } from "./questionSimilarityMatcher";
 import { calculateConfidenceScore, ConfidenceScore } from "./confidenceScorer";
+import { searchGNews } from "./gnewsService";
+import { fetchRedditPosts, fetchMastodonPosts, fetchBlueskyPosts } from "./socialMediaService";
+import { fetchNewsArticles } from "./newsDataFetcher";
+import { analyzeEmotions, analyzeTopics as analyzeTextTopics } from "./realTextAnalyzer";
 
 /**
  * Context الموحد الذي يحمل البيانات عبر جميع الطبقات
@@ -393,27 +397,193 @@ export async function executeUnifiedNetworkPipeline(
     context.analytics.layersExecuted.push("Layer 1: Question Understanding");
 
     // ============================================
-    // LAYER 16: Response Generation - WITH REAL LLM CALL
+    // LAYER 2: REAL DATA FETCHING - News & Social Media
     // ============================================
-    console.log(`[Pipeline] Executing Layer 16: Response Generation with Groq`);
+    console.log(`[Pipeline] Executing Layer 2: Real Data Fetching`);
+    const realDataResults: { source: string; title: string; content: string; sentiment?: string; url?: string }[] = [];
+    const searchQuery = context.layer1.output.entities?.topics?.join(" ") || question;
+    
+    try {
+      // Fetch from GNews API
+      const gnewsResults = await searchGNews({
+        query: searchQuery,
+        language: language === "ar" ? "ar" : "en",
+        max: 5
+      }).catch(() => []);
+      
+      for (const article of gnewsResults) {
+        realDataResults.push({
+          source: "GNews",
+          title: article.title || "",
+          content: article.description || article.content || "",
+          url: article.url
+        });
+      }
+    } catch (e) {
+      console.log("[Pipeline] GNews fetch failed, continuing...");
+    }
+
+    try {
+      // Fetch from NewsAPI
+      const newsApiResults = await fetchNewsArticles({
+        query: searchQuery,
+        language: language === "ar" ? "ar" : "en",
+        limit: 5
+      }).catch(() => []);
+      
+      for (const article of newsApiResults) {
+        realDataResults.push({
+          source: "NewsAPI",
+          title: article.title || "",
+          content: article.description || article.content || "",
+          url: article.url
+        });
+      }
+    } catch (e) {
+      console.log("[Pipeline] NewsAPI fetch failed, continuing...");
+    }
+
+    try {
+      // Fetch from Reddit
+      const redditResults = await fetchRedditPosts({
+        query: searchQuery,
+        limit: 5
+      }).catch(() => []);
+      
+      for (const post of redditResults) {
+        realDataResults.push({
+          source: "Reddit",
+          title: "",
+          content: post.text || "",
+          url: post.url
+        });
+      }
+    } catch (e) {
+      console.log("[Pipeline] Reddit fetch failed, continuing...");
+    }
+
+    try {
+      // Fetch from Mastodon
+      const mastodonResults = await fetchMastodonPosts({
+        query: searchQuery,
+        limit: 3
+      }).catch(() => []);
+      
+      for (const post of mastodonResults) {
+        realDataResults.push({
+          source: "Mastodon",
+          title: "",
+          content: post.text || "",
+          url: post.url
+        });
+      }
+    } catch (e) {
+      console.log("[Pipeline] Mastodon fetch failed, continuing...");
+    }
+
+    try {
+      // Fetch from Bluesky
+      const blueskyResults = await fetchBlueskyPosts({
+        query: searchQuery,
+        limit: 3
+      }).catch(() => []);
+      
+      for (const post of blueskyResults) {
+        realDataResults.push({
+          source: "Bluesky",
+          title: "",
+          content: post.text || "",
+          url: post.url
+        });
+      }
+    } catch (e) {
+      console.log("[Pipeline] Bluesky fetch failed, continuing...");
+    }
+
+    // Store real data in context
+    context.generalKnowledge.sources = realDataResults.map(r => ({ name: r.source, url: r.url || "" }));
+    context.generalKnowledge.relevantFacts = realDataResults.map(r => r.title ? `[${r.source}] ${r.title}: ${r.content.substring(0, 200)}` : `[${r.source}] ${r.content.substring(0, 200)}`);
+    context.generalKnowledge.verified = realDataResults.length > 0;
+    
+    console.log(`[Pipeline] Layer 2: Fetched ${realDataResults.length} real data items from ${new Set(realDataResults.map(r => r.source)).size} sources`);
+    context.analytics.layersExecuted.push(`Layer 2: Real Data Fetching (${realDataResults.length} items)`);
+
+    // ============================================
+    // LAYER 3: EMOTION ANALYSIS on Real Data
+    // ============================================
+    console.log(`[Pipeline] Executing Layer 3: Emotion Analysis`);
+    const allTexts = realDataResults.map(r => r.content).join(" ");
+    if (allTexts.length > 0) {
+      const emotions = analyzeEmotions(allTexts);
+      const topics = analyzeTextTopics(allTexts);
+      context.analysisEngines.emotionAnalysis = {
+        emotions,
+        dominantEmotion: Object.entries(emotions).sort((a, b) => b[1] - a[1])[0]?.[0] || "neutral",
+        context: topics.join(", "),
+        dataSourceCount: realDataResults.length
+      };
+      context.analysisEngines.sentimentAnalysis = {
+        overall: Object.values(emotions).reduce((a, b) => a + b, 0) / Math.max(Object.values(emotions).length, 1),
+        topics,
+        sourceCount: realDataResults.length
+      };
+    } else {
+      context.analysisEngines.emotionAnalysis = {
+        emotions: { neutral: 0.5 },
+        dominantEmotion: "neutral",
+        context: "لم يتم العثور على بيانات كافية",
+        dataSourceCount: 0
+      };
+    }
+    context.analytics.layersExecuted.push("Layer 3: Emotion Analysis");
+
+    // ============================================
+    // LAYER 4: Breaking News Detection
+    // ============================================
+    console.log(`[Pipeline] Executing Layer 4: Breaking News Detection`);
+    context.realtimeEvents.breakingNews = realDataResults
+      .filter(r => r.source === "GNews" || r.source === "NewsAPI")
+      .slice(0, 5)
+      .map(r => ({
+        headline: r.title || r.content.substring(0, 100),
+        source: r.source,
+        timestamp: new Date(),
+        impactScore: 0.7
+      }));
+    context.analytics.layersExecuted.push("Layer 4: Breaking News Detection");
+
+    // ============================================
+    // LAYER 16: Response Generation - WITH REAL DATA CONTEXT
+    // ============================================
+    console.log(`[Pipeline] Executing Layer 16: Response Generation with Real Data Context`);
+    
+    // Build context from real data
+    const dataContext = realDataResults.length > 0
+      ? `\n\nReal-time data from ${realDataResults.length} sources:\n${realDataResults.slice(0, 10).map((r, i) => `${i + 1}. [${r.source}] ${r.title || ""}: ${r.content.substring(0, 300)}`).join("\n")}`
+      : "";
+    
+    const emotionContext = context.analysisEngines.emotionAnalysis
+      ? `\nDetected emotions: ${JSON.stringify(context.analysisEngines.emotionAnalysis.emotions)}\nDominant: ${context.analysisEngines.emotionAnalysis.dominantEmotion}`
+      : "";
+
     try {
       const llmResponse = await invokeLLM({
         messages: [
           {
             role: "system",
-            content: `You are an intelligent AI assistant. Answer the user's question in ${language === "ar" ? "Arabic" : "English"} language. Provide a comprehensive, accurate, and helpful response.` as any
+            content: `You are AmalSense, an advanced collective emotion analysis engine. You analyze real-time data from news and social media to provide deep emotional intelligence insights. Answer in ${language === "ar" ? "Arabic" : "English"} language. Base your analysis on the real data provided. Be specific, cite sources, and provide emotional context. If real data is available, derive your analysis from it rather than general knowledge.` as any
           },
           {
             role: "user",
-            content: question as any
+            content: `${question}${dataContext}${emotionContext}` as any
           }
         ]
       });
 
       const responseContent = llmResponse.choices[0].message.content as any;
       context.generatedResponse.text = (typeof responseContent === 'string' ? responseContent : JSON.stringify(responseContent)) || "Unable to generate response";
-      context.generatedResponse.sources = [];
-      context.generatedResponse.evidence = [];
+      context.generatedResponse.sources = realDataResults.map(r => r.url || r.source);
+      context.generatedResponse.evidence = realDataResults.slice(0, 5).map(r => `[${r.source}] ${r.title || r.content.substring(0, 100)}`);
       context.analytics.layersExecuted.push("Layer 16: Response Generation");
     } catch (error) {
       console.error("LLM call failed:", error);

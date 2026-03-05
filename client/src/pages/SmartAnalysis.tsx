@@ -18,6 +18,11 @@ import { LogoIcon } from '@/components/Logo';
 import { EmotionalIntelligenceCard } from '@/components/EmotionalIntelligenceCard';
 import { QuestionClarificationDialog } from '@/components/QuestionClarificationDialog';
 import { ContextualUnderstandingCard } from '@/components/ContextualUnderstandingCard';
+import { FollowUpQuestionsUI } from '@/components/FollowUpQuestionsUI';
+import { WhatIfScenariosUI } from '@/components/WhatIfScenariosUI';
+import { PredictionsRecommendationsUI } from '@/components/PredictionsRecommendationsUI';
+import { StructuredResponseUI } from '@/components/StructuredResponseUI';
+import { FeedbackCard } from '@/components/FeedbackCard';
 import { Streamdown } from 'streamdown';
 import ResultsPage from './ResultsPage';
 
@@ -124,7 +129,7 @@ export default function SmartAnalysis() {
       // Set context with available data
       setContext({
         topic: topic,
-        gmi: 50, // Default values until we have real data
+        gmi: 0, // Will be populated from real analysis
         cfi: 50,
         hri: 50,
         dominantEmotion: 'neutral',
@@ -728,6 +733,50 @@ export default function SmartAnalysis() {
               )}
             </div>
             
+            {/* Structured Response */}
+            {analysisComplete && analysisData?.data && (
+              <StructuredResponseUI 
+                analysis={analysisData.data} 
+                isLoading={isAnalyzing} 
+                error={undefined}
+              />
+            )}
+
+            {/* Follow-up Questions */}
+            {analysisComplete && analysisData?.data?.humanIntelligence?.proactiveSuggestions && (
+              <FollowUpQuestionsUI 
+                initialQuestions={analysisData.data.humanIntelligence.proactiveSuggestions.map((s: string) => ({ id: Math.random().toString(), text: s, category: 'suggestion' as const }))}
+                onAskQuestion={async (question: string) => { await handleAskQuestion(question); return ''; }}
+                isLoading={isAskingFollowUp}
+              />
+            )}
+
+            {/* Predictions & Recommendations */}
+            {analysisComplete && analysisData?.data && (
+              <PredictionsRecommendationsUI 
+                predictions={analysisData.data.predictions || []}
+                recommendations={analysisData.data.recommendations || []}
+                isLoading={isAnalyzing}
+              />
+            )}
+
+            {/* What-If Scenarios */}
+            {analysisComplete && analysisData?.data && (
+              <WhatIfScenariosUI 
+                scenarios={analysisData.data.scenarios || []}
+                onScenarioSelect={(scenarioId: string) => handleAskQuestion(`ماذا لو ${scenarioId}?`)}
+                isLoading={isAskingFollowUp}
+              />
+            )}
+
+            {/* Feedback */}
+            {analysisComplete && (
+              <FeedbackCard 
+                conversationId={Date.now()}
+                onSubmit={() => console.log('Feedback submitted')}
+              />
+            )}
+
             {/* Quick Question Buttons */}
             {analysisComplete && !isAskingFollowUp && (
               <div className="flex flex-wrap gap-2 mb-3">

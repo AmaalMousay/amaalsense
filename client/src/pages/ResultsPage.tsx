@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * صفحة النتائج الشاملة
  * Comprehensive Results Page

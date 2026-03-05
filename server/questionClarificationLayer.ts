@@ -110,11 +110,11 @@ function performHeuristicCheck(question: string, language: string): Clarificatio
   
   // Check for vague questions
   const vaguePatterns = [
-    /ما رأي.*الناس\?$/,  // "What do people think?" (Arabic)
+    /ما رأي.*الناس[؟?]?$/,  // "What do people think?" (Arabic)
     /what.*people.*think/i,  // English
-    /ما الأفضل\?$/,  // "What's best?" (Arabic)
+    /ما الأفضل[؟?]?$/,  // "What's best?" (Arabic)
     /what.*best/i,  // English
-    /كيف.*الناس\?$/,  // "How are people?" (Arabic)
+    /كيف.*الناس[؟?]?$/,  // "How are people?" (Arabic)
     /how.*people/i  // English
   ];
 
@@ -152,9 +152,9 @@ function performHeuristicCheck(question: string, language: string): Clarificatio
 
   // Check for incomplete questions
   const incompletePatterns = [
-    /\?$/,  // Ends with question mark but very short
-    /^(من|ما|كيف|أين|متى|لماذا)\s*\?$/i,  // Single word question (Arabic)
-    /^(who|what|how|where|when|why)\s*\?$/i  // Single word question (English)
+    /[؟?]$/,  // Ends with question mark but very short
+    /^(من|ما|كيف|أين|متى|لماذا)\s*[؟?]?$/i,  // Single word question (Arabic)
+    /^(who|what|how|where|when|why)\s*\??$/i  // Single word question (English)
   ];
 
   const isIncomplete = question.length < 10 && incompletePatterns.some(pattern => pattern.test(lowerQuestion));

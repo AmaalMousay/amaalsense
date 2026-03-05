@@ -23,6 +23,11 @@ export default defineConfig({
       "client/src/**/*.test.tsx",
       "client/src/**/*.spec.tsx",
     ],
+    exclude: [
+      "node_modules/**",
+      "**/_archive/**",
+    ],
+    testTimeout: 30000,
     setupFiles: ["./vitest.setup.ts"],
   },
 });

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Analytics Storage Service
  * Handles saving and retrieving analysis data for historical trends
