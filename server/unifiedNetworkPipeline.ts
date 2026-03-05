@@ -13,6 +13,7 @@ import { searchGNews } from "./gnewsService";
 import { fetchRedditPosts, fetchMastodonPosts, fetchBlueskyPosts } from "./socialMediaService";
 import { fetchNewsArticles } from "./newsDataFetcher";
 import { analyzeEmotions, analyzeTopics as analyzeTextTopics } from "./realTextAnalyzer";
+import { withCache, CACHE_TTL } from "./cacheManager";
 
 /**
  * Context الموحد الذي يحمل البيانات عبر جميع الطبقات
@@ -404,12 +405,13 @@ export async function executeUnifiedNetworkPipeline(
     const searchQuery = context.layer1.output.entities?.topics?.join(" ") || question;
     
     try {
-      // Fetch from GNews API
-      const gnewsResults = await searchGNews({
-        query: searchQuery,
-        language: language === "ar" ? "ar" : "en",
-        max: 5
-      }).catch(() => []);
+      // Fetch from GNews API (cached)
+      const gnewsResults = await withCache(
+        "gnews",
+        { query: searchQuery, language: language === "ar" ? "ar" : "en" },
+        CACHE_TTL.GNEWS,
+        () => searchGNews({ query: searchQuery, language: language === "ar" ? "ar" : "en", max: 5 })
+      ).catch(() => []);
       
       for (const article of gnewsResults) {
         realDataResults.push({
@@ -424,12 +426,13 @@ export async function executeUnifiedNetworkPipeline(
     }
 
     try {
-      // Fetch from NewsAPI
-      const newsApiResults = await fetchNewsArticles({
-        query: searchQuery,
-        language: language === "ar" ? "ar" : "en",
-        limit: 5
-      }).catch(() => []);
+      // Fetch from NewsAPI (cached)
+      const newsApiResults = await withCache(
+        "newsapi",
+        { query: searchQuery, language: language === "ar" ? "ar" : "en" },
+        CACHE_TTL.NEWS_API,
+        () => fetchNewsArticles({ query: searchQuery, language: language === "ar" ? "ar" : "en", limit: 5 })
+      ).catch(() => []);
       
       for (const article of newsApiResults) {
         realDataResults.push({
@@ -444,11 +447,13 @@ export async function executeUnifiedNetworkPipeline(
     }
 
     try {
-      // Fetch from Reddit
-      const redditResults = await fetchRedditPosts({
-        query: searchQuery,
-        limit: 5
-      }).catch(() => []);
+      // Fetch from Reddit (cached)
+      const redditResults = await withCache(
+        "reddit",
+        { query: searchQuery },
+        CACHE_TTL.REDDIT,
+        () => fetchRedditPosts({ query: searchQuery, limit: 5 })
+      ).catch(() => []);
       
       for (const post of redditResults) {
         realDataResults.push({
@@ -463,11 +468,13 @@ export async function executeUnifiedNetworkPipeline(
     }
 
     try {
-      // Fetch from Mastodon
-      const mastodonResults = await fetchMastodonPosts({
-        query: searchQuery,
-        limit: 3
-      }).catch(() => []);
+      // Fetch from Mastodon (cached)
+      const mastodonResults = await withCache(
+        "mastodon",
+        { query: searchQuery },
+        CACHE_TTL.MASTODON,
+        () => fetchMastodonPosts({ query: searchQuery, limit: 3 })
+      ).catch(() => []);
       
       for (const post of mastodonResults) {
         realDataResults.push({
@@ -482,11 +489,13 @@ export async function executeUnifiedNetworkPipeline(
     }
 
     try {
-      // Fetch from Bluesky
-      const blueskyResults = await fetchBlueskyPosts({
-        query: searchQuery,
-        limit: 3
-      }).catch(() => []);
+      // Fetch from Bluesky (cached)
+      const blueskyResults = await withCache(
+        "bluesky",
+        { query: searchQuery },
+        CACHE_TTL.BLUESKY,
+        () => fetchBlueskyPosts({ query: searchQuery, limit: 3 })
+      ).catch(() => []);
       
       for (const post of blueskyResults) {
         realDataResults.push({

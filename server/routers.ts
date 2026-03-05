@@ -934,6 +934,29 @@ ${input.message || 'No message provided'}
   // Analytics & Historical Trends
   analytics: router({
     /**
+     * Get cache statistics
+     */
+    getCacheStats: publicProcedure.query(async () => {
+      const { cacheManager } = await import("./cacheManager");
+      return cacheManager.getStats();
+    }),
+
+    /**
+     * Clear cache (admin only)
+     */
+    clearCache: publicProcedure
+      .input(z.object({ source: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const { cacheManager } = await import("./cacheManager");
+        if (input.source) {
+          cacheManager.clearSource(input.source);
+        } else {
+          cacheManager.clear();
+        }
+        return { success: true, message: input.source ? `Cache cleared for ${input.source}` : "All cache cleared" };
+      }),
+
+    /**
      * Get daily trend data for charts
      */
     getDailyTrends: publicProcedure
@@ -1294,6 +1317,51 @@ ${input.message || 'No message provided'}
         const { metaLearningEngine } = await import("./dcft");
         metaLearningEngine.runLearningCycle();
         return { success: true, stats: metaLearningEngine.getStats() };
+      }),
+
+    /**
+     * Submit response feedback (user rates analysis quality)
+     */
+    submitResponseFeedback: publicProcedure
+      .input(z.object({
+        question: z.string().min(1),
+        response: z.string().min(1),
+        rating: z.number().min(1).max(5),
+        wasHelpful: z.enum(["yes", "no", "partial"]).optional(),
+        wasAccurate: z.enum(["yes", "no", "unsure"]).optional(),
+        wasUnderstandable: z.enum(["yes", "no", "partial"]).optional(),
+        comment: z.string().max(1000).optional(),
+        topic: z.string().max(100).optional(),
+        cognitivePattern: z.string().max(50).optional(),
+        dominantEmotion: z.string().max(32).optional(),
+        responseConfidence: z.number().min(0).max(100).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { submitResponseFeedback } = await import("./db");
+        const result = await submitResponseFeedback({
+          ...input,
+          userId: ctx.user?.id || null,
+        });
+        return result || { id: 0 };
+      }),
+
+    /**
+     * Get response feedback statistics
+     */
+    getResponseFeedbackStats: publicProcedure.query(async () => {
+      const { getResponseFeedbackStats } = await import("./db");
+      return getResponseFeedbackStats();
+    }),
+
+    /**
+     * Get user's feedback history
+     */
+    getUserFeedbackHistory: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).default(20) }))
+      .query(async ({ input, ctx }) => {
+        if (!ctx.user) return [];
+        const { getUserFeedbackHistory } = await import("./db");
+        return getUserFeedbackHistory(ctx.user.id, input.limit);
       }),
   }),
 

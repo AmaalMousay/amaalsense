@@ -4625,3 +4625,47 @@ All systems are properly connected, tested, and ready for production use.
 ### Low Priority
 - [x] Add comprehensive navigation exposing all features (14 nav links + 8 resource links)
 - [ ] Add caching layer for API responses
+
+## Phase 95: Comprehensive Improvements & New Features
+
+### Suggestion 1: Caching System for API Results
+- [x] Create server/cacheManager.ts with in-memory + TTL cache
+- [x] Add caching to GNews API calls (5 min TTL)
+- [x] Add caching to NewsAPI calls (5 min TTL)
+- [x] Add caching to Social Media calls (3 min TTL)
+- [x] Add cache statistics endpoint (analytics.getCacheStats + analytics.clearCache)
+
+### Suggestion 2: Feedback Loop System
+- [x] Create feedback database table in schema (already existed: responseFeedback)
+- [x] Create feedback tRPC router with submit/get endpoints (metaLearning.submitResponseFeedback)
+- [x] Add feedback UI component (FeedbackWidget with stars + thumbs + comment)
+- [x] Integrate feedback into SmartAnalysis results page
+
+### Suggestion 3: API Health Monitor Dashboard
+- [x] Create server/apiHealthMonitor.ts to track API status (10 sources: NewsAPI, GNews, Reddit, Mastodon, Bluesky, YouTube, Telegram, Groq, Google RSS, Built-in LLM)
+- [x] Create API health check endpoints (dashboard.getSourceHealth, checkSource, refreshSourceHealth, getSourceCategories)
+- [x] Create SourceMonitor page with real-time API status (/source-monitor)
+- [x] Show source count and health in Dashboard (overview stats, health bar, category grouping, detail table)
+
+### Suggestion 4: Improved Loading & Empty States
+- [ ] Add skeleton loaders to SmartAnalysis page
+- [ ] Add empty states with helpful messages to all pages
+- [ ] Add error boundaries with retry buttons
+- [ ] Improve loading animations across the app
+
+### Suggestion 5: Breaking News Notifications
+- [ ] Create notification system for breaking news alerts
+- [ ] Add notification bell icon in navigation
+- [ ] Show real-time breaking news count
+
+### Suggestion 6: Dashboard Live Indicators
+- [x] Connect Dashboard to real-time data feeds (useAnalysisData hook with auto-refresh)
+- [x] Add live source count indicator (SourceHealthWidget with real-time API health)
+- [ ] Add last analysis timestamp
+- [ ] Add trending topics widget with real data
+
+### Suggestion 7: Final Cleanup
+- [x] Fix I18nProvider TypeScript cache error (added 'ja' to validLanguages, added Japanese browser mapping)
+- [ ] Clean up any remaining console.log statements
+- [ ] Verify all pages render correctly
+- [ ] Final build verification

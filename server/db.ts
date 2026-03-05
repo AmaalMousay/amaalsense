@@ -1,6 +1,6 @@
 import { eq, desc, asc, gte, and, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert, classifiedAnalyses, followedTopics, topicAlerts, InsertClassifiedAnalysis, InsertFollowedTopic, InsertTopicAlert } from "../drizzle/schema";
+import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert, classifiedAnalyses, followedTopics, topicAlerts, InsertClassifiedAnalysis, InsertFollowedTopic, InsertTopicAlert, responseFeedback, InsertResponseFeedback } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -1247,6 +1247,81 @@ export async function getUserActiveAlerts(userId: number, limit: number = 10) {
       .limit(limit);
   } catch (error) {
     console.error("[Database] Failed to get user active alerts:", error);
+    return [];
+  }
+}
+
+
+// ============================================
+// Response Feedback Functions
+// ============================================
+
+export async function submitResponseFeedback(feedback: InsertResponseFeedback): Promise<{ id: number } | null> {
+  try {
+    const db = await getDb();
+    if (!db) return null;
+    
+    const result = await db.insert(responseFeedback).values(feedback);
+    return { id: Number(result[0].insertId) };
+  } catch (error) {
+    console.error("[Database] Failed to submit response feedback:", error);
+    return null;
+  }
+}
+
+export async function getResponseFeedbackStats(): Promise<{
+  totalFeedback: number;
+  averageRating: number;
+  helpfulPercentage: number;
+  accuratePercentage: number;
+  recentFeedback: any[];
+}> {
+  try {
+    const db = await getDb();
+    if (!db) return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
+    
+    const allFeedback = await db.select().from(responseFeedback).orderBy(desc(responseFeedback.createdAt)).limit(100);
+    
+    const total = allFeedback.length;
+    if (total === 0) return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
+    
+    const avgRating = allFeedback.reduce((sum, f) => sum + (f.rating || 0), 0) / total;
+    const helpfulCount = allFeedback.filter(f => f.wasHelpful === "yes").length;
+    const accurateCount = allFeedback.filter(f => f.wasAccurate === "yes").length;
+    
+    return {
+      totalFeedback: total,
+      averageRating: Math.round(avgRating * 10) / 10,
+      helpfulPercentage: Math.round((helpfulCount / total) * 100),
+      accuratePercentage: Math.round((accurateCount / total) * 100),
+      recentFeedback: allFeedback.slice(0, 10).map(f => ({
+        id: f.id,
+        question: f.question?.substring(0, 100),
+        rating: f.rating,
+        wasHelpful: f.wasHelpful,
+        wasAccurate: f.wasAccurate,
+        comment: f.comment?.substring(0, 200),
+        topic: f.topic,
+        createdAt: f.createdAt,
+      })),
+    };
+  } catch (error) {
+    console.error("[Database] Failed to get feedback stats:", error);
+    return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
+  }
+}
+
+export async function getUserFeedbackHistory(userId: number, limit: number = 20): Promise<any[]> {
+  try {
+    const db = await getDb();
+    if (!db) return [];
+    
+    return await db.select().from(responseFeedback)
+      .where(eq(responseFeedback.userId, userId))
+      .orderBy(desc(responseFeedback.createdAt))
+      .limit(limit);
+  } catch (error) {
+    console.error("[Database] Failed to get user feedback history:", error);
     return [];
   }
 }

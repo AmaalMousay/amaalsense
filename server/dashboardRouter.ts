@@ -6,6 +6,8 @@ import { publicProcedure, router } from './_core/trpc';
 import { healthDashboard } from './healthDashboard';
 import { feedbackManager } from './feedbackLoop';
 import { analysisCache, predictionCache, userCache, generalCache } from './simpleCache';
+import { checkAllSources, checkSingleSource, forceRefresh, getSourceCategories } from './apiHealthMonitor';
+import { z } from 'zod';
 
 export const dashboardRouter = router({
   /**
@@ -205,6 +207,40 @@ export const dashboardRouter = router({
           accuracy: stats.avgRating,
         })),
     };
+  }),
+
+  /**
+   * Get all source health status
+   */
+  getSourceHealth: publicProcedure.query(async () => {
+    return await checkAllSources();
+  }),
+
+  /**
+   * Check a single source health
+   */
+  checkSource: publicProcedure
+    .input(z.object({ sourceId: z.string() }))
+    .query(async ({ input }) => {
+      const result = await checkSingleSource(input.sourceId);
+      if (!result) {
+        return { error: 'Unknown source ID', sourceId: input.sourceId };
+      }
+      return result;
+    }),
+
+  /**
+   * Force refresh all source health checks
+   */
+  refreshSourceHealth: publicProcedure.mutation(async () => {
+    return await forceRefresh();
+  }),
+
+  /**
+   * Get source categories
+   */
+  getSourceCategories: publicProcedure.query(() => {
+    return getSourceCategories();
   }),
 
   /**

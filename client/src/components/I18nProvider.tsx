@@ -6,7 +6,7 @@ interface I18nProviderProps {
   defaultLanguage?: Language;
 }
 
-const validLanguages: Language[] = ["en", "ar", "fr", "de", "ru", "es", "zh"];
+const validLanguages: Language[] = ["en", "ar", "fr", "de", "ru", "es", "zh", "ja"];
 
 // Map browser language codes to our supported languages
 const browserLanguageMap: Record<string, Language> = {
@@ -32,6 +32,8 @@ const browserLanguageMap: Record<string, Language> = {
   "zh": "zh",
   "zh-CN": "zh",
   "zh-TW": "zh",
+  "ja": "ja",
+  "ja-JP": "ja",
 };
 
 function detectBrowserLanguage(): Language | null {

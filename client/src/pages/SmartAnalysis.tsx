@@ -22,7 +22,7 @@ import { FollowUpQuestionsUI } from '@/components/FollowUpQuestionsUI';
 import { WhatIfScenariosUI } from '@/components/WhatIfScenariosUI';
 import { PredictionsRecommendationsUI } from '@/components/PredictionsRecommendationsUI';
 import { StructuredResponseUI } from '@/components/StructuredResponseUI';
-import { FeedbackCard } from '@/components/FeedbackCard';
+import { FeedbackWidget } from '@/components/FeedbackWidget';
 import { Streamdown } from 'streamdown';
 import ResultsPage from './ResultsPage';
 
@@ -769,11 +769,14 @@ export default function SmartAnalysis() {
               />
             )}
 
-            {/* Feedback */}
-            {analysisComplete && (
-              <FeedbackCard 
-                conversationId={Date.now()}
-                onSubmit={() => console.log('Feedback submitted')}
+            {/* Feedback Widget */}
+            {analysisComplete && context && (
+              <FeedbackWidget 
+                question={context.topic || ''}
+                response={conversation.filter(m => m.role === 'assistant').map(m => m.content).join('\n').substring(0, 5000)}
+                topic={context.topic}
+                dominantEmotion={analysisData?.data?.emotionAnalysis?.dominant}
+                responseConfidence={analysisData?.data?.confidence?.overall}
               />
             )}
 

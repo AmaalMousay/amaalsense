@@ -59,6 +59,7 @@ import Chat from "./pages/Chat";
 import Weather from "./pages/Weather";
 import Indices from "./pages/Indices";
 import SystemHealth from "./pages/SystemHealth";
+import SourceMonitor from "./pages/SourceMonitor";
 import EmotionalWeather from "./pages/EmotionalWeather";
 import NotificationsPage from "./pages/NotificationsPage";
 import { DCFTPage } from "./pages/DCFTPage";
@@ -77,6 +78,7 @@ function Router() {
       {/* Analyzer route removed - analysis now works from Home page */}
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/system-health"} component={SystemHealth} />
+      <Route path={"/source-monitor"} component={SourceMonitor} />
       
       {/* Results Pages */}
       <Route path={"/analysis-results"} component={TopicAnalysisResults} />

@@ -5,7 +5,7 @@ import { IndexCard } from '@/components/IndexCard';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
 import { useAnalysisData } from '@/hooks/useAnalysisData';
-import { ArrowLeft, ArrowRight, TrendingUp, Zap, Heart, Calendar, Download } from 'lucide-react';
+import { ArrowLeft, ArrowRight, TrendingUp, Zap, Heart, Calendar, Download, Activity, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { 
   EMOTION_COLORS, 
   GMI_COLORS, 
@@ -32,6 +32,60 @@ import {
   Area,
   AreaChart,
 } from 'recharts';
+
+function SourceHealthWidget() {
+  const { data: sourceHealth } = trpc.dashboard.getSourceHealth.useQuery(undefined, {
+    refetchInterval: 60000,
+  });
+  const [, navigate] = useLocation();
+
+  if (!sourceHealth) return null;
+
+  const sources = sourceHealth.sources || [];
+  const online = sources.filter((s: any) => s.status === 'online').length;
+  const total = sources.length;
+
+  return (
+    <Card className="cosmic-card p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Activity className="w-5 h-5 text-blue-400" />
+          <h3 className="text-lg font-bold">Data Sources</h3>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => navigate('/source-monitor')}>
+          View All
+        </Button>
+      </div>
+      <div className="flex items-center gap-4 mb-4">
+        <div className="text-3xl font-bold">
+          <span className="text-emerald-400">{online}</span>
+          <span className="text-muted-foreground text-lg">/{total}</span>
+        </div>
+        <span className="text-sm text-muted-foreground">sources online</span>
+      </div>
+      <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden mb-4">
+        <div
+          className="h-full bg-emerald-500 transition-all"
+          style={{ width: `${total > 0 ? (online / total) * 100 : 0}%` }}
+        />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        {sources.slice(0, 5).map((source: any) => (
+          <div key={source.id} className="flex items-center gap-1.5 text-xs">
+            {source.status === 'online' ? (
+              <CheckCircle className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+            ) : source.status === 'degraded' ? (
+              <AlertTriangle className="w-3 h-3 text-amber-400 flex-shrink-0" />
+            ) : (
+              <XCircle className="w-3 h-3 text-red-400 flex-shrink-0" />
+            )}
+            <span className="truncate text-muted-foreground">{source.name}</span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
@@ -316,6 +370,9 @@ export default function Dashboard() {
               <p className="text-muted-foreground">{t.common.loading}...</p>
             </Card>
           )}
+
+          {/* Source Health Widget */}
+          <SourceHealthWidget />
 
           {/* Live Dashboard Preview */}
           <LiveDashboardPreview />
