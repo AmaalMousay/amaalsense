@@ -26,7 +26,9 @@ import {
   Shield, Brain, Clock, BarChart3, Target, Zap,
   ChevronLeft, Globe, ArrowUpRight, ArrowDownRight,
   RefreshCw, CheckCircle2, XCircle, HelpCircle,
+  Play, Square, Timer, Bell,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Link } from "wouter";
 
 // Country list
@@ -337,6 +339,10 @@ export default function PredictionsDashboard() {
             <TabsTrigger value="history" className="gap-1">
               <Clock className="w-4 h-4" />
               السجل
+            </TabsTrigger>
+            <TabsTrigger value="scheduler" className="gap-1">
+              <Timer className="w-4 h-4" />
+              المجدول
             </TabsTrigger>
           </TabsList>
           
@@ -829,8 +835,276 @@ export default function PredictionsDashboard() {
               </Card>
             )}
           </TabsContent>
+          
+          {/* Scheduler Tab */}
+          <TabsContent value="scheduler">
+            <SchedulerPanel />
+          </TabsContent>
         </Tabs>
       </div>
+    </div>
+  );
+}
+
+// ============================================
+// SCHEDULER PANEL COMPONENT
+// ============================================
+
+function SchedulerPanel() {
+  const statusQuery = trpc.predictionScheduler.getStatus.useQuery(undefined, {
+    refetchInterval: 10000,
+  });
+  const startMutation = trpc.predictionScheduler.start.useMutation({
+    onSuccess: () => {
+      statusQuery.refetch();
+      toast.success('تم تشغيل مجدول التنبؤات');
+    },
+    onError: (err) => toast.error(`خطأ: ${err.message}`),
+  });
+  const stopMutation = trpc.predictionScheduler.stop.useMutation({
+    onSuccess: () => {
+      statusQuery.refetch();
+      toast.success('تم إيقاف مجدول التنبؤات');
+    },
+    onError: (err) => toast.error(`خطأ: ${err.message}`),
+  });
+  const runNowMutation = trpc.predictionScheduler.runNow.useMutation({
+    onSuccess: (data) => {
+      statusQuery.refetch();
+      if (data.success) {
+        toast.success(`تم تنفيذ دورة التنبؤات: ${data.predictionsGenerated} تنبؤ، ${data.alertsSent} تنبيه`);
+      } else {
+        toast.warning(`اكتملت مع ${data.errors.length} أخطاء`);
+      }
+    },
+    onError: (err) => toast.error(`خطأ: ${err.message}`),
+  });
+
+  const status = statusQuery.data;
+  const lastRun = status?.lastRunResults;
+
+  return (
+    <div className="space-y-6">
+      {/* Scheduler Status */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Timer className="w-5 h-5 text-primary" />
+            مجدول التنبؤات التلقائي
+          </CardTitle>
+          <CardDescription>
+            يقوم بتوليد تنبؤات دورية لـ {status?.monitoredCountries || 15} دولة وإرسال تنبيهات عند اكتشاف نقاط تحول حرجة
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Status Badge */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${status?.running ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground'}`} />
+              <span className="text-lg font-semibold">
+                {status?.running ? 'يعمل' : 'متوقف'}
+              </span>
+              {status?.running && (
+                <Badge variant="outline" className="text-emerald-500 border-emerald-500/30">
+                  كل {status.intervalMinutes} دقيقة
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {!status?.running ? (
+                <Button
+                  onClick={() => startMutation.mutate({ intervalMinutes: 120 })}
+                  disabled={startMutation.isPending}
+                  className="gap-2"
+                >
+                  <Play className="w-4 h-4" />
+                  تشغيل
+                </Button>
+              ) : (
+                <Button
+                  variant="destructive"
+                  onClick={() => stopMutation.mutate()}
+                  disabled={stopMutation.isPending}
+                  className="gap-2"
+                >
+                  <Square className="w-4 h-4" />
+                  إيقاف
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                onClick={() => runNowMutation.mutate()}
+                disabled={runNowMutation.isPending}
+                className="gap-2"
+              >
+                <RefreshCw className={`w-4 h-4 ${runNowMutation.isPending ? 'animate-spin' : ''}`} />
+                تنفيذ الآن
+              </Button>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Configuration */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="border border-border/50">
+              <CardContent className="p-4 text-center">
+                <Globe className="w-8 h-8 mx-auto mb-2 text-blue-400" />
+                <p className="text-2xl font-bold">{status?.monitoredCountries || 15}</p>
+                <p className="text-sm text-muted-foreground">دولة مراقبة</p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/50">
+              <CardContent className="p-4 text-center">
+                <Clock className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+                <p className="text-2xl font-bold">{status?.intervalMinutes || 120}</p>
+                <p className="text-sm text-muted-foreground">دقيقة بين كل دورة</p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/50">
+              <CardContent className="p-4 text-center">
+                <Bell className="w-8 h-8 mx-auto mb-2 text-orange-400" />
+                <p className="text-2xl font-bold">{status?.alertThreshold || 70}</p>
+                <p className="text-sm text-muted-foreground">حد التنبيه (مخاطر)</p>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Last Run Results */}
+      {lastRun && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-primary" />
+              نتائج آخر دورة
+            </CardTitle>
+            <CardDescription>
+              {new Date(lastRun.timestamp).toLocaleString('ar-LY')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-3 rounded-lg bg-muted/30">
+                <p className="text-2xl font-bold text-blue-400">{lastRun.countriesProcessed}</p>
+                <p className="text-xs text-muted-foreground">دول تمت معالجتها</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/30">
+                <p className="text-2xl font-bold text-emerald-400">{lastRun.predictionsGenerated}</p>
+                <p className="text-xs text-muted-foreground">تنبؤات مولدة</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/30">
+                <p className="text-2xl font-bold text-purple-400">{lastRun.snapshotsSaved}</p>
+                <p className="text-xs text-muted-foreground">لقطات محفوظة</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/30">
+                <p className={`text-2xl font-bold ${lastRun.alertsSent > 0 ? 'text-orange-400' : 'text-muted-foreground'}`}>
+                  {lastRun.alertsSent}
+                </p>
+                <p className="text-xs text-muted-foreground">تنبيهات مرسلة</p>
+              </div>
+            </div>
+
+            {/* Critical Countries */}
+            {lastRun.criticalCountries.length > 0 && (
+              <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30">
+                <h4 className="font-semibold text-red-400 mb-2 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  دول في حالة حرجة
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {lastRun.criticalCountries.map((code: string) => (
+                    <Badge key={code} variant="destructive">{code}</Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Errors */}
+            {lastRun.errors.length > 0 && (
+              <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                <h4 className="font-semibold text-yellow-400 mb-2 flex items-center gap-2">
+                  <XCircle className="w-4 h-4" />
+                  أخطاء ({lastRun.errors.length})
+                </h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  {lastRun.errors.slice(0, 5).map((err: string, i: number) => (
+                    <li key={i}>- {err}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {lastRun.errors.length === 0 && lastRun.criticalCountries.length === 0 && (
+              <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-center">
+                <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
+                <p className="text-emerald-400 font-medium">الدورة اكتملت بنجاح بدون أخطاء أو حالات حرجة</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* How it works */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HelpCircle className="w-5 h-5 text-primary" />
+            كيف يعمل المجدول؟
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <h4 className="font-semibold">الدورة التلقائية</h4>
+              <ul className="text-sm text-muted-foreground space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">1.</span>
+                  يجمع البيانات التاريخية لكل دولة (48 ساعة)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">2.</span>
+                  يحلل الاتجاهات باستخدام EMA وBollinger Bands
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">3.</span>
+                  يكشف نقاط التحول ويحسب مؤشر المخاطر
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">4.</span>
+                  يولد تنبؤات لـ 4 أطر زمنية (6س، 24س، 48س، 7أيام)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">5.</span>
+                  يحفظ النتائج في قاعدة البيانات
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h4 className="font-semibold">نظام التنبيهات</h4>
+              <ul className="text-sm text-muted-foreground space-y-2">
+                <li className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
+                  تنبيه عند مؤشر مخاطر &ge; {70}
+                </li>
+                <li className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
+                  تنبيه عند نقاط تحول حرجة أو عالية الخطورة
+                </li>
+                <li className="flex items-start gap-2">
+                  <Bell className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                  ملخص يومي للدول الحرجة
+                </li>
+                <li className="flex items-start gap-2">
+                  <Shield className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                  تفاصيل عوامل الخطر بالعربية
+                </li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -925,6 +925,33 @@ ${input.message || 'No message provided'}
     }),
   }),
 
+  predictionScheduler: router({
+    /** Get prediction scheduler status */
+    getStatus: publicProcedure.query(async () => {
+      const { getPredictionSchedulerStatus } = await import("./scheduledPredictions");
+      return getPredictionSchedulerStatus();
+    }),
+    /** Start the prediction scheduler */
+    start: publicProcedure
+      .input(z.object({ intervalMinutes: z.number().min(30).max(1440).optional() }))
+      .mutation(async ({ input }) => {
+        const { startPredictionScheduler, getPredictionSchedulerStatus } = await import("./scheduledPredictions");
+        startPredictionScheduler(input.intervalMinutes || 120);
+        return getPredictionSchedulerStatus();
+      }),
+    /** Stop the prediction scheduler */
+    stop: publicProcedure.mutation(async () => {
+      const { stopPredictionScheduler, getPredictionSchedulerStatus } = await import("./scheduledPredictions");
+      stopPredictionScheduler();
+      return getPredictionSchedulerStatus();
+    }),
+    /** Run a single prediction cycle manually */
+    runNow: publicProcedure.mutation(async () => {
+      const { runPredictionCycle } = await import("./scheduledPredictions");
+      return await runPredictionCycle();
+    }),
+  }),
+
   notifications: router({
     /**
      * Subscribe to email notifications

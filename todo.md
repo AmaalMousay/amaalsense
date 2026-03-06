@@ -4772,3 +4772,8 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Build tRPC endpoints: getCountryPrediction, getGlobalPrediction, getTrends, getTippingPoints, getRiskScore, getPredictionHistory, verifyPrediction, getAccuracyStats
 - [x] Build Predictions Dashboard UI (/predictions) with 6 tabs: predictions, risk, tipping points, trends, AI interpretation, history
 - [x] Write comprehensive tests for prediction engine (15 tests passing)
+
+## Phase: Prediction System Enhancements
+- [x] Add predictions link to main navigation menu (Target icon in navLinks)
+- [x] Build auto-scheduling system for periodic predictions (scheduledPredictions.ts + predictionScheduler router + scheduler UI tab)
+- [x] Add auto-notifications for critical tipping points (notifyOwner on risk >= 70 or high/critical tipping points)
