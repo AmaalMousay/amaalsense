@@ -23,6 +23,20 @@ import {
   evaluateEnginePrediction,
 } from './networkEngine';
 import { getRecentAnalyses, submitAccuracyFeedback, getLearningState, getAdjustmentHistory } from './engines/learningStore';
+import {
+  dcftEngine,
+  type GlobalIndices,
+} from './dcft';
+import {
+  calculateDigitalConsciousnessField,
+  calculateResonanceIndex,
+  identifyCollectivePhase,
+  calculateDCFTIndices,
+  getEmotionalColor,
+  detectEmotionalWaves,
+  generateEmotionalForecast,
+  checkAlertConditions,
+} from './dcftEngine';
 
 // Country metadata for batch operations
 const PRIORITY_COUNTRIES = [
@@ -274,6 +288,175 @@ export const unifiedEngineRouter = router({
     .query(({ input }) => {
       return getAdjustmentHistory(input.limit);
     }),
+
+  // ============================================================
+  // DCFT ENDPOINTS (now part of the unified engine)
+  // ============================================================
+
+  /**
+   * DCFT: Calculate Digital Consciousness Field amplitude D(t)
+   * Migrated from dcft.calculateDCF - now uses unified data pipeline
+   */
+  calculateDCF: publicProcedure
+    .input(z.object({ countryCode: z.string().length(2).optional() }))
+    .query(async ({ input }) => {
+      // If country specified, use unified engine to get real data
+      if (input.countryCode) {
+        const countryName = ALL_COUNTRIES.find(c => c.code === input.countryCode)?.name || input.countryCode;
+        const ctx = await executeNetworkEngine('system', `${countryName} news emotions`, 'en');
+        const dcftResult = ctx.dcft.result;
+        if (dcftResult) {
+          return {
+            dcfAmplitude: dcftResult.dcfAmplitude,
+            resonance: dcftResult.resonanceIndices,
+            phase: dcftResult.emotionalPhase,
+            indices: ctx.dcft.indices,
+            color: dcftResult.colorCode || '#4169E1',
+            waves: detectEmotionalWaves([]),
+            eventCount: ctx.collection.eventVector.totalItems,
+            calculatedAt: new Date(),
+          };
+        }
+      }
+      
+      // Fallback: use batch data from priority countries
+      const { generateAllCountriesEmotionData } = await import('./countryEmotionAnalyzer');
+      const countriesData = generateAllCountriesEmotionData(0, 50, 50);
+      const filteredData = input.countryCode
+        ? countriesData.filter(c => c.countryCode === input.countryCode)
+        : countriesData;
+      const events = filteredData.map((country, i) => ({
+        id: `event-${country.countryCode}-${i}`,
+        timestamp: Date.now() - Math.random() * 3600000,
+        affectiveVector: {
+          joy: (country.gmi + 100) / 200 - 0.5,
+          fear: country.cfi / 100 - 0.5,
+          anger: Math.random() * 0.4 - 0.2,
+          sadness: (100 - country.hri) / 200,
+          hope: country.hri / 100 - 0.5,
+          curiosity: Math.random() * 0.6 - 0.3,
+        },
+        influence: 0.5 + Math.random() * 0.5,
+        source: 'country_aggregation',
+        country: country.countryCode,
+      }));
+      return {
+        dcfAmplitude: calculateDigitalConsciousnessField(events),
+        resonance: calculateResonanceIndex(events),
+        phase: identifyCollectivePhase(events),
+        indices: calculateDCFTIndices(events),
+        color: getEmotionalColor(calculateResonanceIndex(events)),
+        waves: detectEmotionalWaves(events),
+        eventCount: events.length,
+        calculatedAt: new Date(),
+      };
+    }),
+
+  /**
+   * DCFT: Generate emotional forecast (Emotional Weather System)
+   * Migrated from dcft.getEmotionalForecast
+   */
+  getEmotionalForecast: publicProcedure
+    .input(z.object({ hoursAhead: z.number().min(1).max(168).default(24) }))
+    .query(async ({ input }) => {
+      const { getEmotionIndicesHistory } = await import('./db');
+      const history = await getEmotionIndicesHistory(72);
+      const historicalData = history.map(h => ({
+        timestamp: h.createdAt.getTime(),
+        indices: { GMI: h.gmi, CFI: h.cfi, HRI: h.hri },
+      }));
+      const forecast = generateEmotionalForecast(historicalData, input.hoursAhead);
+      return { ...forecast, generatedAt: new Date(), dataPoints: historicalData.length };
+    }),
+
+  /**
+   * DCFT: Check alert conditions (Early Warning System)
+   * Migrated from dcft.checkAlerts
+   */
+  checkAlerts: publicProcedure.query(async () => {
+    const { getLatestEmotionIndices, getEmotionIndicesHistory } = await import('./db');
+    const current = await getLatestEmotionIndices();
+    const history = await getEmotionIndicesHistory(2);
+    const currentIndices = current
+      ? { GMI: current.gmi, CFI: current.cfi, HRI: current.hri }
+      : { GMI: 0, CFI: 50, HRI: 50 };
+    const previousIndices = history.length > 1
+      ? { GMI: history[1].gmi, CFI: history[1].cfi, HRI: history[1].hri }
+      : null;
+    const alertStatus = checkAlertConditions(currentIndices, previousIndices);
+    return { ...alertStatus, currentIndices, previousIndices, checkedAt: new Date() };
+  }),
+
+  /**
+   * DCFT: Get theory information (static data)
+   * Migrated from dcft.getTheoryInfo
+   */
+  getTheoryInfo: publicProcedure.query(() => {
+    return {
+      name: 'Digital Consciousness Field Theory (DCFT)',
+      author: 'Amaal Radwan',
+      year: 2025,
+      paper: 'The Birth of Digital Consciousness: The AmaalSense Engine and the Emergent Collective Mind',
+      pillars: ['Collective Psychology', 'Neural Synchronization', 'Information Energetics'],
+      formulas: {
+        dcf: {
+          name: 'Digital Consciousness Field',
+          formula: 'D(t) = \u03a3 [Ei \u00d7 Wi \u00d7 \u0394Ti]',
+          description: 'Measures the instantaneous consciousness amplitude of the digital collective',
+          variables: [
+            { symbol: 'Ei', meaning: 'Emotional intensity of each digital event' },
+            { symbol: 'Wi', meaning: 'Weighting based on global influence or reach' },
+            { symbol: '\u0394Ti', meaning: 'Temporal persistence of that emotion across users' },
+          ],
+        },
+        ri: {
+          name: 'Resonance Index',
+          formula: 'RI(e,t) = \u03a3 (AVi \u00d7 Wi \u00d7 e^(-\u03bb\u0394t))',
+          description: 'Computes resonance for each emotion with exponential decay',
+          variables: [
+            { symbol: 'AVi', meaning: 'Affective vector value for the emotion' },
+            { symbol: 'Wi', meaning: 'Influence weighting' },
+            { symbol: '\u03bb\u0394t', meaning: 'Decay rate controlling emotional persistence' },
+          ],
+        },
+      },
+      indices: [
+        { code: 'GMI', name: 'Global Mood Index', range: '-100 to +100', description: 'General optimism or pessimism across the planet' },
+        { code: 'CFI', name: 'Collective Fear Index', range: '0 to 100', description: 'Probability of market downturn or crisis' },
+        { code: 'HRI', name: 'Hope Resonance Index', range: '0 to 100', description: 'Potential for innovation, recovery, and consumer confidence' },
+      ],
+      affectiveVector: ['Joy', 'Fear', 'Anger', 'Sadness', 'Hope', 'Curiosity'],
+      layers: [
+        { name: 'Perception Layer', role: 'Input', description: 'Gathers emotional data from open digital channels' },
+        { name: 'Cognitive Layer', role: 'Processing', description: 'Aggregates vectors and applies DCF mathematical model' },
+        { name: 'Awareness Layer', role: 'Output', description: 'Transforms currents into visual and numerical representations' },
+      ],
+      colorSystem: [
+        { color: 'Blue', meaning: 'Calm / Reflection', hex: '#4169E1' },
+        { color: 'Red', meaning: 'Anger / Activism', hex: '#DC143C' },
+        { color: 'Yellow', meaning: 'Optimism / Creativity', hex: '#FFD700' },
+        { color: 'Green', meaning: 'Balance / Collective Harmony', hex: '#228B22' },
+      ],
+    };
+  }),
+
+  /**
+   * DCFT: Analyze text using DCFT engine directly
+   * Migrated from dcft analysis endpoints
+   */
+  analyzeDCFT: publicProcedure
+    .input(z.object({
+      text: z.string().min(1).max(5000),
+      source: z.string().default('user_input'),
+    }))
+    .mutation(async ({ input }) => {
+      const result = await dcftEngine.analyzeText(input.text, input.source);
+      return result;
+    }),
+
+  // ============================================================
+  // ENGINE DASHBOARD
+  // ============================================================
 
   /**
    * ENGINE DASHBOARD: Complete dashboard data in one call

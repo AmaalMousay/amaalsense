@@ -151,12 +151,12 @@ describe('Network Engine', () => {
       expect(ctx.analytics).toBeDefined();
       expect(ctx.analytics.totalDurationMs).toBeGreaterThanOrEqual(0);
       expect(ctx.analytics.layerTraces.length).toBeGreaterThan(0);
-      expect(ctx.analytics.parallelGroups).toBe(4);
+      expect(ctx.analytics.parallelGroups).toBe(5);
       
       // Check that traces have proper structure
       for (const trace of ctx.analytics.layerTraces) {
         expect(trace.name).toBeTruthy();
-        expect(['gate', 'collection', 'analysis', 'generation']).toContain(trace.group);
+        expect(['gate', 'collection', 'analysis', 'dcft', 'generation']).toContain(trace.group);
         expect(trace.durationMs).toBeGreaterThanOrEqual(0);
         expect(['success', 'skipped', 'error']).toContain(trace.status);
       }
@@ -381,9 +381,9 @@ describe('Network Engine', () => {
       }
     });
 
-    it('should have 4 parallel groups', async () => {
+    it('should have 5 parallel groups (Gate, Collection, Analysis, DCFT, Generation)', async () => {
       const ctx = await executeNetworkEngine('user1', 'test', 'ar');
-      expect(ctx.analytics.parallelGroups).toBe(4);
+      expect(ctx.analytics.parallelGroups).toBe(5);
     });
 
     it('should have traces from all network groups', async () => {

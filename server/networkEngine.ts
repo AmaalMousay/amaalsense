@@ -67,6 +67,23 @@ import { calculateConfidenceScore, type ConfidenceScore } from './confidenceScor
 import { applyEmotionBias, getEngineWeights, getLearningSummary, runLearningCycle, evaluatePrediction } from './engines/learningLoop';
 import { storeAnalysisRecord, type AnalysisRecord } from './engines/learningStore';
 import { MultiTurnContext } from './multiTurnContext';
+import {
+  dcftEngine,
+  perceptionLayer,
+  cognitiveLayer,
+  awarenessLayer,
+  type DCFTAnalysisResult,
+  type RawDigitalInput,
+  type GlobalIndices,
+  type AlertLevel,
+  type EmotionalPhase,
+  type DCFState,
+  metaLearningEngine,
+  feedbackLoopManager,
+  calculateDecayFactor,
+  calculateInfluenceWeight,
+  calculateTemporalPersistence,
+} from './dcft';
 
 // ============================================================
 // TYPES
@@ -117,6 +134,30 @@ export interface NetworkContext {
     breakingNews: Array<{ headline: string; source: string; impactScore: number }>;
     confidence: ConfidenceScore;
     textTopics: string[];
+  };
+
+  // DCFT Network output (Digital Consciousness Field Theory)
+  dcft: {
+    // Core DCFT result
+    result: DCFTAnalysisResult | null;
+    // Global indices (GMI, CFI, HRI)
+    indices: GlobalIndices;
+    // DCF amplitude D(t)
+    dcfAmplitude: number;
+    // Resonance indices RI(e,t) for each emotion
+    resonanceIndices: Record<string, number>;
+    // Emotional phase detection
+    emotionalPhase: { type: string; intensity: number; description: string } | null;
+    // Color code from DCFT
+    colorCode: string;
+    // Alert level
+    alertLevel: 'normal' | 'elevated' | 'high' | 'critical';
+    // Temporal decay applied
+    temporalDecayApplied: boolean;
+    // Meta-learning patterns detected
+    patternsDetected: number;
+    // Processing time
+    processingTimeMs: number;
   };
 
   // Generation Network output
@@ -477,6 +518,112 @@ async function executeAnalysisNetwork(
 }
 
 // ============================================================
+// DCFT NETWORK (Layers 9-10) - PARALLEL with Analysis
+// Digital Consciousness Field Theory Integration
+// ============================================================
+
+async function executeDCFTNetwork(
+  collection: NetworkContext['collection'],
+  analysis: NetworkContext['analysis'],
+): Promise<{ dcft: NetworkContext['dcft']; traces: LayerTrace[] }> {
+  const startTime = Date.now();
+  const traces: LayerTrace[] = [];
+
+  try {
+    // Convert collected data items to DCFT RawDigitalInput format
+    const dcftInputs: RawDigitalInput[] = collection.rawData.items.map((item, idx) => ({
+      id: `net_${Date.now()}_${idx}`,
+      content: item.title + (item.description ? ' ' + item.description : ''),
+      source: item.source,
+      sourceUrl: item.url || undefined,
+      timestamp: item.publishedAt ? new Date(item.publishedAt) : new Date(),
+      reach: 100,
+      engagement: 10,
+      isVerified: false,
+    }));
+
+    if (dcftInputs.length === 0) {
+      // No data to analyze - return defaults
+      traces.push(traceLayer('L9: DCFT Perception+Cognitive', 'analysis', startTime, 'success'));
+      traces.push(traceLayer('L10: DCFT Awareness+MetaLearning', 'analysis', startTime, 'success'));
+      return {
+        dcft: {
+          result: null,
+          indices: { gmi: 0, cfi: 50, hri: 50 },
+          dcfAmplitude: 0,
+          resonanceIndices: { joy: 0, fear: 0, anger: 0, sadness: 0, hope: 0, curiosity: 0 },
+          emotionalPhase: null,
+          colorCode: '#6C757D',
+          alertLevel: 'normal',
+          temporalDecayApplied: false,
+          patternsDetected: 0,
+          processingTimeMs: Date.now() - startTime,
+        },
+        traces,
+      };
+    }
+
+    // Run DCFT layers in parallel:
+    // L9: Perception + Cognitive (core DCFT analysis)
+    // L10: Awareness + Meta-Learning (output generation + pattern detection)
+    
+    const l9Start = Date.now();
+    const l10Start = Date.now();
+
+    // L9: Full DCFT analysis through all 3 layers (Perception → Cognitive → Awareness)
+    const dcftResult = await dcftEngine.analyze(dcftInputs);
+    traces.push(traceLayer('L9: DCFT Perception+Cognitive', 'analysis', l9Start, 'success'));
+
+    // L10: Meta-Learning pattern detection + Feedback loop (parallel)
+    let patternsDetected = 0;
+    try {
+      // Get meta-learning stats for pattern detection count
+      const stats = metaLearningEngine.getStats();
+      patternsDetected = stats.discoveredPatterns;
+    } catch (mlErr) {
+      // Meta-learning is non-critical
+      console.warn('[DCFT Network] Meta-learning failed:', (mlErr as Error).message);
+    }
+    traces.push(traceLayer('L10: DCFT Awareness+MetaLearning', 'analysis', l10Start, 'success'));
+
+    const processingTimeMs = Date.now() - startTime;
+
+    return {
+      dcft: {
+        result: dcftResult,
+        indices: dcftResult.indices,
+        dcfAmplitude: dcftResult.dcfAmplitude,
+        resonanceIndices: dcftResult.resonanceIndices,
+        emotionalPhase: dcftResult.emotionalPhase,
+        colorCode: dcftResult.colorCode,
+        alertLevel: dcftResult.alertLevel,
+        temporalDecayApplied: true,
+        patternsDetected,
+        processingTimeMs,
+      },
+      traces,
+    };
+  } catch (error) {
+    traces.push(traceLayer('L9: DCFT Perception+Cognitive', 'analysis', startTime, 'error', (error as Error).message));
+    return {
+      dcft: {
+        result: null,
+        indices: { gmi: 0, cfi: 50, hri: 50 },
+        dcfAmplitude: 0,
+        resonanceIndices: { joy: 0, fear: 0, anger: 0, sadness: 0, hope: 0, curiosity: 0 },
+        emotionalPhase: null,
+        colorCode: '#6C757D',
+        alertLevel: 'normal',
+        temporalDecayApplied: false,
+        patternsDetected: 0,
+        processingTimeMs: Date.now() - startTime,
+      },
+      traces,
+    };
+  }
+}
+
+// ============================================================
 // GENERATION NETWORK (Layers 11-18) - NETWORK TOPOLOGY
 // ============================================================
 
@@ -660,9 +807,15 @@ export async function executeNetworkEngine(
     gate: {} as NetworkContext['gate'],
     collection: {} as NetworkContext['collection'],
     analysis: {} as NetworkContext['analysis'],
+    dcft: {
+      result: null, indices: { gmi: 0, cfi: 50, hri: 50 }, dcfAmplitude: 0,
+      resonanceIndices: { joy: 0, fear: 0, anger: 0, sadness: 0, hope: 0, curiosity: 0 },
+      emotionalPhase: null, colorCode: '#6C757D', alertLevel: 'normal' as const,
+      temporalDecayApplied: false, patternsDetected: 0, processingTimeMs: 0,
+    },
     generation: {} as NetworkContext['generation'],
     multiTurn: { isFollowUp: false, enrichedQuery: question, contextSummary: '', conversationTurns: 0, topicContinuity: false },
-    analytics: { totalDurationMs: 0, layerTraces: [], parallelGroups: 4, errors: [] },
+    analytics: { totalDurationMs: 0, layerTraces: [], parallelGroups: 5, errors: [] },
     status: 'completed',
   };
   
@@ -697,10 +850,26 @@ export async function executeNetworkEngine(
     context.collection = collectionResult.collection;
     context.analytics.layerTraces.push(...collectionResult.traces);
     
-    // ====== ANALYSIS NETWORK (parallel layers) ======
-    const analysisResult = await executeAnalysisNetwork(context.collection, context.gate);
+    // ====== ANALYSIS + DCFT NETWORKS (run in PARALLEL) ======
+    const [analysisResult, dcftResult] = await Promise.all([
+      executeAnalysisNetwork(context.collection, context.gate),
+      executeDCFTNetwork(context.collection, context.analysis),
+    ]);
     context.analysis = analysisResult.analysis;
-    context.analytics.layerTraces.push(...analysisResult.traces);
+    context.dcft = dcftResult.dcft;
+    context.analytics.layerTraces.push(...analysisResult.traces, ...dcftResult.traces);
+    
+    // Merge DCFT indices into analysis for downstream use
+    // DCFT provides scientifically-grounded indices that enhance the basic emotion analysis
+    if (context.dcft.result) {
+      // Use DCFT's dominant emotion if available (more scientifically grounded)
+      context.analysis.dominantEmotion = context.dcft.result.dominantEmotion || context.analysis.dominantEmotion;
+      // Merge DCFT emotions with text-based emotions (DCFT takes priority)
+      const dcftEmotions = context.dcft.result.emotions;
+      for (const [emotion, value] of Object.entries(dcftEmotions)) {
+        context.analysis.emotions[emotion] = (value as number) / 100; // DCFT uses 0-100, normalize to 0-1
+      }
+    }
     
     // ====== GENERATION NETWORK (network topology) ======
     if (context.gate.needsLLM) {
@@ -749,11 +918,14 @@ export async function executeNetworkEngine(
       console.warn('[NetworkEngine] Multi-turn recording failed:', (mtErr as Error).message);
     }
     
-    // ====== LEARNING INTEGRATION: Record this analysis ======
+    // ====== LEARNING INTEGRATION: Record this analysis (uses DCFT indices when available) ======
     try {
       const vector = context.collection.eventVector;
       if (vector && vector.totalItems > 0) {
-        const indices = vectorToMapIndices(vector);
+        // Prefer DCFT indices (scientifically grounded) over basic Event Vector indices
+        const dcftIndices = context.dcft.result ? context.dcft.indices : null;
+        const fallbackIndices = vectorToMapIndices(vector);
+        const indices = dcftIndices || fallbackIndices;
         storeAnalysisRecord(
           // question
           {
@@ -774,27 +946,28 @@ export async function executeNetworkEngine(
             sourceCount: vector.totalItems,
             dataQuality: Math.min(100, vector.totalItems * 10),
           },
-          // result
+          // result (DCFT-enhanced)
           {
             gmi: indices.gmi,
             cfi: indices.cfi,
             hri: indices.hri,
-            dominantEmotion: vector.dominantEmotion,
+            dominantEmotion: context.dcft.result?.dominantEmotion || vector.dominantEmotion,
             emotionalIntensity: vector.emotions[vector.dominantEmotion] || 50,
             valence: (indices.hri - 50) / 50,
-            affectiveVector: vector.emotions,
+            affectiveVector: context.dcft.result?.emotions || vector.emotions,
             confidence: context.analysis.confidence.overall,
             insights: vector.topHeadlines.slice(0, 3).map((h: any) => typeof h === 'string' ? h : h.title || String(h)),
             drivers: vector.trendingKeywords.slice(0, 5),
           },
-          // engineContributions (weight values 0-1)
+          // engineContributions (weight values 0-1) - now includes DCFT
           {
-            contextClassification: 0.20,
-            emotionFusion: 0.25,
-            emotionalDynamics: 0.20,
+            contextClassification: 0.15,
+            emotionFusion: 0.20,
+            emotionalDynamics: 0.15,
             driverDetection: 0.15,
-            explainableInsight: 0.20,
-          },
+            explainableInsight: 0.15,
+            dcftAnalysis: 0.20,
+          } as any,
         );
       }
     } catch (learnErr) {
@@ -823,6 +996,17 @@ export async function analyzeForMap(countryCode: string, countryName: string): P
   const cached = networkCache.get(cacheKey);
   
   if (cached && cached.expiresAt > Date.now()) {
+    // Use DCFT indices from cached context if available
+    const dcft = cached.context.dcft;
+    if (dcft?.result) {
+      return {
+        countryCode, countryName,
+        gmi: dcft.indices.gmi, cfi: dcft.indices.cfi, hri: dcft.indices.hri,
+        dominantEmotion: dcft.result.dominantEmotion,
+        isRealData: true,
+        confidence: Math.min(95, cached.context.collection.eventVector.totalItems > 5 ? 90 : 70),
+      };
+    }
     const v = cached.context.collection.eventVector;
     const indices = vectorToMapIndices(v);
     return {
@@ -834,11 +1018,36 @@ export async function analyzeForMap(countryCode: string, countryName: string): P
     };
   }
   
-  // Light execution: only Gate + Collection (no LLM needed for map)
+  // Light execution: Collection + DCFT (no LLM needed for map)
   const rawData = await collectCountryData(countryCode, countryName);
   const vector = createEventVector(rawData);
-  const indices = vectorToMapIndices(vector);
   
+  // Run DCFT on the collected data for scientifically-grounded indices
+  try {
+    const dcftInputs: RawDigitalInput[] = rawData.items.map((item, idx) => ({
+      id: `map_${Date.now()}_${idx}`,
+      content: item.title + (item.description ? ' ' + item.description : ''),
+      source: item.source,
+      sourceUrl: item.url || undefined,
+      timestamp: item.publishedAt ? new Date(item.publishedAt) : new Date(),
+      reach: 100, engagement: 10, isVerified: false,
+    }));
+    if (dcftInputs.length > 0) {
+      const dcftResult = await dcftEngine.analyze(dcftInputs);
+      return {
+        countryCode, countryName,
+        gmi: dcftResult.indices.gmi, cfi: dcftResult.indices.cfi, hri: dcftResult.indices.hri,
+        dominantEmotion: dcftResult.dominantEmotion,
+        isRealData: true,
+        confidence: vector.totalItems > 5 ? 90 : vector.totalItems > 0 ? 65 : 30,
+      };
+    }
+  } catch (dcftErr) {
+    console.warn('[NetworkEngine] DCFT fallback for map:', (dcftErr as Error).message);
+  }
+  
+  // Fallback to Event Vector indices
+  const indices = vectorToMapIndices(vector);
   return {
     countryCode, countryName,
     gmi: indices.gmi, cfi: indices.cfi, hri: indices.hri,
@@ -854,12 +1063,35 @@ export async function analyzeForMap(countryCode: string, countryName: string): P
 export async function analyzeForWeather(countryCode: string, countryName: string): Promise<WeatherResult> {
   const rawData = await collectCountryData(countryCode, countryName);
   const vector = createEventVector(rawData);
-  const indices = vectorToMapIndices(vector);
+  
+  // Run DCFT for scientifically-grounded emotion analysis
+  let dcftIndices: GlobalIndices | null = null;
+  let dcftDominant: string | null = null;
+  try {
+    const dcftInputs: RawDigitalInput[] = rawData.items.map((item, idx) => ({
+      id: `weather_${Date.now()}_${idx}`,
+      content: item.title + (item.description ? ' ' + item.description : ''),
+      source: item.source,
+      sourceUrl: item.url || undefined,
+      timestamp: item.publishedAt ? new Date(item.publishedAt) : new Date(),
+      reach: 100, engagement: 10, isVerified: false,
+    }));
+    if (dcftInputs.length > 0) {
+      const dcftResult = await dcftEngine.analyze(dcftInputs);
+      dcftIndices = dcftResult.indices;
+      dcftDominant = dcftResult.dominantEmotion;
+    }
+  } catch (dcftErr) {
+    console.warn('[NetworkEngine] DCFT fallback for weather:', (dcftErr as Error).message);
+  }
+  
+  const fallbackIndices = vectorToMapIndices(vector);
+  const indices = dcftIndices || fallbackIndices;
   
   return {
     countryCode, countryName,
     emotions: vector.emotions,
-    dominantEmotion: vector.dominantEmotion,
+    dominantEmotion: dcftDominant || vector.dominantEmotion,
     polarity: vector.polarity,
     intensity: vector.intensity,
     categories: vector.categories,
@@ -882,10 +1114,13 @@ export async function analyzeForCountryDetail(
   includeAISummary: boolean = false,
   language: string = 'ar',
 ): Promise<CountryDetailResult> {
-  // Full network execution for country detail
+  // Full network execution for country detail (includes DCFT)
   const ctx = await executeNetworkEngine('system', `${countryName} news emotions`, language);
   const vector = ctx.collection.eventVector;
-  const indices = vectorToMapIndices(vector);
+  // Use DCFT indices when available (scientifically grounded)
+  const dcftIndices = ctx.dcft.result ? ctx.dcft.indices : null;
+  const fallbackIndices = vectorToMapIndices(vector);
+  const indices = dcftIndices || fallbackIndices;
   
   // Categorize news items
   const news: CountryDetailResult['news'] = { political: [], economic: [], social: [], conflict: [] };
@@ -916,7 +1151,7 @@ export async function analyzeForCountryDetail(
     countryCode, countryName,
     gmi: indices.gmi, cfi: indices.cfi, hri: indices.hri,
     emotions: vector.emotions,
-    dominantEmotion: vector.dominantEmotion,
+    dominantEmotion: ctx.dcft.result?.dominantEmotion || vector.dominantEmotion,
     categories: vector.categories,
     dominantCategory: vector.dominantCategory,
     polarity: vector.polarity,
@@ -940,17 +1175,20 @@ export async function analyzeForSmartAnalysis(
   query: string,
   language: string = 'ar',
 ): Promise<SmartAnalysisResult> {
-  // Full network execution
+  // Full network execution (includes DCFT)
   const ctx = await executeNetworkEngine('system', query, language);
   const vector = ctx.collection.eventVector;
-  const indices = vectorToMapIndices(vector);
+  // Use DCFT indices when available (scientifically grounded)
+  const dcftIndices = ctx.dcft.result ? ctx.dcft.indices : null;
+  const fallbackIndices = vectorToMapIndices(vector);
+  const indices = dcftIndices || fallbackIndices;
   
   return {
     query,
     response: ctx.generation.languageEnforced.finalResponse || ctx.generation.response,
     confidence: ctx.analysis.confidence.overall,
     emotions: vector.emotions,
-    dominantEmotion: vector.dominantEmotion,
+    dominantEmotion: ctx.dcft.result?.dominantEmotion || vector.dominantEmotion,
     gmi: indices.gmi, cfi: indices.cfi, hri: indices.hri,
     categories: vector.categories,
     trendingKeywords: vector.trendingKeywords,

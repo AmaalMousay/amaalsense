@@ -20,8 +20,8 @@ import {
 } from "lucide-react";
 
 export default function Theory() {
-  const { data: theoryInfo } = trpc.dcft.getTheoryInfo.useQuery();
-  const { data: dcfData } = trpc.dcft.calculateDCF.useQuery({});
+  const { data: theoryInfo } = trpc.engine.getTheoryInfo.useQuery();
+  const { data: dcfData } = trpc.engine.calculateDCF.useQuery({});
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-950">
@@ -101,23 +101,23 @@ export default function Theory() {
                 </div>
                 <div className="text-center p-4 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30">
                   <div className="text-3xl font-bold text-green-400">
-                    {(dcfData.phase.coherence * 100).toFixed(0)}%
+                    {(dcfData.phase && 'coherence' in dcfData.phase ? (dcfData.phase as any).coherence * 100 : dcfData.phase?.intensity ?? 0).toFixed(0)}%
                   </div>
                   <div className="text-sm text-slate-400">Coherence</div>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
                   <div className="text-3xl font-bold text-purple-400 capitalize">
-                    {dcfData.phase.dominantEmotion}
+                    {dcfData.phase && 'dominantEmotion' in dcfData.phase ? (dcfData.phase as any).dominantEmotion : dcfData.phase?.type ?? 'neutral'}
                   </div>
                   <div className="text-sm text-slate-400">Dominant Emotion</div>
                 </div>
-                <div className="text-center p-4 rounded-lg border border-white/20" style={{ backgroundColor: dcfData.color.primary + '20' }}>
-                  <div className="w-12 h-12 rounded-full mx-auto mb-2" style={{ backgroundColor: dcfData.color.primary }} />
-                  <div className="text-sm text-slate-400">{dcfData.color.description}</div>
+                <div className="text-center p-4 rounded-lg border border-white/20" style={{ backgroundColor: (typeof dcfData.color === 'string' ? dcfData.color : dcfData.color.primary) + '20' }}>
+                  <div className="w-12 h-12 rounded-full mx-auto mb-2" style={{ backgroundColor: typeof dcfData.color === 'string' ? dcfData.color : dcfData.color.primary }} />
+                  <div className="text-sm text-slate-400">{typeof dcfData.color === 'string' ? 'Emotional Color' : dcfData.color.description}</div>
                 </div>
               </div>
               <p className="mt-6 text-center text-slate-300 italic">
-                "{dcfData.phase.description}"
+                "{dcfData.phase?.description ?? 'Analyzing collective consciousness...'}"
               </p>
             </CardContent>
           </Card>

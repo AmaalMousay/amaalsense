@@ -4748,3 +4748,10 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Add Multi-turn Context to Network Engine (integrated existing MultiTurnContext into executeNetworkEngine - resolves references, records turns, tracks emotional state)
 - [x] Improve Engine Dashboard with real-time charts (4 tabs: Overview, Layer Timeline, Learning System, Multi-turn Context)
 - [x] Rewrite comprehensive documentation in Arabic as PDF (28 pages, full RTL support)
+
+## Phase: Merge DCFT into Network Engine (TRUE Unified Engine)
+- [x] Audit DCFT engine files and understand their functions (15 files, 3 layers: Perception, Cognitive, Awareness)
+- [x] Integrate DCFT as 5th network group inside networkEngine.ts (parallel with Analysis, uses DCFT indices in all view formatters)
+- [x] DCFT now runs inside engine.* - all view formatters use DCFT indices with Event Vector fallback
+- [x] All pages use the single unified engine (Map, Weather, CountryDetail, SmartAnalysis)
+- [x] Test and verify the merged engine works correctly (0 TS errors, dcft router removed from routers.ts, Theory.tsx updated)
