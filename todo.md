@@ -4760,3 +4760,7 @@ All systems are properly connected, tested, and ready for production use.
 - [x] Add DCFT tab in Engine Dashboard with real-time field indices visualization
 - [x] Improve Theory page with live DCFT data from unified engine
 - [x] Add DCFT comparison between two countries with side-by-side charts (compareDCFT endpoint + CompareCountries.tsx rewritten)
+
+## Phase: Chat Page Bug Fixes
+- [x] Ensure chat page is connected to the unified engine (engine.smartAnalyze instead of consciousness.analyze)
+- [x] Fix clicking on previous chat not opening the chat page (added useQuery for conversation loading + useEffect to populate messages)

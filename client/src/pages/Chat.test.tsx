@@ -126,20 +126,22 @@ describe('Chat Page Functionality', () => {
   describe('Combined Filtering and Sorting', () => {
     it('should apply multiple filters and then sort', () => {
       const now = new Date();
-      const weekAgo = new Date(now);
-      weekAgo.setDate(weekAgo.getDate() - 7);
+      const threeDaysAgo = new Date(now);
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      const twoWeeksAgo = new Date(now);
+      twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
       const conversations = [
         { id: 1, title: 'Trump Analysis', topic: 'Politics', createdAt: now, messageCount: 5, confidence: 95 },
-        { id: 2, title: 'Old Trump', topic: 'Politics', createdAt: weekAgo, messageCount: 3, confidence: 85 },
+        { id: 2, title: 'Old Trump', topic: 'Politics', createdAt: twoWeeksAgo, messageCount: 3, confidence: 85 },
         { id: 3, title: 'Economy', topic: 'Economics', createdAt: now, messageCount: 2, confidence: 90 },
         { id: 4, title: 'Low Confidence Trump', topic: 'Politics', createdAt: now, messageCount: 1, confidence: 30 },
       ];
 
-      // Filter: topic = Politics, date >= weekAgo, confidence >= 80
+      // Filter: topic = Politics, date >= threeDaysAgo, confidence >= 80
       let filtered = conversations.filter(conv => {
         const matchesTopic = conv.topic === 'Politics';
-        const matchesDate = conv.createdAt >= weekAgo;
+        const matchesDate = conv.createdAt >= threeDaysAgo;
         const matchesConfidence = (conv.confidence || 0) >= 80;
         return matchesTopic && matchesDate && matchesConfidence;
       });
@@ -198,7 +200,7 @@ describe('Chat Page Functionality', () => {
       const scores = [44.4, 44.5, 44.6, 45.4, 45.5, 45.6];
       const rounded = scores.map(s => Math.round(s));
 
-      expect(rounded).toEqual([44, 44, 45, 45, 46, 46]);
+      expect(rounded).toEqual([44, 45, 45, 45, 46, 46]);
     });
 
     it('should ensure all confidence values are between 0-100', () => {
