@@ -115,9 +115,11 @@ export default function SmartAnalysis() {
     setCurrentConversationId(undefined);
     
     try {
+      const smartConvId = `smart_${Date.now()}`;
       const result = await analyzeWithAI.mutateAsync({ 
         query: topic,
-        language: 'ar'
+        language: 'ar',
+        conversationId: smartConvId,
       });
       
       // Extract response and metadata from the network engine
@@ -247,9 +249,11 @@ export default function SmartAnalysis() {
     setIsAskingFollowUp(true);
     
     try {
+      const followUpConvId = currentConversationId ? `smart_${currentConversationId}` : `smart_followup_${Date.now()}`;
       const result = await askFollowUp.mutateAsync({
         query: question,
         language: 'ar',
+        conversationId: followUpConvId,
       });
       
       // Add AI response to conversation

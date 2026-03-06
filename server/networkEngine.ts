@@ -67,6 +67,7 @@ import { calculateConfidenceScore, type ConfidenceScore } from './confidenceScor
 import { applyEmotionBias, getEngineWeights, getLearningSummary, runLearningCycle, evaluatePrediction } from './engines/learningLoop';
 import { storeAnalysisRecord, type AnalysisRecord } from './engines/learningStore';
 import { MultiTurnContext } from './multiTurnContext';
+import { generateStyleInstructions, applyConsultantStyle, addHumanTouch, STYLE_PROHIBITIONS } from './cognitiveArchitecture/narrativeStyleEngine';
 import {
   dcftEngine,
   perceptionLayer,
@@ -633,6 +634,8 @@ async function executeGenerationNetwork(
   collection: NetworkContext['collection'],
   analysis: NetworkContext['analysis'],
   gate: NetworkContext['gate'],
+  conversationHistory?: Array<{ role: string; content: string }>,
+  contextSummary?: string,
 ): Promise<{ generation: NetworkContext['generation']; traces: LayerTrace[] }> {
   const traces: LayerTrace[] = [];
   
@@ -641,37 +644,62 @@ async function executeGenerationNetwork(
   const suggestStart = Date.now();
   
   const [responseResult, suggestionsResult] = await Promise.all([
-    // L11: Response Generation (LLM)
+    // L11: Response Generation (LLM) - NOW WITH HUMANIZED STYLE + CONTEXT
     (async (): Promise<string> => {
       if (!gate.needsLLM) {
         return 'Direct answer mode - no LLM needed';
       }
       
-      const systemPrompt = language === 'ar'
-        ? `أنت "أمل" - محلل مشاعر جماعية ذكي. أجب عن سؤال المستخدم بناءً على البيانات المضغوطة.
-
-قواعد:
-1. أجب بالعربية
-2. كن محدداً واذكر أسباب من العناوين الحقيقية
-3. اذكر المؤشرات (GMI/CFI/HRI) عند الحاجة
-4. قدم تحليلاً عميقاً
-5. لا تكرر نفس الجمل
-
-البيانات المضغوطة:
-${collection.vectorPrompt}`
-        : `You are "Amal" - an intelligent collective emotion analyzer. Answer based on compressed data.
-
-Rules:
-1. Answer in English
-2. Be specific, cite real headlines
-3. Mention indices (GMI/CFI/HRI) when relevant
-4. Provide deep analysis
-5. Don't repeat phrases
-
-Compressed Data:
-${collection.vectorPrompt}`;
+      // Get humanized style instructions from narrativeStyleEngine
+      const styleInstructions = generateStyleInstructions();
       
-      return await smartChat(systemPrompt, question, 'response_generation');
+      // Build emotion-aware tone guidance
+      const emotionTone = analysis.dominantEmotion === 'sadness' ? 'كن متعاطفاً ومتفهماً'
+        : analysis.dominantEmotion === 'anger' ? 'كن هادئاً وموضوعياً'
+        : analysis.dominantEmotion === 'fear' ? 'كن مطمئناً وواقعياً'
+        : analysis.dominantEmotion === 'joy' ? 'شارك الحماس لكن حلل بعمق'
+        : analysis.dominantEmotion === 'hope' ? 'عزز الأمل مع تحليل واقعي'
+        : 'كن مهنياً ومباشراً';
+      
+      // Build context section if conversation history exists
+      let contextSection = '';
+      if (conversationHistory && conversationHistory.length > 0) {
+        contextSection = `\n\nسياق المحادثة السابقة:\n${conversationHistory.map(h => `${h.role === 'user' ? 'المستخدم' : 'أنت'}: ${h.content.substring(0, 200)}`).join('\n')}`;
+        if (contextSummary) {
+          contextSection += `\nملخص السياق: ${contextSummary}`;
+        }
+        contextSection += `\n\nمهم: تذكر ما ناقشته مع المستخدم سابقاً. إذا سأل سؤال متابعة، اربطه بالسياق السابق.`;
+      }
+      
+      const systemPrompt = language === 'ar'
+        ? `${styleInstructions}\n\nمهمتك: أجب عن سؤال المستخدم بناءً على البيانات الحقيقية أدناه.\n\nقواعد الإجابة:\n1. أجب بالعربية بأسلوب طبيعي كأنك تتحدث مع شخص ذكي\n2. استخرج الأسباب والتفسيرات من البيانات الحقيقية - لا تخترع\n3. اذكر المؤشرات (GMI/CFI/HRI) بشكل طبيعي ضمن السياق\n4. ${emotionTone}\n5. كن مختصراً ومركزاً - لا تسرد قوائم طويلة\n6. اربط بين الأحداث والمشاعر بتحليل عميق\n7. لا تبدأ بـ "بناءً على البيانات" أو "وفقاً للتحليل" - ادخل في الموضوع مباشرة${contextSection}\n\nالبيانات المضغوطة:\n${collection.vectorPrompt}`
+        : `${styleInstructions}\n\nYour task: Answer the user's question based on the real data below.\n\nResponse rules:\n1. Answer naturally, like talking to a smart person\n2. Extract reasons from real data - don't invent\n3. Mention indices (GMI/CFI/HRI) naturally within context\n4. ${emotionTone}\n5. Be concise and focused\n6. Connect events with emotions through deep analysis\n7. Don't start with "Based on the data" - get straight to the point${contextSection}\n\nCompressed Data:\n${collection.vectorPrompt}`;
+      
+      // Build messages array with conversation history for multi-turn
+      const messages: Array<{ role: string; content: string }> = [
+        { role: 'system', content: systemPrompt },
+      ];
+      
+      // Add recent conversation turns for context continuity
+      if (conversationHistory && conversationHistory.length > 0) {
+        const recentTurns = conversationHistory.slice(-6); // Last 3 exchanges
+        for (const turn of recentTurns) {
+          messages.push({ role: turn.role, content: turn.content.substring(0, 300) });
+        }
+      }
+      
+      // Add current question
+      messages.push({ role: 'user', content: question });
+      
+      const result = await smartInvokeLLM({
+        messages: messages as any,
+      }, 'response_generation');
+      
+      const content = result.choices[0]?.message?.content;
+      const rawText = typeof content === 'string' ? content : JSON.stringify(content) || '';
+      
+      // Apply consultant style post-processing
+      return applyConsultantStyle(rawText);
     })().catch(() => ''),
     
     // L12: Suggestion Generation
@@ -875,6 +903,8 @@ export async function executeNetworkEngine(
     if (context.gate.needsLLM) {
       const genResult = await executeGenerationNetwork(
         question, language, context.collection, context.analysis, context.gate,
+        llmContext.conversationHistory,
+        llmContext.summary,
       );
       context.generation = genResult.generation;
       context.analytics.layerTraces.push(...genResult.traces);
@@ -1174,9 +1204,12 @@ export async function analyzeForCountryDetail(
 export async function analyzeForSmartAnalysis(
   query: string,
   language: string = 'ar',
+  conversationId?: string,
 ): Promise<SmartAnalysisResult> {
   // Full network execution (includes DCFT)
-  const ctx = await executeNetworkEngine('system', query, language);
+  // Use conversationId for proper multi-turn context per user/conversation
+  const userId = conversationId || 'system';
+  const ctx = await executeNetworkEngine(userId, query, language);
   const vector = ctx.collection.eventVector;
   // Use DCFT indices when available (scientifically grounded)
   const dcftIndices = ctx.dcft.result ? ctx.dcft.indices : null;

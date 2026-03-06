@@ -137,9 +137,12 @@ export default function Chat() {
 
     try {
       // Use the unified network engine via engine.smartAnalyze
+      // Pass conversationId for multi-turn context memory
+      const convId = currentConversationId ? `chat_${currentConversationId}` : `chat_new_${Date.now()}`;
       const result = await smartAnalyze.mutateAsync({
         query: userInput,
         language: 'ar',
+        conversationId: convId,
       });
 
       // Build assistant message from unified engine result

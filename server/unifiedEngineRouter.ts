@@ -165,9 +165,10 @@ export const unifiedEngineRouter = router({
     .input(z.object({
       query: z.string().min(1).max(500),
       language: z.string().default('ar'),
+      conversationId: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      return await analyzeForSmartAnalysis(input.query, input.language);
+      return await analyzeForSmartAnalysis(input.query, input.language, input.conversationId);
     }),
 
   /**
