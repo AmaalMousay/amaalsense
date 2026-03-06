@@ -1,0 +1,41 @@
+CREATE TABLE `prediction_snapshots` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`country_code` varchar(2) NOT NULL,
+	`gmi` float NOT NULL,
+	`cfi` float NOT NULL,
+	`hri` float NOT NULL,
+	`dominant_emotion` varchar(32),
+	`emotion_spectrum` text,
+	`source_count` int DEFAULT 0,
+	`confidence` float DEFAULT 0.75,
+	`risk_score` int DEFAULT 0,
+	`trend_direction` varchar(20),
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `prediction_snapshots_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `predictions` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`country_code` varchar(2) NOT NULL,
+	`country_name` varchar(100) NOT NULL,
+	`timeframe` varchar(10) NOT NULL,
+	`predicted_gmi` float NOT NULL,
+	`predicted_cfi` float NOT NULL,
+	`predicted_hri` float NOT NULL,
+	`predicted_emotion` varchar(32) NOT NULL,
+	`confidence` float NOT NULL,
+	`scenario_name` varchar(100) NOT NULL,
+	`risk_score` int NOT NULL DEFAULT 0,
+	`risk_level` varchar(20) NOT NULL DEFAULT 'low',
+	`prediction_data` text,
+	`ai_interpretation` text,
+	`ai_interpretation_ar` text,
+	`verified` boolean DEFAULT false,
+	`actual_gmi` float,
+	`actual_cfi` float,
+	`actual_hri` float,
+	`accuracy_score` float,
+	`predicted_for` timestamp NOT NULL,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `predictions_id` PRIMARY KEY(`id`)
+);

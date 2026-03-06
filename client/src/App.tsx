@@ -71,6 +71,7 @@ import RegionAnalysisPage from "./pages/RegionAnalysisPage";
 import ImpactAnalysisPage from "./pages/ImpactAnalysisPage";
 import FusionEngineAnalysisPage from "./pages/FusionEngineAnalysisPage";
 import EngineDashboard from "./pages/EngineDashboard";
+import PredictionsDashboard from "./pages/PredictionsDashboard";
 
 function Router() {
   // Routes will be added here
@@ -156,6 +157,9 @@ function Router() {
       
       {/* Metacognition Dashboard */}
       <Route path={"/metacognition"} component={MetacognitionDashboard} />
+      
+      {/* Advanced Predictions */}
+      <Route path={"/predictions"} component={PredictionsDashboard} />
       
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

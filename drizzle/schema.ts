@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean as mysqlBoolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean as mysqlBoolean, float } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -1173,3 +1173,53 @@ export const userConversations = mysqlTable("user_conversations", {
 
 export type UserConversation = typeof userConversations.$inferSelect;
 export type InsertUserConversation = typeof userConversations.$inferInsert;
+
+/**
+ * Predictions Table - stores generated predictions for countries
+ */
+export const predictions = mysqlTable("predictions", {
+  id: int("id").autoincrement().primaryKey(),
+  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  countryName: varchar("country_name", { length: 100 }).notNull(),
+  timeframe: varchar("timeframe", { length: 10 }).notNull(),
+  predictedGmi: float("predicted_gmi").notNull(),
+  predictedCfi: float("predicted_cfi").notNull(),
+  predictedHri: float("predicted_hri").notNull(),
+  predictedEmotion: varchar("predicted_emotion", { length: 32 }).notNull(),
+  confidence: float("confidence").notNull(),
+  scenarioName: varchar("scenario_name", { length: 100 }).notNull(),
+  riskScore: int("risk_score").notNull().default(0),
+  riskLevel: varchar("risk_level", { length: 20 }).notNull().default("low"),
+  predictionData: text("prediction_data"),
+  aiInterpretation: text("ai_interpretation"),
+  aiInterpretationAr: text("ai_interpretation_ar"),
+  verified: mysqlBoolean("verified").default(false),
+  actualGmi: float("actual_gmi"),
+  actualCfi: float("actual_cfi"),
+  actualHri: float("actual_hri"),
+  accuracyScore: float("accuracy_score"),
+  predictedFor: timestamp("predicted_for").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type PredictionRecord = typeof predictions.$inferSelect;
+export type InsertPredictionRecord = typeof predictions.$inferInsert;
+
+/**
+ * Prediction Snapshots - periodic snapshots of emotional state for trend analysis
+ */
+export const predictionSnapshots = mysqlTable("prediction_snapshots", {
+  id: int("id").autoincrement().primaryKey(),
+  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  gmi: float("gmi").notNull(),
+  cfi: float("cfi").notNull(),
+  hri: float("hri").notNull(),
+  dominantEmotion: varchar("dominant_emotion", { length: 32 }),
+  emotionSpectrum: text("emotion_spectrum"),
+  sourceCount: int("source_count").default(0),
+  confidence: float("confidence").default(0.75),
+  riskScore: int("risk_score").default(0),
+  trendDirection: varchar("trend_direction", { length: 20 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type PredictionSnapshot = typeof predictionSnapshots.$inferSelect;
+export type InsertPredictionSnapshot = typeof predictionSnapshots.$inferInsert;

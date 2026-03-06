@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `prediction_snapshots` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `country_code` varchar(2) NOT NULL,\n  `gmi` float NOT NULL,\n  `cfi` float NOT NULL,\n  `hri` float NOT NULL,\n  `dominant_emotion` varchar(32),\n  `emotion_spectrum` text,\n  `source_count` int DEFAULT 0,\n  `confidence` float DEFAULT 0.75,\n  `risk_score` int DEFAULT 0,\n  `trend_direction` varchar(20),\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `prediction_snapshots_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2VsckAsnDsWNG4a.root --database nNCcKwNgPEwkr4saUFSFW2 --execute CREATE TABLE IF NOT EXISTS `prediction_snapshots` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `country_code` varchar(2) NOT NULL,\n  `gmi` float NOT NULL,\n  `cfi` float NOT NULL,\n  `hri` float NOT NULL,\n  `dominant_emotion` varchar(32),\n  `emotion_spectrum` text,\n  `source_count` int DEFAULT 0,\n  `confidence` float DEFAULT 0.75,\n  `risk_score` int DEFAULT 0,\n  `trend_direction` varchar(20),\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `prediction_snapshots_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 127
+}
