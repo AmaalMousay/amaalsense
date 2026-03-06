@@ -454,6 +454,58 @@ export const unifiedEngineRouter = router({
       return result;
     }),
 
+  /**
+   * DCFT COUNTRY COMPARISON: Compare DCFT indices between two countries
+   * Used by: CompareCountries page for side-by-side DCFT analysis
+   */
+  compareDCFT: publicProcedure
+    .input(z.object({
+      country1Code: z.string().length(2),
+      country1Name: z.string().min(1),
+      country2Code: z.string().length(2),
+      country2Name: z.string().min(1),
+      language: z.string().default('ar'),
+    }))
+    .mutation(async ({ input }) => {
+      // Run both country analyses in parallel through the unified engine
+      const [result1, result2] = await Promise.all([
+        analyzeForCountryDetail(input.country1Code, input.country1Name, false, input.language),
+        analyzeForCountryDetail(input.country2Code, input.country2Name, false, input.language),
+      ]);
+      return {
+        country1: {
+          code: result1.countryCode,
+          name: result1.countryName,
+          gmi: result1.gmi,
+          cfi: result1.cfi,
+          hri: result1.hri,
+          emotions: result1.emotions,
+          dominantEmotion: result1.dominantEmotion,
+          confidence: result1.confidence,
+          sourceCount: result1.sourceCount,
+          totalItems: result1.totalItems,
+          isRealData: result1.isRealData,
+          trendingKeywords: result1.trendingKeywords,
+          breakingNews: result1.breakingNews,
+        },
+        country2: {
+          code: result2.countryCode,
+          name: result2.countryName,
+          gmi: result2.gmi,
+          cfi: result2.cfi,
+          hri: result2.hri,
+          emotions: result2.emotions,
+          dominantEmotion: result2.dominantEmotion,
+          confidence: result2.confidence,
+          sourceCount: result2.sourceCount,
+          totalItems: result2.totalItems,
+          isRealData: result2.isRealData,
+          trendingKeywords: result2.trendingKeywords,
+          breakingNews: result2.breakingNews,
+        },
+      };
+    }),
+
   // ============================================================
   // ENGINE DASHBOARD
   // ============================================================

@@ -158,7 +158,7 @@ export default function EngineDashboard() {
     setTimeout(() => setNotification(null), 3000);
   };
   const [isRunningCycle, setIsRunningCycle] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'layers' | 'learning' | 'context'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'layers' | 'learning' | 'context' | 'dcft'>('overview');
 
   // Fetch dashboard data
   const { data: dashboard, isLoading, refetch } = trpc.engine.getDashboardData.useQuery(
@@ -171,6 +171,16 @@ export default function EngineDashboard() {
     undefined,
     { refetchInterval: 15000 }
   );
+
+  // Fetch DCFT theory info
+  const { data: dcftTheory } = trpc.engine.getTheoryInfo.useQuery(
+    undefined,
+    { refetchInterval: 60000 }
+  );
+
+  // DCFT calculate mutation for live demo
+  const [dcftTopic, setDcftTopic] = useState('global emotions');
+  const dcftCalc = trpc.engine.analyzeDCFT.useMutation();
 
   // Learning cycle mutation
   const runLearningCycle = trpc.engine.runLearningCycle.useMutation({
@@ -332,6 +342,7 @@ export default function EngineDashboard() {
               { id: 'layers' as const, label: 'Layer Timeline', icon: Timer },
               { id: 'learning' as const, label: 'Learning System', icon: Brain },
               { id: 'context' as const, label: 'Multi-turn Context', icon: MessageSquare },
+              { id: 'dcft' as const, label: 'DCFT Field', icon: Cpu },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -853,6 +864,252 @@ export default function EngineDashboard() {
         {/* ============================================================ */}
         {/* MULTI-TURN CONTEXT TAB */}
         {/* ============================================================ */}
+        {/* ============================================================ */}
+        {/* DCFT FIELD TAB */}
+        {/* ============================================================ */}
+        {activeTab === 'dcft' && (
+          <>
+            {/* DCFT Theory Overview */}
+            <Card className="bg-[#111827] border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-violet-400" />
+                  Digital Consciousness Field Theory (DCFT)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Core Formula */}
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-violet-500/10 to-purple-500/10 border border-violet-500/20">
+                    <h3 className="text-sm font-medium text-violet-400 mb-3">Core Formula</h3>
+                    <div className="text-center py-4">
+                      <p className="text-xl font-mono text-white">D(t) = A(t) &middot; e<sup>i&phi;(t)</sup></p>
+                      <p className="text-xs text-gray-400 mt-2">Digital Consciousness Field Amplitude at time t</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                      <div className="p-3 rounded-lg bg-black/30 text-center">
+                        <p className="text-xs text-gray-400">A(t) - Amplitude</p>
+                        <p className="text-sm text-white mt-1">Emotional intensity</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Calculated from aggregated sentiment scores</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-black/30 text-center">
+                        <p className="text-xs text-gray-400">&phi;(t) - Phase</p>
+                        <p className="text-sm text-white mt-1">Emotional direction</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Positive/negative polarity of collective mood</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-black/30 text-center">
+                        <p className="text-xs text-gray-400">e<sup>i&phi;</sup> - Complex</p>
+                        <p className="text-sm text-white mt-1">Phase rotation</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Maps emotions to circular phase space</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Three Processing Layers */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                          <span className="text-blue-400 text-sm font-bold">1</span>
+                        </div>
+                        <h3 className="text-sm font-medium text-blue-400">Perception Layer</h3>
+                      </div>
+                      <p className="text-xs text-gray-300">Processes raw text into emotional signals using NLP sentiment analysis, keyword extraction, and source weighting</p>
+                      <div className="mt-3 space-y-1">
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">Sentiment Analysis</div>
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">Source Credibility Weighting</div>
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">Temporal Decay Function</div>
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                          <span className="text-purple-400 text-sm font-bold">2</span>
+                        </div>
+                        <h3 className="text-sm font-medium text-purple-400">Cognitive Layer</h3>
+                      </div>
+                      <p className="text-xs text-gray-300">Calculates the DCF state: amplitude A(t), phase &phi;(t), resonance indices, and influence weights</p>
+                      <div className="mt-3 space-y-1">
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">DCF State Calculation</div>
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">Resonance Detection</div>
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">Influence Weight Matrix</div>
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                          <span className="text-green-400 text-sm font-bold">3</span>
+                        </div>
+                        <h3 className="text-sm font-medium text-green-400">Awareness Layer</h3>
+                      </div>
+                      <p className="text-xs text-gray-300">Generates final indices: GMI (Global Mood), CFI (Collective Focus), HRI (Hope-Resilience), and emotional forecasts</p>
+                      <div className="mt-3 space-y-1">
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">GMI Calculation</div>
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">CFI Calculation</div>
+                        <div className="text-[10px] text-gray-500 bg-black/20 rounded px-2 py-0.5">HRI Calculation</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Live DCFT Calculator */}
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-violet-500/10 to-pink-500/10 border border-violet-500/20">
+                    <h3 className="text-sm font-medium text-violet-400 mb-3">Live DCFT Calculator</h3>
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        value={dcftTopic}
+                        onChange={(e) => setDcftTopic(e.target.value)}
+                        placeholder="Enter topic to analyze..."
+                        className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-violet-500/50"
+                      />
+                      <Button
+                        onClick={() => dcftCalc.mutate({ text: dcftTopic })}
+                        disabled={dcftCalc.isPending || !dcftTopic.trim()}
+                        className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+                      >
+                        <Zap className="w-4 h-4 mr-2" />
+                        {dcftCalc.isPending ? 'Calculating...' : 'Calculate D(t)'}
+                      </Button>
+                    </div>
+
+                    {dcftCalc.data && (
+                      <div className="mt-4 space-y-4">
+                        {/* DCF Amplitude Gauge */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                          <div className="p-3 rounded-lg bg-black/30 text-center">
+                            <p className="text-xs text-gray-400">DCF Amplitude</p>
+                            <p className="text-3xl font-bold text-violet-400 mt-1">{typeof dcftCalc.data.dcfAmplitude === 'number' ? dcftCalc.data.dcfAmplitude.toFixed(3) : '—'}</p>
+                            <p className="text-[10px] text-gray-500 mt-1">D(t) value</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-black/30 text-center">
+                            <p className="text-xs text-gray-400">Dominant Emotion</p>
+                            <p className="text-2xl font-bold text-purple-400 mt-1 capitalize">{dcftCalc.data.dominantEmotion || '—'}</p>
+                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.emotionalPhase?.description || 'Emotional direction'}</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-black/30 text-center">
+                            <p className="text-xs text-gray-400">Field Color</p>
+                            <div className="flex items-center justify-center mt-1">
+                              <div className="w-10 h-10 rounded-full" style={{ backgroundColor: dcftCalc.data.colorCode || '#4169E1' }} />
+                            </div>
+                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.colorCode || '#4169E1'}</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-black/30 text-center">
+                            <p className="text-xs text-gray-400">Alert Level</p>
+                            <p className={`text-2xl font-bold mt-1 capitalize ${dcftCalc.data.alertLevel === 'critical' ? 'text-red-400' : dcftCalc.data.alertLevel === 'high' ? 'text-orange-400' : dcftCalc.data.alertLevel === 'elevated' ? 'text-yellow-400' : 'text-green-400'}`}>{dcftCalc.data.alertLevel}</p>
+                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.eventCount} events</p>
+                          </div>
+                        </div>
+
+                        {/* DCFT Indices */}
+                        {dcftCalc.data.indices && (
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="p-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
+                              <div className="flex items-center justify-between">
+                                <p className="text-xs text-blue-400">GMI - Global Mood Index</p>
+                                <TrendingUp className="w-4 h-4 text-blue-400" />
+                              </div>
+                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.indices.gmi?.toFixed(1) ?? '—'}</p>
+                              <div className="mt-2 h-2 rounded-full bg-black/30 overflow-hidden">
+                                <div className="h-full rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 transition-all duration-700" style={{ width: `${Math.max(0, Math.min(100, ((dcftCalc.data.indices.gmi ?? 0) + 100) / 2))}%` }} />
+                              </div>
+                              <p className="text-[10px] text-gray-500 mt-1">Range: -100 (negative) to +100 (positive)</p>
+                            </div>
+                            <div className="p-4 rounded-lg bg-gradient-to-br from-amber-500/10 to-amber-600/10 border border-amber-500/20">
+                              <div className="flex items-center justify-between">
+                                <p className="text-xs text-amber-400">CFI - Collective Focus Index</p>
+                                <BarChart3 className="w-4 h-4 text-amber-400" />
+                              </div>
+                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.indices.cfi?.toFixed(1) ?? '—'}</p>
+                              <div className="mt-2 h-2 rounded-full bg-black/30 overflow-hidden">
+                                <div className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-700" style={{ width: `${dcftCalc.data.indices.cfi ?? 0}%` }} />
+                              </div>
+                              <p className="text-[10px] text-gray-500 mt-1">Range: 0 (scattered) to 100 (focused)</p>
+                            </div>
+                            <div className="p-4 rounded-lg bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/20">
+                              <div className="flex items-center justify-between">
+                                <p className="text-xs text-emerald-400">HRI - Hope-Resilience Index</p>
+                                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                              </div>
+                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.indices.hri?.toFixed(1) ?? '—'}</p>
+                              <div className="mt-2 h-2 rounded-full bg-black/30 overflow-hidden">
+                                <div className="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-700" style={{ width: `${dcftCalc.data.indices.hri ?? 0}%` }} />
+                              </div>
+                              <p className="text-[10px] text-gray-500 mt-1">Range: 0 (despair) to 100 (hopeful)</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Resonance */}
+                        {dcftCalc.data.resonanceIndices && (
+                          <div className="p-4 rounded-lg bg-black/30 border border-white/10">
+                            <h4 className="text-xs text-gray-400 mb-3">Resonance Indices</h4>
+                            <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+                              {Object.entries(dcftCalc.data.resonanceIndices).map(([key, val]) => (
+                                <div key={key} className="text-center">
+                                  <p className="text-[10px] text-gray-500 capitalize">{key}</p>
+                                  <p className="text-lg font-bold text-white">{typeof val === 'number' ? val.toFixed(2) : String(val)}</p>
+                                  <div className="mt-1 h-1.5 rounded-full bg-black/30 overflow-hidden">
+                                    <div className="h-full rounded-full bg-violet-500/60 transition-all duration-500" style={{ width: `${typeof val === 'number' ? val * 100 : 0}%` }} />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* DCFT in Network Engine */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                    <h3 className="text-sm font-medium text-gray-400 mb-4">DCFT Integration in Network Engine</h3>
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                      <div className="px-3 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-xs text-blue-400">Gate</div>
+                      <span className="text-gray-500">&rarr;</span>
+                      <div className="px-3 py-2 rounded-lg bg-green-500/20 border border-green-500/30 text-xs text-green-400">Collection</div>
+                      <span className="text-gray-500">&rarr;</span>
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="px-3 py-2 rounded-lg bg-orange-500/20 border border-orange-500/30 text-xs text-orange-400">Analysis</div>
+                        <span className="text-[10px] text-gray-500">parallel</span>
+                        <div className="px-3 py-2 rounded-lg bg-violet-500/20 border border-violet-500/30 text-xs text-violet-400 font-bold">DCFT</div>
+                      </div>
+                      <span className="text-gray-500">&rarr;</span>
+                      <div className="px-3 py-2 rounded-lg bg-pink-500/20 border border-pink-500/30 text-xs text-pink-400">Generation</div>
+                    </div>
+                    <p className="text-center text-[10px] text-gray-500 mt-3">DCFT runs in parallel with Analysis Network, providing GMI/CFI/HRI indices to all view formatters</p>
+                  </div>
+
+                  {/* Theory Info */}
+                  {dcftTheory && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/10 text-center">
+                        <p className="text-xs text-gray-400">Theory</p>
+                        <p className="text-lg font-bold text-violet-400 mt-1">DCFT</p>
+                        <p className="text-[10px] text-gray-500 mt-1">v2.0</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/10 text-center">
+                        <p className="text-xs text-gray-400">Layers</p>
+                        <p className="text-2xl font-bold text-white mt-1">3</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Perception, Cognitive, Awareness</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/10 text-center">
+                        <p className="text-xs text-gray-400">Indices</p>
+                        <p className="text-2xl font-bold text-white mt-1">3</p>
+                        <p className="text-[10px] text-gray-500 mt-1">GMI, CFI, HRI</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/10 text-center">
+                        <p className="text-xs text-gray-400">Engine Group</p>
+                        <p className="text-lg font-bold text-white mt-1">5th</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Parallel with Analysis</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        )}
+
         {activeTab === 'context' && (
           <>
             <Card className="bg-[#111827] border-white/10">

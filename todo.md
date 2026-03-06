@@ -4755,3 +4755,8 @@ All systems are properly connected, tested, and ready for production use.
 - [x] DCFT now runs inside engine.* - all view formatters use DCFT indices with Event Vector fallback
 - [x] All pages use the single unified engine (Map, Weather, CountryDetail, SmartAnalysis)
 - [x] Test and verify the merged engine works correctly (0 TS errors, dcft router removed from routers.ts, Theory.tsx updated)
+
+## Phase: Final Three Suggestions
+- [x] Add DCFT tab in Engine Dashboard with real-time field indices visualization
+- [x] Improve Theory page with live DCFT data from unified engine
+- [x] Add DCFT comparison between two countries with side-by-side charts (compareDCFT endpoint + CompareCountries.tsx rewritten)
