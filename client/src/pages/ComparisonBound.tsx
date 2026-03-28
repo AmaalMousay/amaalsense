@@ -51,34 +51,39 @@ export default function ComparisonBound() {
   const [timeRange, setTimeRange] = useState("24h");
   const [scenario, setScenario] = useState("economic_growth");
 
-  // Country comparison query
-  const countryComparisonQuery = trpc.comparison.compareCountries.useQuery(
-    { countries: selectedCountries, timeRange },
+  // Country comparison query - uses unified engine
+  const countryComparisonQuery = trpc.engine.compareDCFT.useQuery(
+    {
+      countryCode1: selectedCountries[0] === 'Egypt' ? 'EG' : selectedCountries[0] === 'Saudi Arabia' ? 'SA' : 'US',
+      countryName1: selectedCountries[0] || 'Egypt',
+      countryCode2: selectedCountries[1] === 'Egypt' ? 'EG' : selectedCountries[1] === 'Saudi Arabia' ? 'SA' : 'GB',
+      countryName2: selectedCountries[1] || 'Saudi Arabia',
+    },
     { enabled: comparisonType === "countries" }
   );
 
-  // Temporal comparison query
-  const temporalQuery = trpc.comparison.temporalComparison.useQuery(
-    {
-      topic: selectedCountries[0] || "Global",
-      startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      endDate: new Date(),
-    },
+  // Temporal comparison - uses historical indices from engine
+  const temporalQuery = trpc.engine.getHistoricalIndices.useQuery(
+    { hoursBack: timeRange === '24h' ? 24 : timeRange === '7d' ? 168 : 720 },
     { enabled: comparisonType === "temporal" }
   );
 
-  // What-if scenario query
-  const scenarioQuery = trpc.comparison.whatIfScenario.useQuery(
+  // What-if scenario - uses engine prediction
+  const scenarioQuery = trpc.prediction.getCountryPrediction.useQuery(
     {
-      scenario: scenario,
-      parameters: { region: selectedCountries[0], intensity: 0.8 },
+      countryCode: selectedCountries[0] === 'Egypt' ? 'EG' : selectedCountries[0] === 'Saudi Arabia' ? 'SA' : 'US',
+      countryName: selectedCountries[0] || 'Egypt',
+      timeframe: '7d' as const,
     },
     { enabled: comparisonType === "scenario" }
   );
 
-  const comparisonData = countryComparisonQuery.data?.comparison.data || [];
-  const timelineData = temporalQuery.data?.timeline || [];
-  const scenarioResults = scenarioQuery.data?.results;
+  const comparisonData = countryComparisonQuery.data ? [
+    { country: countryComparisonQuery.data.country1.countryName, sentiment: countryComparisonQuery.data.country1.gmi, emotionProfile: countryComparisonQuery.data.country1.emotions || {} },
+    { country: countryComparisonQuery.data.country2.countryName, sentiment: countryComparisonQuery.data.country2.gmi, emotionProfile: countryComparisonQuery.data.country2.emotions || {} },
+  ] : [];
+  const timelineData = (temporalQuery.data || []).map((item: any) => ({ time: item.analyzedAt, gmi: item.gmi, cfi: item.cfi, hri: item.hri }));
+  const scenarioResults = scenarioQuery.data;
 
   // Prepare chart data
   const chartData = comparisonData.map((item: any) => ({

@@ -46,7 +46,7 @@ export function DCFTVisualizationConnected({
   const [selectedHarmonic, setSelectedHarmonic] = React.useState<Harmonic | null>(null);
 
   // Fetch DCFT visualization data from backend
-  const { data: dcftData, isLoading, error } = trpc.analysisData.getDCFTVisualization.useQuery({
+  const { data: dcftData, isLoading, error } = trpc.engine.getDCFTVisualization.useQuery({
     topic,
     country
   });

@@ -177,11 +177,11 @@ function SourceCard({ source }: { source: SourceHealthResult }) {
 export default function SourceMonitor() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { data: healthData, refetch, isLoading } = trpc.dashboard.getSourceHealth.useQuery(undefined, {
+  const { data: healthData, refetch, isLoading } = trpc.engine.getSourceHealth.useQuery(undefined, {
     refetchInterval: 60000, // Auto-refresh every 60 seconds
   });
 
-  const refreshMutation = trpc.dashboard.refreshSourceHealth.useMutation({
+  const refreshMutation = trpc.engine.refreshSourceHealth.useMutation({
     onSuccess: () => {
       refetch();
       setIsRefreshing(false);

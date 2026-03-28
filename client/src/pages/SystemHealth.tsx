@@ -14,27 +14,27 @@ export default function SystemHealth() {
   const [refreshInterval, setRefreshInterval] = useState(5000);
 
   // Fetch health data
-  const { data: health, refetch: refetchHealth } = trpc.dashboard.getHealth.useQuery(undefined, {
+  const { data: health, refetch: refetchHealth } = trpc.engine.getHealth.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: summary } = trpc.dashboard.getHealthSummary.useQuery(undefined, {
+  const { data: summary } = trpc.engine.getHealthSummary.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: metrics } = trpc.dashboard.getMetrics.useQuery(undefined, {
+  const { data: metrics } = trpc.engine.getMetrics.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: alerts } = trpc.dashboard.getAlerts.useQuery(undefined, {
+  const { data: alerts } = trpc.engine.getAlerts.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: cacheStats } = trpc.dashboard.getCacheStats.useQuery(undefined, {
+  const { data: cacheStats } = trpc.engine.getCacheStats.useQuery(undefined, {
     refetchInterval: autoRefresh ? 10000 : false,
   });
 
-  const { data: feedbackStats } = trpc.dashboard.getFeedbackStats.useQuery(undefined, {
+  const { data: feedbackStats } = trpc.engine.getFeedbackStats.useQuery(undefined, {
     refetchInterval: autoRefresh ? 10000 : false,
   });
 

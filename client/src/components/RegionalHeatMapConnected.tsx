@@ -39,7 +39,7 @@ export function RegionalHeatMapConnected({
   const [selectedRegion, setSelectedRegion] = React.useState<RegionalData | null>(null);
 
   // Fetch regional heatmap data from backend
-  const { data: heatmapData, isLoading, error } = trpc.mapData.getRegionalHeatMapData.useQuery({
+  const { data: heatmapData, isLoading, error } = trpc.engine.getRegionalHeatMapData.useQuery({
     country,
     limit
   });

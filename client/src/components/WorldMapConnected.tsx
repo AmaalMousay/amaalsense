@@ -39,7 +39,7 @@ export function WorldMapConnected({
   const [sortBy, setSortBy] = React.useState<'gmi' | 'cfi' | 'hri'>('gmi');
 
   // Fetch world map data from backend
-  const { data: worldData, isLoading, error } = trpc.mapData.getWorldMapData.useQuery({
+  const { data: worldData, isLoading, error } = trpc.engine.getWorldMapData.useQuery({
     limit
   });
 

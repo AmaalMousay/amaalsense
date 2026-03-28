@@ -64,7 +64,7 @@ export default function EnterpriseDashboard() {
   const [newTopic, setNewTopic] = useState("");
 
   // Get global mood data
-  const { data: globalMood, isLoading: moodLoading, refetch: refetchMood } = trpc.emotion.getLatestIndices.useQuery(
+  const { data: globalMood, isLoading: moodLoading, refetch: refetchMood } = trpc.engine.getLatestIndices.useQuery(
     undefined,
     { refetchInterval: 60000 }
   );

@@ -118,7 +118,7 @@ export default function TopicAnalysisResults() {
   const [suggestedQuestions, setSuggestedQuestions] = useState<DynamicQuestion[]>([]);
 
   // Mutations
-  const analyzeTopicMutation = trpc.topic.analyzeTopicInCountry.useMutation();
+  const analyzeTopicMutation = trpc.engine.analyzeTopicInCountry.useMutation();
   const generatePdfMutation = trpc.pdfExport.generateAnalysisReport.useMutation();
   const createConversationMutation = trpc.conversations.create.useMutation();
   

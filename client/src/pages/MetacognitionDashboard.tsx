@@ -13,9 +13,9 @@ import { Brain, AlertTriangle, CheckCircle, TrendingUp, Activity } from 'lucide-
 import { trpc } from '@/lib/trpc';
 
 export default function MetacognitionDashboard() {
-  const { data: systemHealth, isLoading } = trpc.metacognition.getSystemHealth.useQuery();
-  const { data: recentErrors } = trpc.metacognition.getRecentErrors.useQuery();
-  const { data: recommendations } = trpc.metacognition.getRecommendations.useQuery();
+  const { data: systemHealth, isLoading } = trpc.engine.getSystemHealth.useQuery();
+  const { data: recentErrors } = trpc.engine.getRecentErrors.useQuery();
+  const { data: recommendations } = trpc.engine.getRecommendations.useQuery();
 
   if (isLoading) {
     return (

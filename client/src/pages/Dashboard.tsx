@@ -34,7 +34,7 @@ import {
 } from 'recharts';
 
 function SourceHealthWidget() {
-  const { data: sourceHealth } = trpc.dashboard.getSourceHealth.useQuery(undefined, {
+  const { data: sourceHealth } = trpc.engine.getSourceHealth.useQuery(undefined, {
     refetchInterval: 60000,
   });
   const [, navigate] = useLocation();
@@ -101,10 +101,10 @@ export default function Dashboard() {
   });
 
   // Fetch latest indices
-  const { data: latestIndices } = trpc.emotion.getLatestIndices.useQuery();
+  const { data: latestIndices } = trpc.engine.getLatestIndices.useQuery();
 
   // Fetch historical data
-  const { data: historicalIndices } = trpc.emotion.getHistoricalIndices.useQuery(
+  const { data: historicalIndices } = trpc.engine.getHistoricalIndices.useQuery(
     { hoursBack: timeRange },
     { refetchInterval: 30000 } // Refetch every 30 seconds
   );

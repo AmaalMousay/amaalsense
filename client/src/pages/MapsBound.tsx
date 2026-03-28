@@ -40,24 +40,24 @@ export default function MapsBound() {
   const [zoom, setZoom] = useState(2);
   const [selectedRegion, setSelectedRegion] = useState<RegionData | null>(null);
 
-  // Fetch geographic data
-  const geoQuery = trpc.maps.getGeographicData.useQuery(
-    { region, timeRange },
-    { refetchInterval: 30000 } // Refresh every 30 seconds
+  // Fetch geographic data - uses unified engine
+  const geoQuery = trpc.engine.getGeographicData.useQuery(
+    { metric: 'gmi' },
+    { refetchInterval: 30000 }
   );
 
-  // Fetch regional trends
-  const trendsQuery = trpc.maps.getRegionalTrends.useQuery(
+  // Fetch regional trends - uses unified engine
+  const trendsQuery = trpc.engine.getRegionalTrends.useQuery(
     { region: selectedRegion?.name || region },
     { enabled: !!selectedRegion }
   );
 
-  // Fetch hotspots
-  const hotspotsQuery = trpc.maps.getHotspots.useQuery();
+  // Fetch hotspots - uses unified engine
+  const hotspotsQuery = trpc.engine.getHotspots.useQuery();
 
-  const regions = geoQuery.data?.data.regions || [];
-  const hotspots = hotspotsQuery.data?.hotspots || [];
-  const globalSentiment = geoQuery.data?.data.globalSentiment || 0;
+  const regions = (geoQuery.data?.countries || []).map((c: any) => ({ name: c.countryName, code: c.countryCode, sentiment: c.gmi, emotion: c.dominantEmotion }));
+  const hotspots = (hotspotsQuery.data || []).map((h: any) => ({ name: h.countryName, code: h.countryCode, risk: h.risk, cfi: h.cfi }));
+  const globalSentiment = trendsQuery.data?.averages?.gmi || 0;
 
   // Get emotion color
   const getEmotionColor = (emotion: string): string => {

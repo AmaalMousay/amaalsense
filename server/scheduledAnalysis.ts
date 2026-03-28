@@ -7,6 +7,7 @@ import { saveAnalysisSession, AnalysisResult, SourceResult } from "./analyticsSt
 import { getNewsWithFallback, fetchGlobalNews, generateMockNews } from "./newsService";
 import { fetchAllSocialMedia, SocialPost } from "./socialMediaService";
 import { analyzeTextsWithAI, SentimentAnalysisResult } from "./aiSentimentAnalyzer";
+import { executeNetworkEngine, getGlobalMood } from "./networkEngine";
 
 // Track if scheduler is running
 let isSchedulerRunning = false;
@@ -23,21 +24,21 @@ export async function runAnalysisCycle(): Promise<{
   const errors: string[] = [];
   let sessionsCreated = 0;
 
-  console.log("[Scheduler] Starting analysis cycle...");
+  console.log("[Scheduler] Starting analysis cycle (using unified network engine)...");
 
   try {
-    // 1. Analyze global news
-    const globalResult = await analyzeGlobalNews();
+    // 1. Analyze global mood via unified engine
+    const globalResult = await analyzeGlobalMoodViaEngine();
     if (globalResult.success) {
       sessionsCreated++;
     } else if (globalResult.error) {
-      errors.push(`Global news: ${globalResult.error}`);
+      errors.push(`Global mood: ${globalResult.error}`);
     }
 
-    // 2. Analyze top 5 countries
+    // 2. Analyze top 5 countries via unified engine
     const topCountries = ["US", "GB", "DE", "FR", "JP"];
     for (const countryCode of topCountries) {
-      const countryResult = await analyzeCountryNews(countryCode);
+      const countryResult = await analyzeCountryViaEngine(countryCode);
       if (countryResult.success) {
         sessionsCreated++;
       } else if (countryResult.error) {
@@ -243,6 +244,59 @@ async function analyzeSocialMedia(): Promise<{ success: boolean; error?: string 
     return { success: true };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+}
+
+/**
+ * Analyze global mood via unified network engine
+ */
+async function analyzeGlobalMoodViaEngine(): Promise<{ success: boolean; error?: string }> {
+  try {
+    const mood = await getGlobalMood();
+    const result: AnalysisResult = {
+      gmi: mood.gmi,
+      cfi: mood.cfi,
+      hri: mood.hri,
+      sentimentScore: mood.gmi / 100,
+      dominantEmotion: mood.dominantEmotion,
+      confidence: mood.confidence,
+      sources: [],
+    };
+    await saveAnalysisSession(result, {
+      sessionType: 'scheduled',
+      query: 'global mood (unified engine)',
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Scheduler] Engine global mood failed, falling back:', error);
+    return analyzeGlobalNews();
+  }
+}
+
+/**
+ * Analyze country via unified network engine
+ */
+async function analyzeCountryViaEngine(countryCode: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const ctx = await executeNetworkEngine('scheduler', `Analyze current emotional state of ${countryCode}`, 'en');
+    const result: AnalysisResult = {
+      gmi: ctx.dcft?.indices?.gmi ?? 0,
+      cfi: ctx.dcft?.indices?.cfi ?? 50,
+      hri: ctx.dcft?.indices?.hri ?? 50,
+      sentimentScore: 0,
+      dominantEmotion: ctx.collection?.eventVector?.dominantEmotion || 'neutral',
+      confidence: ctx.analysis?.confidence?.overall || 0,
+      sources: [],
+    };
+    await saveAnalysisSession(result, {
+      sessionType: 'scheduled',
+      query: `${countryCode} analysis (unified engine)`,
+      countryCode,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error(`[Scheduler] Engine analysis failed for ${countryCode}, falling back:`, error);
+    return analyzeCountryNews(countryCode);
   }
 }
 

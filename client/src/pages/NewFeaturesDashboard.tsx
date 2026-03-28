@@ -16,32 +16,32 @@ export function NewFeaturesDashboard() {
   const [selectedQuestion, setSelectedQuestion] = useState<string>('is_world_dangerous');
   const [activeTab, setActiveTab] = useState<'weather' | 'questions' | 'explanation' | 'predictions'>('weather');
 
-  // Fetch Daily Weather
-  const weatherQuery = trpc.newFeatures.getDailyWeather.useQuery(
+  // Fetch Daily Weather - uses unified engine
+  const weatherQuery = trpc.engine.getDailyWeather.useQuery(
     { region: selectedRegion },
     { enabled: activeTab === 'weather' }
   );
 
-  // Fetch Universal Questions
-  const questionsQuery = trpc.newFeatures.getAvailableQuestions.useQuery(
+  // Fetch Universal Questions - uses unified engine
+  const questionsQuery = trpc.engine.getAvailableQuestions.useQuery(
     undefined,
     { enabled: activeTab === 'questions' }
   );
 
-  // Fetch Answer
-  const answerQuery = trpc.newFeatures.answerQuestion.useQuery(
+  // Fetch Answer - uses unified engine
+  const answerQuery = trpc.engine.answerQuestion.useQuery(
     { question: selectedQuestion as any },
     { enabled: activeTab === 'questions' && !!selectedQuestion }
   );
 
-  // Fetch Quick Explanation
-  const explanationQuery = trpc.newFeatures.getQuickExplanation.useQuery(
+  // Fetch Quick Explanation - uses unified engine
+  const explanationQuery = trpc.engine.getQuickExplanation.useQuery(
     undefined,
     { enabled: activeTab === 'explanation' }
   );
 
-  // Fetch Aggregated Metrics
-  const metricsQuery = trpc.newFeatures.getAggregatedMetrics.useQuery(
+  // Fetch Aggregated Metrics - uses unified engine
+  const metricsQuery = trpc.engine.getAggregatedMetrics.useQuery(
     { region: selectedRegion },
     { enabled: true }
   );

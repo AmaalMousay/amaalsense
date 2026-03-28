@@ -31,7 +31,7 @@ export function LiveAlertSystem({
   const { alerts, addAlert, removeAlert } = useAlertManager();
 
   // Subscribe to alerts via tRPC
-  const { data: alertHistory } = trpc.notification.getAlertHistory.useQuery(
+  const { data: alertHistory } = trpc.engine.getAlertHistory.useQuery(
     { limit: 5 },
     { enabled: !!userId }
   );

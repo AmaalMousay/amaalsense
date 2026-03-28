@@ -348,7 +348,7 @@ export default function Home() {
   );
 
   // Fetch historical data for sparklines (keep using emotion router as it has DB history)
-  const { data: historicalIndices } = trpc.emotion.getHistoricalIndices.useQuery(
+  const { data: historicalIndices } = trpc.engine.getHistoricalIndices.useQuery(
     { hoursBack: 6 },
     { refetchInterval: 60000 }
   );

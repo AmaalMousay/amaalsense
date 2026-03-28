@@ -40,21 +40,21 @@ export default function LiveAnalysis() {
   const [selectedCountry, setSelectedCountry] = useState('SA');
 
   // Fetch sources status
-  const { data: sourcesStatus } = trpc.realtime.getSourcesStatus.useQuery();
+  const { data: sourcesStatus } = trpc.engine.getSourceHealth.useQuery();
 
   // Fetch country news analysis
   const { data: countryAnalysis, isLoading: isLoadingCountry, refetch: refetchCountry } = 
-    trpc.realtime.getCountryNewsAnalysis.useQuery(
-      { countryCode: selectedCountry, pageSize: 10 },
+    trpc.engine.getCountryDetail.useQuery(
+      { countryCode: selectedCountry, countryName: selectedCountry, language: 'en' },
       { enabled: true }
     );
 
   // AI analysis mutation for custom text
-  const analyzeWithAI = trpc.realtime.analyzeWithAI.useMutation();
+  const analyzeWithAI = trpc.engine.analyzeDCFT.useMutation();
 
   const handleAnalyzeCustomText = async () => {
     if (!customText.trim()) return;
-    await analyzeWithAI.mutateAsync({ text: customText });
+    await analyzeWithAI.mutateAsync({ text: customText, language: 'en' });
   };
 
   const countries = [

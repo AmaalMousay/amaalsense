@@ -69,8 +69,8 @@ export function useAnalysisData(options: UseAnalysisDataOptions = {}) {
   const [error, setError] = useState<string | null>(null);
 
   // Use tRPC to fetch analysis data
-  const analyzeQuery = trpc.unified.analyzeQuestion.useMutation();
-  const dashboardQuery = trpc.dashboard.getMetrics.useQuery(
+  const analyzeQuery = trpc.engine.smartAnalyze.useMutation();
+  const dashboardQuery = trpc.engine.getMetrics.useQuery(
     country ? { country, timeframe } : { timeframe },
     { enabled: autoFetch && !topic }
   );
@@ -240,7 +240,7 @@ export function useMapData(metric: 'gmi' | 'cfi' | 'hri' = 'gmi') {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const mapDataQuery = trpc.mapData.getGlobalData.useQuery({ metric });
+  const mapDataQuery = trpc.engine.getGeographicData.useQuery({ metric });
 
   useEffect(() => {
     if (mapDataQuery.data) {
@@ -291,7 +291,7 @@ export function useAlertsData(country?: string, topic?: string) {
   }> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const alertsQuery = trpc.notification.getAlerts.useQuery(
+  const alertsQuery = trpc.engine.getAlerts.useQuery(
     country || topic ? { country, topic } : undefined,
     { enabled: !!country || !!topic }
   );

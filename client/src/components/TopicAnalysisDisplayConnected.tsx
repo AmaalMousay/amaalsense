@@ -42,7 +42,7 @@ export function TopicAnalysisDisplayConnected({
   const [selectedSubtopic, setSelectedSubtopic] = React.useState<string | null>(null);
 
   // Fetch topic analysis data from backend
-  const { data: topicData, isLoading, error } = trpc.analysisData.getTopicAnalysis.useQuery({
+  const { data: topicData, isLoading, error } = trpc.engine.getTopicAnalysis.useQuery({
     topic,
     country,
     timeRange

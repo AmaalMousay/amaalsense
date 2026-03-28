@@ -4781,3 +4781,18 @@ All systems are properly connected, tested, and ready for production use.
 ## Phase: Chat Humanization & Context Memory Fixes
 - [x] Fix chat responses to feel human/natural (integrated narrativeStyleEngine + applyConsultantStyle + emotion-aware tone into generation network)
 - [x] Fix context memory so chat remembers previous messages (conversationHistory + contextSummary passed to LLM, unique conversationId per chat/smart session)
+
+## Phase: Comprehensive Audit - Connect ALL components to Unified Engine
+- [ ] Fix Dashboard.tsx to use engine.* instead of emotion.getLatestIndices/getHistoricalIndices
+- [ ] Fix Home.tsx to use engine.* instead of emotion.getHistoricalIndices
+- [ ] Fix EnterpriseDashboard.tsx to use engine.* instead of emotion.getLatestIndices
+- [ ] Fix LiveAnalysis.tsx to use engine.* instead of realtime.*
+- [ ] Fix ComparisonBound.tsx to use engine.compareDCFT instead of comparison.*
+- [ ] Fix MapsBound.tsx to use engine.getMapData instead of maps.*
+- [ ] Fix TopicAnalysisResults.tsx to use engine.smartAnalyze instead of topic.*
+- [ ] Fix Reports.tsx to use engine data instead of classification.*
+- [ ] Fix MetacognitionDashboard.tsx to use engine.getStats instead of metacognition.*
+- [ ] Fix NewFeaturesDashboard.tsx to use engine.* instead of newFeatures.*
+- [ ] Fix scheduledAnalysis.ts to use networkEngine instead of aiSentimentAnalyzer
+- [ ] Fix analysisDataRouter.ts to use real engine data instead of Math.random()
+- [ ] Fix Connected Components (DCFT, EventVector, TopicAnalysis, HeatMap, WorldMap) to use engine data

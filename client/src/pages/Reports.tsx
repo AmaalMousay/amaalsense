@@ -56,10 +56,10 @@ export default function Reports() {
   const [timeRange, setTimeRange] = useState<string>("30");
 
   // Fetch statistics
-  const domainStatsQuery = trpc.classification.getDomainStats.useQuery();
-  const sensitivityStatsQuery = trpc.classification.getSensitivityStats.useQuery();
-  const analysesOverTimeQuery = trpc.classification.getAnalysesOverTime.useQuery({ days: parseInt(timeRange) });
-  const allAnalysesQuery = trpc.classification.getAllAnalyses.useQuery({ limit: 100 });
+  const domainStatsQuery = trpc.engine.getDomainStats.useQuery();
+  const sensitivityStatsQuery = trpc.engine.getSensitivityStats.useQuery();
+  const analysesOverTimeQuery = trpc.engine.getAnalysesOverTime.useQuery({ days: parseInt(timeRange) });
+  const allAnalysesQuery = trpc.engine.getAllAnalyses.useQuery({ limit: 100 });
 
   // Calculate totals
   const totalAnalyses = useMemo(() => {

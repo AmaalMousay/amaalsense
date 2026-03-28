@@ -45,7 +45,7 @@ export function EventVectorDisplayConnected({
   const [sortBy, setSortBy] = React.useState<'impact' | 'reach' | 'sentiment'>('impact');
 
   // Fetch event vectors from backend
-  const { data: eventsData, isLoading, error } = trpc.analysisData.getEventVectors.useQuery({
+  const { data: eventsData, isLoading, error } = trpc.engine.getEventVectors.useQuery({
     topic,
     country,
     limit

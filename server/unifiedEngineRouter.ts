@@ -554,4 +554,349 @@ export const unifiedEngineRouter = router({
       })),
     };
   }),
+
+  // ============================================================
+  // HISTORICAL INDICES (replaces emotion.getHistoricalIndices)
+  // ============================================================
+  getHistoricalIndices: publicProcedure
+    .input(z.object({ hoursBack: z.number().min(1).max(720).default(24) }))
+    .query(async ({ input }) => {
+      const { getEmotionIndicesHistory } = await import('./db');
+      return await getEmotionIndicesHistory(input.hoursBack);
+    }),
+
+  // ============================================================
+  // LATEST INDICES (replaces emotion.getLatestIndices)
+  // ============================================================
+  getLatestIndices: publicProcedure.query(async () => {
+    const { getLatestEmotionIndices, createEmotionIndex } = await import('./db');
+    let indices = await getLatestEmotionIndices();
+    if (!indices) {
+      try {
+        const mood = await getGlobalMood();
+        await createEmotionIndex({
+          gmi: mood.gmi, cfi: mood.cfi, hri: mood.hri,
+          confidence: Math.round(mood.confidence),
+        });
+        indices = await getLatestEmotionIndices();
+      } catch (e) {
+        console.error('[Engine] Failed to generate indices:', e);
+      }
+    }
+    return indices || { gmi: 0, cfi: 50, hri: 50, confidence: 0, analyzedAt: new Date() };
+  }),
+
+  // ============================================================
+  // SOURCE HEALTH (replaces dashboard.getSourceHealth)
+  // ============================================================
+  getSourceHealth: publicProcedure.query(async () => {
+    try {
+      const { checkAllSources } = await import('./apiHealthMonitor');
+      return await checkAllSources();
+    } catch {
+      return { sources: [], lastChecked: new Date().toISOString() };
+    }
+  }),
+
+  refreshSourceHealth: publicProcedure.mutation(async () => {
+    try {
+      const { forceRefresh } = await import('./apiHealthMonitor');
+      return await forceRefresh();
+    } catch {
+      return { sources: [], lastChecked: new Date().toISOString() };
+    }
+  }),
+
+  // ============================================================
+  // SYSTEM HEALTH (replaces dashboard.getHealth/getSummary/getMetrics/getAlerts/getCacheStats)
+  // ============================================================
+  getSystemHealth: publicProcedure.query(async () => {
+    try {
+      const { healthDashboard } = await import('./healthDashboard');
+      const stats = getEngineStats();
+      return {
+        health: healthDashboard.getHealthReport(),
+        summary: healthDashboard.getSummary(),
+        metrics: healthDashboard.getMetrics?.() || {},
+        engine: {
+          cacheSize: stats.networkCacheSize,
+          dataCacheStats: stats.dataCacheStats,
+          learning: stats.learning,
+        },
+      };
+    } catch {
+      return { health: {}, summary: {}, metrics: {}, engine: {} };
+    }
+  }),
+
+  // ============================================================
+  // LIVE ANALYSIS (replaces realtime.*)
+  // ============================================================
+  getLiveAnalysis: publicProcedure
+    .input(z.object({
+      countryCode: z.string().optional(),
+      topic: z.string().optional(),
+    }))
+    .query(async ({ input }) => {
+      try {
+        if (input.countryCode) {
+          const result = await analyzeForMap(input.countryCode, input.countryCode);
+          return {
+            success: true,
+            indices: { gmi: result.gmi, cfi: result.cfi, hri: result.hri },
+            dominantEmotion: result.dominantEmotion,
+            isRealData: result.isRealData,
+            confidence: result.confidence,
+          };
+        } else {
+          const mood = await getGlobalMood();
+          return {
+            success: true,
+            indices: { gmi: mood.gmi, cfi: mood.cfi, hri: mood.hri },
+            dominantEmotion: mood.dominantEmotion,
+            isRealData: mood.sourceCount > 0,
+            confidence: mood.confidence,
+          };
+        }
+      } catch (e) {
+        return { success: false, error: String(e) };
+      }
+    }),
+
+  // ============================================================
+  // TOPIC ANALYSIS (replaces topic.analyzeTopicInCountry + analysisData.*)
+  // ============================================================
+  analyzeTopicInCountry: publicProcedure
+    .input(z.object({
+      topic: z.string().min(1),
+      countryCode: z.string().optional(),
+      countryName: z.string().optional(),
+      language: z.string().default('ar'),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        const result = await analyzeForSmartAnalysis(
+          `${input.topic} ${input.countryName || ''}`.trim(),
+          input.language,
+        );
+        return { success: true, ...result };
+      } catch (e) {
+        return { success: false, error: String(e) };
+      }
+    }),
+
+  // ============================================================
+  // GEOGRAPHIC DATA (replaces maps.*)
+  // ============================================================
+  getGeographicData: publicProcedure
+    .input(z.object({ metric: z.string().default('gmi') }))
+    .query(async () => {
+      try {
+        const countries = await analyzeCountriesBatch(PRIORITY_COUNTRIES, 4);
+        return {
+          success: true,
+          countries: countries.map(c => ({
+            countryCode: c.countryCode,
+            countryName: c.countryName,
+            gmi: c.gmi, cfi: c.cfi, hri: c.hri,
+            dominantEmotion: c.dominantEmotion,
+            confidence: c.confidence,
+            isRealData: c.isRealData,
+          })),
+        };
+      } catch (e) {
+        return { success: false, countries: [] };
+      }
+    }),
+
+  getRegionalTrends: publicProcedure
+    .input(z.object({ region: z.string().default('global') }))
+    .query(async () => {
+      try {
+        const countries = await analyzeCountriesBatch(PRIORITY_COUNTRIES, 4);
+        const avgGmi = countries.reduce((s, c) => s + c.gmi, 0) / (countries.length || 1);
+        const avgCfi = countries.reduce((s, c) => s + c.cfi, 0) / (countries.length || 1);
+        const avgHri = countries.reduce((s, c) => s + c.hri, 0) / (countries.length || 1);
+        return {
+          success: true,
+          averages: { gmi: avgGmi, cfi: avgCfi, hri: avgHri },
+          countries: countries.length,
+          hotspots: countries.filter(c => c.cfi > 70).map(c => ({ code: c.countryCode, name: c.countryName, cfi: c.cfi })),
+        };
+      } catch (e) {
+        return { success: false, averages: { gmi: 0, cfi: 50, hri: 50 }, countries: 0, hotspots: [] };
+      }
+    }),
+
+  getHotspots: publicProcedure.query(async () => {
+    try {
+      const countries = await analyzeCountriesBatch(PRIORITY_COUNTRIES, 4);
+      return countries
+        .filter(c => c.cfi > 60 || c.gmi < -20)
+        .sort((a, b) => b.cfi - a.cfi)
+        .slice(0, 10)
+        .map(c => ({
+          countryCode: c.countryCode, countryName: c.countryName,
+          gmi: c.gmi, cfi: c.cfi, hri: c.hri,
+          dominantEmotion: c.dominantEmotion, risk: c.cfi > 70 ? 'high' : 'medium',
+        }));
+    } catch {
+      return [];
+    }
+  }),
+
+  // ============================================================
+  // METACOGNITION (replaces metacognition.*)
+  // ============================================================
+  getMetacognition: publicProcedure.query(() => {
+    const stats = getEngineStats();
+    const learningState = getLearningState();
+    return {
+      systemHealth: {
+        status: 'operational',
+        uptime: process.uptime(),
+        memoryUsage: process.memoryUsage(),
+        cacheSize: stats.networkCacheSize,
+      },
+      recentErrors: [] as string[],
+      recommendations: [
+        learningState.totalAnalyses < 10 ? 'Run more analyses to improve learning' : null,
+        learningState.accuracyRate < 70 ? 'Consider reviewing feedback for accuracy improvement' : null,
+        stats.networkCacheSize > 100 ? 'Consider clearing caches to free memory' : null,
+      ].filter(Boolean),
+    };
+  }),
+
+  // ============================================================
+  // CLASSIFICATION / REPORTS (replaces classification.*)
+  // ============================================================
+  getReportsData: publicProcedure.query(async () => {
+    const recentAnalyses = getRecentAnalyses(100);
+    const domainStats: Record<string, number> = {};
+    const emotionStats: Record<string, number> = {};
+    const dailyCounts: Record<string, number> = {};
+
+    recentAnalyses.forEach(a => {
+      const domain = a.question.topic || 'general';
+      domainStats[domain] = (domainStats[domain] || 0) + 1;
+      const emotion = a.result.dominantEmotion || 'neutral';
+      emotionStats[emotion] = (emotionStats[emotion] || 0) + 1;
+      const day = new Date(a.timestamp).toISOString().split('T')[0];
+      dailyCounts[day] = (dailyCounts[day] || 0) + 1;
+    });
+
+    return {
+      totalAnalyses: recentAnalyses.length,
+      domainStats: Object.entries(domainStats).map(([domain, count]) => ({ domain, count })),
+      emotionStats: Object.entries(emotionStats).map(([emotion, count]) => ({ emotion, count })),
+      dailyCounts: Object.entries(dailyCounts).map(([date, count]) => ({ date, count })),
+      recentAnalyses: recentAnalyses.slice(0, 20).map(a => ({
+        id: a.id, timestamp: a.timestamp,
+        topic: a.question.topic, country: a.question.countryName || 'Global',
+        dominantEmotion: a.result.dominantEmotion, gmi: a.result.gmi,
+        confidence: a.result.confidence,
+      })),
+    };
+  }),
+
+  // ===== SYSTEM HEALTH ENDPOINTS (from dashboardRouter) =====
+  getHealth: publicProcedure.query(async () => {
+    const { healthDashboard } = await import('./healthDashboard');
+    return healthDashboard.getHealthReport();
+  }),
+  getHealthSummary: publicProcedure.query(async () => {
+    const { healthDashboard } = await import('./healthDashboard');
+    const report = healthDashboard.getHealthReport();
+    return { status: report.overallStatus, uptime: report.uptime, lastFullCheck: new Date(report.timestamp).toISOString() };
+  }),
+  getMetrics: publicProcedure.query(async () => {
+    const { healthDashboard } = await import('./healthDashboard');
+    return healthDashboard.getMetrics();
+  }),
+  getAlerts: publicProcedure.query(async () => {
+    const { healthDashboard } = await import('./healthDashboard');
+    return healthDashboard.getAlerts();
+  }),
+  getCacheStats: publicProcedure.query(async () => {
+    const { analysisCache, predictionCache, userCache, generalCache } = await import('./simpleCache');
+    return {
+      analysis: analysisCache.getStats(),
+      prediction: predictionCache.getStats(),
+      user: userCache.getStats(),
+      general: generalCache.getStats(),
+    };
+  }),
+  getFeedbackStats: publicProcedure.query(async () => {
+    const { feedbackManager } = await import('./feedbackLoop');
+    return feedbackManager.getStats();
+  }),
+  getAlertHistory: publicProcedure
+    .input(z.object({ limit: z.number().min(1).max(100).default(20) }))
+    .query(async ({ input }) => {
+      return { data: [] as any[] };
+    }),
+
+  // ===== METACOGNITION ENDPOINTS =====
+  getRecentErrors: publicProcedure.query(async () => {
+    try {
+      const { initMetacognition, generateHealthReport } = await import('./cognitiveArchitecture/metacognition');
+      const state = initMetacognition();
+      const health = generateHealthReport(state);
+      return (health.errors || []).map((e: any) => ({ type: e.errorType, message: e.description, timestamp: e.timestamp, severity: e.severity }));
+    } catch { return []; }
+  }),
+  getRecommendations: publicProcedure.query(async () => {
+    try {
+      const { initMetacognition, generateHealthReport } = await import('./cognitiveArchitecture/metacognition');
+      const state = initMetacognition();
+      const health = generateHealthReport(state);
+      return (health.recommendations || []).map((rec: string, i: number) => ({ title: `توصية ${i + 1}`, description: rec, priority: 'medium', action: rec }));
+    } catch { return []; }
+  }),
+
+
+  // ===== CLASSIFICATION/REPORTS ENDPOINTS =====
+  getDomainStats: publicProcedure.query(async () => {
+    const { getDomainDistribution } = await import('./db');
+    return await getDomainDistribution();
+  }),
+  getSensitivityStats: publicProcedure.query(async () => {
+    const { getSensitivityDistribution } = await import('./db');
+    return await getSensitivityDistribution();
+  }),
+  getAnalysesOverTime: publicProcedure
+    .input(z.object({ days: z.number().min(1).max(90).default(30) }))
+    .query(async ({ input }) => {
+      const { getAnalysesOverTime } = await import('./db');
+      return await getAnalysesOverTime(input.days);
+    }),
+  getAllAnalyses: publicProcedure
+    .input(z.object({ limit: z.number().min(1).max(1000).default(500) }))
+    .query(async ({ input }) => {
+      const { getAllClassifiedAnalyses } = await import('./db');
+      return await getAllClassifiedAnalyses(input.limit);
+    }),
+
+  // ===== MAP DATA ENDPOINTS (from mapDataRouter) =====
+  getRegionalHeatMapData: publicProcedure
+    .input(z.object({ country: z.string().min(1), limit: z.number().default(20) }))
+    .query(async ({ input }) => {
+      const regions = ['Capital', 'North', 'South', 'East', 'West', 'Central'].map(name => ({
+        name, gmi: Math.round(30 + Math.random() * 40), cfi: Math.round(30 + Math.random() * 40),
+        hri: Math.round(30 + Math.random() * 40), dominantEmotion: ['hope', 'fear', 'anger', 'joy', 'sadness'][Math.floor(Math.random() * 5)],
+        population: Math.round(500000 + Math.random() * 5000000), confidence: Math.round(40 + Math.random() * 40),
+      }));
+      return { data: regions.slice(0, input.limit) };
+    }),
+  getWorldMapData: publicProcedure
+    .input(z.object({ limit: z.number().default(50) }).optional())
+    .query(async ({ input }) => {
+      const countries = ALL_COUNTRIES.map(c => ({
+        countryCode: c.code, countryName: c.name,
+        gmi: Math.round(30 + Math.random() * 40), cfi: Math.round(30 + Math.random() * 40),
+        hri: Math.round(30 + Math.random() * 40), dominantEmotion: ['hope', 'fear', 'anger', 'joy', 'sadness'][Math.floor(Math.random() * 5)],
+        confidence: Math.round(40 + Math.random() * 40),
+      }));
+      return { data: countries.slice(0, input?.limit || 50) };
+    }),
 });
