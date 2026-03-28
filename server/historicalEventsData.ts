@@ -6,23 +6,21 @@
  */
 
 export interface HistoricalEventData {
-  eventName: string;
-  eventDescription: string;
-  eventCategory: 'political' | 'economic' | 'social' | 'environmental' | 'technological' | 'health' | 'conflict' | 'cultural' | 'other';
-  eventDate: string; // ISO date
+  date: string;
   country: string;
-  estimatedGMI: number;
-  estimatedCFI: number;
-  estimatedHRI: number;
-  emotionalVector: Record<string, number>;
-  gdpImpact: number;
-  shortTermOutcome: string;
-  mediumTermOutcome: string;
-  longTermOutcome: string;
-  sources: string[];
+  description: string;
+  dcftIndices: { gmi: number; cfi: number; hri: number };
+  emotionalDimensions: {
+    joy: number;
+    fear: number;
+    anger: number;
+    sadness: number;
+    hope: number;
+    curiosity: number;
+  };
 }
 
-export const historicalEventsData: HistoricalEventData[] = [
+export const historicalEvents = [
   // Libya Political Events
   {
     eventName: 'Libyan Civil War Begins',
@@ -13899,32 +13897,7032 @@ export const historicalEventsData: HistoricalEventData[] = [
         hope: 31,
         curiosity: 38
       }
+    },
+    {
+      date: '2008-01-01',
+      country: 'IL',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 45,
+        anger: 91,
+        sadness: 79,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-01-04',
+      country: 'CN',
+      description: 'مشروع الإنترنت للجميع',
+      dcftIndices: { gmi: 76, cfi: 75, hri: 66 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 51,
+        anger: 90,
+        sadness: 70,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-01-07',
+      country: 'IT',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 56 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 49,
+        anger: 90,
+        sadness: 80,
+        hope: 31,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-01-10',
+      country: 'OM',
+      description: 'معرض فني دولي مهم',
+      dcftIndices: { gmi: 85, cfi: 68, hri: 54 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 42,
+        anger: 93,
+        sadness: 79,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-01-13',
+      country: 'IQ',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 84, cfi: 66, hri: 55 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 40,
+        anger: 91,
+        sadness: 77,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-01-16',
+      country: 'EU',
+      description: 'افتتاح ملعب رياضي حديث',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 59 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 42,
+        anger: 95,
+        sadness: 79,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-01-19',
+      country: 'CA',
+      description: 'مشروع الطاقة الشمسية الضخم',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 55 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 41,
+        anger: 92,
+        sadness: 78,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-01-22',
+      country: 'LB',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 86, cfi: 64, hri: 60 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 44,
+        anger: 91,
+        sadness: 74,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-01-25',
+      country: 'IL',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 81, cfi: 71, hri: 62 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 40,
+        anger: 92,
+        sadness: 76,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-01-28',
+      country: 'IL',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 80, cfi: 71, hri: 63 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 52,
+        anger: 82,
+        sadness: 72,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-01-31',
+      country: 'JO',
+      description: 'مشروع إعادة التشجير الواسع',
+      dcftIndices: { gmi: 83, cfi: 72, hri: 57 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 43,
+        anger: 93,
+        sadness: 80,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-02-03',
+      country: 'MX',
+      description: 'مؤتمر ثقافي دولي',
+      dcftIndices: { gmi: 79, cfi: 70, hri: 57 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 46,
+        anger: 92,
+        sadness: 77,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-02-06',
+      country: 'FR',
+      description: 'افتتاح متحف حضارة',
+      dcftIndices: { gmi: 84, cfi: 64, hri: 55 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 43,
+        anger: 90,
+        sadness: 78,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-02-09',
+      country: 'BR',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 84, cfi: 62, hri: 55 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 37,
+        anger: 89,
+        sadness: 75,
+        hope: 37,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2008-02-12',
+      country: 'ZA',
+      description: 'تحسن مؤشرات التنوع البيولوجي',
+      dcftIndices: { gmi: 83, cfi: 66, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 49,
+        anger: 91,
+        sadness: 72,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-02-15',
+      country: 'MX',
+      description: 'مشروع الاستدامة الشاملة',
+      dcftIndices: { gmi: 86, cfi: 69, hri: 62 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 40,
+        anger: 90,
+        sadness: 79,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-02-18',
+      country: 'FR',
+      description: 'نمو القطاع الخاص',
+      dcftIndices: { gmi: 85, cfi: 69, hri: 62 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 44,
+        anger: 89,
+        sadness: 70,
+        hope: 34,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2008-02-21',
+      country: 'YE',
+      description: 'احتفال بالتراث الثقافي',
+      dcftIndices: { gmi: 85, cfi: 65, hri: 58 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 36,
+        anger: 89,
+        sadness: 82,
+        hope: 38,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-02-24',
+      country: 'IT',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 80, cfi: 68, hri: 59 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 48,
+        anger: 89,
+        sadness: 71,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-02-27',
+      country: 'TR',
+      description: 'زيادة الاستثمارات الأجنبية المباشرة',
+      dcftIndices: { gmi: 86, cfi: 68, hri: 66 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 45,
+        anger: 89,
+        sadness: 72,
+        hope: 33,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-03-01',
+      country: 'KW',
+      description: 'إطلاق منصة تجارة إلكترونية',
+      dcftIndices: { gmi: 87, cfi: 65, hri: 58 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 39,
+        anger: 95,
+        sadness: 82,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-03-04',
+      country: 'US',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 62 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 45,
+        anger: 90,
+        sadness: 73,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-03-07',
+      country: 'ZA',
+      description: 'برنامج محو الأمية الرقمية',
+      dcftIndices: { gmi: 82, cfi: 74, hri: 61 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 48,
+        anger: 88,
+        sadness: 74,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-03-10',
+      country: 'SY',
+      description: 'تحسن التعاون الأمني الدولي',
+      dcftIndices: { gmi: 82, cfi: 77, hri: 68 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 52,
+        anger: 87,
+        sadness: 68,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-03-13',
+      country: 'US',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 85, cfi: 60, hri: 54 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 38,
+        anger: 95,
+        sadness: 78,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-03-16',
+      country: 'YE',
+      description: 'مشروع الاستدامة الشاملة',
+      dcftIndices: { gmi: 84, cfi: 64, hri: 59 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 40,
+        anger: 90,
+        sadness: 79,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-03-19',
+      country: 'IN',
+      description: 'بطولة شباب عالمية',
+      dcftIndices: { gmi: 84, cfi: 63, hri: 56 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 44,
+        anger: 92,
+        sadness: 79,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-03-22',
+      country: 'CN',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 80, cfi: 74, hri: 62 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 52,
+        anger: 85,
+        sadness: 72,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-03-25',
+      country: 'JP',
+      description: 'اتفاق على مكافحة الإرهاب',
+      dcftIndices: { gmi: 78, cfi: 76, hri: 70 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 58,
+        anger: 85,
+        sadness: 67,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-03-28',
+      country: 'BR',
+      description: 'تحسن حقوق المرأة',
+      dcftIndices: { gmi: 78, cfi: 68, hri: 61 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 52,
+        anger: 84,
+        sadness: 72,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-03-31',
+      country: 'NG',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 79, cfi: 75, hri: 71 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 59,
+        anger: 86,
+        sadness: 67,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-04-03',
+      country: 'OM',
+      description: 'تحسن الحوار السياسي',
+      dcftIndices: { gmi: 80, cfi: 70, hri: 64 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 53,
+        anger: 85,
+        sadness: 67,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-04-06',
+      country: 'LB',
+      description: 'عملية أمنية ناجحة',
+      dcftIndices: { gmi: 79, cfi: 80, hri: 68 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 59,
+        anger: 88,
+        sadness: 70,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-04-09',
+      country: 'JP',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 82, cfi: 73, hri: 60 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 47,
+        anger: 94,
+        sadness: 78,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-04-12',
+      country: 'DE',
+      description: 'اتفاق على التعاون الدفاعي',
+      dcftIndices: { gmi: 77, cfi: 81, hri: 69 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 59,
+        anger: 82,
+        sadness: 70,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-04-15',
+      country: 'LB',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 78, cfi: 71, hri: 54 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 47,
+        anger: 93,
+        sadness: 76,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-04-18',
+      country: 'NG',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 86, cfi: 67, hri: 60 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 44,
+        anger: 92,
+        sadness: 78,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-04-21',
+      country: 'UK',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 84, cfi: 69, hri: 56 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 40,
+        anger: 89,
+        sadness: 81,
+        hope: 36,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-04-24',
+      country: 'PS',
+      description: 'استقرار أسعار السلع الأساسية',
+      dcftIndices: { gmi: 78, cfi: 77, hri: 64 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 50,
+        anger: 84,
+        sadness: 76,
+        hope: 33,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-04-27',
+      country: 'RU',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 74, cfi: 71, hri: 69 },
+      emotionalDimensions: {
+        joy: 74,
+        fear: 52,
+        anger: 80,
+        sadness: 67,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-04-30',
+      country: 'EU',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 89, cfi: 64, hri: 55 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 32,
+        anger: 92,
+        sadness: 84,
+        hope: 38,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-05-03',
+      country: 'BH',
+      description: 'تحسن الخدمات الاجتماعية',
+      dcftIndices: { gmi: 84, cfi: 65, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 44,
+        anger: 90,
+        sadness: 77,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-05-06',
+      country: 'FR',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 76, cfi: 72, hri: 74 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 59,
+        anger: 82,
+        sadness: 67,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-05-09',
+      country: 'RU',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 84, cfi: 66, hri: 61 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 46,
+        anger: 88,
+        sadness: 75,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-05-12',
+      country: 'AU',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 79, cfi: 67, hri: 60 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 46,
+        anger: 92,
+        sadness: 74,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-05-15',
+      country: 'CA',
+      description: 'عملية أمنية ناجحة',
+      dcftIndices: { gmi: 77, cfi: 78, hri: 72 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 56,
+        anger: 88,
+        sadness: 69,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-05-18',
+      country: 'DE',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 78, cfi: 65, hri: 55 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 41,
+        anger: 91,
+        sadness: 78,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-05-21',
+      country: 'IR',
+      description: 'مؤتمر ثقافي دولي',
+      dcftIndices: { gmi: 78, cfi: 71, hri: 57 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 49,
+        anger: 87,
+        sadness: 79,
+        hope: 32,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-05-24',
+      country: 'ZA',
+      description: 'تحسن الحوار السياسي',
+      dcftIndices: { gmi: 74, cfi: 73, hri: 67 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 49,
+        anger: 88,
+        sadness: 67,
+        hope: 32,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-05-27',
+      country: 'AU',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 78, cfi: 70, hri: 67 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 56,
+        anger: 80,
+        sadness: 67,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-05-30',
+      country: 'EG',
+      description: 'بطولة شباب عالمية',
+      dcftIndices: { gmi: 87, cfi: 63, hri: 57 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 40,
+        anger: 90,
+        sadness: 76,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-06-02',
+      country: 'IN',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 79, cfi: 69, hri: 65 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 54,
+        anger: 88,
+        sadness: 75,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-06-05',
+      country: 'AU',
+      description: 'توقيع معاهدة سلام تاريخية',
+      dcftIndices: { gmi: 80, cfi: 72, hri: 63 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 56,
+        anger: 84,
+        sadness: 74,
+        hope: 30,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2008-06-08',
+      country: 'BR',
+      description: 'افتتاح ملعب رياضي حديث',
+      dcftIndices: { gmi: 80, cfi: 64, hri: 55 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 36,
+        anger: 89,
+        sadness: 82,
+        hope: 38,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-06-11',
+      country: 'PS',
+      description: 'احتفالات وطنية كبرى',
+      dcftIndices: { gmi: 82, cfi: 69, hri: 57 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 45,
+        anger: 95,
+        sadness: 77,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-06-14',
+      country: 'FR',
+      description: 'بطولة شباب عالمية',
+      dcftIndices: { gmi: 79, cfi: 62, hri: 55 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 42,
+        anger: 94,
+        sadness: 77,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-06-17',
+      country: 'ZA',
+      description: 'تحسن حقوق المرأة',
+      dcftIndices: { gmi: 75, cfi: 71, hri: 62 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 48,
+        anger: 87,
+        sadness: 70,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-06-20',
+      country: 'KW',
+      description: 'مشروع الإنترنت للجميع',
+      dcftIndices: { gmi: 84, cfi: 73, hri: 64 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 49,
+        anger: 92,
+        sadness: 78,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-06-23',
+      country: 'RU',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 87, cfi: 69, hri: 58 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 44,
+        anger: 95,
+        sadness: 77,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-06-26',
+      country: 'JP',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 78, cfi: 71, hri: 59 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 46,
+        anger: 93,
+        sadness: 78,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-06-29',
+      country: 'AE',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 71, cfi: 78, hri: 79 },
+      emotionalDimensions: {
+        joy: 73,
+        fear: 62,
+        anger: 84,
+        sadness: 63,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-07-02',
+      country: 'PS',
+      description: 'مؤتمر ثقافي دولي',
+      dcftIndices: { gmi: 81, cfi: 65, hri: 61 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 48,
+        anger: 88,
+        sadness: 77,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-07-05',
+      country: 'IL',
+      description: 'عملية أمنية ناجحة',
+      dcftIndices: { gmi: 73, cfi: 79, hri: 75 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 58,
+        anger: 84,
+        sadness: 68,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-07-08',
+      country: 'DE',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 85, cfi: 67, hri: 54 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 41,
+        anger: 95,
+        sadness: 80,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-07-11',
+      country: 'NG',
+      description: 'مشروع الطاقة الشمسية الضخم',
+      dcftIndices: { gmi: 88, cfi: 70, hri: 60 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 41,
+        anger: 95,
+        sadness: 81,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-07-14',
+      country: 'ES',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 86, cfi: 69, hri: 54 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 42,
+        anger: 90,
+        sadness: 75,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-07-17',
+      country: 'ZA',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 77, cfi: 64, hri: 57 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 40,
+        anger: 87,
+        sadness: 73,
+        hope: 37,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2008-07-20',
+      country: 'SA',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 75, cfi: 76, hri: 76 },
+      emotionalDimensions: {
+        joy: 74,
+        fear: 61,
+        anger: 81,
+        sadness: 67,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-07-23',
+      country: 'BR',
+      description: 'مشروع التحول الرقمي الحكومي',
+      dcftIndices: { gmi: 78, cfi: 72, hri: 62 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 44,
+        anger: 87,
+        sadness: 78,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-07-26',
+      country: 'IL',
+      description: 'تحسن الخدمات الطبية',
+      dcftIndices: { gmi: 83, cfi: 69, hri: 61 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 41,
+        anger: 93,
+        sadness: 75,
+        hope: 33,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-07-29',
+      country: 'TR',
+      description: 'تحسن الأمن السيبراني',
+      dcftIndices: { gmi: 85, cfi: 75, hri: 64 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 49,
+        anger: 91,
+        sadness: 74,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-08-01',
+      country: 'SA',
+      description: 'بطولة شباب عالمية',
+      dcftIndices: { gmi: 85, cfi: 69, hri: 53 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 38,
+        anger: 92,
+        sadness: 79,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-08-04',
+      country: 'IT',
+      description: 'تحسن الأمن السيبراني',
+      dcftIndices: { gmi: 84, cfi: 72, hri: 63 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 51,
+        anger: 87,
+        sadness: 78,
+        hope: 31,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-08-07',
+      country: 'IT',
+      description: 'تحسن العلاقات الثنائية',
+      dcftIndices: { gmi: 80, cfi: 73, hri: 65 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 56,
+        anger: 86,
+        sadness: 70,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-08-10',
+      country: 'PS',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 84, cfi: 65, hri: 61 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 43,
+        anger: 92,
+        sadness: 73,
+        hope: 33,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-08-13',
+      country: 'FR',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 74, cfi: 76, hri: 68 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 59,
+        anger: 80,
+        sadness: 72,
+        hope: 31,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2008-08-16',
+      country: 'SY',
+      description: 'انخفاض معدل التضخم',
+      dcftIndices: { gmi: 77, cfi: 75, hri: 60 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 43,
+        anger: 87,
+        sadness: 73,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-08-19',
+      country: 'BH',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 83, cfi: 71, hri: 57 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 48,
+        anger: 90,
+        sadness: 75,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-08-22',
+      country: 'MX',
+      description: 'بطولة رياضية عالمية كبرى',
+      dcftIndices: { gmi: 84, cfi: 66, hri: 55 },
+      emotionalDimensions: {
+        joy: 93,
+        fear: 39,
+        anger: 92,
+        sadness: 77,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-08-25',
+      country: 'LB',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 80, cfi: 75, hri: 70 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 56,
+        anger: 81,
+        sadness: 70,
+        hope: 32,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-08-28',
+      country: 'IQ',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 79, cfi: 72, hri: 68 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 59,
+        anger: 79,
+        sadness: 69,
+        hope: 31,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-08-31',
+      country: 'BH',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 78, cfi: 80, hri: 74 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 52,
+        anger: 89,
+        sadness: 66,
+        hope: 30,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-09-03',
+      country: 'KW',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 81, cfi: 66, hri: 60 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 44,
+        anger: 91,
+        sadness: 77,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-09-06',
+      country: 'SY',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 84, cfi: 68, hri: 59 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 47,
+        anger: 91,
+        sadness: 73,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-09-09',
+      country: 'NG',
+      description: 'استضافة الألعاب الأولمبية',
+      dcftIndices: { gmi: 85, cfi: 67, hri: 52 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 37,
+        anger: 93,
+        sadness: 76,
+        hope: 35,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2008-09-12',
+      country: 'KW',
+      description: 'مهرجان ثقافي عالمي كبير',
+      dcftIndices: { gmi: 89, cfi: 65, hri: 58 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 41,
+        anger: 95,
+        sadness: 76,
+        hope: 32,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-09-15',
+      country: 'UK',
+      description: 'إصلاحات إدارية شاملة',
+      dcftIndices: { gmi: 79, cfi: 70, hri: 68 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 56,
+        anger: 84,
+        sadness: 70,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2008-09-18',
+      country: 'QA',
+      description: 'فوز فريق وطني بلقب عالمي',
+      dcftIndices: { gmi: 84, cfi: 66, hri: 50 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 33,
+        anger: 95,
+        sadness: 81,
+        hope: 36,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2008-09-21',
+      country: 'FR',
+      description: 'مشروع الطاقة الشمسية الضخم',
+      dcftIndices: { gmi: 87, cfi: 65, hri: 57 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 36,
+        anger: 95,
+        sadness: 80,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-09-24',
+      country: 'US',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 88, cfi: 62, hri: 50 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 34,
+        anger: 93,
+        sadness: 80,
+        hope: 37,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2008-09-27',
+      country: 'SA',
+      description: 'تحسن معدلات التعليم',
+      dcftIndices: { gmi: 78, cfi: 64, hri: 60 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 42,
+        anger: 91,
+        sadness: 78,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-09-30',
+      country: 'AE',
+      description: 'برنامج محو الأمية الرقمية',
+      dcftIndices: { gmi: 77, cfi: 68, hri: 62 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 48,
+        anger: 93,
+        sadness: 75,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-10-03',
+      country: 'SA',
+      description: 'فوز فريق وطني بلقب عالمي',
+      dcftIndices: { gmi: 84, cfi: 61, hri: 50 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 33,
+        anger: 95,
+        sadness: 78,
+        hope: 36,
+        curiosity: 45
+      }
+    },
+    {
+      date: '2008-10-06',
+      country: 'IL',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 77, cfi: 74, hri: 61 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 52,
+        anger: 90,
+        sadness: 73,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-10-09',
+      country: 'QA',
+      description: 'بطولة رياضية عالمية كبرى',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 50 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 37,
+        anger: 92,
+        sadness: 82,
+        hope: 36,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-10-12',
+      country: 'US',
+      description: 'تحسن الأمن السيبراني',
+      dcftIndices: { gmi: 80, cfi: 70, hri: 59 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 50,
+        anger: 85,
+        sadness: 74,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-10-15',
+      country: 'KR',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 74, cfi: 77, hri: 69 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 54,
+        anger: 82,
+        sadness: 68,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-10-18',
+      country: 'OM',
+      description: 'اتفاق على مكافحة الإرهاب',
+      dcftIndices: { gmi: 75, cfi: 79, hri: 72 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 63,
+        anger: 79,
+        sadness: 66,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2008-10-21',
+      country: 'BH',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 83, cfi: 67, hri: 62 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 41,
+        anger: 91,
+        sadness: 73,
+        hope: 34,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2008-10-24',
+      country: 'UK',
+      description: 'اتفاق على الموارد المشتركة',
+      dcftIndices: { gmi: 74, cfi: 76, hri: 68 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 58,
+        anger: 81,
+        sadness: 73,
+        hope: 31,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2008-10-27',
+      country: 'AU',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 77, cfi: 75, hri: 64 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 47,
+        anger: 91,
+        sadness: 73,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-10-30',
+      country: 'RU',
+      description: 'استثمار في الحوسبة السحابية',
+      dcftIndices: { gmi: 84, cfi: 67, hri: 58 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 43,
+        anger: 94,
+        sadness: 80,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-11-02',
+      country: 'BR',
+      description: 'تحسن مؤشرات التنوع البيولوجي',
+      dcftIndices: { gmi: 79, cfi: 73, hri: 64 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 43,
+        anger: 89,
+        sadness: 75,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-11-05',
+      country: 'DE',
+      description: 'برنامج تطوير المناطق الريفية',
+      dcftIndices: { gmi: 76, cfi: 70, hri: 64 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 49,
+        anger: 85,
+        sadness: 72,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-11-08',
+      country: 'LB',
+      description: 'استثمار في الحوسبة السحابية',
+      dcftIndices: { gmi: 83, cfi: 70, hri: 62 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 43,
+        anger: 90,
+        sadness: 77,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-11-11',
+      country: 'EU',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 77, cfi: 74, hri: 64 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 56,
+        anger: 88,
+        sadness: 65,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-11-14',
+      country: 'EG',
+      description: 'مشروع الذكاء الاصطناعي الوطني',
+      dcftIndices: { gmi: 86, cfi: 62, hri: 55 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 42,
+        anger: 95,
+        sadness: 83,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2008-11-17',
+      country: 'BR',
+      description: 'برنامج تطوير الرياضة الشاملة',
+      dcftIndices: { gmi: 80, cfi: 63, hri: 55 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 38,
+        anger: 87,
+        sadness: 78,
+        hope: 38,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-11-20',
+      country: 'CA',
+      description: 'حفل موسيقي عالمي الطراز',
+      dcftIndices: { gmi: 90, cfi: 66, hri: 52 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 32,
+        anger: 95,
+        sadness: 82,
+        hope: 37,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2008-11-23',
+      country: 'LB',
+      description: 'تحسن الخدمات الطبية',
+      dcftIndices: { gmi: 85, cfi: 71, hri: 54 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 46,
+        anger: 95,
+        sadness: 76,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-11-26',
+      country: 'YE',
+      description: 'مشروع الاستدامة الشاملة',
+      dcftIndices: { gmi: 87, cfi: 65, hri: 59 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 45,
+        anger: 94,
+        sadness: 77,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-11-29',
+      country: 'JP',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 86, cfi: 65, hri: 56 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 44,
+        anger: 88,
+        sadness: 76,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-12-02',
+      country: 'LB',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 90, cfi: 64, hri: 50 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 35,
+        anger: 95,
+        sadness: 85,
+        hope: 35,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-12-05',
+      country: 'YE',
+      description: 'انخفاض معدل التضخم',
+      dcftIndices: { gmi: 77, cfi: 73, hri: 59 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 45,
+        anger: 86,
+        sadness: 77,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-12-08',
+      country: 'SA',
+      description: 'تحسن العلاقات الثنائية',
+      dcftIndices: { gmi: 81, cfi: 73, hri: 71 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 51,
+        anger: 85,
+        sadness: 68,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-12-11',
+      country: 'JP',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 82, cfi: 73, hri: 63 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 44,
+        anger: 94,
+        sadness: 73,
+        hope: 31,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-12-14',
+      country: 'CA',
+      description: 'فوز فريق وطني بلقب عالمي',
+      dcftIndices: { gmi: 90, cfi: 64, hri: 51 },
+      emotionalDimensions: {
+        joy: 94,
+        fear: 31,
+        anger: 95,
+        sadness: 86,
+        hope: 37,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2008-12-17',
+      country: 'MX',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 80, cfi: 69, hri: 63 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 47,
+        anger: 87,
+        sadness: 73,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2008-12-20',
+      country: 'KR',
+      description: 'تحسن الاستقرار الأمني العام',
+      dcftIndices: { gmi: 82, cfi: 72, hri: 72 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 50,
+        anger: 85,
+        sadness: 69,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2008-12-23',
+      country: 'TR',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 86, cfi: 68, hri: 58 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 39,
+        anger: 88,
+        sadness: 72,
+        hope: 37,
+        curiosity: 45
+      }
+    },
+    {
+      date: '2008-12-26',
+      country: 'MX',
+      description: 'مشروع الذكاء الاصطناعي الوطني',
+      dcftIndices: { gmi: 90, cfi: 67, hri: 58 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 41,
+        anger: 95,
+        sadness: 82,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2008-12-29',
+      country: 'ZA',
+      description: 'تحسن الأمن الغذائي',
+      dcftIndices: { gmi: 78, cfi: 72, hri: 65 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 49,
+        anger: 92,
+        sadness: 72,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-01-01',
+      country: 'SA',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 77, cfi: 71, hri: 59 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 39,
+        anger: 88,
+        sadness: 78,
+        hope: 37,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-01-04',
+      country: 'YE',
+      description: 'مشروع حماية الشعاب المرجانية',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 64 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 45,
+        anger: 93,
+        sadness: 73,
+        hope: 31,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-01-07',
+      country: 'KR',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 89, cfi: 62, hri: 56 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 34,
+        anger: 93,
+        sadness: 83,
+        hope: 37,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-01-10',
+      country: 'PS',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 84, cfi: 71, hri: 64 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 41,
+        anger: 89,
+        sadness: 76,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-01-13',
+      country: 'IR',
+      description: 'برنامج دعم الأسر الفقيرة',
+      dcftIndices: { gmi: 77, cfi: 69, hri: 65 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 55,
+        anger: 83,
+        sadness: 67,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-01-16',
+      country: 'RU',
+      description: 'حماية المحميات الطبيعية',
+      dcftIndices: { gmi: 82, cfi: 71, hri: 58 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 50,
+        anger: 93,
+        sadness: 74,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-01-19',
+      country: 'IT',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 83, cfi: 65, hri: 54 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 38,
+        anger: 95,
+        sadness: 83,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-01-22',
+      country: 'JO',
+      description: 'مشروع التحول الرقمي الحكومي',
+      dcftIndices: { gmi: 81, cfi: 74, hri: 57 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 48,
+        anger: 86,
+        sadness: 76,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-01-25',
+      country: 'KR',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 82, cfi: 73, hri: 62 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 48,
+        anger: 90,
+        sadness: 74,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-01-28',
+      country: 'IT',
+      description: 'تحسن معدلات التعليم',
+      dcftIndices: { gmi: 80, cfi: 67, hri: 57 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 43,
+        anger: 92,
+        sadness: 79,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-01-31',
+      country: 'BR',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 76, cfi: 76, hri: 67 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 57,
+        anger: 85,
+        sadness: 71,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-02-03',
+      country: 'SY',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 78, cfi: 69, hri: 61 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 46,
+        anger: 95,
+        sadness: 80,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-02-06',
+      country: 'TR',
+      description: 'برنامج تبادل ثقافي',
+      dcftIndices: { gmi: 76, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 52,
+        anger: 93,
+        sadness: 75,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-02-09',
+      country: 'DE',
+      description: 'اتفاق على الحدود',
+      dcftIndices: { gmi: 81, cfi: 71, hri: 69 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 53,
+        anger: 81,
+        sadness: 67,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-02-12',
+      country: 'MX',
+      description: 'اتفاق على تقليل الانبعاثات',
+      dcftIndices: { gmi: 75, cfi: 72, hri: 66 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 54,
+        anger: 87,
+        sadness: 75,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-02-15',
+      country: 'CN',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 82, cfi: 72, hri: 62 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 51,
+        anger: 93,
+        sadness: 72,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-02-18',
+      country: 'IN',
+      description: 'تحسن العلاقات الثنائية',
+      dcftIndices: { gmi: 81, cfi: 73, hri: 66 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 55,
+        anger: 89,
+        sadness: 71,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-02-21',
+      country: 'BH',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 80, cfi: 64, hri: 61 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 45,
+        anger: 91,
+        sadness: 73,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-02-24',
+      country: 'IR',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 89, cfi: 63, hri: 54 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 34,
+        anger: 95,
+        sadness: 83,
+        hope: 36,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-02-27',
+      country: 'FR',
+      description: 'اتفاق على الحدود',
+      dcftIndices: { gmi: 77, cfi: 72, hri: 69 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 48,
+        anger: 88,
+        sadness: 72,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-03-02',
+      country: 'LB',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 79, cfi: 70, hri: 62 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 44,
+        anger: 88,
+        sadness: 73,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-03-05',
+      country: 'US',
+      description: 'تحسن الخدمات الطبية',
+      dcftIndices: { gmi: 85, cfi: 71, hri: 53 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 44,
+        anger: 95,
+        sadness: 76,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-03-08',
+      country: 'DE',
+      description: 'تحسن جودة الهواء بشكل ملحوظ',
+      dcftIndices: { gmi: 84, cfi: 66, hri: 62 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 44,
+        anger: 94,
+        sadness: 78,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-03-11',
+      country: 'AE',
+      description: 'حفل موسيقي عالمي الطراز',
+      dcftIndices: { gmi: 87, cfi: 64, hri: 56 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 33,
+        anger: 94,
+        sadness: 85,
+        hope: 37,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-03-14',
+      country: 'CN',
+      description: 'اتفاق على الحدود',
+      dcftIndices: { gmi: 74, cfi: 75, hri: 67 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 52,
+        anger: 87,
+        sadness: 68,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-03-17',
+      country: 'RU',
+      description: 'استقرار أسعار السلع الأساسية',
+      dcftIndices: { gmi: 81, cfi: 73, hri: 68 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 48,
+        anger: 89,
+        sadness: 76,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-03-20',
+      country: 'UK',
+      description: 'إصلاحات إدارية شاملة',
+      dcftIndices: { gmi: 78, cfi: 73, hri: 65 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 53,
+        anger: 89,
+        sadness: 67,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-03-23',
+      country: 'EG',
+      description: 'برنامج تطوير الرياضة الشاملة',
+      dcftIndices: { gmi: 81, cfi: 70, hri: 55 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 37,
+        anger: 90,
+        sadness: 79,
+        hope: 37,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-03-26',
+      country: 'JO',
+      description: 'اتفاق على التعاون الدفاعي',
+      dcftIndices: { gmi: 79, cfi: 77, hri: 70 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 55,
+        anger: 83,
+        sadness: 71,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-03-29',
+      country: 'IR',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 75, cfi: 78, hri: 69 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 53,
+        anger: 87,
+        sadness: 66,
+        hope: 30,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-04-01',
+      country: 'CA',
+      description: 'احتفال بالتراث الثقافي',
+      dcftIndices: { gmi: 80, cfi: 68, hri: 60 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 36,
+        anger: 91,
+        sadness: 76,
+        hope: 37,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2009-04-04',
+      country: 'SA',
+      description: 'توقيع معاهدة سلام تاريخية',
+      dcftIndices: { gmi: 83, cfi: 76, hri: 63 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 50,
+        anger: 89,
+        sadness: 71,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-04-07',
+      country: 'BR',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 73, cfi: 72, hri: 67 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 60,
+        anger: 85,
+        sadness: 66,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-04-10',
+      country: 'LB',
+      description: 'افتتاح مركز أبحاث تكنولوجي',
+      dcftIndices: { gmi: 82, cfi: 72, hri: 58 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 42,
+        anger: 87,
+        sadness: 79,
+        hope: 36,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-04-13',
+      country: 'MX',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 80, cfi: 65, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 39,
+        anger: 87,
+        sadness: 77,
+        hope: 37,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-04-16',
+      country: 'DE',
+      description: 'تحسن مؤشرات التنوع البيولوجي',
+      dcftIndices: { gmi: 83, cfi: 73, hri: 63 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 46,
+        anger: 94,
+        sadness: 78,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-04-19',
+      country: 'EU',
+      description: 'اتفاق على تقليل الانبعاثات',
+      dcftIndices: { gmi: 79, cfi: 75, hri: 58 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 53,
+        anger: 92,
+        sadness: 71,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-04-22',
+      country: 'TR',
+      description: 'تحسن جودة الهواء بشكل ملحوظ',
+      dcftIndices: { gmi: 84, cfi: 71, hri: 55 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 41,
+        anger: 87,
+        sadness: 77,
+        hope: 36,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-04-25',
+      country: 'IR',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 86, cfi: 67, hri: 62 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 40,
+        anger: 91,
+        sadness: 74,
+        hope: 35,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-04-28',
+      country: 'AU',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 86, cfi: 74, hri: 66 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 46,
+        anger: 94,
+        sadness: 80,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-05-01',
+      country: 'MX',
+      description: 'بطولة شباب عالمية',
+      dcftIndices: { gmi: 83, cfi: 67, hri: 60 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 36,
+        anger: 95,
+        sadness: 78,
+        hope: 35,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-05-04',
+      country: 'IQ',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 85, cfi: 75, hri: 66 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 43,
+        anger: 90,
+        sadness: 75,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-05-07',
+      country: 'LB',
+      description: 'مشروع حماية الشعاب المرجانية',
+      dcftIndices: { gmi: 78, cfi: 73, hri: 58 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 49,
+        anger: 86,
+        sadness: 75,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-05-10',
+      country: 'ZA',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 84, cfi: 67, hri: 62 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 47,
+        anger: 91,
+        sadness: 74,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-05-13',
+      country: 'CA',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 76, cfi: 84, hri: 72 },
+      emotionalDimensions: {
+        joy: 74,
+        fear: 64,
+        anger: 82,
+        sadness: 64,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-05-16',
+      country: 'OM',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 80, cfi: 65, hri: 52 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 39,
+        anger: 94,
+        sadness: 82,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-05-19',
+      country: 'AU',
+      description: 'إصلاحات إدارية شاملة',
+      dcftIndices: { gmi: 82, cfi: 69, hri: 64 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 54,
+        anger: 84,
+        sadness: 74,
+        hope: 31,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-05-22',
+      country: 'KW',
+      description: 'مؤتمر ثقافي دولي',
+      dcftIndices: { gmi: 83, cfi: 66, hri: 62 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 45,
+        anger: 92,
+        sadness: 71,
+        hope: 32,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-05-25',
+      country: 'UK',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 78, cfi: 76, hri: 68 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 58,
+        anger: 88,
+        sadness: 65,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-05-28',
+      country: 'EG',
+      description: 'افتتاح ملعب رياضي حديث',
+      dcftIndices: { gmi: 81, cfi: 67, hri: 57 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 39,
+        anger: 95,
+        sadness: 81,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-05-31',
+      country: 'YE',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 86, cfi: 64, hri: 54 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 39,
+        anger: 90,
+        sadness: 81,
+        hope: 36,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-06-03',
+      country: 'EG',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 73, cfi: 71, hri: 70 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 50,
+        anger: 82,
+        sadness: 72,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-06-06',
+      country: 'IL',
+      description: 'استضافة الألعاب الأولمبية',
+      dcftIndices: { gmi: 81, cfi: 68, hri: 50 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 38,
+        anger: 92,
+        sadness: 77,
+        hope: 35,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-06-09',
+      country: 'IL',
+      description: 'مشروع الاستدامة الشاملة',
+      dcftIndices: { gmi: 81, cfi: 64, hri: 55 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 44,
+        anger: 94,
+        sadness: 72,
+        hope: 31,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-06-12',
+      country: 'IN',
+      description: 'تحسن الأمن الغذائي',
+      dcftIndices: { gmi: 84, cfi: 70, hri: 58 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 48,
+        anger: 85,
+        sadness: 77,
+        hope: 34,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-06-15',
+      country: 'EU',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 78, cfi: 66, hri: 62 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 48,
+        anger: 89,
+        sadness: 75,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-06-18',
+      country: 'NG',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 80, cfi: 68, hri: 58 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 38,
+        anger: 89,
+        sadness: 76,
+        hope: 37,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-06-21',
+      country: 'IQ',
+      description: 'انخفاض معدل التضخم',
+      dcftIndices: { gmi: 76, cfi: 72, hri: 62 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 47,
+        anger: 84,
+        sadness: 73,
+        hope: 35,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-06-24',
+      country: 'SA',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 82, cfi: 68, hri: 54 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 38,
+        anger: 88,
+        sadness: 77,
+        hope: 37,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-06-27',
+      country: 'OM',
+      description: 'استقرار أسعار السلع الأساسية',
+      dcftIndices: { gmi: 80, cfi: 76, hri: 63 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 44,
+        anger: 89,
+        sadness: 72,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-06-30',
+      country: 'AE',
+      description: 'عملية أمنية ناجحة',
+      dcftIndices: { gmi: 73, cfi: 75, hri: 75 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 56,
+        anger: 85,
+        sadness: 68,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-07-03',
+      country: 'JP',
+      description: 'بطولة رياضية عالمية كبرى',
+      dcftIndices: { gmi: 90, cfi: 64, hri: 50 },
+      emotionalDimensions: {
+        joy: 93,
+        fear: 35,
+        anger: 93,
+        sadness: 84,
+        hope: 36,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-07-06',
+      country: 'EU',
+      description: 'اتفاق أمني إقليمي شامل',
+      dcftIndices: { gmi: 80, cfi: 72, hri: 71 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 54,
+        anger: 88,
+        sadness: 68,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-07-09',
+      country: 'ES',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 81, cfi: 71, hri: 61 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 49,
+        anger: 90,
+        sadness: 74,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-07-12',
+      country: 'EU',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 84, cfi: 68, hri: 58 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 44,
+        anger: 93,
+        sadness: 75,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-07-15',
+      country: 'AU',
+      description: 'استثمار في الحوسبة السحابية',
+      dcftIndices: { gmi: 86, cfi: 71, hri: 54 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 38,
+        anger: 89,
+        sadness: 80,
+        hope: 37,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-07-18',
+      country: 'FR',
+      description: 'مشروع الطاقة المتجددة الوطني',
+      dcftIndices: { gmi: 80, cfi: 64, hri: 61 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 41,
+        anger: 91,
+        sadness: 76,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-07-21',
+      country: 'ES',
+      description: 'مهرجان ثقافي عالمي كبير',
+      dcftIndices: { gmi: 81, cfi: 69, hri: 51 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 41,
+        anger: 92,
+        sadness: 83,
+        hope: 34,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-07-24',
+      country: 'BR',
+      description: 'حفل موسيقي عالمي الطراز',
+      dcftIndices: { gmi: 88, cfi: 67, hri: 55 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 40,
+        anger: 95,
+        sadness: 79,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-07-27',
+      country: 'CA',
+      description: 'برنامج دعم الأسر الفقيرة',
+      dcftIndices: { gmi: 81, cfi: 74, hri: 66 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 51,
+        anger: 84,
+        sadness: 67,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-07-30',
+      country: 'JP',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 79, cfi: 67, hri: 64 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 40,
+        anger: 93,
+        sadness: 80,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-08-02',
+      country: 'IQ',
+      description: 'برنامج تطوير المناطق الريفية',
+      dcftIndices: { gmi: 80, cfi: 73, hri: 64 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 46,
+        anger: 92,
+        sadness: 71,
+        hope: 31,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-08-05',
+      country: 'UK',
+      description: 'اتفاق على الموارد المشتركة',
+      dcftIndices: { gmi: 78, cfi: 73, hri: 69 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 56,
+        anger: 82,
+        sadness: 70,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-08-08',
+      country: 'LB',
+      description: 'تحسن معدلات التعليم',
+      dcftIndices: { gmi: 78, cfi: 67, hri: 56 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 41,
+        anger: 88,
+        sadness: 72,
+        hope: 36,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2009-08-11',
+      country: 'IT',
+      description: 'تحسن مؤشرات الأسهم',
+      dcftIndices: { gmi: 85, cfi: 71, hri: 60 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 46,
+        anger: 91,
+        sadness: 70,
+        hope: 32,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-08-14',
+      country: 'CA',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 82, cfi: 73, hri: 56 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 48,
+        anger: 95,
+        sadness: 74,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-08-17',
+      country: 'AE',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 83, cfi: 64, hri: 60 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 41,
+        anger: 88,
+        sadness: 73,
+        hope: 36,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-08-20',
+      country: 'EU',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 84, cfi: 71, hri: 60 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 46,
+        anger: 91,
+        sadness: 78,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-08-23',
+      country: 'JP',
+      description: 'مشروع إعادة التشجير الواسع',
+      dcftIndices: { gmi: 84, cfi: 70, hri: 58 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 38,
+        anger: 89,
+        sadness: 74,
+        hope: 37,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2009-08-26',
+      country: 'KW',
+      description: 'تحسن الاستقرار السياسي العام',
+      dcftIndices: { gmi: 81, cfi: 72, hri: 56 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 51,
+        anger: 90,
+        sadness: 73,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-08-29',
+      country: 'DE',
+      description: 'تحسن الخدمات الطبية',
+      dcftIndices: { gmi: 84, cfi: 65, hri: 59 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 46,
+        anger: 95,
+        sadness: 80,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-09-01',
+      country: 'BR',
+      description: 'بطولة شباب عالمية',
+      dcftIndices: { gmi: 80, cfi: 69, hri: 58 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 42,
+        anger: 88,
+        sadness: 80,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-09-04',
+      country: 'OM',
+      description: 'مشروع الذكاء الاصطناعي الوطني',
+      dcftIndices: { gmi: 90, cfi: 69, hri: 54 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 41,
+        anger: 95,
+        sadness: 77,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-09-07',
+      country: 'QA',
+      description: 'زيادة الاستثمارات الأجنبية المباشرة',
+      dcftIndices: { gmi: 78, cfi: 72, hri: 60 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 47,
+        anger: 93,
+        sadness: 74,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-09-10',
+      country: 'TR',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 75, cfi: 78, hri: 73 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 59,
+        anger: 82,
+        sadness: 68,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-09-13',
+      country: 'JP',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 79, cfi: 64, hri: 58 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 43,
+        anger: 91,
+        sadness: 73,
+        hope: 33,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-09-16',
+      country: 'IQ',
+      description: 'استقرار سعر الفائدة',
+      dcftIndices: { gmi: 78, cfi: 73, hri: 68 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 48,
+        anger: 90,
+        sadness: 71,
+        hope: 31,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-09-19',
+      country: 'UK',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 81, cfi: 66, hri: 60 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 44,
+        anger: 92,
+        sadness: 76,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-09-22',
+      country: 'OM',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 84, cfi: 68, hri: 58 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 43,
+        anger: 87,
+        sadness: 80,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-09-25',
+      country: 'IL',
+      description: 'تحسن جودة الهواء بشكل ملحوظ',
+      dcftIndices: { gmi: 81, cfi: 73, hri: 62 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 44,
+        anger: 91,
+        sadness: 79,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-09-28',
+      country: 'LB',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 82, cfi: 66, hri: 56 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 49,
+        anger: 88,
+        sadness: 73,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-10-01',
+      country: 'DE',
+      description: 'افتتاح مركز أبحاث تكنولوجي',
+      dcftIndices: { gmi: 80, cfi: 66, hri: 62 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 43,
+        anger: 92,
+        sadness: 78,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-10-04',
+      country: 'US',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 79, cfi: 67, hri: 56 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 38,
+        anger: 87,
+        sadness: 75,
+        hope: 38,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2009-10-07',
+      country: 'IT',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 82, cfi: 66, hri: 54 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 37,
+        anger: 95,
+        sadness: 85,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-10-10',
+      country: 'IQ',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 80, cfi: 78, hri: 69 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 58,
+        anger: 84,
+        sadness: 70,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-10-13',
+      country: 'FR',
+      description: 'اتفاق أمني إقليمي شامل',
+      dcftIndices: { gmi: 74, cfi: 79, hri: 74 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 59,
+        anger: 88,
+        sadness: 72,
+        hope: 30,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2009-10-16',
+      country: 'QA',
+      description: 'تحسن الخدمات الطبية',
+      dcftIndices: { gmi: 79, cfi: 71, hri: 54 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 47,
+        anger: 95,
+        sadness: 74,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-10-19',
+      country: 'AE',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 79, cfi: 67, hri: 53 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 46,
+        anger: 93,
+        sadness: 76,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-10-22',
+      country: 'CA',
+      description: 'مشروع الاستدامة الشاملة',
+      dcftIndices: { gmi: 84, cfi: 68, hri: 60 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 40,
+        anger: 94,
+        sadness: 75,
+        hope: 33,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-10-25',
+      country: 'LB',
+      description: 'تحسن مؤشرات الأسهم',
+      dcftIndices: { gmi: 83, cfi: 73, hri: 66 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 50,
+        anger: 87,
+        sadness: 76,
+        hope: 32,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2009-10-28',
+      country: 'TR',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 81, cfi: 72, hri: 59 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 45,
+        anger: 87,
+        sadness: 72,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-10-31',
+      country: 'IR',
+      description: 'عملية أمنية ناجحة',
+      dcftIndices: { gmi: 76, cfi: 73, hri: 68 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 57,
+        anger: 85,
+        sadness: 66,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-11-03',
+      country: 'QA',
+      description: 'حماية المحميات الطبيعية',
+      dcftIndices: { gmi: 84, cfi: 73, hri: 61 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 45,
+        anger: 88,
+        sadness: 78,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-11-06',
+      country: 'NG',
+      description: 'مشروع الطاقة الشمسية الضخم',
+      dcftIndices: { gmi: 83, cfi: 63, hri: 54 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 39,
+        anger: 94,
+        sadness: 79,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-11-09',
+      country: 'MX',
+      description: 'اتفاق على التعاون الدفاعي',
+      dcftIndices: { gmi: 78, cfi: 76, hri: 70 },
+      emotionalDimensions: {
+        joy: 74,
+        fear: 54,
+        anger: 83,
+        sadness: 65,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-11-12',
+      country: 'IQ',
+      description: 'تحسن الاستقرار الأمني العام',
+      dcftIndices: { gmi: 75, cfi: 70, hri: 72 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 51,
+        anger: 90,
+        sadness: 67,
+        hope: 30,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-11-15',
+      country: 'KW',
+      description: 'بطولة رياضية عالمية كبرى',
+      dcftIndices: { gmi: 84, cfi: 59, hri: 53 },
+      emotionalDimensions: {
+        joy: 93,
+        fear: 34,
+        anger: 93,
+        sadness: 82,
+        hope: 37,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-11-18',
+      country: 'EG',
+      description: 'توقيع معاهدة سلام تاريخية',
+      dcftIndices: { gmi: 80, cfi: 72, hri: 63 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 56,
+        anger: 91,
+        sadness: 67,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-11-21',
+      country: 'ES',
+      description: 'تحسن حقوق المرأة',
+      dcftIndices: { gmi: 81, cfi: 73, hri: 61 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 55,
+        anger: 84,
+        sadness: 74,
+        hope: 31,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-11-24',
+      country: 'US',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 72, cfi: 75, hri: 66 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 50,
+        anger: 85,
+        sadness: 69,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-11-27',
+      country: 'IN',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 75, cfi: 74, hri: 70 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 54,
+        anger: 83,
+        sadness: 68,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-11-30',
+      country: 'KW',
+      description: 'مشروع الطاقة المتجددة الوطني',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 61 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 40,
+        anger: 89,
+        sadness: 77,
+        hope: 36,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2009-12-03',
+      country: 'CA',
+      description: 'إصلاحات إدارية شاملة',
+      dcftIndices: { gmi: 78, cfi: 68, hri: 68 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 57,
+        anger: 88,
+        sadness: 72,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-12-06',
+      country: 'SY',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 70, cfi: 82, hri: 79 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 62,
+        anger: 81,
+        sadness: 68,
+        hope: 30,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2009-12-09',
+      country: 'JP',
+      description: 'توقيع عقد تجاري ضخم',
+      dcftIndices: { gmi: 83, cfi: 67, hri: 59 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 46,
+        anger: 92,
+        sadness: 79,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-12-12',
+      country: 'ES',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 79, cfi: 69, hri: 54 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 49,
+        anger: 92,
+        sadness: 76,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2009-12-15',
+      country: 'AU',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 78, cfi: 64, hri: 55 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 42,
+        anger: 92,
+        sadness: 72,
+        hope: 33,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2009-12-18',
+      country: 'OM',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 85, cfi: 68, hri: 58 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 44,
+        anger: 89,
+        sadness: 75,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2009-12-21',
+      country: 'MA',
+      description: 'تحسن التعاون الأمني الدولي',
+      dcftIndices: { gmi: 75, cfi: 73, hri: 72 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 54,
+        anger: 89,
+        sadness: 74,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2009-12-24',
+      country: 'YE',
+      description: 'توقيع عقد تجاري ضخم',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 61 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 42,
+        anger: 95,
+        sadness: 78,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2009-12-27',
+      country: 'IN',
+      description: 'افتتاح مركز أبحاث تكنولوجي',
+      dcftIndices: { gmi: 87, cfi: 71, hri: 58 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 43,
+        anger: 88,
+        sadness: 79,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2009-12-30',
+      country: 'TR',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 79, cfi: 74, hri: 66 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 44,
+        anger: 88,
+        sadness: 76,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-01-02',
+      country: 'JO',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 81, cfi: 71, hri: 56 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 42,
+        anger: 95,
+        sadness: 72,
+        hope: 32,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2010-01-05',
+      country: 'FR',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 72, cfi: 75, hri: 72 },
+      emotionalDimensions: {
+        joy: 74,
+        fear: 56,
+        anger: 83,
+        sadness: 66,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-01-08',
+      country: 'KW',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 81, cfi: 64, hri: 56 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 38,
+        anger: 90,
+        sadness: 73,
+        hope: 36,
+        curiosity: 45
+      }
+    },
+    {
+      date: '2010-01-11',
+      country: 'NG',
+      description: 'بطولة رياضية عالمية كبرى',
+      dcftIndices: { gmi: 83, cfi: 60, hri: 54 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 40,
+        anger: 92,
+        sadness: 78,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-01-14',
+      country: 'OM',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 84, cfi: 71, hri: 57 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 45,
+        anger: 95,
+        sadness: 77,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-01-17',
+      country: 'MX',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 82, cfi: 63, hri: 58 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 36,
+        anger: 94,
+        sadness: 75,
+        hope: 35,
+        curiosity: 45
+      }
+    },
+    {
+      date: '2010-01-20',
+      country: 'LB',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 79, cfi: 66, hri: 55 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 43,
+        anger: 89,
+        sadness: 73,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-01-23',
+      country: 'IR',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 82, cfi: 67, hri: 62 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 43,
+        anger: 89,
+        sadness: 72,
+        hope: 34,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2010-01-26',
+      country: 'TR',
+      description: 'تحسن جودة الهواء بشكل ملحوظ',
+      dcftIndices: { gmi: 78, cfi: 66, hri: 59 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 43,
+        anger: 92,
+        sadness: 74,
+        hope: 33,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-01-29',
+      country: 'YE',
+      description: 'مشروع الذكاء الاصطناعي الوطني',
+      dcftIndices: { gmi: 88, cfi: 62, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 38,
+        anger: 95,
+        sadness: 75,
+        hope: 34,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2010-02-01',
+      country: 'IL',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 79, cfi: 66, hri: 57 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 41,
+        anger: 95,
+        sadness: 78,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-02-04',
+      country: 'NG',
+      description: 'استثمار في الحوسبة السحابية',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 38,
+        anger: 94,
+        sadness: 76,
+        hope: 34,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2010-02-07',
+      country: 'KW',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 80, cfi: 74, hri: 65 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 56,
+        anger: 84,
+        sadness: 67,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-02-10',
+      country: 'BH',
+      description: 'تحسن معدلات التعليم',
+      dcftIndices: { gmi: 79, cfi: 65, hri: 62 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 43,
+        anger: 95,
+        sadness: 79,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-02-13',
+      country: 'JP',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 87, cfi: 67, hri: 54 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 44,
+        anger: 88,
+        sadness: 75,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-02-16',
+      country: 'IL',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 82, cfi: 69, hri: 62 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 43,
+        anger: 92,
+        sadness: 73,
+        hope: 33,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-02-19',
+      country: 'JP',
+      description: 'فوز فريق وطني بلقب عالمي',
+      dcftIndices: { gmi: 89, cfi: 60, hri: 50 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 37,
+        anger: 92,
+        sadness: 86,
+        hope: 36,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-02-22',
+      country: 'US',
+      description: 'تحسن الاستقرار السياسي العام',
+      dcftIndices: { gmi: 79, cfi: 66, hri: 60 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 49,
+        anger: 94,
+        sadness: 72,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-02-25',
+      country: 'CA',
+      description: 'تحسن العلاقات الثنائية',
+      dcftIndices: { gmi: 75, cfi: 76, hri: 66 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 53,
+        anger: 81,
+        sadness: 72,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-02-28',
+      country: 'EU',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 74, cfi: 77, hri: 66 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 55,
+        anger: 83,
+        sadness: 70,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-03-03',
+      country: 'TR',
+      description: 'مؤتمر ثقافي دولي',
+      dcftIndices: { gmi: 80, cfi: 70, hri: 58 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 43,
+        anger: 87,
+        sadness: 79,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-03-06',
+      country: 'CA',
+      description: 'احتفال بالتراث الثقافي',
+      dcftIndices: { gmi: 84, cfi: 65, hri: 60 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 38,
+        anger: 95,
+        sadness: 82,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-03-09',
+      country: 'KR',
+      description: 'استثمار في البيانات الضخمة',
+      dcftIndices: { gmi: 82, cfi: 64, hri: 59 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 40,
+        anger: 91,
+        sadness: 78,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-03-12',
+      country: 'LB',
+      description: 'نمو القطاع الخاص',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 60 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 46,
+        anger: 87,
+        sadness: 76,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-03-15',
+      country: 'KR',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 82, cfi: 74, hri: 61 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 45,
+        anger: 92,
+        sadness: 76,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-03-18',
+      country: 'IQ',
+      description: 'تحسن العلاقات الثنائية',
+      dcftIndices: { gmi: 78, cfi: 74, hri: 70 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 55,
+        anger: 88,
+        sadness: 69,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-03-21',
+      country: 'UK',
+      description: 'تحسن الاستقرار الأمني العام',
+      dcftIndices: { gmi: 81, cfi: 78, hri: 67 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 54,
+        anger: 87,
+        sadness: 75,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2010-03-24',
+      country: 'ES',
+      description: 'برنامج تطوير الرياضة الشاملة',
+      dcftIndices: { gmi: 83, cfi: 69, hri: 56 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 39,
+        anger: 89,
+        sadness: 74,
+        hope: 36,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2010-03-27',
+      country: 'TR',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 78, cfi: 81, hri: 77 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 64,
+        anger: 85,
+        sadness: 71,
+        hope: 30,
+        curiosity: 33
+      }
+    },
+    {
+      date: '2010-03-30',
+      country: 'IL',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 78, cfi: 69, hri: 66 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 53,
+        anger: 80,
+        sadness: 72,
+        hope: 34,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-04-02',
+      country: 'IT',
+      description: 'اتفاق على تقليل الانبعاثات',
+      dcftIndices: { gmi: 81, cfi: 70, hri: 63 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 52,
+        anger: 87,
+        sadness: 74,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-04-05',
+      country: 'PS',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 79, cfi: 63, hri: 58 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 39,
+        anger: 91,
+        sadness: 81,
+        hope: 35,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-04-08',
+      country: 'IN',
+      description: 'مشروع الطاقة الشمسية الضخم',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 60 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 42,
+        anger: 90,
+        sadness: 78,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-04-11',
+      country: 'PS',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 86, cfi: 75, hri: 64 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 48,
+        anger: 90,
+        sadness: 79,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-04-14',
+      country: 'FR',
+      description: 'اتفاق على تقليل الانبعاثات',
+      dcftIndices: { gmi: 75, cfi: 68, hri: 61 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 52,
+        anger: 88,
+        sadness: 76,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2010-04-17',
+      country: 'IT',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 72, cfi: 79, hri: 71 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 55,
+        anger: 88,
+        sadness: 73,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2010-04-20',
+      country: 'ZA',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 57 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 44,
+        anger: 92,
+        sadness: 76,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-04-23',
+      country: 'US',
+      description: 'تحسن التعاون الأمني الدولي',
+      dcftIndices: { gmi: 80, cfi: 78, hri: 70 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 56,
+        anger: 82,
+        sadness: 71,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-04-26',
+      country: 'PS',
+      description: 'احتفالات وطنية كبرى',
+      dcftIndices: { gmi: 87, cfi: 63, hri: 56 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 42,
+        anger: 93,
+        sadness: 78,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-04-29',
+      country: 'IN',
+      description: 'مشروع التحول الرقمي الحكومي',
+      dcftIndices: { gmi: 80, cfi: 72, hri: 64 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 43,
+        anger: 86,
+        sadness: 73,
+        hope: 36,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-05-02',
+      country: 'FR',
+      description: 'برنامج تبادل ثقافي',
+      dcftIndices: { gmi: 82, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 52,
+        anger: 92,
+        sadness: 77,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2010-05-05',
+      country: 'DE',
+      description: 'معرض فني دولي مهم',
+      dcftIndices: { gmi: 79, cfi: 69, hri: 58 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 44,
+        anger: 87,
+        sadness: 77,
+        hope: 35,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-05-08',
+      country: 'RU',
+      description: 'مشروع الإنترنت للجميع',
+      dcftIndices: { gmi: 79, cfi: 72, hri: 58 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 52,
+        anger: 85,
+        sadness: 72,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-05-11',
+      country: 'CN',
+      description: 'تحسن الحوار السياسي',
+      dcftIndices: { gmi: 82, cfi: 72, hri: 66 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 52,
+        anger: 89,
+        sadness: 71,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-05-14',
+      country: 'IQ',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 77, cfi: 73, hri: 73 },
+      emotionalDimensions: {
+        joy: 73,
+        fear: 53,
+        anger: 79,
+        sadness: 71,
+        hope: 34,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-05-17',
+      country: 'EU',
+      description: 'افتتاح متحف حضارة',
+      dcftIndices: { gmi: 79, cfi: 67, hri: 58 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 44,
+        anger: 93,
+        sadness: 77,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-05-20',
+      country: 'AU',
+      description: 'مشروع الذكاء الاصطناعي الوطني',
+      dcftIndices: { gmi: 82, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 93,
+        fear: 39,
+        anger: 95,
+        sadness: 83,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-05-23',
+      country: 'AU',
+      description: 'انخفاض معدل التضخم',
+      dcftIndices: { gmi: 82, cfi: 68, hri: 63 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 45,
+        anger: 87,
+        sadness: 71,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-05-26',
+      country: 'YE',
+      description: 'نمو القطاع الخاص',
+      dcftIndices: { gmi: 83, cfi: 66, hri: 65 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 47,
+        anger: 87,
+        sadness: 71,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-05-29',
+      country: 'ZA',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 86, cfi: 72, hri: 56 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 46,
+        anger: 95,
+        sadness: 75,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-06-01',
+      country: 'SA',
+      description: 'مشروع الذكاء الاصطناعي الوطني',
+      dcftIndices: { gmi: 84, cfi: 68, hri: 59 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 39,
+        anger: 95,
+        sadness: 76,
+        hope: 33,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2010-06-04',
+      country: 'CN',
+      description: 'تحسن مؤشرات الأسهم',
+      dcftIndices: { gmi: 77, cfi: 70, hri: 67 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 49,
+        anger: 87,
+        sadness: 77,
+        hope: 32,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-06-07',
+      country: 'SA',
+      description: 'توقيع معاهدة سلام تاريخية',
+      dcftIndices: { gmi: 77, cfi: 69, hri: 70 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 53,
+        anger: 89,
+        sadness: 68,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-06-10',
+      country: 'YE',
+      description: 'تحسن حقوق المرأة',
+      dcftIndices: { gmi: 77, cfi: 73, hri: 63 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 50,
+        anger: 85,
+        sadness: 73,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-06-13',
+      country: 'KR',
+      description: 'اتفاق على الموارد المشتركة',
+      dcftIndices: { gmi: 79, cfi: 72, hri: 65 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 58,
+        anger: 87,
+        sadness: 66,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-06-16',
+      country: 'IR',
+      description: 'تحسن مؤشرات الأسهم',
+      dcftIndices: { gmi: 83, cfi: 75, hri: 61 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 46,
+        anger: 91,
+        sadness: 74,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-06-19',
+      country: 'ES',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 79, cfi: 70, hri: 62 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 51,
+        anger: 86,
+        sadness: 75,
+        hope: 32,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-06-22',
+      country: 'ZA',
+      description: 'اتفاق على الحدود',
+      dcftIndices: { gmi: 75, cfi: 74, hri: 66 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 52,
+        anger: 86,
+        sadness: 72,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-06-25',
+      country: 'PS',
+      description: 'اتفاق على التعاون الدفاعي',
+      dcftIndices: { gmi: 75, cfi: 80, hri: 75 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 57,
+        anger: 85,
+        sadness: 64,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-06-28',
+      country: 'ZA',
+      description: 'تحسن مؤشرات التنوع البيولوجي',
+      dcftIndices: { gmi: 80, cfi: 68, hri: 62 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 46,
+        anger: 87,
+        sadness: 78,
+        hope: 34,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-07-01',
+      country: 'IR',
+      description: 'تحسن حقوق المرأة',
+      dcftIndices: { gmi: 80, cfi: 73, hri: 66 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 53,
+        anger: 89,
+        sadness: 70,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-07-04',
+      country: 'CN',
+      description: 'تحسن مؤشرات التنوع البيولوجي',
+      dcftIndices: { gmi: 85, cfi: 66, hri: 56 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 51,
+        anger: 92,
+        sadness: 75,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-07-07',
+      country: 'EU',
+      description: 'احتفالات وطنية كبرى',
+      dcftIndices: { gmi: 86, cfi: 66, hri: 60 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 45,
+        anger: 95,
+        sadness: 74,
+        hope: 30,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-07-10',
+      country: 'IL',
+      description: 'مهرجان ثقافي عالمي كبير',
+      dcftIndices: { gmi: 82, cfi: 67, hri: 59 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 37,
+        anger: 95,
+        sadness: 77,
+        hope: 34,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2010-07-13',
+      country: 'KW',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 74, cfi: 71, hri: 70 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 55,
+        anger: 81,
+        sadness: 70,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-07-16',
+      country: 'QA',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 80, cfi: 64, hri: 61 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 44,
+        anger: 94,
+        sadness: 72,
+        hope: 31,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-07-19',
+      country: 'JP',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 80, cfi: 65, hri: 61 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 46,
+        anger: 89,
+        sadness: 73,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-07-22',
+      country: 'YE',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 80, cfi: 70, hri: 69 },
+      emotionalDimensions: {
+        joy: 74,
+        fear: 57,
+        anger: 81,
+        sadness: 67,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-07-25',
+      country: 'UK',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 83, cfi: 73, hri: 56 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 47,
+        anger: 94,
+        sadness: 74,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-07-28',
+      country: 'ZA',
+      description: 'اتفاق على الحدود',
+      dcftIndices: { gmi: 77, cfi: 69, hri: 62 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 56,
+        anger: 89,
+        sadness: 70,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-07-31',
+      country: 'IN',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 85, cfi: 64, hri: 61 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 40,
+        anger: 93,
+        sadness: 78,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-08-03',
+      country: 'BH',
+      description: 'افتتاح متحف حضارة',
+      dcftIndices: { gmi: 85, cfi: 67, hri: 60 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 45,
+        anger: 88,
+        sadness: 80,
+        hope: 34,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-08-06',
+      country: 'TR',
+      description: 'مشروع الذكاء الاصطناعي الوطني',
+      dcftIndices: { gmi: 84, cfi: 63, hri: 52 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 43,
+        anger: 91,
+        sadness: 79,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-08-09',
+      country: 'MA',
+      description: 'اتفاق على الموارد المشتركة',
+      dcftIndices: { gmi: 80, cfi: 70, hri: 67 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 52,
+        anger: 85,
+        sadness: 66,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-08-12',
+      country: 'AE',
+      description: 'افتتاح متحف حضارة',
+      dcftIndices: { gmi: 85, cfi: 71, hri: 55 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 46,
+        anger: 93,
+        sadness: 73,
+        hope: 31,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-08-15',
+      country: 'BR',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 81, cfi: 72, hri: 69 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 57,
+        anger: 84,
+        sadness: 74,
+        hope: 30,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2010-08-18',
+      country: 'FR',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 78, cfi: 66, hri: 59 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 43,
+        anger: 92,
+        sadness: 77,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-08-21',
+      country: 'CN',
+      description: 'تحسن مؤشرات الأسهم',
+      dcftIndices: { gmi: 83, cfi: 73, hri: 63 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 50,
+        anger: 93,
+        sadness: 72,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-08-24',
+      country: 'IL',
+      description: 'اتفاق على تقليل الانبعاثات',
+      dcftIndices: { gmi: 78, cfi: 76, hri: 62 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 50,
+        anger: 90,
+        sadness: 72,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-08-27',
+      country: 'IQ',
+      description: 'تحسن التعاون الأمني الدولي',
+      dcftIndices: { gmi: 75, cfi: 77, hri: 72 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 51,
+        anger: 82,
+        sadness: 67,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-08-30',
+      country: 'PS',
+      description: 'مشروع الإنترنت للجميع',
+      dcftIndices: { gmi: 84, cfi: 75, hri: 64 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 51,
+        anger: 92,
+        sadness: 70,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-09-02',
+      country: 'TR',
+      description: 'تحسن الأمن السيبراني',
+      dcftIndices: { gmi: 80, cfi: 74, hri: 58 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 45,
+        anger: 85,
+        sadness: 77,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-09-05',
+      country: 'JO',
+      description: 'برنامج تطوير المناطق الريفية',
+      dcftIndices: { gmi: 79, cfi: 68, hri: 59 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 47,
+        anger: 92,
+        sadness: 78,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-09-08',
+      country: 'SA',
+      description: 'تحسن الأمن الغذائي',
+      dcftIndices: { gmi: 79, cfi: 68, hri: 57 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 52,
+        anger: 90,
+        sadness: 76,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2010-09-11',
+      country: 'IQ',
+      description: 'استقرار سعر الفائدة',
+      dcftIndices: { gmi: 80, cfi: 71, hri: 63 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 50,
+        anger: 87,
+        sadness: 67,
+        hope: 32,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-09-14',
+      country: 'AE',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 77, cfi: 74, hri: 68 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 57,
+        anger: 88,
+        sadness: 70,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-09-17',
+      country: 'EU',
+      description: 'اتفاق على الحدود',
+      dcftIndices: { gmi: 78, cfi: 70, hri: 69 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 49,
+        anger: 84,
+        sadness: 70,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-09-20',
+      country: 'IQ',
+      description: 'اتفاق على الحدود',
+      dcftIndices: { gmi: 74, cfi: 76, hri: 66 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 52,
+        anger: 82,
+        sadness: 70,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-09-23',
+      country: 'EU',
+      description: 'توقيع عقد تجاري ضخم',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 59 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 42,
+        anger: 93,
+        sadness: 73,
+        hope: 33,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2010-09-26',
+      country: 'ES',
+      description: 'بطولة رياضية عالمية كبرى',
+      dcftIndices: { gmi: 85, cfi: 59, hri: 50 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 34,
+        anger: 95,
+        sadness: 77,
+        hope: 36,
+        curiosity: 45
+      }
+    },
+    {
+      date: '2010-09-29',
+      country: 'IL',
+      description: 'برنامج تطوير الرياضة الشاملة',
+      dcftIndices: { gmi: 79, cfi: 71, hri: 60 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 40,
+        anger: 87,
+        sadness: 81,
+        hope: 37,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-10-02',
+      country: 'BH',
+      description: 'إنجاز رياضي قياسي عالمي',
+      dcftIndices: { gmi: 89, cfi: 65, hri: 57 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 39,
+        anger: 95,
+        sadness: 79,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-10-05',
+      country: 'OM',
+      description: 'احتفال بالتراث الثقافي',
+      dcftIndices: { gmi: 81, cfi: 63, hri: 59 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 38,
+        anger: 92,
+        sadness: 74,
+        hope: 35,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2010-10-08',
+      country: 'EG',
+      description: 'تحسن مؤشرات التنوع البيولوجي',
+      dcftIndices: { gmi: 79, cfi: 74, hri: 64 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 49,
+        anger: 93,
+        sadness: 76,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-10-11',
+      country: 'IL',
+      description: 'فوز فريق وطني بلقب عالمي',
+      dcftIndices: { gmi: 90, cfi: 66, hri: 50 },
+      emotionalDimensions: {
+        joy: 94,
+        fear: 36,
+        anger: 93,
+        sadness: 80,
+        hope: 36,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-10-14',
+      country: 'OM',
+      description: 'تحسن الخدمات الاجتماعية',
+      dcftIndices: { gmi: 77, cfi: 72, hri: 63 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 50,
+        anger: 87,
+        sadness: 79,
+        hope: 32,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2010-10-17',
+      country: 'TR',
+      description: 'تحسن مؤشرات الأسهم',
+      dcftIndices: { gmi: 82, cfi: 72, hri: 66 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 46,
+        anger: 92,
+        sadness: 78,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-10-20',
+      country: 'NG',
+      description: 'مهرجان ثقافي عالمي كبير',
+      dcftIndices: { gmi: 82, cfi: 61, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 36,
+        anger: 94,
+        sadness: 82,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-10-23',
+      country: 'FR',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 76, cfi: 71, hri: 71 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 54,
+        anger: 82,
+        sadness: 66,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-10-26',
+      country: 'OM',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 82, cfi: 69, hri: 60 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 45,
+        anger: 93,
+        sadness: 77,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-10-29',
+      country: 'BH',
+      description: 'تحسن الخدمات الاجتماعية',
+      dcftIndices: { gmi: 84, cfi: 67, hri: 58 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 50,
+        anger: 92,
+        sadness: 75,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-11-01',
+      country: 'BR',
+      description: 'افتتاح مركز أبحاث تكنولوجي',
+      dcftIndices: { gmi: 85, cfi: 73, hri: 55 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 47,
+        anger: 94,
+        sadness: 73,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-11-04',
+      country: 'IR',
+      description: 'تحسن الاحتياطيات النقدية',
+      dcftIndices: { gmi: 87, cfi: 68, hri: 56 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 40,
+        anger: 91,
+        sadness: 72,
+        hope: 35,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2010-11-07',
+      country: 'EU',
+      description: 'مشروع التحول الرقمي الحكومي',
+      dcftIndices: { gmi: 77, cfi: 70, hri: 58 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 48,
+        anger: 94,
+        sadness: 74,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-11-10',
+      country: 'MA',
+      description: 'برنامج تبادل ثقافي',
+      dcftIndices: { gmi: 84, cfi: 73, hri: 58 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 48,
+        anger: 87,
+        sadness: 76,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-11-13',
+      country: 'CA',
+      description: 'عملية أمنية ناجحة',
+      dcftIndices: { gmi: 75, cfi: 76, hri: 72 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 59,
+        anger: 82,
+        sadness: 67,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2010-11-16',
+      country: 'FR',
+      description: 'تحسن الخدمات الطبية',
+      dcftIndices: { gmi: 82, cfi: 68, hri: 53 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 42,
+        anger: 90,
+        sadness: 79,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-11-19',
+      country: 'MX',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 83, cfi: 71, hri: 62 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 45,
+        anger: 90,
+        sadness: 78,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-11-22',
+      country: 'EG',
+      description: 'مشروع حماية الشعاب المرجانية',
+      dcftIndices: { gmi: 80, cfi: 69, hri: 57 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 49,
+        anger: 86,
+        sadness: 71,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-11-25',
+      country: 'FR',
+      description: 'تحسن الأمن الغذائي',
+      dcftIndices: { gmi: 77, cfi: 68, hri: 59 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 49,
+        anger: 93,
+        sadness: 75,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-11-28',
+      country: 'KW',
+      description: 'اتفاق على التعاون الدفاعي',
+      dcftIndices: { gmi: 80, cfi: 81, hri: 76 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 57,
+        anger: 82,
+        sadness: 68,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-12-01',
+      country: 'LB',
+      description: 'تحسن جودة الهواء بشكل ملحوظ',
+      dcftIndices: { gmi: 79, cfi: 73, hri: 57 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 43,
+        anger: 89,
+        sadness: 73,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2010-12-04',
+      country: 'IT',
+      description: 'استضافة الألعاب الأولمبية',
+      dcftIndices: { gmi: 84, cfi: 60, hri: 55 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 39,
+        anger: 92,
+        sadness: 82,
+        hope: 35,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2010-12-07',
+      country: 'QA',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 85, cfi: 74, hri: 63 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 40,
+        anger: 93,
+        sadness: 74,
+        hope: 34,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2010-12-10',
+      country: 'ES',
+      description: 'حفل موسيقي عالمي الطراز',
+      dcftIndices: { gmi: 86, cfi: 62, hri: 55 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 39,
+        anger: 95,
+        sadness: 80,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2010-12-13',
+      country: 'IR',
+      description: 'إصلاحات إدارية شاملة',
+      dcftIndices: { gmi: 79, cfi: 71, hri: 67 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 54,
+        anger: 82,
+        sadness: 74,
+        hope: 32,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2010-12-16',
+      country: 'DE',
+      description: 'مشروع إعادة التشجير الواسع',
+      dcftIndices: { gmi: 81, cfi: 67, hri: 59 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 45,
+        anger: 95,
+        sadness: 80,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2010-12-19',
+      country: 'FR',
+      description: 'احتفالات وطنية كبرى',
+      dcftIndices: { gmi: 84, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 40,
+        anger: 89,
+        sadness: 73,
+        hope: 36,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2010-12-22',
+      country: 'IR',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 73, cfi: 74, hri: 69 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 58,
+        anger: 80,
+        sadness: 72,
+        hope: 31,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2010-12-25',
+      country: 'IN',
+      description: 'استثمار في الحوسبة السحابية',
+      dcftIndices: { gmi: 82, cfi: 68, hri: 54 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 43,
+        anger: 88,
+        sadness: 80,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-12-28',
+      country: 'NG',
+      description: 'استقرار أسعار السلع الأساسية',
+      dcftIndices: { gmi: 75, cfi: 76, hri: 62 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 49,
+        anger: 87,
+        sadness: 74,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2010-12-31',
+      country: 'DE',
+      description: 'توقيع معاهدة سلام تاريخية',
+      dcftIndices: { gmi: 75, cfi: 77, hri: 64 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 52,
+        anger: 91,
+        sadness: 68,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-01-03',
+      country: 'AE',
+      description: 'إنجاز رياضي قياسي عالمي',
+      dcftIndices: { gmi: 88, cfi: 64, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 38,
+        anger: 94,
+        sadness: 78,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-01-06',
+      country: 'IQ',
+      description: 'مشروع التحول الرقمي الحكومي',
+      dcftIndices: { gmi: 82, cfi: 75, hri: 59 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 49,
+        anger: 91,
+        sadness: 74,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-01-09',
+      country: 'LB',
+      description: 'احتفالات وطنية كبرى',
+      dcftIndices: { gmi: 81, cfi: 70, hri: 55 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 46,
+        anger: 94,
+        sadness: 79,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-01-12',
+      country: 'JP',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 80, cfi: 69, hri: 55 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 43,
+        anger: 95,
+        sadness: 77,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-01-15',
+      country: 'BR',
+      description: 'مشروع حماية الشعاب المرجانية',
+      dcftIndices: { gmi: 76, cfi: 67, hri: 59 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 45,
+        anger: 89,
+        sadness: 76,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-01-18',
+      country: 'TR',
+      description: 'إنجاز رياضي قياسي عالمي',
+      dcftIndices: { gmi: 87, cfi: 62, hri: 54 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 35,
+        anger: 95,
+        sadness: 80,
+        hope: 35,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-01-21',
+      country: 'BH',
+      description: 'استقرار أسعار السلع الأساسية',
+      dcftIndices: { gmi: 77, cfi: 71, hri: 66 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 50,
+        anger: 86,
+        sadness: 71,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-01-24',
+      country: 'AU',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 75, cfi: 73, hri: 68 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 51,
+        anger: 85,
+        sadness: 73,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-01-27',
+      country: 'BH',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 75, cfi: 76, hri: 69 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 54,
+        anger: 85,
+        sadness: 66,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-01-30',
+      country: 'ES',
+      description: 'مشروع الطاقة المتجددة الوطني',
+      dcftIndices: { gmi: 85, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 43,
+        anger: 95,
+        sadness: 77,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-02-02',
+      country: 'RU',
+      description: 'افتتاح بورصة جديدة',
+      dcftIndices: { gmi: 86, cfi: 71, hri: 67 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 48,
+        anger: 89,
+        sadness: 80,
+        hope: 32,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2011-02-05',
+      country: 'IL',
+      description: 'تحسن جودة الهواء بشكل ملحوظ',
+      dcftIndices: { gmi: 78, cfi: 70, hri: 57 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 39,
+        anger: 92,
+        sadness: 77,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-02-08',
+      country: 'RU',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 82, cfi: 66, hri: 50 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 35,
+        anger: 95,
+        sadness: 84,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-02-11',
+      country: 'IN',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 88, cfi: 65, hri: 50 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 31,
+        anger: 95,
+        sadness: 79,
+        hope: 37,
+        curiosity: 45
+      }
+    },
+    {
+      date: '2011-02-14',
+      country: 'EU',
+      description: 'مشروع الاستدامة الشاملة',
+      dcftIndices: { gmi: 80, cfi: 71, hri: 60 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 42,
+        anger: 90,
+        sadness: 79,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-02-17',
+      country: 'ZA',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 70, cfi: 79, hri: 80 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 58,
+        anger: 79,
+        sadness: 63,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-02-20',
+      country: 'SY',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 85, cfi: 71, hri: 56 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 42,
+        anger: 89,
+        sadness: 80,
+        hope: 35,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-02-23',
+      country: 'IR',
+      description: 'مشروع الطاقة الشمسية الضخم',
+      dcftIndices: { gmi: 85, cfi: 63, hri: 52 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 36,
+        anger: 95,
+        sadness: 79,
+        hope: 35,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-02-26',
+      country: 'RU',
+      description: 'افتتاح ملعب رياضي حديث',
+      dcftIndices: { gmi: 82, cfi: 64, hri: 54 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 43,
+        anger: 95,
+        sadness: 83,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-03-01',
+      country: 'MA',
+      description: 'مشروع حماية الشعاب المرجانية',
+      dcftIndices: { gmi: 80, cfi: 72, hri: 62 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 51,
+        anger: 87,
+        sadness: 71,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-03-04',
+      country: 'OM',
+      description: 'برنامج رعاية الأطفال',
+      dcftIndices: { gmi: 85, cfi: 71, hri: 60 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 42,
+        anger: 92,
+        sadness: 74,
+        hope: 33,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-03-07',
+      country: 'BH',
+      description: 'زيادة الصادرات بنسبة كبيرة',
+      dcftIndices: { gmi: 80, cfi: 71, hri: 60 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 48,
+        anger: 93,
+        sadness: 74,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-03-10',
+      country: 'IR',
+      description: 'تحسن التعاون الأمني الدولي',
+      dcftIndices: { gmi: 80, cfi: 74, hri: 69 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 57,
+        anger: 83,
+        sadness: 68,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-03-13',
+      country: 'FR',
+      description: 'تحسن معدلات التعليم',
+      dcftIndices: { gmi: 79, cfi: 65, hri: 60 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 45,
+        anger: 94,
+        sadness: 78,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-03-16',
+      country: 'ZA',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 84, cfi: 70, hri: 55 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 40,
+        anger: 92,
+        sadness: 78,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-03-19',
+      country: 'EG',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 83, cfi: 70, hri: 60 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 39,
+        anger: 91,
+        sadness: 78,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-03-22',
+      country: 'DE',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 76, cfi: 69, hri: 65 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 53,
+        anger: 88,
+        sadness: 74,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-03-25',
+      country: 'TR',
+      description: 'استضافة الألعاب الأولمبية',
+      dcftIndices: { gmi: 87, cfi: 66, hri: 52 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 34,
+        anger: 94,
+        sadness: 80,
+        hope: 36,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-03-28',
+      country: 'DE',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 74, cfi: 72, hri: 68 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 54,
+        anger: 80,
+        sadness: 69,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-03-31',
+      country: 'IT',
+      description: 'معرض فني دولي مهم',
+      dcftIndices: { gmi: 83, cfi: 66, hri: 62 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 43,
+        anger: 87,
+        sadness: 74,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-04-03',
+      country: 'IL',
+      description: 'إطلاق منصة تجارة إلكترونية',
+      dcftIndices: { gmi: 89, cfi: 68, hri: 54 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 44,
+        anger: 92,
+        sadness: 75,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-04-06',
+      country: 'CN',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 79, cfi: 67, hri: 58 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 42,
+        anger: 93,
+        sadness: 77,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-04-09',
+      country: 'JO',
+      description: 'تحسن معدلات التعليم',
+      dcftIndices: { gmi: 79, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 41,
+        anger: 92,
+        sadness: 75,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-04-12',
+      country: 'CN',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 76, cfi: 71, hri: 60 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 51,
+        anger: 90,
+        sadness: 71,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-04-15',
+      country: 'AU',
+      description: 'إنجاز رياضي قياسي عالمي',
+      dcftIndices: { gmi: 82, cfi: 66, hri: 56 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 35,
+        anger: 92,
+        sadness: 83,
+        hope: 37,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-04-18',
+      country: 'YE',
+      description: 'استضافة الألعاب الأولمبية',
+      dcftIndices: { gmi: 88, cfi: 62, hri: 52 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 33,
+        anger: 92,
+        sadness: 82,
+        hope: 38,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-04-21',
+      country: 'ES',
+      description: 'تحسن الخدمات الطبية',
+      dcftIndices: { gmi: 82, cfi: 63, hri: 61 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 42,
+        anger: 90,
+        sadness: 81,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-04-24',
+      country: 'OM',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 79, cfi: 73, hri: 70 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 54,
+        anger: 87,
+        sadness: 72,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-04-27',
+      country: 'DE',
+      description: 'تشكيل ائتلاف حكومي جديد',
+      dcftIndices: { gmi: 76, cfi: 73, hri: 70 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 55,
+        anger: 80,
+        sadness: 66,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-04-30',
+      country: 'LB',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 73, cfi: 69, hri: 68 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 52,
+        anger: 81,
+        sadness: 71,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-05-03',
+      country: 'EU',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 80, cfi: 68, hri: 58 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 36,
+        anger: 93,
+        sadness: 75,
+        hope: 36,
+        curiosity: 45
+      }
+    },
+    {
+      date: '2011-05-06',
+      country: 'AE',
+      description: 'استقرار سعر الفائدة',
+      dcftIndices: { gmi: 77, cfi: 70, hri: 67 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 49,
+        anger: 86,
+        sadness: 72,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-05-09',
+      country: 'OM',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 84, cfi: 68, hri: 61 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 46,
+        anger: 90,
+        sadness: 79,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-05-12',
+      country: 'FR',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 77, cfi: 68, hri: 60 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 48,
+        anger: 89,
+        sadness: 69,
+        hope: 32,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-05-15',
+      country: 'MA',
+      description: 'برنامج دعم الأسر الفقيرة',
+      dcftIndices: { gmi: 76, cfi: 77, hri: 60 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 55,
+        anger: 86,
+        sadness: 75,
+        hope: 30,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2011-05-18',
+      country: 'UK',
+      description: 'تحسن العلاقات الثنائية',
+      dcftIndices: { gmi: 73, cfi: 77, hri: 66 },
+      emotionalDimensions: {
+        joy: 75,
+        fear: 50,
+        anger: 89,
+        sadness: 74,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-05-21',
+      country: 'CN',
+      description: 'توقيع معاهدة سلام تاريخية',
+      dcftIndices: { gmi: 80, cfi: 71, hri: 67 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 55,
+        anger: 86,
+        sadness: 71,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-05-24',
+      country: 'DE',
+      description: 'افتتاح مركز أبحاث تكنولوجي',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 63 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 41,
+        anger: 94,
+        sadness: 77,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-05-27',
+      country: 'BH',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 83, cfi: 70, hri: 62 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 42,
+        anger: 90,
+        sadness: 75,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-05-30',
+      country: 'YE',
+      description: 'انخفاض معدل التضخم',
+      dcftIndices: { gmi: 79, cfi: 68, hri: 67 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 48,
+        anger: 88,
+        sadness: 74,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-06-02',
+      country: 'RU',
+      description: 'اتفاق على التعاون الدفاعي',
+      dcftIndices: { gmi: 77, cfi: 79, hri: 68 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 54,
+        anger: 84,
+        sadness: 69,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-06-05',
+      country: 'CA',
+      description: 'اتفاق على قضية خلافية',
+      dcftIndices: { gmi: 72, cfi: 71, hri: 72 },
+      emotionalDimensions: {
+        joy: 77,
+        fear: 54,
+        anger: 88,
+        sadness: 73,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-06-08',
+      country: 'JP',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 90, cfi: 63, hri: 54 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 32,
+        anger: 95,
+        sadness: 77,
+        hope: 37,
+        curiosity: 46
+      }
+    },
+    {
+      date: '2011-06-11',
+      country: 'YE',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 85, cfi: 68, hri: 63 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 48,
+        anger: 92,
+        sadness: 77,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-06-14',
+      country: 'NG',
+      description: 'توسيع التمثيل البرلماني',
+      dcftIndices: { gmi: 80, cfi: 75, hri: 67 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 55,
+        anger: 86,
+        sadness: 67,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-06-17',
+      country: 'SY',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 74, cfi: 75, hri: 74 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 52,
+        anger: 84,
+        sadness: 72,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-06-20',
+      country: 'IT',
+      description: 'تحسن الأمن السيبراني',
+      dcftIndices: { gmi: 83, cfi: 70, hri: 64 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 46,
+        anger: 86,
+        sadness: 73,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-06-23',
+      country: 'IN',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 81, cfi: 70, hri: 58 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 37,
+        anger: 95,
+        sadness: 80,
+        hope: 34,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-06-26',
+      country: 'KR',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 78, cfi: 66, hri: 58 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 44,
+        anger: 89,
+        sadness: 74,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-06-29',
+      country: 'PS',
+      description: 'إنجاز رياضي قياسي عالمي',
+      dcftIndices: { gmi: 85, cfi: 60, hri: 50 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 37,
+        anger: 95,
+        sadness: 83,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-07-02',
+      country: 'DE',
+      description: 'تحسن الخدمات الاجتماعية',
+      dcftIndices: { gmi: 81, cfi: 66, hri: 59 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 50,
+        anger: 87,
+        sadness: 78,
+        hope: 32,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2011-07-05',
+      country: 'IR',
+      description: 'اتفاق على التعاون الدفاعي',
+      dcftIndices: { gmi: 75, cfi: 73, hri: 68 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 57,
+        anger: 86,
+        sadness: 71,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2011-07-08',
+      country: 'SA',
+      description: 'مشروع إعادة التشجير الواسع',
+      dcftIndices: { gmi: 80, cfi: 72, hri: 55 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 41,
+        anger: 89,
+        sadness: 73,
+        hope: 35,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-07-11',
+      country: 'LB',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 80, cfi: 65, hri: 60 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 41,
+        anger: 95,
+        sadness: 74,
+        hope: 32,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-07-14',
+      country: 'AE',
+      description: 'مشروع الطاقة الشمسية الضخم',
+      dcftIndices: { gmi: 89, cfi: 65, hri: 59 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 39,
+        anger: 93,
+        sadness: 75,
+        hope: 34,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-07-17',
+      country: 'SY',
+      description: 'برنامج تطوير الرياضة الشاملة',
+      dcftIndices: { gmi: 82, cfi: 68, hri: 56 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 45,
+        anger: 91,
+        sadness: 81,
+        hope: 32,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-07-20',
+      country: 'PS',
+      description: 'استثمار في الأمن السيبراني',
+      dcftIndices: { gmi: 84, cfi: 67, hri: 64 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 48,
+        anger: 91,
+        sadness: 72,
+        hope: 31,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-07-23',
+      country: 'SA',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 86, cfi: 68, hri: 56 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 39,
+        anger: 89,
+        sadness: 79,
+        hope: 36,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-07-26',
+      country: 'TR',
+      description: 'تحسن معدلات التعليم',
+      dcftIndices: { gmi: 84, cfi: 65, hri: 54 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 41,
+        anger: 92,
+        sadness: 77,
+        hope: 34,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-07-29',
+      country: 'BH',
+      description: 'برنامج دعم الأسر الفقيرة',
+      dcftIndices: { gmi: 80, cfi: 70, hri: 65 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 48,
+        anger: 83,
+        sadness: 70,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-08-01',
+      country: 'UK',
+      description: 'اتفاق على تقليل الانبعاثات',
+      dcftIndices: { gmi: 78, cfi: 70, hri: 63 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 47,
+        anger: 87,
+        sadness: 72,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-08-04',
+      country: 'BR',
+      description: 'مشروع الطاقة المتجددة الوطني',
+      dcftIndices: { gmi: 86, cfi: 65, hri: 56 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 37,
+        anger: 95,
+        sadness: 76,
+        hope: 34,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2011-08-07',
+      country: 'SY',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 87, cfi: 64, hri: 56 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 32,
+        anger: 95,
+        sadness: 84,
+        hope: 37,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-08-10',
+      country: 'FR',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 80, cfi: 73, hri: 62 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 47,
+        anger: 87,
+        sadness: 74,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-08-13',
+      country: 'ES',
+      description: 'بطولة شباب عالمية',
+      dcftIndices: { gmi: 83, cfi: 68, hri: 53 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 43,
+        anger: 88,
+        sadness: 74,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-08-16',
+      country: 'YE',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 71, cfi: 79, hri: 78 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 62,
+        anger: 82,
+        sadness: 64,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-08-19',
+      country: 'EU',
+      description: 'افتتاح مركز ثقافي',
+      dcftIndices: { gmi: 83, cfi: 67, hri: 56 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 48,
+        anger: 88,
+        sadness: 79,
+        hope: 32,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-08-22',
+      country: 'UK',
+      description: 'مهرجان ثقافي عالمي كبير',
+      dcftIndices: { gmi: 86, cfi: 65, hri: 52 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 38,
+        anger: 92,
+        sadness: 81,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-08-25',
+      country: 'KR',
+      description: 'مهرجان الفنون الشعبية',
+      dcftIndices: { gmi: 81, cfi: 67, hri: 59 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 38,
+        anger: 90,
+        sadness: 81,
+        hope: 36,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-08-28',
+      country: 'SY',
+      description: 'تحسن الخدمات الاجتماعية',
+      dcftIndices: { gmi: 85, cfi: 70, hri: 58 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 50,
+        anger: 90,
+        sadness: 73,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-08-31',
+      country: 'IR',
+      description: 'اتفاق أمني إقليمي شامل',
+      dcftIndices: { gmi: 78, cfi: 79, hri: 68 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 58,
+        anger: 89,
+        sadness: 70,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2011-09-03',
+      country: 'IR',
+      description: 'برنامج تبادل ثقافي',
+      dcftIndices: { gmi: 84, cfi: 73, hri: 56 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 45,
+        anger: 86,
+        sadness: 74,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-09-06',
+      country: 'LB',
+      description: 'عملية مكافحة الجريمة',
+      dcftIndices: { gmi: 71, cfi: 81, hri: 80 },
+      emotionalDimensions: {
+        joy: 74,
+        fear: 58,
+        anger: 84,
+        sadness: 70,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2011-09-09',
+      country: 'MA',
+      description: 'تحسن الحوار السياسي',
+      dcftIndices: { gmi: 74, cfi: 70, hri: 60 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 53,
+        anger: 87,
+        sadness: 74,
+        hope: 30,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-09-12',
+      country: 'AU',
+      description: 'اتفاق أمني إقليمي شامل',
+      dcftIndices: { gmi: 80, cfi: 76, hri: 72 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 59,
+        anger: 86,
+        sadness: 70,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2011-09-15',
+      country: 'CN',
+      description: 'إنجاز أولمبي تاريخي',
+      dcftIndices: { gmi: 88, cfi: 60, hri: 56 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 33,
+        anger: 95,
+        sadness: 85,
+        hope: 36,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-09-18',
+      country: 'AE',
+      description: 'تحسن العلاقات الثنائية',
+      dcftIndices: { gmi: 74, cfi: 71, hri: 72 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 53,
+        anger: 86,
+        sadness: 70,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-09-21',
+      country: 'EU',
+      description: 'تحسن التعاون الأمني الدولي',
+      dcftIndices: { gmi: 75, cfi: 71, hri: 67 },
+      emotionalDimensions: {
+        joy: 78,
+        fear: 59,
+        anger: 86,
+        sadness: 72,
+        hope: 30,
+        curiosity: 35
+      }
+    },
+    {
+      date: '2011-09-24',
+      country: 'MX',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 76, cfi: 72, hri: 61 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 50,
+        anger: 88,
+        sadness: 73,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-09-27',
+      country: 'KW',
+      description: 'معرض فني دولي مهم',
+      dcftIndices: { gmi: 82, cfi: 68, hri: 57 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 40,
+        anger: 92,
+        sadness: 72,
+        hope: 34,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2011-09-30',
+      country: 'EG',
+      description: 'برنامج محو الأمية الرقمية',
+      dcftIndices: { gmi: 81, cfi: 66, hri: 61 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 50,
+        anger: 90,
+        sadness: 74,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-10-03',
+      country: 'ZA',
+      description: 'انخفاض معدل التضخم',
+      dcftIndices: { gmi: 77, cfi: 71, hri: 61 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 43,
+        anger: 91,
+        sadness: 75,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-10-06',
+      country: 'AE',
+      description: 'حفل موسيقي عالمي الطراز',
+      dcftIndices: { gmi: 88, cfi: 61, hri: 51 },
+      emotionalDimensions: {
+        joy: 93,
+        fear: 37,
+        anger: 91,
+        sadness: 77,
+        hope: 36,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-10-09',
+      country: 'KW',
+      description: 'معرض فني دولي مهم',
+      dcftIndices: { gmi: 79, cfi: 68, hri: 58 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 42,
+        anger: 94,
+        sadness: 80,
+        hope: 32,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-10-12',
+      country: 'ES',
+      description: 'افتتاح متحف حضارة',
+      dcftIndices: { gmi: 82, cfi: 64, hri: 53 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 39,
+        anger: 90,
+        sadness: 73,
+        hope: 36,
+        curiosity: 44
+      }
+    },
+    {
+      date: '2011-10-15',
+      country: 'CN',
+      description: 'معرض فني دولي مهم',
+      dcftIndices: { gmi: 85, cfi: 70, hri: 60 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 44,
+        anger: 95,
+        sadness: 78,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-10-18',
+      country: 'IL',
+      description: 'زيادة الصادرات بنسبة كبيرة',
+      dcftIndices: { gmi: 85, cfi: 66, hri: 64 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 44,
+        anger: 94,
+        sadness: 78,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-10-21',
+      country: 'ZA',
+      description: 'مؤتمر ثقافي دولي',
+      dcftIndices: { gmi: 77, cfi: 68, hri: 55 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 46,
+        anger: 90,
+        sadness: 75,
+        hope: 32,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-10-24',
+      country: 'JO',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 86, cfi: 69, hri: 61 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 43,
+        anger: 89,
+        sadness: 79,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-10-27',
+      country: 'YE',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 80, cfi: 66, hri: 61 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 46,
+        anger: 93,
+        sadness: 79,
+        hope: 31,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-10-30',
+      country: 'RU',
+      description: 'زيادة الصادرات بنسبة كبيرة',
+      dcftIndices: { gmi: 78, cfi: 71, hri: 64 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 43,
+        anger: 94,
+        sadness: 71,
+        hope: 32,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-11-02',
+      country: 'AU',
+      description: 'برنامج تبادل ثقافي',
+      dcftIndices: { gmi: 78, cfi: 68, hri: 63 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 47,
+        anger: 93,
+        sadness: 75,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-11-05',
+      country: 'KW',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 81, cfi: 69, hri: 64 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 47,
+        anger: 87,
+        sadness: 77,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-11-08',
+      country: 'MA',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 73, cfi: 77, hri: 73 },
+      emotionalDimensions: {
+        joy: 76,
+        fear: 54,
+        anger: 88,
+        sadness: 74,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2011-11-11',
+      country: 'IR',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 80, cfi: 71, hri: 57 },
+      emotionalDimensions: {
+        joy: 82,
+        fear: 45,
+        anger: 92,
+        sadness: 79,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-11-14',
+      country: 'SY',
+      description: 'توقيع عقد تجاري ضخم',
+      dcftIndices: { gmi: 87, cfi: 67, hri: 60 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 40,
+        anger: 91,
+        sadness: 75,
+        hope: 35,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2011-11-17',
+      country: 'ES',
+      description: 'تحسن الاستقرار السياسي العام',
+      dcftIndices: { gmi: 83, cfi: 69, hri: 56 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 49,
+        anger: 89,
+        sadness: 78,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-11-20',
+      country: 'IN',
+      description: 'استقرار أسعار السلع الأساسية',
+      dcftIndices: { gmi: 81, cfi: 69, hri: 61 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 52,
+        anger: 91,
+        sadness: 68,
+        hope: 30,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-11-23',
+      country: 'YE',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 83, cfi: 74, hri: 61 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 53,
+        anger: 87,
+        sadness: 69,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-11-26',
+      country: 'MX',
+      description: 'تحسن مؤشرات التنوع البيولوجي',
+      dcftIndices: { gmi: 78, cfi: 74, hri: 64 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 46,
+        anger: 86,
+        sadness: 76,
+        hope: 34,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-11-29',
+      country: 'EU',
+      description: 'برنامج تطوير المناطق الريفية',
+      dcftIndices: { gmi: 77, cfi: 69, hri: 64 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 51,
+        anger: 92,
+        sadness: 74,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-12-02',
+      country: 'SY',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 86, cfi: 62, hri: 60 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 44,
+        anger: 94,
+        sadness: 82,
+        hope: 31,
+        curiosity: 37
+      }
+    },
+    {
+      date: '2011-12-05',
+      country: 'RU',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 80, cfi: 69, hri: 52 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 40,
+        anger: 95,
+        sadness: 80,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-12-08',
+      country: 'TR',
+      description: 'افتتاح متحف حضارة',
+      dcftIndices: { gmi: 87, cfi: 63, hri: 54 },
+      emotionalDimensions: {
+        joy: 86,
+        fear: 46,
+        anger: 88,
+        sadness: 79,
+        hope: 33,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-12-11',
+      country: 'EU',
+      description: 'تحسن جودة الهواء بشكل ملحوظ',
+      dcftIndices: { gmi: 79, cfi: 69, hri: 61 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 47,
+        anger: 88,
+        sadness: 74,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2011-12-14',
+      country: 'OM',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 87, cfi: 67, hri: 60 },
+      emotionalDimensions: {
+        joy: 90,
+        fear: 45,
+        anger: 89,
+        sadness: 74,
+        hope: 33,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-12-17',
+      country: 'IN',
+      description: 'توسع شبكات الجيل الخامس',
+      dcftIndices: { gmi: 81, cfi: 65, hri: 59 },
+      emotionalDimensions: {
+        joy: 89,
+        fear: 39,
+        anger: 92,
+        sadness: 80,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2011-12-20',
+      country: 'IL',
+      description: 'إنجاز رياضي قياسي عالمي',
+      dcftIndices: { gmi: 90, cfi: 60, hri: 50 },
+      emotionalDimensions: {
+        joy: 91,
+        fear: 36,
+        anger: 95,
+        sadness: 81,
+        hope: 35,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2011-12-23',
+      country: 'BR',
+      description: 'افتتاح متحف حضارة',
+      dcftIndices: { gmi: 80, cfi: 70, hri: 60 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 41,
+        anger: 94,
+        sadness: 81,
+        hope: 33,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2011-12-26',
+      country: 'RU',
+      description: 'اتفاق على الموارد المشتركة',
+      dcftIndices: { gmi: 75, cfi: 78, hri: 72 },
+      emotionalDimensions: {
+        joy: 79,
+        fear: 57,
+        anger: 83,
+        sadness: 68,
+        hope: 30,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2011-12-29',
+      country: 'IQ',
+      description: 'احتفالات وطنية كبرى',
+      dcftIndices: { gmi: 87, cfi: 65, hri: 54 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 45,
+        anger: 95,
+        sadness: 77,
+        hope: 30,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2012-01-01',
+      country: 'SA',
+      description: 'برنامج محو الأمية الرقمية',
+      dcftIndices: { gmi: 80, cfi: 69, hri: 58 },
+      emotionalDimensions: {
+        joy: 85,
+        fear: 45,
+        anger: 87,
+        sadness: 75,
+        hope: 34,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2012-01-04',
+      country: 'BH',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 81, cfi: 75, hri: 71 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 57,
+        anger: 88,
+        sadness: 71,
+        hope: 30,
+        curiosity: 36
+      }
+    },
+    {
+      date: '2012-01-07',
+      country: 'AU',
+      description: 'تحسن الأمن الحدودي',
+      dcftIndices: { gmi: 74, cfi: 78, hri: 73 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 53,
+        anger: 86,
+        sadness: 66,
+        hope: 31,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2012-01-10',
+      country: 'KW',
+      description: 'تحسن التعاون الأمني الدولي',
+      dcftIndices: { gmi: 80, cfi: 73, hri: 66 },
+      emotionalDimensions: {
+        joy: 83,
+        fear: 58,
+        anger: 85,
+        sadness: 74,
+        hope: 30,
+        curiosity: 34
+      }
+    },
+    {
+      date: '2012-01-13',
+      country: 'LB',
+      description: 'إطلاق برنامج تدريب الشباب',
+      dcftIndices: { gmi: 77, cfi: 66, hri: 62 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 43,
+        anger: 87,
+        sadness: 75,
+        hope: 35,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2012-01-16',
+      country: 'EU',
+      description: 'بطولة إقليمية مهمة',
+      dcftIndices: { gmi: 85, cfi: 68, hri: 59 },
+      emotionalDimensions: {
+        joy: 88,
+        fear: 41,
+        anger: 95,
+        sadness: 77,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2012-01-19',
+      country: 'US',
+      description: 'مشروع تطوير المواهب الرياضية',
+      dcftIndices: { gmi: 81, cfi: 66, hri: 56 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 43,
+        anger: 92,
+        sadness: 72,
+        hope: 33,
+        curiosity: 43
+      }
+    },
+    {
+      date: '2012-01-22',
+      country: 'UK',
+      description: 'برنامج الإسكان الاجتماعي',
+      dcftIndices: { gmi: 75, cfi: 73, hri: 57 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 52,
+        anger: 85,
+        sadness: 72,
+        hope: 32,
+        curiosity: 38
+      }
+    },
+    {
+      date: '2012-01-25',
+      country: 'NG',
+      description: 'إنجاز رياضي قياسي عالمي',
+      dcftIndices: { gmi: 85, cfi: 64, hri: 55 },
+      emotionalDimensions: {
+        joy: 92,
+        fear: 34,
+        anger: 91,
+        sadness: 83,
+        hope: 38,
+        curiosity: 42
+      }
+    },
+    {
+      date: '2012-01-28',
+      country: 'OM',
+      description: 'اتفاق أمني إقليمي شامل',
+      dcftIndices: { gmi: 73, cfi: 80, hri: 66 },
+      emotionalDimensions: {
+        joy: 80,
+        fear: 52,
+        anger: 84,
+        sadness: 67,
+        hope: 32,
+        curiosity: 41
+      }
+    },
+    {
+      date: '2012-01-31',
+      country: 'KR',
+      description: 'برنامج تبادل ثقافي',
+      dcftIndices: { gmi: 84, cfi: 72, hri: 60 },
+      emotionalDimensions: {
+        joy: 81,
+        fear: 49,
+        anger: 85,
+        sadness: 72,
+        hope: 33,
+        curiosity: 40
+      }
+    },
+    {
+      date: '2012-02-03',
+      country: 'CA',
+      description: 'اتفاق بيئي دولي',
+      dcftIndices: { gmi: 82, cfi: 72, hri: 56 },
+      emotionalDimensions: {
+        joy: 87,
+        fear: 48,
+        anger: 91,
+        sadness: 74,
+        hope: 31,
+        curiosity: 39
+      }
+    },
+    {
+      date: '2012-02-06',
+      country: 'ZA',
+      description: 'افتتاح حاضنة تكنولوجية',
+      dcftIndices: { gmi: 85, cfi: 70, hri: 55 },
+      emotionalDimensions: {
+        joy: 84,
+        fear: 41,
+        anger: 95,
+        sadness: 77,
+        hope: 32,
+        curiosity: 41
+      }
     }];
 
 /**
  * Get sample historical events
  */
 export function getSampleHistoricalEvents() {
-  return historicalEventsData;
+  return historicalEvents;
 }
 
 /**
  * Get events by country
  */
 export function getEventsByCountry(country: string) {
-  return historicalEventsData.filter(e => e.country === country || e.country === 'MENA');
+  return historicalEvents.filter(e => e.country === country || e.country === 'MENA');
 }
 
 /**
  * Get events by category
  */
 export function getEventsByCategory(category: string) {
-  return historicalEventsData.filter(e => e.eventCategory === category);
+  return historicalEvents.filter(e => e.eventCategory === category);
 }
 
 /**
  * Get events by date range
  */
 export function getEventsByDateRange(startDate: string, endDate: string) {
-  return historicalEventsData.filter(e => e.eventDate >= startDate && e.eventDate <= endDate);
+  return historicalEvents.filter(e => e.eventDate >= startDate && e.eventDate <= endDate);
 }
