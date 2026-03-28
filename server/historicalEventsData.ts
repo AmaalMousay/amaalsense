@@ -37,6 +37,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International intervention discussions, humanitarian crisis',
     longTermOutcome: 'Prolonged conflict, state fragmentation',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Government fragmentation, militia proliferation, international intervention debates',
+      economic: 'Economic collapse, GDP decline 15%, currency devaluation, unemployment rises',
+      social: 'Displacement of civilians, humanitarian crisis, thousands killed'
+    },
   },
   {
     eventName: 'Gaddafi Regime Falls',
@@ -53,6 +58,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Constitutional drafting, security challenges emerge',
     longTermOutcome: 'Political instability, militia proliferation',
     sources: ['Reuters', 'AP News', 'BBC'],
+    impacts: {
+      political: 'Regime change, transitional government formed, initial optimism for democracy',
+      economic: 'Oil production disrupted, economic uncertainty, reconstruction needs',
+      social: 'Celebration, 25,000+ deaths, political prisoners released, national identity shift'
+    },
   },
   {
     eventName: 'Benghazi Attack',
@@ -69,6 +79,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Increased foreign military presence',
     longTermOutcome: 'Continued instability, militia strengthening',
     sources: ['Reuters', 'CNN', 'BBC'],
+    impacts: {
+      political: 'US-Libya relations damaged, security review, diplomatic crisis',
+      economic: 'Tourism affected, business confidence shaken, security costs increase',
+      social: '4 deaths including US ambassador, anti-American protests, security concerns'
+    },
   },
   {
     eventName: 'National Dialogue Begins',
@@ -85,6 +100,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Slow progress, disagreements persist',
     longTermOutcome: 'Partial agreements, continued divisions',
     sources: ['UN News', 'Reuters', 'Al Jazeera'],
+    impacts: {
+      political: 'UN-sponsored negotiations, diplomatic efforts, slow progress',
+      economic: 'Slight improvement in business confidence, some stability',
+      social: 'Hope for peace, political engagement increases, divisions persist'
+    },
   },
   {
     eventName: 'Oil Production Collapses',
@@ -101,6 +121,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Unemployment rises, public services collapse',
     longTermOutcome: 'Economic crisis, dependency on imports',
     sources: ['OPEC', 'Reuters', 'World Bank'],
+    impacts: {
+      political: 'Government loses revenue, international pressure, policy debates',
+      economic: 'GDP decline 45%, currency devaluation, inflation spike, unemployment',
+      social: 'Public services collapse, poverty increases, social unrest'
+    },
   },
   {
     eventName: 'Dinar Currency Crisis',
@@ -117,6 +142,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Informal economy grows, black market thrives',
     longTermOutcome: 'Economic informalization, reduced government revenue',
     sources: ['IMF', 'Central Bank of Libya', 'Reuters'],
+    impacts: {
+      political: 'Government credibility damaged, economic policy debates',
+      economic: 'Currency loses 50% value, inflation 400%+, purchasing power collapses',
+      social: 'Panic buying, hoarding behavior, informal economy grows, poverty rises'
+    },
   },
   {
     eventName: 'ISIS Gains Territory',
@@ -133,6 +163,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Military operations against ISIS',
     longTermOutcome: 'ISIS defeated but instability remains',
     sources: ['Reuters', 'BBC', 'SOCOM'],
+    impacts: {
+      political: 'International concern, military coordination, security threats',
+      economic: 'Business disruption, investment freeze, economic activity halts',
+      social: 'Civilian evacuations, terrorism fears, 11 deaths, humanitarian crisis'
+    },
   },
   {
     eventName: 'UN-Backed Government Established',
@@ -149,6 +184,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Gradual stabilization efforts begin',
     longTermOutcome: 'Slow recovery, ongoing challenges',
     sources: ['UN News', 'Reuters', 'BBC'],
+    impacts: {
+      political: 'International recognition, government legitimacy, diplomatic progress',
+      economic: 'Aid pledges, investment confidence improves, economic outlook positive',
+      social: 'Hope for stability, political engagement, international support'
+    },
   },
   {
     eventName: 'Tripoli Airport Reopens',
@@ -165,6 +205,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic activity increases',
     longTermOutcome: 'Tourism sector recovery begins',
     sources: ['Reuters', 'Al Jazeera', 'BBC'],
+    impacts: {
+      political: 'Government control strengthened, symbolic victory',
+      economic: 'Tourism and trade resume, economic activity increases, GDP growth 5%',
+      social: 'Mobility restored, connection to world, hope for recovery'
+    },
   },
   {
     eventName: 'Oil Production Partially Recovers',
@@ -181,6 +226,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Salary payments resume, public services improve',
     longTermOutcome: 'Economic stabilization continues',
     sources: ['OPEC', 'Reuters', 'World Bank'],
+    impacts: {
+      political: 'Government revenue increases, political stability improves',
+      economic: 'GDP growth 12%, government revenue increases, salary payments resume',
+      social: 'Public services improve, employment increases, hope for future'
+    },
   },
 
   // MENA Regional Events
@@ -199,6 +249,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Multiple countries experience uprisings',
     longTermOutcome: 'Mixed outcomes across region',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Pro-democracy movement spreads, regime change in Tunisia, regional upheaval',
+      economic: 'Economic uncertainty, tourism decline, investment freeze',
+      social: 'Mass protests, millions mobilized, political awakening, hope for change'
+    },
   },
   {
     eventName: 'Egyptian Revolution',
@@ -215,6 +270,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Constitutional debates, elections',
     longTermOutcome: 'New government established',
     sources: ['Reuters', 'BBC', 'AP News'],
+    impacts: {
+      political: 'Mubarak regime falls, military interim control, democratic hopes',
+      economic: 'Economic disruption, tourism collapse, currency concerns',
+      social: 'Massive celebrations, 846 deaths, political prisoners released, national unity'
+    },
   },
   {
     eventName: 'Syrian Civil War Escalates',
@@ -231,6 +291,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional destabilization',
     longTermOutcome: 'Prolonged conflict, millions displaced',
     sources: ['Reuters', 'BBC', 'UN News'],
+    impacts: {
+      political: 'International involvement, proxy war dynamics, government vs opposition',
+      economic: 'GDP decline 50%, infrastructure destroyed, economic collapse',
+      social: 'Humanitarian crisis, 500,000+ deaths, 6.8 million displaced, refugee flows'
+    },
   },
   {
     eventName: 'Saudi-Led Coalition Intervention in Yemen',
@@ -247,6 +312,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Prolonged conflict, economic collapse',
     longTermOutcome: 'World\'s worst humanitarian crisis',
     sources: ['Reuters', 'BBC', 'UN News'],
+    impacts: {
+      political: 'Regional power dynamics shift, international intervention',
+      economic: 'GDP decline 40%, economic collapse, humanitarian crisis',
+      social: 'Airstrikes, 377,000+ deaths, 80% humanitarian crisis, world\'s worst crisis'
+    },
   },
   {
     eventName: 'Iran Nuclear Deal Signed',
@@ -263,6 +333,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional tensions ease slightly',
     longTermOutcome: 'Temporary stability, later reversed',
     sources: ['Reuters', 'BBC', 'AP News'],
+    impacts: {
+      political: 'Diplomatic breakthrough, sanctions relief, regional tensions ease',
+      economic: 'Oil prices fall, Iranian economy opens, investment opportunities',
+      social: 'Hope for peace, regional cooperation increases, cultural exchange'
+    },
   },
   {
     eventName: 'Refugee Crisis Peaks',
@@ -279,6 +354,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Refugee camps expand, humanitarian crisis',
     longTermOutcome: 'Long-term displacement, integration challenges',
     sources: ['UN UNHCR', 'Reuters', 'BBC'],
+    impacts: {
+      political: 'European border closures, immigration debates, political polarization',
+      economic: 'Integration costs, labor market impacts, economic disruption',
+      social: '1 million+ refugees reach Europe, humanitarian concerns, social tensions'
+    },
   },
   {
     eventName: 'ISIS Caliphate Declared',
