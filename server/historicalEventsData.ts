@@ -375,6 +375,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International coalition forms, military operations',
     longTermOutcome: 'Caliphate defeated but terrorism continues',
     sources: ['Reuters', 'BBC', 'SOCOM'],
+    impacts: {
+      political: 'Military escalation, international intervention, diplomatic tensions',
+      economic: 'Economic disruption, trade suspension, investment freeze',
+      social: 'Civilian casualties, displacement, humanitarian crisis'
+    },
   },
   {
     eventName: 'Saudi-Iran Tensions Rise',
@@ -391,6 +396,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional polarization deepens',
     longTermOutcome: 'Ongoing regional rivalry',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Political instability, government crisis, institutional weakness',
+      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
+      social: 'Political polarization, social division, public distrust'
+    },
   },
   {
     eventName: 'Oil Price Collapse',
@@ -407,6 +417,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic contraction, unemployment rises',
     longTermOutcome: 'Structural economic reforms needed',
     sources: ['OPEC', 'Reuters', 'World Bank'],
+    impacts: {
+      political: 'Government policy debates, economic sanctions, fiscal crisis',
+      economic: 'GDP decline, unemployment rise, currency devaluation',
+      social: 'Poverty increases, social unrest, public services decline'
+    },
   },
 
   // Additional Events
@@ -425,6 +440,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Political polarization increases',
     longTermOutcome: 'Authoritarian tendencies strengthen',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Political instability, government crisis, institutional weakness',
+      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
+      social: 'Political polarization, social division, public distrust'
+    },
   },
   {
     eventName: 'Qatar Blockade Begins',
@@ -441,6 +461,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional divisions deepen',
     longTermOutcome: 'Blockade continues for years',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Political instability, government crisis, institutional weakness',
+      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
+      social: 'Political polarization, social division, public distrust'
+    },
   },
   {
     eventName: 'Morocco-Algeria Border Tensions',
@@ -457,6 +482,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Border remains tense',
     longTermOutcome: 'Occasional skirmishes, no major conflict',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Military escalation, international intervention, diplomatic tensions',
+      economic: 'Economic disruption, trade suspension, investment freeze',
+      social: 'Civilian casualties, displacement, humanitarian crisis'
+    },
   },
   {
     eventName: 'Jordan Refugee Crisis',
@@ -473,6 +503,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Strain on resources, social tensions',
     longTermOutcome: 'Long-term integration challenges',
     sources: ['UN UNHCR', 'Reuters', 'BBC'],
+    impacts: {
+      political: 'Social unrest, political mobilization, government response',
+      economic: 'Economic disruption, business interruption, productivity loss',
+      social: 'Social tension, mass mobilization, community division'
+    },
   },
   {
     eventName: 'Lebanon Political Crisis',
@@ -489,6 +524,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic stagnation, services decline',
     longTermOutcome: 'Government eventually formed',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Political instability, government crisis, institutional weakness',
+      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
+      social: 'Political polarization, social division, public distrust'
+    },
   },
   {
     eventName: 'Palestine-Israel Escalation',
@@ -505,6 +545,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Humanitarian concerns, aid appeals',
     longTermOutcome: 'Ongoing conflict, periodic escalations',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Military escalation, international intervention, diplomatic tensions',
+      economic: 'Economic disruption, trade suspension, investment freeze',
+      social: 'Civilian casualties, displacement, humanitarian crisis'
+    },
   },
   {
     eventName: 'Tunisia Democratic Progress',
@@ -521,6 +566,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Stable governance, economic recovery',
     longTermOutcome: 'Tunisia becomes regional democratic model',
     sources: ['Reuters', 'BBC', 'UN News'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Morocco Economic Growth',
@@ -537,6 +587,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Continued growth, investment increases',
     longTermOutcome: 'Morocco becomes regional economic leader',
     sources: ['World Bank', 'Reuters', 'IMF'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
 ,
   // Additional 25+ Events (2017-2024)
@@ -555,6 +610,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Currency devaluation, inflation spike',
     longTermOutcome: 'Prolonged economic crisis',
     sources: ['Reuters', 'BBC', 'AP News'],
+    impacts: {
+      political: 'Political instability, government crisis, institutional weakness',
+      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
+      social: 'Political polarization, social division, public distrust'
+    },
   },
   {
     eventName: 'Saudi Vision 2030 Reforms',
@@ -571,6 +631,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'New industries develop, tourism grows',
     longTermOutcome: 'Economic transformation progresses',
     sources: ['Reuters', 'World Bank', 'Saudi Press Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Egypt Suez Canal Blockade',
@@ -587,6 +652,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International cooperation for salvage',
     longTermOutcome: 'Canal security improved',
     sources: ['Reuters', 'BBC', 'CNN'],
+    impacts: {
+      political: 'Government policy debates, economic sanctions, fiscal crisis',
+      economic: 'GDP decline, unemployment rise, currency devaluation',
+      social: 'Poverty increases, social unrest, public services decline'
+    },
   },
   {
     eventName: 'Abraham Accords Signed',
@@ -603,6 +673,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional realignment, economic cooperation',
     longTermOutcome: 'New regional partnerships emerge',
     sources: ['Reuters', 'BBC', 'AP News'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'COVID-19 Pandemic Hits MENA',
@@ -619,6 +694,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic contraction, unemployment rises',
     longTermOutcome: 'Gradual recovery with new challenges',
     sources: ['WHO', 'Reuters', 'BBC'],
+    impacts: {
+      political: 'Public health emergency, government response, international coordination',
+      economic: 'Healthcare costs, economic disruption, productivity loss',
+      social: 'Health crisis, mortality increase, social disruption'
+    },
   },
   {
     eventName: 'Lebanon Economic Collapse',
@@ -635,6 +715,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Capital controls, economic paralysis',
     longTermOutcome: 'Worst economic crisis in history',
     sources: ['Reuters', 'BBC', 'IMF'],
+    impacts: {
+      political: 'Government policy debates, economic sanctions, fiscal crisis',
+      economic: 'GDP decline, unemployment rise, currency devaluation',
+      social: 'Poverty increases, social unrest, public services decline'
+    },
   },
   {
     eventName: 'Beirut Port Explosion',
@@ -651,6 +736,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International aid, reconstruction begins',
     longTermOutcome: 'Slow recovery, political fallout',
     sources: ['Reuters', 'BBC', 'CNN'],
+    impacts: {
+      political: 'Crisis response, government action, institutional challenges',
+      economic: 'Economic impact, recovery costs, business disruption',
+      social: 'Social impact, community response, humanitarian concerns'
+    },
   },
   {
     eventName: 'Iraq Protests and Unrest',
@@ -667,6 +757,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Continued protests, political pressure',
     longTermOutcome: 'Gradual reforms, ongoing tensions',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Social unrest, political mobilization, government response',
+      economic: 'Economic disruption, business interruption, productivity loss',
+      social: 'Social tension, mass mobilization, community division'
+    },
   },
   {
     eventName: 'UAE-Israel Normalization Trade Surge',
@@ -683,6 +778,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration accelerates',
     longTermOutcome: 'Sustained bilateral cooperation',
     sources: ['Reuters', 'World Bank', 'UAE News Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Libya Elections and Transition',
@@ -699,6 +799,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Government formation, stability efforts',
     longTermOutcome: 'Continued democratic development',
     sources: ['Reuters', 'UN News', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Saudi-Qatar Reconciliation',
@@ -715,6 +820,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation increases',
     longTermOutcome: 'Sustained regional stability',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Egypt Inflation Crisis',
@@ -731,6 +841,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'IMF bailout negotiations',
     longTermOutcome: 'Economic reforms implemented',
     sources: ['Reuters', 'IMF', 'BBC'],
+    impacts: {
+      political: 'Government policy debates, economic sanctions, fiscal crisis',
+      economic: 'GDP decline, unemployment rise, currency devaluation',
+      social: 'Poverty increases, social unrest, public services decline'
+    },
   },
   {
     eventName: 'Turkey-Greece Maritime Tensions',
@@ -747,6 +862,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'EU mediation attempts',
     longTermOutcome: 'Ongoing disputes, periodic tensions',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Military escalation, international intervention, diplomatic tensions',
+      economic: 'Economic disruption, trade suspension, investment freeze',
+      social: 'Civilian casualties, displacement, humanitarian crisis'
+    },
   },
   {
     eventName: 'Saudi Aramco IPO',
@@ -763,6 +883,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Continued privatization efforts',
     longTermOutcome: 'Saudi economic diversification accelerates',
     sources: ['Reuters', 'Bloomberg', 'Saudi Stock Exchange'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Iran-US Tensions Escalate',
@@ -779,6 +904,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Proxy conflicts intensify',
     longTermOutcome: 'Ongoing regional tensions',
     sources: ['Reuters', 'BBC', 'CNN'],
+    impacts: {
+      political: 'Military escalation, international intervention, diplomatic tensions',
+      economic: 'Economic disruption, trade suspension, investment freeze',
+      social: 'Civilian casualties, displacement, humanitarian crisis'
+    },
   },
   {
     eventName: 'Tunisia Political Crisis',
@@ -795,6 +925,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Democratic backsliding concerns',
     longTermOutcome: 'Democratic institutions weakened',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Political instability, government crisis, institutional weakness',
+      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
+      social: 'Political polarization, social division, public distrust'
+    },
   },
   {
     eventName: 'Yemen Humanitarian Crisis Worsens',
@@ -811,6 +946,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International aid efforts expand',
     longTermOutcome: 'Prolonged humanitarian emergency',
     sources: ['UN OCHA', 'Reuters', 'BBC'],
+    impacts: {
+      political: 'Social unrest, political mobilization, government response',
+      economic: 'Economic disruption, business interruption, productivity loss',
+      social: 'Social tension, mass mobilization, community division'
+    },
   },
   {
     eventName: 'Morocco-Spain Migration Crisis',
@@ -827,6 +967,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'EU-Morocco relations strained',
     longTermOutcome: 'Ongoing migration pressures',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Social unrest, political mobilization, government response',
+      economic: 'Economic disruption, business interruption, productivity loss',
+      social: 'Social tension, mass mobilization, community division'
+    },
   },
   {
     eventName: 'Israel-Palestine Gaza Conflict 2021',
@@ -843,6 +988,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International mediation efforts',
     longTermOutcome: 'Ceasefire, humanitarian concerns remain',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Military escalation, international intervention, diplomatic tensions',
+      economic: 'Economic disruption, trade suspension, investment freeze',
+      social: 'Civilian casualties, displacement, humanitarian crisis'
+    },
   },
   {
     eventName: 'Saudi-Yemen Ceasefire Talks',
@@ -859,6 +1009,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Peace negotiations progress',
     longTermOutcome: 'Fragile peace, ongoing challenges',
     sources: ['Reuters', 'UN News', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Egypt New Administrative Capital Opens',
@@ -875,6 +1030,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Government relocation begins',
     longTermOutcome: 'New capital becomes major hub',
     sources: ['Reuters', 'BBC', 'Egypt Today'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Iraq Oil Production Reaches 5 Million Barrels',
@@ -891,6 +1051,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic growth accelerates',
     longTermOutcome: 'Sustained oil-based prosperity',
     sources: ['OPEC', 'Reuters', 'World Bank'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Turkey Earthquake Disaster',
@@ -907,6 +1072,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International aid, reconstruction begins',
     longTermOutcome: 'Long-term recovery efforts',
     sources: ['Reuters', 'BBC', 'CNN'],
+    impacts: {
+      political: 'Crisis response, government action, institutional challenges',
+      economic: 'Economic impact, recovery costs, business disruption',
+      social: 'Social impact, community response, humanitarian concerns'
+    },
   },
   {
     eventName: 'Syria Earthquake Aftermath',
@@ -923,6 +1093,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International aid despite sanctions',
     longTermOutcome: 'Prolonged recovery challenges',
     sources: ['UN News', 'Reuters', 'BBC'],
+    impacts: {
+      political: 'Crisis response, government action, institutional challenges',
+      economic: 'Economic impact, recovery costs, business disruption',
+      social: 'Social impact, community response, humanitarian concerns'
+    },
   },
   {
     eventName: 'UAE-Saudi Renewable Energy Partnership',
@@ -939,6 +1114,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Renewable capacity expands',
     longTermOutcome: 'Energy transition accelerates',
     sources: ['Reuters', 'World Bank', 'IRENA'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Egypt Suez Canal Revenue Record',
@@ -955,6 +1135,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic stability improves',
     longTermOutcome: 'Sustained revenue growth',
     sources: ['Reuters', 'Egypt Today', 'World Bank'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Morocco-Spain Renewable Energy Deal',
@@ -971,6 +1156,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Green industry development',
     longTermOutcome: 'Morocco becomes energy hub',
     sources: ['Reuters', 'World Bank', 'Morocco News Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Saudi Arabia Joins BRICS',
@@ -987,6 +1177,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Trade diversification increases',
     longTermOutcome: 'Reduced US dollar dependency',
     sources: ['Reuters', 'BBC', 'BRICS News'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Iran Nuclear Talks Resume',
@@ -1003,6 +1198,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic recovery prospects improve',
     longTermOutcome: 'Potential regional stability',
     sources: ['Reuters', 'BBC', 'UN News'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
 
   {
@@ -1020,6 +1220,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International pressure for ceasefire',
     longTermOutcome: 'Prolonged humanitarian emergency',
     sources: ['UN OCHA', 'Reuters', 'BBC'],
+    impacts: {
+      political: 'Social unrest, political mobilization, government response',
+      economic: 'Economic disruption, business interruption, productivity loss',
+      social: 'Social tension, mass mobilization, community division'
+    },
   },
   {
     eventName: 'Egypt-Sudan Border Tensions',
@@ -1036,6 +1241,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Border remains tense, negotiations begin',
     longTermOutcome: 'Diplomatic resolution reached',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Military escalation, international intervention, diplomatic tensions',
+      economic: 'Economic disruption, trade suspension, investment freeze',
+      social: 'Civilian casualties, displacement, humanitarian crisis'
+    },
   },
   {
     eventName: 'Saudi Arabia Mega Projects Accelerate',
@@ -1052,6 +1262,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Infrastructure development accelerates',
     longTermOutcome: 'Saudi Arabia becomes global hub',
     sources: ['Reuters', 'Bloomberg', 'Saudi Press Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Iran Drone Technology Advances',
@@ -1068,6 +1283,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'International concerns raised',
     longTermOutcome: 'New deterrence dynamics emerge',
     sources: ['Reuters', 'BBC', 'IISS'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Egypt Tourism Recovery Accelerates',
@@ -1084,6 +1304,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic growth accelerates',
     longTermOutcome: 'Tourism becomes major revenue source',
     sources: ['Reuters', 'World Bank', 'Egypt Today'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'UAE-India Trade Surge',
@@ -1100,6 +1325,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration deepens',
     longTermOutcome: 'Strategic partnership strengthens',
     sources: ['Reuters', 'World Bank', 'UAE News Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Morocco Tech Hub Growth',
@@ -1116,6 +1346,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Tech talent migration increases',
     longTermOutcome: 'Morocco leads African tech',
     sources: ['Reuters', 'TechCrunch', 'Morocco News'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Iraq-Turkey Water Crisis',
@@ -1132,6 +1367,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Water negotiations begin',
     longTermOutcome: 'Regional water-sharing agreement',
     sources: ['Reuters', 'BBC', 'UN Water'],
+    impacts: {
+      political: 'Environmental policy debates, international agreements, climate diplomacy',
+      economic: 'Environmental costs, resource scarcity, economic losses',
+      social: 'Displacement, health impacts, food security concerns'
+    },
   },
   {
     eventName: 'Lebanon Government Reforms',
@@ -1148,6 +1388,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Currency stabilizes, inflation falls',
     longTermOutcome: 'Gradual economic recovery',
     sources: ['Reuters', 'IMF', 'BBC'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Tunisia-Libya Border Agreement',
@@ -1164,6 +1409,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional stability improves',
     longTermOutcome: 'Sustained bilateral relations',
     sources: ['Reuters', 'UN News', 'Al Jazeera'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Saudi-Iran Diplomatic Thaw',
@@ -1180,6 +1430,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation increases',
     longTermOutcome: 'Sustained diplomatic engagement',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Egypt Renewable Energy Target',
@@ -1196,6 +1451,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Electricity costs fall',
     longTermOutcome: 'Sustainable energy future',
     sources: ['Reuters', 'IRENA', 'Egypt Today'],
+    impacts: {
+      political: 'Environmental leadership, green policies, international cooperation',
+      economic: 'Green economy growth, renewable energy investment, cost savings',
+      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+    },
   },
   {
     eventName: 'Yemen Peace Agreement Signed',
@@ -1212,6 +1472,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Reconstruction begins',
     longTermOutcome: 'Long-term peace and stability',
     sources: ['Reuters', 'UN News', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Palestine-Israel Two-State Solution',
@@ -1228,6 +1493,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'State institutions develop',
     longTermOutcome: 'Independent Palestinian state',
     sources: ['Reuters', 'UN News', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Syria Reconstruction Begins',
@@ -1244,6 +1514,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic activity resumes',
     longTermOutcome: 'Gradual recovery progresses',
     sources: ['Reuters', 'World Bank', 'UN News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Turkey-Greece Energy Cooperation',
@@ -1260,6 +1535,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation expands',
     longTermOutcome: 'Sustained partnership',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Saudi-Pakistan Military Alliance',
@@ -1276,6 +1556,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional security balance shifts',
     longTermOutcome: 'Strategic partnership deepens',
     sources: ['Reuters', 'BBC', 'Dawn'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Libya Oil Production Boom',
@@ -1292,6 +1577,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic growth accelerates',
     longTermOutcome: 'Libya becomes major oil producer',
     sources: ['OPEC', 'Reuters', 'World Bank'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Qatar World Cup Legacy Projects',
@@ -1308,6 +1598,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Tourism revenue increases',
     longTermOutcome: 'Qatar becomes tourism hub',
     sources: ['Reuters', 'Bloomberg', 'Qatar News Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Jordan-Israel Water Agreement',
@@ -1324,6 +1619,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Agricultural production increases',
     longTermOutcome: 'Sustained cooperation',
     sources: ['Reuters', 'UN Water', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'UAE-China Tech Partnership',
@@ -1340,6 +1640,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Innovation ecosystem expands',
     longTermOutcome: 'UAE becomes tech leader',
     sources: ['Reuters', 'Bloomberg', 'UAE News Agency'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Iraq-Iran Border Stability',
@@ -1356,6 +1661,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Smuggling decreases',
     longTermOutcome: 'Stable bilateral relations',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Morocco-EU Trade Expansion',
@@ -1372,6 +1682,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Manufacturing expands',
     longTermOutcome: 'Morocco becomes export hub',
     sources: ['Reuters', 'World Bank', 'Morocco News Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Tunisia-Algeria Economic Integration',
@@ -1388,6 +1703,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation deepens',
     longTermOutcome: 'Maghreb integration strengthens',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Saudi Arabia Space Program Success',
@@ -1404,6 +1724,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Space industry develops',
     longTermOutcome: 'Saudi Arabia becomes space power',
     sources: ['Reuters', 'BBC', 'Saudi Press Agency'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Egypt-Sudan Nile Water Agreement',
@@ -1420,6 +1745,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation strengthens',
     longTermOutcome: 'Sustainable water management',
     sources: ['Reuters', 'UN Water', 'BBC'],
+    impacts: {
+      political: 'Environmental leadership, green policies, international cooperation',
+      economic: 'Green economy growth, renewable energy investment, cost savings',
+      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+    },
   },
   {
     eventName: 'Iran Tech Sanctions Relief',
@@ -1436,6 +1766,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Innovation ecosystem grows',
     longTermOutcome: 'Iran becomes tech hub',
     sources: ['Reuters', 'BBC', 'IRNA'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Kuwait-Saudi Oil Cooperation',
@@ -1452,6 +1787,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Revenue growth accelerates',
     longTermOutcome: 'Sustained cooperation',
     sources: ['OPEC', 'Reuters', 'World Bank'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Bahrain-Saudi Causeway Expansion',
@@ -1468,6 +1808,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional integration deepens',
     longTermOutcome: 'GCC cooperation strengthens',
     sources: ['Reuters', 'BBC', 'Gulf News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Oman-India Strategic Partnership',
@@ -1484,6 +1829,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional security balance shifts',
     longTermOutcome: 'Strategic partnership deepens',
     sources: ['Reuters', 'BBC', 'Times of Oman'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Israel-Saudi Normalization',
@@ -1500,6 +1850,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional realignment accelerates',
     longTermOutcome: 'New Middle East order emerges',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'MENA Climate Summit',
@@ -1516,6 +1871,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Green investments increase',
     longTermOutcome: 'Regional climate action accelerates',
     sources: ['Reuters', 'UNFCCC', 'BBC'],
+    impacts: {
+      political: 'Environmental leadership, green policies, international cooperation',
+      economic: 'Green economy growth, renewable energy investment, cost savings',
+      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+    },
   },
   {
     eventName: 'Egypt-Sudan Peace Treaty',
@@ -1532,6 +1892,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation strengthens',
     longTermOutcome: 'Sustained peace and prosperity',
     sources: ['Reuters', 'UN News', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Iraq Oil Exports Peak',
@@ -1548,6 +1913,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic growth accelerates',
     longTermOutcome: 'Iraq becomes economic powerhouse',
     sources: ['OPEC', 'Reuters', 'World Bank'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Lebanon Banking System Restored',
@@ -1564,6 +1934,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic activity resumes',
     longTermOutcome: 'Lebanon recovers from crisis',
     sources: ['Reuters', 'IMF', 'BBC'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Morocco-EU Green Hydrogen Export',
@@ -1580,6 +1955,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Green industry becomes major sector',
     longTermOutcome: 'Morocco leads African green transition',
     sources: ['Reuters', 'World Bank', 'Morocco News'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Iran Nuclear Deal 2.0',
@@ -1596,6 +1976,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Foreign investment floods in',
     longTermOutcome: 'Iran becomes regional economic hub',
     sources: ['Reuters', 'BBC', 'UN News'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Saudi Arabia Hosts Olympics',
@@ -1612,6 +1997,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Tourism industry transforms',
     longTermOutcome: 'Saudi Arabia becomes global destination',
     sources: ['Reuters', 'IOC', 'Saudi Press Agency'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Tunisia-Libya Cooperation Zone',
@@ -1628,6 +2018,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional integration deepens',
     longTermOutcome: 'Maghreb becomes unified market',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Yemen Reconstruction Fund',
@@ -1644,6 +2039,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Infrastructure rebuilds',
     longTermOutcome: 'Yemen emerges from crisis',
     sources: ['Reuters', 'World Bank', 'UN News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Turkey-Syria Normalization',
@@ -1660,6 +2060,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation increases',
     longTermOutcome: 'Syria begins reconstruction',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Egypt-Israel Water Agreement',
@@ -1676,6 +2081,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation strengthens',
     longTermOutcome: 'Sustainable water future',
     sources: ['Reuters', 'UN Water', 'BBC'],
+    impacts: {
+      political: 'Environmental leadership, green policies, international cooperation',
+      economic: 'Green economy growth, renewable energy investment, cost savings',
+      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+    },
   },
   {
     eventName: 'GCC Economic Union',
@@ -1692,6 +2102,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration accelerates',
     longTermOutcome: 'GCC becomes unified bloc',
     sources: ['Reuters', 'Bloomberg', 'Gulf News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Palestine State Recognition',
@@ -1708,6 +2123,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'State institutions strengthen',
     longTermOutcome: 'Palestine becomes full nation',
     sources: ['Reuters', 'UN News', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'MENA Tech Hub Network',
@@ -1724,6 +2144,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Innovation ecosystem expands',
     longTermOutcome: 'MENA becomes global tech center',
     sources: ['Reuters', 'TechCrunch', 'Bloomberg'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Iraq-Turkey Water Accord',
@@ -1740,6 +2165,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Agricultural production increases',
     longTermOutcome: 'Sustainable water management',
     sources: ['Reuters', 'UN Water', 'BBC'],
+    impacts: {
+      political: 'Environmental leadership, green policies, international cooperation',
+      economic: 'Green economy growth, renewable energy investment, cost savings',
+      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+    },
   },
   {
     eventName: 'Saudi Arabia Becomes AI Leader',
@@ -1756,6 +2186,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'AI innovation accelerates',
     longTermOutcome: 'Saudi Arabia leads global AI',
     sources: ['Reuters', 'TechCrunch', 'Saudi Press Agency'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Egypt Tourism Record',
@@ -1772,6 +2207,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Tourism becomes major sector',
     longTermOutcome: 'Egypt becomes tourism powerhouse',
     sources: ['Reuters', 'World Bank', 'Egypt Today'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Morocco-Saudi Joint Venture',
@@ -1788,6 +2228,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic growth accelerates',
     longTermOutcome: 'Morocco becomes investment hub',
     sources: ['Reuters', 'Bloomberg', 'Morocco News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Iran-EU Trade Normalization',
@@ -1804,6 +2249,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration deepens',
     longTermOutcome: 'Iran becomes regional trade hub',
     sources: ['Reuters', 'BBC', 'IRNA'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Qatar-Saudi Joint Mega Project',
@@ -1820,6 +2270,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional cooperation deepens',
     longTermOutcome: 'GCC becomes investment magnet',
     sources: ['Reuters', 'Bloomberg', 'Gulf News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Libya-Tunisia Border Economic Zone',
@@ -1836,6 +2291,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional integration strengthens',
     longTermOutcome: 'Maghreb becomes unified market',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Syria-Iraq Energy Partnership',
@@ -1852,6 +2312,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration increases',
     longTermOutcome: 'Regional energy network emerges',
     sources: ['Reuters', 'Bloomberg', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Oman Tourism Development',
@@ -1868,6 +2333,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Visitor numbers increase',
     longTermOutcome: 'Oman becomes tourism hub',
     sources: ['Reuters', 'World Bank', 'Times of Oman'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Jordan-Palestine Economic Corridor',
@@ -1884,6 +2354,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration strengthens',
     longTermOutcome: 'Regional prosperity increases',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Kuwait Diversification Success',
@@ -1900,6 +2375,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Non-oil growth continues',
     longTermOutcome: 'Kuwait becomes diversified economy',
     sources: ['Reuters', 'World Bank', 'Gulf News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Bahrain Financial Hub Expansion',
@@ -1916,6 +2396,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Investment flows increase',
     longTermOutcome: 'Bahrain leads Islamic finance',
     sources: ['Reuters', 'Bloomberg', 'Gulf News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'UAE-Pakistan Tech Partnership',
@@ -1932,6 +2417,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Innovation ecosystem expands',
     longTermOutcome: 'Regional tech network emerges',
     sources: ['Reuters', 'TechCrunch', 'Bloomberg'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Egypt-Saudi Mega City',
@@ -1948,6 +2438,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Urban development accelerates',
     longTermOutcome: 'New regional hub emerges',
     sources: ['Reuters', 'Bloomberg', 'Egypt Today'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Morocco-Mauritania Trade Zone',
@@ -1964,6 +2459,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Regional integration strengthens',
     longTermOutcome: 'West Africa becomes unified market',
     sources: ['Reuters', 'BBC', 'Morocco News'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Iran-China Strategic Alliance',
@@ -1980,6 +2480,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration deepens',
     longTermOutcome: 'Iran becomes China partner',
     sources: ['Reuters', 'BBC', 'IRNA'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'Saudi Arabia Green City',
@@ -1996,6 +2501,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Green technology adoption spreads',
     longTermOutcome: 'Saudi Arabia leads green transition',
     sources: ['Reuters', 'Bloomberg', 'Saudi Press Agency'],
+    impacts: {
+      political: 'Environmental leadership, green policies, international cooperation',
+      economic: 'Green economy growth, renewable energy investment, cost savings',
+      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+    },
   },
   {
     eventName: 'Tunisia Digital Economy Boom',
@@ -2012,6 +2522,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Tech sector expands',
     longTermOutcome: 'Tunisia becomes digital hub',
     sources: ['Reuters', 'TechCrunch', 'Tunisia News'],
+    impacts: {
+      political: 'Technology leadership, digital innovation, tech diplomacy',
+      economic: 'Tech sector growth, job creation, economic innovation',
+      social: 'Digital inclusion, connectivity increase, innovation culture'
+    },
   },
   {
     eventName: 'Iraq-Syria Border Trade Surge',
@@ -2028,6 +2543,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration deepens',
     longTermOutcome: 'Levant becomes unified market',
     sources: ['Reuters', 'Bloomberg', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Libya-Egypt Cooperation Deepens',
@@ -2044,6 +2564,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic cooperation increases',
     longTermOutcome: 'North Africa becomes unified bloc',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
   {
     eventName: 'Yemen Stability Achieved',
@@ -2060,6 +2585,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic growth accelerates',
     longTermOutcome: 'Yemen becomes stable nation',
     sources: ['Reuters', 'UN News', 'BBC'],
+    impacts: {
+      political: 'Democratic progress, institutional strengthening, political stability',
+      economic: 'Business confidence improves, investment increases, economic growth',
+      social: 'Political participation increases, social cohesion, public trust'
+    },
   },
   {
     eventName: 'MENA Regional Trade Bloc',
@@ -2076,6 +2606,11 @@ export const historicalEvents = [
     mediumTermOutcome: 'Economic integration accelerates',
     longTermOutcome: 'MENA becomes global economic power',
     sources: ['Reuters', 'Bloomberg', 'World Bank'],
+    impacts: {
+      political: 'Government revenue increases, economic confidence, policy success',
+      economic: 'GDP growth, job creation, currency strengthens',
+      social: 'Employment rises, living standards improve, social stability'
+    },
   },
 ,
     {
