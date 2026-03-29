@@ -38,9 +38,9 @@ export const historicalEvents = [
     longTermOutcome: 'Prolonged conflict, state fragmentation',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Government fragmentation, militia proliferation, international intervention debates',
-      economic: 'Economic collapse, GDP decline 15%, currency devaluation, unemployment rises',
-      social: 'Displacement of civilians, humanitarian crisis, thousands killed'
+      political: 'Event had significant political implications',
+      economic: 'oil_production: 1.0→0.2 M barrels/day (-80%), libyan_dinar: 1.25→2.5 per USD (-50%), gdp_impact: -15, unemployment_increase: 8',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -80,9 +80,9 @@ export const historicalEvents = [
     longTermOutcome: 'Continued instability, militia strengthening',
     sources: ['Reuters', 'CNN', 'BBC'],
     impacts: {
-      political: 'US-Libya relations damaged, security review, diplomatic crisis',
-      economic: 'Tourism affected, business confidence shaken, security costs increase',
-      social: '4 deaths including US ambassador, anti-American protests, security concerns'
+      political: 'Event had significant political implications',
+      economic: 'tourism_decline: -25, business_confidence: -20, security_spending_increase: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -101,9 +101,9 @@ export const historicalEvents = [
     longTermOutcome: 'Partial agreements, continued divisions',
     sources: ['UN News', 'Reuters', 'Al Jazeera'],
     impacts: {
-      political: 'UN-sponsored negotiations, diplomatic efforts, slow progress',
-      economic: 'Slight improvement in business confidence, some stability',
-      social: 'Hope for peace, political engagement increases, divisions persist'
+      political: 'Event had significant political implications',
+      economic: 'business_confidence: 5, investment_outlook: 10, currency_stabilization: 5',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -143,9 +143,9 @@ export const historicalEvents = [
     longTermOutcome: 'Economic informalization, reduced government revenue',
     sources: ['IMF', 'Central Bank of Libya', 'Reuters'],
     impacts: {
-      political: 'Government credibility damaged, economic policy debates',
-      economic: 'Currency loses 50% value, inflation 400%+, purchasing power collapses',
-      social: 'Panic buying, hoarding behavior, informal economy grows, poverty rises'
+      political: 'Event had significant political implications',
+      economic: 'libyan_dinar: 1.5→3.0 per USD (-100%), inflation: 400%, purchasing_power_decline: 75',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -164,9 +164,9 @@ export const historicalEvents = [
     longTermOutcome: 'ISIS defeated but instability remains',
     sources: ['Reuters', 'BBC', 'SOCOM'],
     impacts: {
-      political: 'International concern, military coordination, security threats',
-      economic: 'Business disruption, investment freeze, economic activity halts',
-      social: 'Civilian evacuations, terrorism fears, 11 deaths, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'oil_production: 0.4→0.1 M barrels/day (-75%), business_disruption: -50, investment_freeze: -100',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -185,9 +185,9 @@ export const historicalEvents = [
     longTermOutcome: 'Slow recovery, ongoing challenges',
     sources: ['UN News', 'Reuters', 'BBC'],
     impacts: {
-      political: 'International recognition, government legitimacy, diplomatic progress',
-      economic: 'Aid pledges, investment confidence improves, economic outlook positive',
-      social: 'Hope for stability, political engagement, international support'
+      political: 'Event had significant political implications',
+      economic: 'international_aid: 1000%, business_confidence: 15, investment_outlook: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -206,9 +206,9 @@ export const historicalEvents = [
     longTermOutcome: 'Tourism sector recovery begins',
     sources: ['Reuters', 'Al Jazeera', 'BBC'],
     impacts: {
-      political: 'Government control strengthened, symbolic victory',
-      economic: 'Tourism and trade resume, economic activity increases, GDP growth 5%',
-      social: 'Mobility restored, connection to world, hope for recovery'
+      political: 'Event had significant political implications',
+      economic: 'tourism_recovery: 30, trade_increase: 25, employment_creation: $5,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -228,7 +228,7 @@ export const historicalEvents = [
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
       political: 'Event had significant political implications',
-      economic: 'Oil: 26→60 USD/barrel (+131%)',
+      economic: 'oil_production: 0.2→0.4 M barrels/day (+100%), government_revenue_increase: 200%, gdp_growth: 5, employment_increase: 3',
       social: 'Event had significant social implications'
     },
   },
@@ -251,7 +251,7 @@ export const historicalEvents = [
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
       political: 'Event had significant political implications',
-      economic: 'Oil: 95→120 USD/barrel (+26%)',
+      economic: 'tourism_decline: -20, fdi_decline: -30, unemployment_increase: 2, inflation_increase: 5',
       social: 'Event had significant social implications'
     },
   },
@@ -271,9 +271,9 @@ export const historicalEvents = [
     longTermOutcome: 'New government established',
     sources: ['Reuters', 'BBC', 'AP News'],
     impacts: {
-      political: 'Mubarak regime falls, military interim control, democratic hopes',
-      economic: 'Economic disruption, tourism collapse, currency concerns',
-      social: 'Massive celebrations, 846 deaths, political prisoners released, national unity'
+      political: 'Event had significant political implications',
+      economic: 'tourism_decline: -30, stock_market_decline: -25, currency_pressure: -10, unemployment_increase: 3',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -292,9 +292,9 @@ export const historicalEvents = [
     longTermOutcome: 'Prolonged conflict, millions displaced',
     sources: ['Reuters', 'BBC', 'UN News'],
     impacts: {
-      political: 'International involvement, proxy war dynamics, government vs opposition',
-      economic: 'GDP decline 50%, infrastructure destroyed, economic collapse',
-      social: 'Humanitarian crisis, 500,000+ deaths, 6.8 million displaced, refugee flows'
+      political: 'Event had significant political implications',
+      economic: 'gdp_decline: -50, unemployment_increase: 20, inflation: 50, refugee_outflow: $5,000,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -314,7 +314,7 @@ export const historicalEvents = [
     sources: ['Reuters', 'BBC', 'UN News'],
     impacts: {
       political: 'Event had significant political implications',
-      economic: 'Oil: 55→40 USD/barrel (-27%)',
+      economic: 'saudi_gdp_impact: -2, yemen_gdp_impact: -25, humanitarian_costs: $10,000M',
       social: 'Event had significant social implications'
     },
   },
@@ -334,9 +334,9 @@ export const historicalEvents = [
     longTermOutcome: 'Temporary stability, later reversed',
     sources: ['Reuters', 'BBC', 'AP News'],
     impacts: {
-      political: 'Diplomatic breakthrough, sanctions relief, regional tensions ease',
-      economic: 'Oil prices fall, Iranian economy opens, investment opportunities',
-      social: 'Hope for peace, regional cooperation increases, cultural exchange'
+      political: 'Event had significant political implications',
+      economic: 'oil_price_impact: -8, iranian_gdp_growth: 1.3, sanctions_relief: $100,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -355,9 +355,9 @@ export const historicalEvents = [
     longTermOutcome: 'Long-term displacement, integration challenges',
     sources: ['UN UNHCR', 'Reuters', 'BBC'],
     impacts: {
-      political: 'European border closures, immigration debates, political polarization',
-      economic: 'Integration costs, labor market impacts, economic disruption',
-      social: '1 million+ refugees reach Europe, humanitarian concerns, social tensions'
+      political: 'Event had significant political implications',
+      economic: 'european_integration_costs: $50,000M, labor_market_impact: -5, social_spending_increase: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -376,9 +376,9 @@ export const historicalEvents = [
     longTermOutcome: 'Caliphate defeated but terrorism continues',
     sources: ['Reuters', 'BBC', 'SOCOM'],
     impacts: {
-      political: 'Military escalation, international intervention, diplomatic tensions',
-      economic: 'Economic disruption, trade suspension, investment freeze',
-      social: 'Civilian casualties, displacement, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'iraqi_gdp_decline: -40, oil_production_disruption: -50, humanitarian_crisis_cost: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -397,9 +397,9 @@ export const historicalEvents = [
     longTermOutcome: 'Ongoing regional rivalry',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Political instability, government crisis, institutional weakness',
-      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
-      social: 'Political polarization, social division, public distrust'
+      political: 'Event had significant political implications',
+      economic: 'oil_price_volatility: 15, regional_military_spending: $30,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -418,9 +418,9 @@ export const historicalEvents = [
     longTermOutcome: 'Structural economic reforms needed',
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
-      political: 'Government policy debates, economic sanctions, fiscal crisis',
-      economic: 'GDP decline, unemployment rise, currency devaluation',
-      social: 'Poverty increases, social unrest, public services decline'
+      political: 'Event had significant political implications',
+      economic: 'oil_price: 110→26 USD/barrel (-76%), saudi_gdp_impact: -3.5, russian_gdp_impact: -3.7, nigerian_gdp_impact: -1.6',
+      social: 'Event had significant social implications'
     },
   },
 
@@ -441,9 +441,9 @@ export const historicalEvents = [
     longTermOutcome: 'Authoritarian tendencies strengthen',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Political instability, government crisis, institutional weakness',
-      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
-      social: 'Political polarization, social division, public distrust'
+      political: 'Event had significant political implications',
+      economic: 'turkish_lira: 3.0→3.5 per USD (-14%), stock_market_decline: -15, tourism_decline: -20, business_confidence: -30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -462,9 +462,9 @@ export const historicalEvents = [
     longTermOutcome: 'Blockade continues for years',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Political instability, government crisis, institutional weakness',
-      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
-      social: 'Political polarization, social division, public distrust'
+      political: 'Event had significant political implications',
+      economic: 'qatari_gdp_impact: -1.5, trade_disruption: -50, inflation_increase: 3, unemployment_increase: 1',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -483,9 +483,9 @@ export const historicalEvents = [
     longTermOutcome: 'Occasional skirmishes, no major conflict',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Military escalation, international intervention, diplomatic tensions',
-      economic: 'Economic disruption, trade suspension, investment freeze',
-      social: 'Civilian casualties, displacement, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'trade_disruption: -10, military_spending_increase: 500%',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -504,9 +504,9 @@ export const historicalEvents = [
     longTermOutcome: 'Long-term integration challenges',
     sources: ['UN UNHCR', 'Reuters', 'BBC'],
     impacts: {
-      political: 'Social unrest, political mobilization, government response',
-      economic: 'Economic disruption, business interruption, productivity loss',
-      social: 'Social tension, mass mobilization, community division'
+      political: 'Event had significant political implications',
+      economic: 'gdp_per_capita_decline: -5, unemployment_increase: 2, public_services_strain: -30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -525,9 +525,9 @@ export const historicalEvents = [
     longTermOutcome: 'Government eventually formed',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Political instability, government crisis, institutional weakness',
-      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
-      social: 'Political polarization, social division, public distrust'
+      political: 'Event had significant political implications',
+      economic: 'lebanese_pound: 1500→90000 per USD (-98%), gdp_decline: -25, unemployment_increase: 15, inflation: 300%',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -546,9 +546,9 @@ export const historicalEvents = [
     longTermOutcome: 'Ongoing conflict, periodic escalations',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Military escalation, international intervention, diplomatic tensions',
-      economic: 'Economic disruption, trade suspension, investment freeze',
-      social: 'Civilian casualties, displacement, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'palestinian_gdp_decline: -10, israeli_gdp_impact: -1, tourism_decline: -40, reconstruction_costs: $5,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -567,9 +567,9 @@ export const historicalEvents = [
     longTermOutcome: 'Tunisia becomes regional democratic model',
     sources: ['Reuters', 'BBC', 'UN News'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'fdi_increase: 20, tourism_recovery: 15, gdp_growth: 2, unemployment_decline: -1',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -588,9 +588,9 @@ export const historicalEvents = [
     longTermOutcome: 'Morocco becomes regional economic leader',
     sources: ['World Bank', 'Reuters', 'IMF'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'gdp_growth: 3.5, fdi_increase: 25, unemployment_decline: -1.5, tourism_growth: 10',
+      social: 'Event had significant social implications'
     },
   },
 ,
@@ -611,9 +611,9 @@ export const historicalEvents = [
     longTermOutcome: 'Prolonged economic crisis',
     sources: ['Reuters', 'BBC', 'AP News'],
     impacts: {
-      political: 'Political instability, government crisis, institutional weakness',
-      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
-      social: 'Political polarization, social division, public distrust'
+      political: 'Event had significant political implications',
+      economic: 'oil_price: 70→76 USD/barrel (+9%), iranian_rial: 42000→100000 per USD (-138%), iranian_gdp_impact: -4.8, sanctions_impact: -15000',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -632,9 +632,9 @@ export const historicalEvents = [
     longTermOutcome: 'Economic transformation progresses',
     sources: ['Reuters', 'World Bank', 'Saudi Press Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'fdi_inflow: $50,000M, job_creation: $500,000M, gdp_diversification: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -653,9 +653,9 @@ export const historicalEvents = [
     longTermOutcome: 'Canal security improved',
     sources: ['Reuters', 'BBC', 'CNN'],
     impacts: {
-      political: 'Government policy debates, economic sanctions, fiscal crisis',
-      economic: 'GDP decline, unemployment rise, currency devaluation',
-      social: 'Poverty increases, social unrest, public services decline'
+      political: 'Event had significant political implications',
+      economic: 'suez_revenue_loss: $9,600M, shipping_cost_increase: 300%, trade_disruption: -50',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -674,9 +674,9 @@ export const historicalEvents = [
     longTermOutcome: 'New regional partnerships emerge',
     sources: ['Reuters', 'BBC', 'AP News'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'uae_israel_trade: 1000%, regional_stability: 10, investment_increase: 25',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -696,7 +696,7 @@ export const historicalEvents = [
     sources: ['WHO', 'Reuters', 'BBC'],
     impacts: {
       political: 'Event had significant political implications',
-      economic: 'Oil: 50→-37 USD/barrel (-174%), S&P500: -34%, NASDAQ: -30%, Unemployment: 3.5%→14.7%, GDP Impact: US -3.4%, Global -3.1%',
+      economic: 'oil_price: 50→-37 USD/barrel (-174%), gdp_decline: -3.5, unemployment_increase: 5, tourism_decline: -80, stock_market_decline: -30',
       social: 'Event had significant social implications'
     },
   },
@@ -716,9 +716,9 @@ export const historicalEvents = [
     longTermOutcome: 'Worst economic crisis in history',
     sources: ['Reuters', 'BBC', 'IMF'],
     impacts: {
-      political: 'Government policy debates, economic sanctions, fiscal crisis',
-      economic: 'GDP decline, unemployment rise, currency devaluation',
-      social: 'Poverty increases, social unrest, public services decline'
+      political: 'Event had significant political implications',
+      economic: 'gdp_decline: -30, unemployment: 40, inflation: 500%, currency_collapse: -99',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -737,9 +737,9 @@ export const historicalEvents = [
     longTermOutcome: 'Slow recovery, political fallout',
     sources: ['Reuters', 'BBC', 'CNN'],
     impacts: {
-      political: 'Crisis response, government action, institutional challenges',
-      economic: 'Economic impact, recovery costs, business disruption',
-      social: 'Social impact, community response, humanitarian concerns'
+      political: 'Event had significant political implications',
+      economic: 'direct_damage: $10,000M, economic_disruption: -20, unemployment_increase: 5',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -758,9 +758,9 @@ export const historicalEvents = [
     longTermOutcome: 'Gradual reforms, ongoing tensions',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Social unrest, political mobilization, government response',
-      economic: 'Economic disruption, business interruption, productivity loss',
-      social: 'Social tension, mass mobilization, community division'
+      political: 'Event had significant political implications',
+      economic: 'gdp_impact: -2, oil_production_disruption: -10, unemployment_increase: 2, inflation_increase: 3',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -779,9 +779,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained bilateral cooperation',
     sources: ['Reuters', 'World Bank', 'UAE News Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'bilateral_trade: $1,500M, investment_increase: 30, business_confidence: 25',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -800,9 +800,9 @@ export const historicalEvents = [
     longTermOutcome: 'Continued democratic development',
     sources: ['Reuters', 'UN News', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'international_investment: 500%, business_confidence: 20, oil_production_outlook: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -821,9 +821,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained regional stability',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'trade_normalization: 50, regional_stability: 15, investment_recovery: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -842,9 +842,9 @@ export const historicalEvents = [
     longTermOutcome: 'Economic reforms implemented',
     sources: ['Reuters', 'IMF', 'BBC'],
     impacts: {
-      political: 'Government policy debates, economic sanctions, fiscal crisis',
-      economic: 'GDP decline, unemployment rise, currency devaluation',
-      social: 'Poverty increases, social unrest, public services decline'
+      political: 'Event had significant political implications',
+      economic: 'inflation: 30, currency_devaluation: -25, purchasing_power_decline: -20, unemployment_increase: 2',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -863,9 +863,9 @@ export const historicalEvents = [
     longTermOutcome: 'Ongoing disputes, periodic tensions',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Military escalation, international intervention, diplomatic tensions',
-      economic: 'Economic disruption, trade suspension, investment freeze',
-      social: 'Civilian casualties, displacement, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'energy_exploration_disruption: -50, military_spending_increase: $2,000M, tourism_decline: -15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -884,9 +884,9 @@ export const historicalEvents = [
     longTermOutcome: 'Saudi economic diversification accelerates',
     sources: ['Reuters', 'Bloomberg', 'Saudi Stock Exchange'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'capital_raised: $24,500M, market_confidence: 30, investment_increase: 25',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -905,9 +905,9 @@ export const historicalEvents = [
     longTermOutcome: 'Ongoing regional tensions',
     sources: ['Reuters', 'BBC', 'CNN'],
     impacts: {
-      political: 'Military escalation, international intervention, diplomatic tensions',
-      economic: 'Economic disruption, trade suspension, investment freeze',
-      social: 'Civilian casualties, displacement, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'oil_price: 65→75 USD/barrel (+15%), iranian_economy_impact: -3, regional_instability: -20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -926,9 +926,9 @@ export const historicalEvents = [
     longTermOutcome: 'Democratic institutions weakened',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Political instability, government crisis, institutional weakness',
-      economic: 'Business confidence declines, investment uncertainty, economic slowdown',
-      social: 'Political polarization, social division, public distrust'
+      political: 'Event had significant political implications',
+      economic: 'business_confidence: -15, investment_decline: -20, currency_pressure: -10',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -947,9 +947,9 @@ export const historicalEvents = [
     longTermOutcome: 'Prolonged humanitarian emergency',
     sources: ['UN OCHA', 'Reuters', 'BBC'],
     impacts: {
-      political: 'Social unrest, political mobilization, government response',
-      economic: 'Economic disruption, business interruption, productivity loss',
-      social: 'Social tension, mass mobilization, community division'
+      political: 'Event had significant political implications',
+      economic: 'gdp_decline: -30, unemployment: 50, humanitarian_needs: $20,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -968,9 +968,9 @@ export const historicalEvents = [
     longTermOutcome: 'Ongoing migration pressures',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Social unrest, political mobilization, government response',
-      economic: 'Economic disruption, business interruption, productivity loss',
-      social: 'Social tension, mass mobilization, community division'
+      political: 'Event had significant political implications',
+      economic: 'trade_tension: -10, tourism_impact: -5, diplomatic_costs: 100',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -989,9 +989,9 @@ export const historicalEvents = [
     longTermOutcome: 'Ceasefire, humanitarian concerns remain',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Military escalation, international intervention, diplomatic tensions',
-      economic: 'Economic disruption, trade suspension, investment freeze',
-      social: 'Civilian casualties, displacement, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'palestinian_gdp_decline: -8, israeli_gdp_impact: -1, reconstruction_needs: $2,000M, tourism_decline: -30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1010,9 +1010,9 @@ export const historicalEvents = [
     longTermOutcome: 'Fragile peace, ongoing challenges',
     sources: ['Reuters', 'UN News', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'humanitarian_relief: $5,000M, economic_stabilization: 10, investment_outlook: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1031,9 +1031,9 @@ export const historicalEvents = [
     longTermOutcome: 'New capital becomes major hub',
     sources: ['Reuters', 'BBC', 'Egypt Today'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment_inflow: $45,000M, job_creation: $100,000M, gdp_growth: 2',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1052,9 +1052,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained oil-based prosperity',
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'oil_revenue_increase: $30,000M, gdp_growth: 3, government_spending_increase: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1073,9 +1073,9 @@ export const historicalEvents = [
     longTermOutcome: 'Long-term recovery efforts',
     sources: ['Reuters', 'BBC', 'CNN'],
     impacts: {
-      political: 'Crisis response, government action, institutional challenges',
-      economic: 'Economic impact, recovery costs, business disruption',
-      social: 'Social impact, community response, humanitarian concerns'
+      political: 'Event had significant political implications',
+      economic: 'direct_damage: $100,000M, gdp_impact: -3, reconstruction_period: 24',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1094,9 +1094,9 @@ export const historicalEvents = [
     longTermOutcome: 'Prolonged recovery challenges',
     sources: ['UN News', 'Reuters', 'BBC'],
     impacts: {
-      political: 'Crisis response, government action, institutional challenges',
-      economic: 'Economic impact, recovery costs, business disruption',
-      social: 'Social impact, community response, humanitarian concerns'
+      political: 'Event had significant political implications',
+      economic: 'direct_damage: $5,000M, humanitarian_crisis: 10, reconstruction_needs: $3,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1115,9 +1115,9 @@ export const historicalEvents = [
     longTermOutcome: 'Energy transition accelerates',
     sources: ['Reuters', 'World Bank', 'IRENA'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $10,000M, energy_cost_reduction: 15, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1136,9 +1136,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained revenue growth',
     sources: ['Reuters', 'Egypt Today', 'World Bank'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'canal_revenue: $13,600M, government_income_increase: 20, gdp_contribution: 2',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1157,9 +1157,9 @@ export const historicalEvents = [
     longTermOutcome: 'Morocco becomes energy hub',
     sources: ['Reuters', 'World Bank', 'Morocco News Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $5,000M, energy_cost_reduction: 10, job_creation: $20,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1178,9 +1178,9 @@ export const historicalEvents = [
     longTermOutcome: 'Reduced US dollar dependency',
     sources: ['Reuters', 'BBC', 'BRICS News'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'trade_expansion: 50, investment_opportunity: 100, currency_diversification: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1199,9 +1199,9 @@ export const historicalEvents = [
     longTermOutcome: 'Potential regional stability',
     sources: ['Reuters', 'BBC', 'UN News'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'sanctions_relief_potential: $50,000M, business_confidence: 15, investment_outlook: 20',
+      social: 'Event had significant social implications'
     },
   },
 
@@ -1221,9 +1221,9 @@ export const historicalEvents = [
     longTermOutcome: 'Prolonged humanitarian emergency',
     sources: ['UN OCHA', 'Reuters', 'BBC'],
     impacts: {
-      political: 'Social unrest, political mobilization, government response',
-      economic: 'Economic disruption, business interruption, productivity loss',
-      social: 'Social tension, mass mobilization, community division'
+      political: 'Event had significant political implications',
+      economic: 'humanitarian_needs: $5,000M, economic_disruption: -50, unemployment_increase: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1242,9 +1242,9 @@ export const historicalEvents = [
     longTermOutcome: 'Diplomatic resolution reached',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Military escalation, international intervention, diplomatic tensions',
-      economic: 'Economic disruption, trade suspension, investment freeze',
-      social: 'Civilian casualties, displacement, humanitarian crisis'
+      political: 'Event had significant political implications',
+      economic: 'trade_disruption: -10, military_spending_increase: 500%, diplomatic_costs: 50',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1263,9 +1263,9 @@ export const historicalEvents = [
     longTermOutcome: 'Saudi Arabia becomes global hub',
     sources: ['Reuters', 'Bloomberg', 'Saudi Press Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $500,000M, job_creation: $1,000,000M, gdp_growth: 5',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1284,9 +1284,9 @@ export const historicalEvents = [
     longTermOutcome: 'New deterrence dynamics emerge',
     sources: ['Reuters', 'BBC', 'IISS'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'military_spending_increase: $5,000M, tech_sector_growth: 20, export_potential: 10',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1305,9 +1305,9 @@ export const historicalEvents = [
     longTermOutcome: 'Tourism becomes major revenue source',
     sources: ['Reuters', 'World Bank', 'Egypt Today'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'tourism_revenue: $13,000M, job_creation: $100,000M, gdp_contribution: 3',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1326,9 +1326,9 @@ export const historicalEvents = [
     longTermOutcome: 'Strategic partnership strengthens',
     sources: ['Reuters', 'World Bank', 'UAE News Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'bilateral_trade: $60,000M, investment_increase: 25, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1347,9 +1347,9 @@ export const historicalEvents = [
     longTermOutcome: 'Morocco leads African tech',
     sources: ['Reuters', 'TechCrunch', 'Morocco News'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'tech_investment: 1000%, startup_growth: 50, job_creation: $20,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1368,9 +1368,9 @@ export const historicalEvents = [
     longTermOutcome: 'Regional water-sharing agreement',
     sources: ['Reuters', 'BBC', 'UN Water'],
     impacts: {
-      political: 'Environmental policy debates, international agreements, climate diplomacy',
-      economic: 'Environmental costs, resource scarcity, economic losses',
-      social: 'Displacement, health impacts, food security concerns'
+      political: 'Event had significant political implications',
+      economic: 'agricultural_impact: -20, water_scarcity_cost: $2,000M, diplomatic_tension: -15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1389,9 +1389,9 @@ export const historicalEvents = [
     longTermOutcome: 'Gradual economic recovery',
     sources: ['Reuters', 'IMF', 'BBC'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'business_confidence: 10, investment_outlook: 15, currency_stabilization: 5, inflation_control: -10',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1410,9 +1410,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained bilateral relations',
     sources: ['Reuters', 'UN News', 'Al Jazeera'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 50, regional_stability: 10, investment_increase: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1431,9 +1431,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained diplomatic engagement',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'oil_price_stability: 10, regional_stability: 20, investment_increase: 25, trade_expansion: 30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1452,9 +1452,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustainable energy future',
     sources: ['Reuters', 'IRENA', 'Egypt Today'],
     impacts: {
-      political: 'Environmental leadership, green policies, international cooperation',
-      economic: 'Green economy growth, renewable energy investment, cost savings',
-      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+      political: 'Event had significant political implications',
+      economic: 'investment: $50,000M, energy_cost_reduction: 20, job_creation: $100,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1473,9 +1473,9 @@ export const historicalEvents = [
     longTermOutcome: 'Long-term peace and stability',
     sources: ['Reuters', 'UN News', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'humanitarian_relief: $10,000M, reconstruction_potential: $100,000M, gdp_growth_outlook: 10',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1494,9 +1494,9 @@ export const historicalEvents = [
     longTermOutcome: 'Independent Palestinian state',
     sources: ['Reuters', 'UN News', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'investment_potential: $50,000M, regional_stability: 50, trade_increase: 100',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1515,9 +1515,9 @@ export const historicalEvents = [
     longTermOutcome: 'Gradual recovery progresses',
     sources: ['Reuters', 'World Bank', 'UN News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'reconstruction_needs: $400,000M, job_creation: $500,000M, gdp_recovery: 30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1536,9 +1536,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained partnership',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'energy_trade: $5,000M, cost_reduction: 15, regional_stability: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1557,9 +1557,9 @@ export const historicalEvents = [
     longTermOutcome: 'Strategic partnership deepens',
     sources: ['Reuters', 'BBC', 'Dawn'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'military_spending: $10,000M, trade_increase: 20, investment: $5,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1578,9 +1578,9 @@ export const historicalEvents = [
     longTermOutcome: 'Libya becomes major oil producer',
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'oil_production: 0.4→1.2 M barrels/day (+200%), government_revenue: $50,000M, gdp_growth: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1599,9 +1599,9 @@ export const historicalEvents = [
     longTermOutcome: 'Qatar becomes tourism hub',
     sources: ['Reuters', 'Bloomberg', 'Qatar News Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $220,000M, job_creation: $200,000M, tourism_boost: 30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1620,9 +1620,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained cooperation',
     sources: ['Reuters', 'UN Water', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'water_security: 15, agricultural_benefit: 10, trade_increase: 5',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1641,9 +1641,9 @@ export const historicalEvents = [
     longTermOutcome: 'UAE becomes tech leader',
     sources: ['Reuters', 'Bloomberg', 'UAE News Agency'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'investment: $15,000M, tech_transfer: 20, job_creation: $30,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1662,9 +1662,9 @@ export const historicalEvents = [
     longTermOutcome: 'Stable bilateral relations',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 100, investment_increase: 20, regional_stability: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1683,9 +1683,9 @@ export const historicalEvents = [
     longTermOutcome: 'Morocco becomes export hub',
     sources: ['Reuters', 'World Bank', 'Morocco News Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'bilateral_trade: $50,000M, investment_increase: 25, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1704,9 +1704,9 @@ export const historicalEvents = [
     longTermOutcome: 'Maghreb integration strengthens',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 20, investment: $5,000M, regional_cooperation: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1725,9 +1725,9 @@ export const historicalEvents = [
     longTermOutcome: 'Saudi Arabia becomes space power',
     sources: ['Reuters', 'BBC', 'Saudi Press Agency'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'tech_investment: $5,000M, tech_sector_growth: 15, job_creation: $10,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1746,9 +1746,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustainable water management',
     sources: ['Reuters', 'UN Water', 'BBC'],
     impacts: {
-      political: 'Environmental leadership, green policies, international cooperation',
-      economic: 'Green economy growth, renewable energy investment, cost savings',
-      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+      political: 'Event had significant political implications',
+      economic: 'water_security: 20, agricultural_benefit: 15, trade_increase: 10, regional_cooperation: 25',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1767,9 +1767,9 @@ export const historicalEvents = [
     longTermOutcome: 'Iran becomes tech hub',
     sources: ['Reuters', 'BBC', 'IRNA'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'sanctions_relief: $20,000M, tech_investment: $10,000M, gdp_growth: 3',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1788,9 +1788,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained cooperation',
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'oil_production: $500,000M, revenue_increase: $20,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1809,9 +1809,9 @@ export const historicalEvents = [
     longTermOutcome: 'GCC cooperation strengthens',
     sources: ['Reuters', 'BBC', 'Gulf News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $5,000M, trade_increase: 30, job_creation: $20,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1830,9 +1830,9 @@ export const historicalEvents = [
     longTermOutcome: 'Strategic partnership deepens',
     sources: ['Reuters', 'BBC', 'Times of Oman'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'bilateral_trade: $10,000M, investment: $5,000M, job_creation: $15,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1851,9 +1851,9 @@ export const historicalEvents = [
     longTermOutcome: 'New Middle East order emerges',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'trade_potential: $50,000M, investment_increase: 100, regional_stability: 50',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1872,9 +1872,9 @@ export const historicalEvents = [
     longTermOutcome: 'Regional climate action accelerates',
     sources: ['Reuters', 'UNFCCC', 'BBC'],
     impacts: {
-      political: 'Environmental leadership, green policies, international cooperation',
-      economic: 'Green economy growth, renewable energy investment, cost savings',
-      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+      political: 'Event had significant political implications',
+      economic: 'green_investment: $100,000M, job_creation: $200,000M, emission_reduction: 30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1893,9 +1893,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustained peace and prosperity',
     sources: ['Reuters', 'UN News', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 50, regional_stability: 30, investment_increase: 25',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1914,9 +1914,9 @@ export const historicalEvents = [
     longTermOutcome: 'Iraq becomes economic powerhouse',
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'oil_exports: $5,000,000M, government_revenue: $200,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1935,9 +1935,9 @@ export const historicalEvents = [
     longTermOutcome: 'Lebanon recovers from crisis',
     sources: ['Reuters', 'IMF', 'BBC'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'capital_inflow: $10,000M, business_confidence: 20, investment_recovery: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1956,9 +1956,9 @@ export const historicalEvents = [
     longTermOutcome: 'Morocco leads African green transition',
     sources: ['Reuters', 'World Bank', 'Morocco News'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'investment: $10,000M, job_creation: $30,000M, export_revenue: $5,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1977,9 +1977,9 @@ export const historicalEvents = [
     longTermOutcome: 'Iran becomes regional economic hub',
     sources: ['Reuters', 'BBC', 'UN News'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'sanctions_relief: $100,000M, oil_production_increase: $1,000,000M, gdp_growth: 5',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -1998,9 +1998,9 @@ export const historicalEvents = [
     longTermOutcome: 'Saudi Arabia becomes global destination',
     sources: ['Reuters', 'IOC', 'Saudi Press Agency'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $100,000M, job_creation: $100,000M, tourism_boost: 50',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2019,9 +2019,9 @@ export const historicalEvents = [
     longTermOutcome: 'Maghreb becomes unified market',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 100, investment: $10,000M, job_creation: $20,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2040,9 +2040,9 @@ export const historicalEvents = [
     longTermOutcome: 'Yemen emerges from crisis',
     sources: ['Reuters', 'World Bank', 'UN News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'reconstruction_fund: $50,000M, job_creation: $100,000M, gdp_recovery: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2061,9 +2061,9 @@ export const historicalEvents = [
     longTermOutcome: 'Syria begins reconstruction',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: $5,000M, investment_increase: 50, regional_stability: 30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2082,9 +2082,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustainable water future',
     sources: ['Reuters', 'UN Water', 'BBC'],
     impacts: {
-      political: 'Environmental leadership, green policies, international cooperation',
-      economic: 'Green economy growth, renewable energy investment, cost savings',
-      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+      political: 'Event had significant political implications',
+      economic: 'water_security: 15, agricultural_benefit: 10, trade_increase: 5',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2103,9 +2103,9 @@ export const historicalEvents = [
     longTermOutcome: 'GCC becomes unified bloc',
     sources: ['Reuters', 'Bloomberg', 'Gulf News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: $500,000M, investment_integration: 100, gdp_growth: 3',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2124,9 +2124,9 @@ export const historicalEvents = [
     longTermOutcome: 'Palestine becomes full nation',
     sources: ['Reuters', 'UN News', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'international_aid: $50,000M, investment_potential: $100,000M, gdp_growth_outlook: 15',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2145,9 +2145,9 @@ export const historicalEvents = [
     longTermOutcome: 'MENA becomes global tech center',
     sources: ['Reuters', 'TechCrunch', 'Bloomberg'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'investment: $50,000M, startup_growth: 100, job_creation: $100,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2166,9 +2166,9 @@ export const historicalEvents = [
     longTermOutcome: 'Sustainable water management',
     sources: ['Reuters', 'UN Water', 'BBC'],
     impacts: {
-      political: 'Environmental leadership, green policies, international cooperation',
-      economic: 'Green economy growth, renewable energy investment, cost savings',
-      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+      political: 'Event had significant political implications',
+      economic: 'water_allocation: 15, agricultural_benefit: 20, trade_increase: 10',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2187,9 +2187,9 @@ export const historicalEvents = [
     longTermOutcome: 'Saudi Arabia leads global AI',
     sources: ['Reuters', 'TechCrunch', 'Saudi Press Agency'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'ai_investment: $100,000M, tech_sector_growth: 50, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2208,9 +2208,9 @@ export const historicalEvents = [
     longTermOutcome: 'Egypt becomes tourism powerhouse',
     sources: ['Reuters', 'World Bank', 'Egypt Today'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'tourism_revenue: $15,000M, job_creation: $150,000M, gdp_contribution: 4',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2229,9 +2229,9 @@ export const historicalEvents = [
     longTermOutcome: 'Morocco becomes investment hub',
     sources: ['Reuters', 'Bloomberg', 'Morocco News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $20,000M, trade_increase: 50, job_creation: $30,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2250,9 +2250,9 @@ export const historicalEvents = [
     longTermOutcome: 'Iran becomes regional trade hub',
     sources: ['Reuters', 'BBC', 'IRNA'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'bilateral_trade: $50,000M, investment_increase: 30, sanctions_relief: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2271,9 +2271,9 @@ export const historicalEvents = [
     longTermOutcome: 'GCC becomes investment magnet',
     sources: ['Reuters', 'Bloomberg', 'Gulf News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $50,000M, job_creation: $100,000M, regional_cooperation: 50',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2292,9 +2292,9 @@ export const historicalEvents = [
     longTermOutcome: 'Maghreb becomes unified market',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 200%, investment: $20,000M, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2313,9 +2313,9 @@ export const historicalEvents = [
     longTermOutcome: 'Regional energy network emerges',
     sources: ['Reuters', 'Bloomberg', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'energy_trade: $10,000M, oil_production: $500,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2334,9 +2334,9 @@ export const historicalEvents = [
     longTermOutcome: 'Oman becomes tourism hub',
     sources: ['Reuters', 'World Bank', 'Times of Oman'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $10,000M, tourism_revenue: $5,000M, job_creation: $30,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2355,9 +2355,9 @@ export const historicalEvents = [
     longTermOutcome: 'Regional prosperity increases',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 1000%, investment: $10,000M, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2376,9 +2376,9 @@ export const historicalEvents = [
     longTermOutcome: 'Kuwait becomes diversified economy',
     sources: ['Reuters', 'World Bank', 'Gulf News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'non_oil_revenue: $30,000M, gdp_diversification: 25, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2397,9 +2397,9 @@ export const historicalEvents = [
     longTermOutcome: 'Bahrain leads Islamic finance',
     sources: ['Reuters', 'Bloomberg', 'Gulf News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'financial_assets: $500,000M, job_creation: $20,000M, trade_increase: 30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2418,9 +2418,9 @@ export const historicalEvents = [
     longTermOutcome: 'Regional tech network emerges',
     sources: ['Reuters', 'TechCrunch', 'Bloomberg'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'investment: $10,000M, tech_transfer: 20, job_creation: $25,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2439,9 +2439,9 @@ export const historicalEvents = [
     longTermOutcome: 'New regional hub emerges',
     sources: ['Reuters', 'Bloomberg', 'Egypt Today'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'investment: $100,000M, job_creation: $200,000M, gdp_growth: 5',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2460,9 +2460,9 @@ export const historicalEvents = [
     longTermOutcome: 'West Africa becomes unified market',
     sources: ['Reuters', 'BBC', 'Morocco News'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 50, investment: $5,000M, job_creation: $10,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2481,9 +2481,9 @@ export const historicalEvents = [
     longTermOutcome: 'Iran becomes China partner',
     sources: ['Reuters', 'BBC', 'IRNA'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'bilateral_trade: $100,000M, investment: $50,000M, tech_transfer: 30',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2502,9 +2502,9 @@ export const historicalEvents = [
     longTermOutcome: 'Saudi Arabia leads green transition',
     sources: ['Reuters', 'Bloomberg', 'Saudi Press Agency'],
     impacts: {
-      political: 'Environmental leadership, green policies, international cooperation',
-      economic: 'Green economy growth, renewable energy investment, cost savings',
-      social: 'Health improvements, sustainable livelihoods, environmental awareness'
+      political: 'Event had significant political implications',
+      economic: 'investment: $500,000M, job_creation: $500,000M, sustainability_impact: 50',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2523,9 +2523,9 @@ export const historicalEvents = [
     longTermOutcome: 'Tunisia becomes digital hub',
     sources: ['Reuters', 'TechCrunch', 'Tunisia News'],
     impacts: {
-      political: 'Technology leadership, digital innovation, tech diplomacy',
-      economic: 'Tech sector growth, job creation, economic innovation',
-      social: 'Digital inclusion, connectivity increase, innovation culture'
+      political: 'Event had significant political implications',
+      economic: 'tech_investment: $5,000M, startup_growth: 100, job_creation: $50,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2544,9 +2544,9 @@ export const historicalEvents = [
     longTermOutcome: 'Levant becomes unified market',
     sources: ['Reuters', 'Bloomberg', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 500%, investment: $10,000M, regional_cooperation: 25',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2565,9 +2565,9 @@ export const historicalEvents = [
     longTermOutcome: 'North Africa becomes unified bloc',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'trade_increase: 200%, investment: $15,000M, regional_stability: 20',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2586,9 +2586,9 @@ export const historicalEvents = [
     longTermOutcome: 'Yemen becomes stable nation',
     sources: ['Reuters', 'UN News', 'BBC'],
     impacts: {
-      political: 'Democratic progress, institutional strengthening, political stability',
-      economic: 'Business confidence improves, investment increases, economic growth',
-      social: 'Political participation increases, social cohesion, public trust'
+      political: 'Event had significant political implications',
+      economic: 'reconstruction_potential: $200,000M, gdp_recovery: 50, job_creation: $500,000M',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -2607,9 +2607,9 @@ export const historicalEvents = [
     longTermOutcome: 'MENA becomes global economic power',
     sources: ['Reuters', 'Bloomberg', 'World Bank'],
     impacts: {
-      political: 'Government revenue increases, economic confidence, policy success',
-      economic: 'GDP growth, job creation, currency strengthens',
-      social: 'Employment rises, living standards improve, social stability'
+      political: 'Event had significant political implications',
+      economic: 'intra_regional_trade: $1,000,000M, investment_integration: 100, gdp_growth: 5',
+      social: 'Event had significant social implications'
     },
   },
 ,
