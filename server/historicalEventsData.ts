@@ -59,9 +59,9 @@ export const historicalEvents = [
     longTermOutcome: 'Political instability, militia proliferation',
     sources: ['Reuters', 'AP News', 'BBC'],
     impacts: {
-      political: 'Regime change, transitional government formed, initial optimism for democracy',
-      economic: 'Oil production disrupted, economic uncertainty, reconstruction needs',
-      social: 'Celebration, 25,000+ deaths, political prisoners released, national identity shift'
+      political: 'Event had significant political implications',
+      economic: 'Oil: 95→120 USD/barrel (+26%), Dinar: 1.25→1.5 per USD (-20%)',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -122,9 +122,9 @@ export const historicalEvents = [
     longTermOutcome: 'Economic crisis, dependency on imports',
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
-      political: 'Government loses revenue, international pressure, policy debates',
-      economic: 'GDP decline 45%, currency devaluation, inflation spike, unemployment',
-      social: 'Public services collapse, poverty increases, social unrest'
+      political: 'Event had significant political implications',
+      economic: 'Oil: 110→26 USD/barrel (-76%), Dinar: 1.25→2.0 per USD (-60%)',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -227,9 +227,9 @@ export const historicalEvents = [
     longTermOutcome: 'Economic stabilization continues',
     sources: ['OPEC', 'Reuters', 'World Bank'],
     impacts: {
-      political: 'Government revenue increases, political stability improves',
-      economic: 'GDP growth 12%, government revenue increases, salary payments resume',
-      social: 'Public services improve, employment increases, hope for future'
+      political: 'Event had significant political implications',
+      economic: 'Oil: 26→60 USD/barrel (+131%)',
+      social: 'Event had significant social implications'
     },
   },
 
@@ -250,9 +250,9 @@ export const historicalEvents = [
     longTermOutcome: 'Mixed outcomes across region',
     sources: ['Reuters', 'BBC', 'Al Jazeera'],
     impacts: {
-      political: 'Pro-democracy movement spreads, regime change in Tunisia, regional upheaval',
-      economic: 'Economic uncertainty, tourism decline, investment freeze',
-      social: 'Mass protests, millions mobilized, political awakening, hope for change'
+      political: 'Event had significant political implications',
+      economic: 'Oil: 95→120 USD/barrel (+26%)',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -313,9 +313,9 @@ export const historicalEvents = [
     longTermOutcome: 'World\'s worst humanitarian crisis',
     sources: ['Reuters', 'BBC', 'UN News'],
     impacts: {
-      political: 'Regional power dynamics shift, international intervention',
-      economic: 'GDP decline 40%, economic collapse, humanitarian crisis',
-      social: 'Airstrikes, 377,000+ deaths, 80% humanitarian crisis, world\'s worst crisis'
+      political: 'Event had significant political implications',
+      economic: 'Oil: 55→40 USD/barrel (-27%)',
+      social: 'Event had significant social implications'
     },
   },
   {
@@ -695,9 +695,9 @@ export const historicalEvents = [
     longTermOutcome: 'Gradual recovery with new challenges',
     sources: ['WHO', 'Reuters', 'BBC'],
     impacts: {
-      political: 'Public health emergency, government response, international coordination',
-      economic: 'Healthcare costs, economic disruption, productivity loss',
-      social: 'Health crisis, mortality increase, social disruption'
+      political: 'Event had significant political implications',
+      economic: 'Oil: 50→-37 USD/barrel (-174%), S&P500: -34%, NASDAQ: -30%, Unemployment: 3.5%→14.7%, GDP Impact: US -3.4%, Global -3.1%',
+      social: 'Event had significant social implications'
     },
   },
   {
