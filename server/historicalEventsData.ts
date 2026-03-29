@@ -21804,7 +21804,7 @@ export const historicalEvents = [
     impacts: {
       political: 'International space cooperation, scientific prestige, funding debates',
       economic: 'Science investment $10B+, technology spinoffs, research opportunities',
-      social: 'Scientific wonder, educational inspiration, humanity's curiosity'
+      social: 'Scientific wonder, educational inspiration, humanity\'s curiosity'
     },
   },
   {
@@ -21888,7 +21888,7 @@ export const historicalEvents = [
     impacts: {
       political: 'Taliban takeover, geopolitical realignment, refugee crisis',
       economic: '$2.3T war cost, GDP collapse -25%, humanitarian crisis',
-      social: '20 year war ends, 170,000+ deaths, 5M+ refugees, women's rights concerns'
+      social: '20 year war ends, 170,000+ deaths, 5M+ refugees, women\'s rights concerns'
     },
   },
   {
