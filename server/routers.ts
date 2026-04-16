@@ -21,6 +21,7 @@ import { explainabilityRouter } from "./explainabilityRouter";
 import { notificationRouter } from "./notificationRouter";
 import { searchRouter } from "./searchRouter";
 import { unifiedEngineRouter } from "./unifiedEngineRouter";
+import { historicalEventsRouter } from "./historicalEventsRouter";
 // Old pipeline imports removed - now using networkEngine via unifiedRouters.ts
 
 export const appRouter = router({
@@ -44,6 +45,7 @@ export const appRouter = router({
   notification: notificationRouter,
   search: searchRouter,
   engine: unifiedEngineRouter,
+  historicalEvents: historicalEventsRouter,
   // Old pipeline routers removed - all analysis now goes through networkEngine
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

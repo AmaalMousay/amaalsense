@@ -4796,3 +4796,22 @@ All systems are properly connected, tested, and ready for production use.
 - [ ] Fix scheduledAnalysis.ts to use networkEngine instead of aiSentimentAnalyzer
 - [ ] Fix analysisDataRouter.ts to use real engine data instead of Math.random()
 - [ ] Fix Connected Components (DCFT, EventVector, TopicAnalysis, HeatMap, WorldMap) to use engine data
+
+## Phase 93: Historical Events Data Cleanup & Enhancement
+- [x] Update HistoricalEventData interface to match actual data structure
+- [x] Add impacts (political, economic, social) to all 231 events
+- [x] Add real economic data (oil prices, currency rates, GDP) to events
+- [x] Clean up 1350 old-format undefined events
+- [x] Remove 29 duplicate events
+- [x] Final count: 202 unique, validated events with full data
+- [x] Write comprehensive unit tests (14/14 passing)
+
+## Phase 94: Historical Events API & Frontend Integration
+- [x] Create historicalEventsRouter.ts with search/filter/stats endpoints
+- [x] Register router in main routers.ts
+- [x] Create HistoricalEvents.tsx page with full impacts display
+- [x] Add route in App.tsx
+- [x] Add navigation link in DashboardLayout sidebar
+- [x] Add navigation link in Home page
+- [x] Add Recent Historical Events widget to Dashboard
+- [x] Update project documentation (v2) with accurate project state

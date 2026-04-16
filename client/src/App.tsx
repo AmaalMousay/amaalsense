@@ -72,6 +72,7 @@ import ImpactAnalysisPage from "./pages/ImpactAnalysisPage";
 import FusionEngineAnalysisPage from "./pages/FusionEngineAnalysisPage";
 import EngineDashboard from "./pages/EngineDashboard";
 import PredictionsDashboard from "./pages/PredictionsDashboard";
+import HistoricalEvents from "./pages/HistoricalEvents";
 
 function Router() {
   // Routes will be added here
@@ -160,6 +161,7 @@ function Router() {
       
       {/* Advanced Predictions */}
       <Route path={"/predictions"} component={PredictionsDashboard} />
+      <Route path={"/historical-events"} component={HistoricalEvents} />
       
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

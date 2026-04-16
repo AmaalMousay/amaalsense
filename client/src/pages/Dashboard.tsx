@@ -5,7 +5,7 @@ import { IndexCard } from '@/components/IndexCard';
 import { trpc } from '@/lib/trpc';
 import { useLocation } from 'wouter';
 import { useAnalysisData } from '@/hooks/useAnalysisData';
-import { ArrowLeft, ArrowRight, TrendingUp, Zap, Heart, Calendar, Download, Activity, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, TrendingUp, Zap, Heart, Calendar, Download, Activity, CheckCircle, XCircle, AlertTriangle, ChevronRight, MapPin, DollarSign, Building2, Users } from 'lucide-react';
 import { 
   EMOTION_COLORS, 
   GMI_COLORS, 
@@ -32,6 +32,64 @@ import {
   Area,
   AreaChart,
 } from 'recharts';
+
+function RecentEventsWidget({ isRTL }: { isRTL: boolean }) {
+  const { data } = trpc.historicalEvents.getAll.useQuery({ page: 1, limit: 5, sortBy: 'date', sortOrder: 'desc' });
+  const events = data?.events || [];
+  
+  const CATEGORY_COLORS: Record<string, string> = {
+    conflict: '#E63946', economic: '#F4A261', political: '#457B9D',
+    social: '#8D5CF6', environmental: '#2A9D8F', health: '#E9C46A',
+    technological: '#3B82F6', cultural: '#EC4899', humanitarian: '#F97316',
+  };
+  
+  if (events.length === 0) {
+    return <p className="text-sm text-muted-foreground text-center py-4">{isRTL ? 'جاري التحميل...' : 'Loading...'}</p>;
+  }
+  
+  return (
+    <div className="space-y-3">
+      {events.map((event: any, i: number) => (
+        <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border-l-3" style={{ borderLeftColor: CATEGORY_COLORS[event.eventCategory] || '#6C757D', borderLeftWidth: '3px' }}>
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-medium truncate">{event.eventName}</h4>
+            <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{new Date(event.eventDate).getFullYear()}</span>
+              <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.country}</span>
+            </div>
+            {event.impacts && (
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {event.impacts.political && (
+                  <div className="text-xs p-1.5 rounded bg-blue-500/10 text-blue-400 truncate flex items-center gap-1">
+                    <Building2 className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{isRTL ? 'سياسي' : 'Political'}</span>
+                  </div>
+                )}
+                {event.impacts.economic && (
+                  <div className="text-xs p-1.5 rounded bg-orange-500/10 text-orange-400 truncate flex items-center gap-1">
+                    <DollarSign className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{isRTL ? 'اقتصادي' : 'Economic'}</span>
+                  </div>
+                )}
+                {event.impacts.social && (
+                  <div className="text-xs p-1.5 rounded bg-purple-500/10 text-purple-400 truncate flex items-center gap-1">
+                    <Users className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{isRTL ? 'اجتماعي' : 'Social'}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <span className="text-xs px-1.5 py-0.5 rounded font-medium" style={{ backgroundColor: (event.estimatedGMI >= 50 ? '#2A9D8F' : '#E63946') + '20', color: event.estimatedGMI >= 50 ? '#2A9D8F' : '#E63946' }}>
+              GMI {event.estimatedGMI}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function SourceHealthWidget() {
   const { data: sourceHealth } = trpc.engine.getSourceHealth.useQuery(undefined, {
@@ -370,6 +428,21 @@ export default function Dashboard() {
               <p className="text-muted-foreground">{t.common.loading}...</p>
             </Card>
           )}
+
+          {/* Recent Historical Events */}
+          <Card className="cosmic-card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold cosmic-text flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                {isRTL ? 'أحدث الأحداث التاريخية' : 'Recent Historical Events'}
+              </h3>
+              <Button variant="outline" size="sm" onClick={() => navigate('/historical-events')}>
+                {isRTL ? 'عرض الكل' : 'View All'}
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+            <RecentEventsWidget isRTL={isRTL} />
+          </Card>
 
           {/* Source Health Widget */}
           <SourceHealthWidget />

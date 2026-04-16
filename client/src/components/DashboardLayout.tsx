@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, TrendingUp, Heart, Zap, BarChart3, Globe, Activity } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, TrendingUp, Heart, Zap, BarChart3, Globe, Activity, Calendar } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -36,6 +36,7 @@ const menuItems = [
   { icon: Globe, label: "Region Analysis", path: "/region-analysis" },
   { icon: Activity, label: "Impact Analysis", path: "/impact-analysis" },
   { icon: Zap, label: "Fusion Analysis", path: "/fusion-analysis" },
+  { icon: Calendar, label: "Historical Events", path: "/historical-events" },
   { icon: Users, label: "Settings", path: "/settings" },
 ];
 
