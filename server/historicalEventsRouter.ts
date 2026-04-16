@@ -402,4 +402,229 @@ export const historicalEventsRouter = router({
         total: events.length,
       };
     }),
+
+  /**
+   * Compare two or more events side by side
+   */
+  compare: publicProcedure
+    .input(z.object({
+      eventNames: z.array(z.string()).min(2).max(5),
+    }))
+    .query(({ input }) => {
+      const validEvents = historicalEvents.filter((e): e is NonNullable<typeof e> => e != null);
+      const found = input.eventNames.map(name => {
+        const event = validEvents.find(e => safeName(e).toLowerCase() === name.toLowerCase());
+        return event || null;
+      });
+
+      const events = found.filter((e): e is NonNullable<typeof e> => e != null);
+      if (events.length < 2) {
+        return { events: [], comparison: null, found: false };
+      }
+
+      // Build comparison metrics
+      const comparison = {
+        indices: events.map(e => ({
+          name: safeName(e),
+          date: safeDate(e),
+          country: safeCountry(e),
+          category: safeCategory(e),
+          gmi: safeGMI(e),
+          cfi: safeCFI(e),
+          hri: safeHRI(e),
+          gdpImpact: e.gdpImpact ?? 0,
+        })),
+        emotions: events.map(e => ({
+          name: safeName(e),
+          joy: e.emotionalVector?.joy ?? 0,
+          fear: e.emotionalVector?.fear ?? 0,
+          anger: e.emotionalVector?.anger ?? 0,
+          sadness: e.emotionalVector?.sadness ?? 0,
+          hope: e.emotionalVector?.hope ?? 0,
+          curiosity: e.emotionalVector?.curiosity ?? 0,
+        })),
+        impacts: events.map(e => ({
+          name: safeName(e),
+          political: e.impacts?.political ?? 'N/A',
+          economic: e.impacts?.economic ?? 'N/A',
+          social: e.impacts?.social ?? 'N/A',
+        })),
+        outcomes: events.map(e => ({
+          name: safeName(e),
+          shortTerm: e.shortTermOutcome ?? 'N/A',
+          mediumTerm: e.mediumTermOutcome ?? 'N/A',
+          longTerm: e.longTermOutcome ?? 'N/A',
+        })),
+      };
+
+      return { events, comparison, found: true };
+    }),
+
+  /**
+   * Predict outcomes based on historical patterns
+   */
+  predict: publicProcedure
+    .input(z.object({
+      eventType: z.string(),
+      severity: z.enum(['low', 'medium', 'high', 'extreme']),
+      region: z.string().optional(),
+      description: z.string().optional(),
+    }))
+    .query(({ input }) => {
+      const validEvents = historicalEvents.filter((e): e is NonNullable<typeof e> => e != null);
+
+      // Find similar historical events by category and severity
+      let similar = validEvents.filter(e => safeCategory(e) === input.eventType);
+
+      // Filter by severity based on CFI ranges
+      const severityRanges: Record<string, [number, number]> = {
+        low: [0, 40],
+        medium: [40, 65],
+        high: [65, 85],
+        extreme: [85, 100],
+      };
+      const [minCFI, maxCFI] = severityRanges[input.severity];
+      similar = similar.filter(e => safeCFI(e) >= minCFI && safeCFI(e) <= maxCFI);
+
+      // If region specified, prioritize same region
+      if (input.region) {
+        const regionLower = input.region.toLowerCase();
+        const sameRegion = similar.filter(e => safeCountry(e).toLowerCase().includes(regionLower));
+        if (sameRegion.length >= 3) {
+          similar = sameRegion;
+        }
+      }
+
+      // If not enough events, broaden search
+      if (similar.length < 3) {
+        similar = validEvents.filter(e => {
+          const cfi = safeCFI(e);
+          return cfi >= minCFI && cfi <= maxCFI;
+        });
+      }
+
+      if (similar.length === 0) {
+        return {
+          prediction: null,
+          confidence: 0,
+          basedOn: [],
+          message: 'Not enough historical data to make a prediction',
+        };
+      }
+
+      // Calculate predicted indices (weighted average of similar events)
+      const avgGMI = Math.round(similar.reduce((s, e) => s + safeGMI(e), 0) / similar.length);
+      const avgCFI = Math.round(similar.reduce((s, e) => s + safeCFI(e), 0) / similar.length);
+      const avgHRI = Math.round(similar.reduce((s, e) => s + safeHRI(e), 0) / similar.length);
+
+      // Average emotional vector
+      const emotions = ['joy', 'fear', 'anger', 'sadness', 'hope', 'curiosity'] as const;
+      const avgEmotions: Record<string, number> = {};
+      for (const em of emotions) {
+        avgEmotions[em] = Math.round(similar.reduce((s, e) => s + (e.emotionalVector?.[em] ?? 0), 0) / similar.length);
+      }
+
+      // Average GDP impact
+      const avgGDP = parseFloat((similar.reduce((s, e) => s + (e.gdpImpact ?? 0), 0) / similar.length).toFixed(1));
+
+      // Collect common outcomes
+      const shortTermOutcomes = similar.map(e => e.shortTermOutcome).filter(Boolean);
+      const mediumTermOutcomes = similar.map(e => e.mediumTermOutcome).filter(Boolean);
+      const longTermOutcomes = similar.map(e => e.longTermOutcome).filter(Boolean);
+
+      // Collect common impacts
+      const politicalImpacts = similar.map(e => e.impacts?.political).filter(Boolean);
+      const economicImpacts = similar.map(e => e.impacts?.economic).filter(Boolean);
+      const socialImpacts = similar.map(e => e.impacts?.social).filter(Boolean);
+
+      // Confidence based on sample size
+      const confidence = Math.min(95, Math.round(30 + similar.length * 5));
+
+      // Scenarios
+      const bestCase = similar.reduce((best, e) => safeGMI(e) > safeGMI(best) ? e : best, similar[0]);
+      const worstCase = similar.reduce((worst, e) => safeGMI(e) < safeGMI(worst) ? e : worst, similar[0]);
+      const mostLikely = similar.sort((a, b) => {
+        const aDist = Math.abs(safeGMI(a) - avgGMI) + Math.abs(safeCFI(a) - avgCFI);
+        const bDist = Math.abs(safeGMI(b) - avgGMI) + Math.abs(safeCFI(b) - avgCFI);
+        return aDist - bDist;
+      })[0];
+
+      return {
+        prediction: {
+          estimatedGMI: avgGMI,
+          estimatedCFI: avgCFI,
+          estimatedHRI: avgHRI,
+          emotionalVector: avgEmotions,
+          gdpImpact: avgGDP,
+          predictedImpacts: {
+            political: politicalImpacts.slice(0, 3),
+            economic: economicImpacts.slice(0, 3),
+            social: socialImpacts.slice(0, 3),
+          },
+          predictedOutcomes: {
+            shortTerm: shortTermOutcomes.slice(0, 3),
+            mediumTerm: mediumTermOutcomes.slice(0, 3),
+            longTerm: longTermOutcomes.slice(0, 3),
+          },
+          scenarios: {
+            bestCase: { name: safeName(bestCase), gmi: safeGMI(bestCase), cfi: safeCFI(bestCase), hri: safeHRI(bestCase) },
+            worstCase: { name: safeName(worstCase), gmi: safeGMI(worstCase), cfi: safeCFI(worstCase), hri: safeHRI(worstCase) },
+            mostLikely: { name: safeName(mostLikely), gmi: safeGMI(mostLikely), cfi: safeCFI(mostLikely), hri: safeHRI(mostLikely) },
+          },
+        },
+        confidence,
+        basedOn: similar.slice(0, 10).map(e => ({
+          name: safeName(e),
+          date: safeDate(e),
+          country: safeCountry(e),
+          gmi: safeGMI(e),
+          cfi: safeCFI(e),
+          hri: safeHRI(e),
+        })),
+        sampleSize: similar.length,
+      };
+    }),
+
+  /**
+   * Get economic impact timeline data for charts
+   */
+  getEconomicTimeline: publicProcedure
+    .input(z.object({
+      category: z.string().optional(),
+      country: z.string().optional(),
+    }).optional())
+    .query(({ input }) => {
+      let events = historicalEvents.filter((e): e is NonNullable<typeof e> => e != null);
+
+      if (input?.category) {
+        events = events.filter(e => safeCategory(e) === input.category);
+      }
+      if (input?.country) {
+        events = events.filter(e => safeCountry(e).toLowerCase().includes(input.country!.toLowerCase()));
+      }
+
+      events.sort((a, b) => new Date(safeDate(a)).getTime() - new Date(safeDate(b)).getTime());
+
+      return {
+        data: events.map(e => ({
+          name: safeName(e),
+          date: safeDate(e),
+          year: new Date(safeDate(e)).getFullYear(),
+          category: safeCategory(e),
+          country: safeCountry(e),
+          gmi: safeGMI(e),
+          cfi: safeCFI(e),
+          hri: safeHRI(e),
+          gdpImpact: e.gdpImpact ?? 0,
+          economicImpact: e.impacts?.economic ?? '',
+          joy: e.emotionalVector?.joy ?? 0,
+          fear: e.emotionalVector?.fear ?? 0,
+          anger: e.emotionalVector?.anger ?? 0,
+          sadness: e.emotionalVector?.sadness ?? 0,
+          hope: e.emotionalVector?.hope ?? 0,
+          curiosity: e.emotionalVector?.curiosity ?? 0,
+        })),
+        total: events.length,
+      };
+    }),
 });

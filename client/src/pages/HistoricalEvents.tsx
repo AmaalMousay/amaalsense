@@ -307,14 +307,32 @@ export default function HistoricalEvents() {
                 </p>
               </div>
             </div>
-            <Button
-              variant={showStats ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setShowStats(!showStats)}
-            >
-              <BarChart3 className="w-4 h-4 mr-1" />
-              {isRTL ? 'إحصائيات' : 'Statistics'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/event-comparison')}
+              >
+                <Layers className="w-4 h-4 mr-1" />
+                {isRTL ? 'مقارنة' : 'Compare'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/event-prediction')}
+              >
+                <Sparkles className="w-4 h-4 mr-1" />
+                {isRTL ? 'تنبؤ' : 'Predict'}
+              </Button>
+              <Button
+                variant={showStats ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setShowStats(!showStats)}
+              >
+                <BarChart3 className="w-4 h-4 mr-1" />
+                {isRTL ? 'إحصائيات' : 'Statistics'}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
