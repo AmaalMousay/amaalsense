@@ -22,10 +22,11 @@ import { notificationRouter } from "./notificationRouter";
 import { searchRouter } from "./searchRouter";
 import { unifiedEngineRouter } from "./unifiedEngineRouter";
 import { historicalEventsRouter } from "./historicalEventsRouter";
+import { agentRouter } from "./agentRouter";
 // Old pipeline imports removed - now using networkEngine via unifiedRouters.ts
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
+  // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   newFeatures: newFeaturesRouter,
   realtimeData: realtimeDataRouter,
@@ -46,6 +47,23 @@ export const appRouter = router({
   search: searchRouter,
   engine: unifiedEngineRouter,
   historicalEvents: historicalEventsRouter,
+  agent: agentRouter,
+  support: router({
+    askQuestion: publicProcedure
+      .input(z.object({ query: z.string(), email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const { supportAgent } = await import("./agents/SupportAgent");
+        const answer = await supportAgent.handleQuery(input.query, input.email);
+        return { answer };
+      }),
+    sendEmail: publicProcedure
+      .input(z.object({ email: z.string().email(), subject: z.string(), message: z.string() }))
+      .mutation(async ({ input }) => {
+        const { supportAgent } = await import("./agents/SupportAgent");
+        const success = await supportAgent.sendUserEmail(input.email, input.subject, input.message);
+        return { success };
+      }),
+  }),
   // Old pipeline routers removed - all analysis now goes through networkEngine
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -133,16 +151,16 @@ export const appRouter = router({
      */
     getLatestIndices: publicProcedure.query(async () => {
       const { getLatestEmotionIndices, createEmotionIndex } = await import("./db");
-      
+
       // First check if we have existing indices
       let indices = await getLatestEmotionIndices();
-      
+
       // If no data exists, fetch and analyze real data
       if (!indices) {
         try {
           const { getGlobalMood } = await import("./unifiedDataService");
           const globalMood = await getGlobalMood();
-          
+
           // Save to database
           await createEmotionIndex({
             gmi: globalMood.gmi,
@@ -150,7 +168,7 @@ export const appRouter = router({
             hri: globalMood.hri,
             confidence: Math.round(globalMood.confidence * 100),
           });
-          
+
           // Return the fresh data
           return {
             gmi: globalMood.gmi,
@@ -165,7 +183,7 @@ export const appRouter = router({
           return { gmi: 0, cfi: 50, hri: 50, confidence: 0 };
         }
       }
-      
+
       return indices;
     }),
 
@@ -200,12 +218,12 @@ export const appRouter = router({
     getAllCountriesEmotions: publicProcedure.query(async () => {
       const { getAllCountryCodes, quickCountryAnalysis, getCountryMeta } = await import("./countryNewsAnalyzer");
       const codes = getAllCountryCodes();
-      
+
       // Fetch quick analysis for a batch of important countries (parallel, keyword-only, no LLM)
       const priorityCodes = ['LY', 'EG', 'SA', 'AE', 'US', 'GB', 'PS', 'SY', 'IQ', 'SD', 'YE', 'LB', 'TR', 'RU', 'CN', 'JP'];
       const batchSize = 4;
       const results: Record<string, { gmi: number; cfi: number; hri: number; dominantEmotion: string; isRealData: boolean }> = {};
-      
+
       // Fetch priority countries first in small batches
       for (let i = 0; i < priorityCodes.length; i += batchSize) {
         const batch = priorityCodes.slice(i, i + batchSize);
@@ -214,7 +232,7 @@ export const appRouter = router({
           if (batchResults[idx].status === 'fulfilled') results[code] = batchResults[idx].value;
         });
       }
-      
+
       return codes.map(code => {
         const data = results[code];
         const meta = getCountryMeta(code);
@@ -298,11 +316,11 @@ export const appRouter = router({
         // First get AI analysis
         const { analyzeTextWithAI } = await import("./aiSentimentAnalyzer");
         const aiResult = await analyzeTextWithAI(input.text);
-        
+
         // Then process through DCFT engine for D(t) and RI(e,t) calculations
         const { analyzeTextDCFT } = await import("./dcft");
         const dcftResult = await analyzeTextDCFT(input.text, 'ai_analysis');
-        
+
         return {
           ...aiResult,
           // Add DCFT calculations
@@ -429,6 +447,76 @@ export const appRouter = router({
 
   // Subscription & Pricing System
   subscription: router({
+    /**
+     * Create Stripe Checkout Session
+     */
+    createCheckoutSession: publicProcedure
+      .input(z.object({
+        tier: z.enum(['pro', 'enterprise']),
+        successUrl: z.string().url(),
+        cancelUrl: z.string().url(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Using a mock user ID if not logged in for demo purposes
+        const userId = ctx.user?.id || 1; 
+        
+        const { createCheckoutSession } = await import("./stripeService");
+        
+        try {
+          const session = await createCheckoutSession(
+            input.tier,
+            userId,
+            input.successUrl,
+            input.cancelUrl
+          );
+          
+          return { url: session.url };
+        } catch (error: any) {
+          throw new Error('Failed to create checkout session: ' + error.message);
+        }
+      }),
+
+    /**
+     * Generate a new API Key for the user
+     */
+    generateApiKey: publicProcedure.mutation(async ({ ctx }) => {
+      // For demo we simulate a user ID and enterprise tier if not logged in
+      const userId = ctx.user?.id || 1;
+      const tier = (ctx.user as any)?.subscriptionTier || 'enterprise';
+      
+      const { generateApiKey } = await import("./apiKeys");
+      try {
+        const keyData = await generateApiKey(userId, tier);
+        return keyData;
+      } catch (error: any) {
+        throw new Error('Failed to generate API Key: ' + error.message);
+      }
+    }),
+
+    /**
+     * Get user's API Keys
+     */
+    getUserApiKeys: publicProcedure.query(async ({ ctx }) => {
+      const userId = ctx.user?.id || 1;
+      const { getUserApiKeys } = await import("./apiKeys");
+      return getUserApiKeys(userId);
+    }),
+
+    /**
+     * Revoke an API Key
+     */
+    revokeApiKey: publicProcedure
+      .input(z.object({ keyId: z.string() }))
+      .mutation(async ({ input, ctx }) => {
+        const userId = ctx.user?.id || 1;
+        const { revokeApiKey } = await import("./apiKeys");
+        const success = await revokeApiKey(userId, input.keyId);
+        if (!success) {
+          throw new Error('Failed to revoke API key. Key not found or unauthorized.');
+        }
+        return { success };
+      }),
+
     /**
      * Get all pricing tiers
      */
@@ -1254,7 +1342,7 @@ ${input.message || 'No message provided'}
       .mutation(async ({ input }) => {
         const { createPaymentRecord } = await import("./db");
         const { notifyOwner } = await import("./_core/notification");
-        
+
         // Create payment record
         await createPaymentRecord({
           email: input.email,
@@ -1346,15 +1434,15 @@ Please verify the payment and confirm in the admin panel.
         }
         const { updatePaymentRecordStatus, getPaymentRecordById } = await import("./db");
         const { notifyOwner } = await import("./_core/notification");
-        
+
         const payment = await getPaymentRecordById(input.paymentId);
         if (!payment) {
           throw new Error("Payment not found");
         }
 
         await updatePaymentRecordStatus(
-          input.paymentId, 
-          "confirmed", 
+          input.paymentId,
+          "confirmed",
           input.adminNotes,
           ctx.user.id
         );
@@ -1382,10 +1470,10 @@ Please verify the payment and confirm in the admin panel.
           throw new Error("Unauthorized: Admin access required");
         }
         const { updatePaymentRecordStatus } = await import("./db");
-        
+
         await updatePaymentRecordStatus(
-          input.paymentId, 
-          "rejected", 
+          input.paymentId,
+          "rejected",
           input.adminNotes,
           ctx.user.id
         );
@@ -1512,14 +1600,14 @@ Please verify the payment and confirm in the admin panel.
       .mutation(async ({ input }) => {
         const { checkAndSendMoodAlert } = await import("./telegramNotificationService");
         const { getLatestEmotionIndices } = await import("./db");
-        
+
         const indices = await getLatestEmotionIndices();
         const currentMood = {
           gmi: indices?.gmi || 50,
           cfi: indices?.cfi || 50,
           hri: indices?.hri || 50,
         };
-        
+
         return await checkAndSendMoodAlert(input.chatId, currentMood, undefined, {
           country: input.country,
           countryName: input.countryName,
@@ -1539,14 +1627,14 @@ Please verify the payment and confirm in the admin panel.
       .mutation(async ({ input }) => {
         const { sendDailySummary } = await import("./telegramNotificationService");
         const { getLatestEmotionIndices } = await import("./db");
-        
+
         const indices = await getLatestEmotionIndices();
         const mood = {
           gmi: indices?.gmi || 50,
           cfi: indices?.cfi || 50,
           hri: indices?.hri || 50,
         };
-        
+
         const success = await sendDailySummary(input.chatId, mood, {
           country: input.country,
           countryName: input.countryName,
@@ -1583,7 +1671,7 @@ Please verify the payment and confirm in the admin panel.
       .mutation(async ({ input }) => {
         const { generateReportHTML, createReportData } = await import("./pdfExportService");
         const { getLatestEmotionIndices } = await import("./db");
-        
+
         // Get latest indices if not provided
         let analysisData = input.analysisData;
         if (!analysisData) {
@@ -1594,7 +1682,7 @@ Please verify the payment and confirm in the admin panel.
             hri: indices?.hri || 50,
           };
         }
-        
+
         const reportData = createReportData({
           ...analysisData,
           sentiment: {
@@ -1609,12 +1697,12 @@ Please verify the payment and confirm in the admin panel.
           countryName: input.countryName,
           timeRange: input.timeRange,
         });
-        
+
         const html = generateReportHTML(reportData);
-        const filename = input.topic 
+        const filename = input.topic
           ? `amalsense-${input.topic.replace(/\s+/g, '-').toLowerCase()}-report.html`
           : `amalsense-report-${new Date().toISOString().split('T')[0]}.html`;
-        
+
         return { html, filename };
       }),
   }),
@@ -1736,13 +1824,13 @@ Please verify the payment and confirm in the admin panel.
       .mutation(async ({ input }) => {
         const { analyzeTopicInCountry } = await import("./topicAnalyzer");
         const { StreamingResponse } = await import("./_core/streamingHelper");
-        
+
         const stream = new StreamingResponse();
-        
+
         try {
           // Phase 67: Stream thinking phase
           stream.addThinking(`جاري تحليل "${input.topic}" في ${input.countryName}...`);
-          
+
           // Run analysis
           const result = await analyzeTopicInCountry(
             input.topic,
@@ -1755,25 +1843,25 @@ Please verify the payment and confirm in the admin panel.
               isFollowUp: input.isFollowUp,
             }
           );
-          
+
           // Stream analysis phase
           if (result.intelligentResponse) {
             stream.addAnalysis(result.intelligentResponse);
           }
-          
+
           // Stream emotion data
           if ((result as any).emotionData) {
             stream.addEmotion((result as any).emotionData);
           }
-          
+
           // Stream metadata
           if ((result as any).pipelineMetadata) {
             stream.addMetadata((result as any).pipelineMetadata);
           }
-          
+
           // Complete with full result
           stream.complete(result);
-          
+
           // Return chunks for streaming
           return {
             chunks: stream.getChunks(),
@@ -2031,7 +2119,7 @@ Please verify the payment and confirm in the admin panel.
       }))
       .mutation(async ({ input, ctx }) => {
         const { createClassifiedAnalysis } = await import('./db');
-        
+
         await createClassifiedAnalysis({
           userId: ctx.user?.id || null,
           headline: input.headline,
@@ -2060,7 +2148,7 @@ Please verify the payment and confirm in the admin panel.
       .input(z.object({ limit: z.number().min(1).max(100).default(50) }))
       .query(async ({ input, ctx }) => {
         if (!ctx.user) return [];
-        
+
         const { getUserClassifiedAnalyses } = await import('./db');
         return await getUserClassifiedAnalyses(ctx.user.id, input.limit);
       }),
@@ -2128,7 +2216,7 @@ Please verify the payment and confirm in the admin panel.
         }
 
         const { createFollowedTopic } = await import('./db');
-        
+
         await createFollowedTopic({
           userId: ctx.user.id,
           topic: input.topic,
@@ -2145,7 +2233,7 @@ Please verify the payment and confirm in the admin panel.
      */
     getFollowed: publicProcedure.query(async ({ ctx }) => {
       if (!ctx.user) return [];
-      
+
       const { getUserFollowedTopics } = await import('./db');
       return await getUserFollowedTopics(ctx.user.id);
     }),
@@ -2155,7 +2243,7 @@ Please verify the payment and confirm in the admin panel.
      */
     getActive: publicProcedure.query(async ({ ctx }) => {
       if (!ctx.user) return [];
-      
+
       const { getActiveFollowedTopics } = await import('./db');
       return await getActiveFollowedTopics(ctx.user.id);
     }),
@@ -2202,7 +2290,7 @@ Please verify the payment and confirm in the admin panel.
       .input(z.object({ limit: z.number().min(1).max(100).default(50) }))
       .query(async ({ input, ctx }) => {
         if (!ctx.user) return [];
-        
+
         const { getUserTopicAlerts } = await import('./db');
         return await getUserTopicAlerts(ctx.user.id, input.limit);
       }),
@@ -2212,7 +2300,7 @@ Please verify the payment and confirm in the admin panel.
      */
     getUnread: publicProcedure.query(async ({ ctx }) => {
       if (!ctx.user) return [];
-      
+
       const { getUnreadTopicAlerts } = await import('./db');
       return await getUnreadTopicAlerts(ctx.user.id);
     }),
@@ -2222,7 +2310,7 @@ Please verify the payment and confirm in the admin panel.
      */
     getUnreadCount: publicProcedure.query(async ({ ctx }) => {
       if (!ctx.user) return 0;
-      
+
       const { getUnreadAlertsCount } = await import('./db');
       return await getUnreadAlertsCount(ctx.user.id);
     }),
@@ -2288,7 +2376,7 @@ Please verify the payment and confirm in the admin panel.
       .input(z.object({ limit: z.number().min(1).max(50).default(10) }))
       .query(async ({ input, ctx }) => {
         if (!ctx.user) return [];
-        
+
         const { getUserRecentAnalyses } = await import('./db');
         return await getUserRecentAnalyses(ctx.user.id, input.limit);
       }),
@@ -2300,7 +2388,7 @@ Please verify the payment and confirm in the admin panel.
       .input(z.object({ limit: z.number().min(1).max(50).default(10) }))
       .query(async ({ input, ctx }) => {
         if (!ctx.user) return [];
-        
+
         const { getUserActiveAlerts } = await import('./db');
         return await getUserActiveAlerts(ctx.user.id, input.limit);
       }),
@@ -2342,10 +2430,10 @@ Please verify the payment and confirm in the admin panel.
       .query(async ({ input }) => {
         const { classifyContext } = await import('./engines/contextClassification');
         const { fuseEmotions } = await import('./engines/emotionFusion');
-        
+
         const context = classifyContext(input.text);
         const emotions = fuseEmotions(input.text, context);
-        
+
         return {
           context,
           emotions,
@@ -2370,17 +2458,17 @@ Please verify the payment and confirm in the admin panel.
         const { orchestrate } = await import('./orchestrator');
         const { detectCountryFromTopic } = await import('./conversationalAI');
         const { analyze } = await import('./engines');
-        
+
         // Detect country from topic
         const detectedCountry = detectCountryFromTopic(input.topic);
-        
+
         // Run unified analysis (for backward compatibility)
         const analysisResult = await analyze({
           text: input.topic,
           country: detectedCountry || 'ALL',
           userType: 'general',
         });
-        
+
         // Use Orchestrator for intelligent AI response
         // Pass the user's original question directly (not wrapped in English)
         const orchestrationResult = await orchestrate({
@@ -2388,7 +2476,7 @@ Please verify the payment and confirm in the admin panel.
           topic: input.topic,
           country: detectedCountry || undefined,
         });
-        
+
         // Build context from orchestration results
         const context = {
           topic: input.topic,
@@ -2404,7 +2492,7 @@ Please verify the payment and confirm in the admin panel.
           enginesUsed: orchestrationResult.metadata.enginesUsed,
           provider: orchestrationResult.metadata.provider,
         };
-        
+
         return {
           analysis: analysisResult,
           context,
@@ -2444,7 +2532,7 @@ Please verify the payment and confirm in the admin panel.
       .mutation(async ({ input }) => {
         // Use the new AI Orchestrator for intelligent follow-up
         const { orchestrate } = await import('./orchestrator');
-        
+
         // Convert conversation history to orchestrator format
         const history = input.conversationHistory
           .filter(m => m.role === 'user' || m.role === 'assistant')
@@ -2452,14 +2540,14 @@ Please verify the payment and confirm in the admin panel.
             role: m.role as 'user' | 'assistant',
             content: m.content,
           }));
-        
+
         const orchestrationResult = await orchestrate({
           question: input.question,
           topic: input.context.topic,
           country: input.context.detectedCountry,
           conversationHistory: history,
         });
-        
+
         return {
           aiResponse: orchestrationResult.answer,
           timestamp: Date.now(),
@@ -2484,7 +2572,7 @@ Please verify the payment and confirm in the admin panel.
       }))
       .query(async ({ input }) => {
         const { analyzeEmotionalState, generateRecommendations } = await import('./conversationalAI');
-        
+
         const context = {
           topic: 'general',
           gmi: input.gmi,
@@ -2494,10 +2582,10 @@ Please verify the payment and confirm in the admin panel.
           emotionVector: {},
           confidence: 80,
         };
-        
+
         const state = analyzeEmotionalState(context);
         const { recommendations, warnings, scenarios } = generateRecommendations(context);
-        
+
         return {
           state,
           recommendations,
@@ -2518,17 +2606,17 @@ Please verify the payment and confirm in the admin panel.
       if (!db) return [];
       const { aiConversations } = await import('../drizzle/schema');
       const { desc, eq } = await import('drizzle-orm');
-      
+
       // Get user's conversations or all if not logged in (for demo)
       const userId = ctx.user?.id;
-      
+
       const conversations = await db
         .select()
         .from(aiConversations)
         .where(userId ? eq(aiConversations.userId, userId) : undefined)
         .orderBy(desc(aiConversations.lastActivityAt))
         .limit(50);
-      
+
       return conversations;
     }),
 
@@ -2543,23 +2631,23 @@ Please verify the payment and confirm in the admin panel.
         if (!db) throw new Error('Database not available');
         const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
         const { eq, asc } = await import('drizzle-orm');
-        
+
         const [conversation] = await db
           .select()
           .from(aiConversations)
           .where(eq(aiConversations.id, input.id))
           .limit(1);
-        
+
         if (!conversation) {
           throw new Error('Conversation not found');
         }
-        
+
         const messages = await db
           .select()
           .from(aiConversationMessages)
           .where(eq(aiConversationMessages.conversationId, input.id))
           .orderBy(asc(aiConversationMessages.createdAt));
-        
+
         return {
           ...conversation,
           messages,
@@ -2586,12 +2674,12 @@ Please verify the payment and confirm in the admin panel.
         const db = await getDb();
         if (!db) throw new Error('Database not available');
         const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
-        
+
         // Generate title from topic (first 50 chars)
-        const title = input.topic.length > 50 
-          ? input.topic.substring(0, 47) + '...' 
+        const title = input.topic.length > 50
+          ? input.topic.substring(0, 47) + '...'
           : input.topic;
-        
+
         // Create conversation
         const [result] = await db.insert(aiConversations).values({
           userId: ctx.user?.id || null,
@@ -2604,16 +2692,16 @@ Please verify the payment and confirm in the admin panel.
           dominantEmotion: input.initialAnalysis?.dominantEmotion || null,
           messageCount: input.initialAnalysis ? 2 : 1,
         });
-        
+
         const conversationId = result.insertId;
-        
+
         // Add initial user message
         await db.insert(aiConversationMessages).values({
           conversationId,
           role: 'user',
           content: input.topic,
         });
-        
+
         // Add AI response if provided
         if (input.initialAnalysis) {
           await db.insert(aiConversationMessages).values({
@@ -2628,7 +2716,7 @@ Please verify the payment and confirm in the admin panel.
             }),
           });
         }
-        
+
         return { id: conversationId, title };
       }),
 
@@ -2653,7 +2741,7 @@ Please verify the payment and confirm in the admin panel.
         if (!db) throw new Error('Database not available');
         const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
         const { eq, sql } = await import('drizzle-orm');
-        
+
         // Add message
         await db.insert(aiConversationMessages).values({
           conversationId: input.conversationId,
@@ -2661,7 +2749,7 @@ Please verify the payment and confirm in the admin panel.
           content: input.content,
           analysisData: input.analysisData ? JSON.stringify(input.analysisData) : null,
         });
-        
+
         // Update conversation
         await db.update(aiConversations)
           .set({
@@ -2675,7 +2763,7 @@ Please verify the payment and confirm in the admin panel.
             } : {}),
           })
           .where(eq(aiConversations.id, input.conversationId));
-        
+
         return { success: true };
       }),
 
@@ -2690,15 +2778,15 @@ Please verify the payment and confirm in the admin panel.
         if (!db) throw new Error('Database not available');
         const { aiConversations, aiConversationMessages } = await import('../drizzle/schema');
         const { eq } = await import('drizzle-orm');
-        
+
         // Delete messages first
         await db.delete(aiConversationMessages)
           .where(eq(aiConversationMessages.conversationId, input.id));
-        
+
         // Delete conversation
         await db.delete(aiConversations)
           .where(eq(aiConversations.id, input.id));
-        
+
         return { success: true };
       }),
   }),
@@ -2709,7 +2797,7 @@ Please verify the payment and confirm in the admin panel.
       const { initMetacognition, generateHealthReport } = await import('./cognitiveArchitecture/metacognition');
       const state = initMetacognition();
       const health = generateHealthReport(state);
-      
+
       return {
         status: health.overallHealth > 0.8 ? 'healthy' : 'needs_attention',
         successRate: Math.round(health.overallHealth * 100),
@@ -2737,7 +2825,7 @@ Please verify the payment and confirm in the admin panel.
       const state = initMetacognition();
       const health = generateHealthReport(state);
       const errors = health.errors || [];
-      
+
       return errors.map((error: any) => ({
         type: error.errorType,
         message: error.description,
@@ -2752,7 +2840,7 @@ Please verify the payment and confirm in the admin panel.
       const state = initMetacognition();
       const health = generateHealthReport(state);
       const recommendations = health.recommendations || [];
-      
+
       return recommendations.map((rec: string, index: number) => ({
         title: `توصية ${index + 1}`,
         description: rec,

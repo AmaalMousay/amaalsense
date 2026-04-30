@@ -1209,7 +1209,8 @@ export type InsertPredictionRecord = typeof predictions.$inferInsert;
  */
 export const predictionSnapshots = mysqlTable("prediction_snapshots", {
   id: int("id").autoincrement().primaryKey(),
-  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  countryCode: varchar("country_code", { length: 2 }),
+  topic: varchar("topic", { length: 100 }),
   gmi: float("gmi").notNull(),
   cfi: float("cfi").notNull(),
   hri: float("hri").notNull(),
@@ -1221,5 +1222,41 @@ export const predictionSnapshots = mysqlTable("prediction_snapshots", {
   trendDirection: varchar("trend_direction", { length: 20 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+/**
+ * Case Studies Table - stores notable predictive successes
+ */
+export const caseStudies = mysqlTable("case_studies", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  topic: varchar("topic", { length: 100 }),
+  eventDate: timestamp("eventDate"),
+  predictionAccuracy: int("predictionAccuracy"),
+  impactLevel: mysqlEnum("impactLevel", ["low", "medium", "high", "critical"]),
+  dataSnapshot: text("dataSnapshot"), // JSON of indices at that time
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export type PredictionSnapshot = typeof predictionSnapshots.$inferSelect;
 export type InsertPredictionSnapshot = typeof predictionSnapshots.$inferInsert;
+
+/**
+ * API Keys Table - stores encrypted/hashed API keys for external access
+ */
+export const apiKeys = mysqlTable("api_keys", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  keyHash: varchar("keyHash", { length: 255 }).notNull().unique(),
+  partialKey: varchar("partialKey", { length: 32 }).notNull(),
+  tier: mysqlEnum("tier", ["pro", "enterprise", "government"]).notNull(),
+  usage: int("usage").default(0).notNull(),
+  limit: int("limit").default(1000).notNull(),
+  isActive: mysqlBoolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastUsedAt: timestamp("lastUsedAt"),
+});
+
+export type ApiKey = typeof apiKeys.$inferSelect;
+export type InsertApiKey = typeof apiKeys.$inferInsert;
+

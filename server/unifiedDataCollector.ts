@@ -27,6 +27,7 @@ export interface RawDataItem {
   publishedAt: string;
   language: string;
   country?: string;
+  trustScore: number; // 0-100 (Official News = 90, Social = 40)
 }
 
 export interface CollectedData {
@@ -90,6 +91,7 @@ async function fetchFromGoogleRSS(query: string, countryCode?: string): Promise<
           publishedAt: article.pubDate || new Date().toISOString(),
           language: 'auto',
           country: countryCode,
+          trustScore: 85, // Google News is high trust
         });
       }
     }
@@ -107,6 +109,7 @@ async function fetchFromGoogleRSS(query: string, countryCode?: string): Promise<
         publishedAt: article.pubDate || new Date().toISOString(),
         language: 'auto',
         country: countryCode,
+        trustScore: 85,
       });
     }
   } catch (error) {
@@ -132,6 +135,7 @@ async function fetchFromNewsAPI(query: string, countryCode?: string): Promise<Ra
           publishedAt: article.publishedAt instanceof Date ? article.publishedAt.toISOString() : new Date().toISOString(),
           language: 'en',
           country: countryCode,
+          trustScore: 90, // NewsAPI is very high trust
         });
       }
     }
@@ -156,6 +160,7 @@ async function fetchFromGNews(query: string, language: string = 'en'): Promise<R
         url: article.url || '',
         publishedAt: article.publishedAt || new Date().toISOString(),
         language,
+        trustScore: 80,
       });
     }
   } catch (error) {
@@ -182,6 +187,7 @@ async function fetchFromSocialMedia(query: string): Promise<RawDataItem[]> {
         url: post.url || '',
         publishedAt: post.publishedAt instanceof Date ? post.publishedAt.toISOString() : new Date().toISOString(),
         language: 'en',
+        trustScore: 45, // Reddit
       });
     }
   } catch (error) {
@@ -203,6 +209,7 @@ async function fetchFromSocialMedia(query: string): Promise<RawDataItem[]> {
         url: post.url || '',
         publishedAt: post.publishedAt instanceof Date ? post.publishedAt.toISOString() : new Date().toISOString(),
         language: 'en',
+        trustScore: 35, // Mastodon
       });
     }
   } catch (error) {
@@ -224,6 +231,7 @@ async function fetchFromSocialMedia(query: string): Promise<RawDataItem[]> {
         url: post.url || '',
         publishedAt: post.publishedAt instanceof Date ? post.publishedAt.toISOString() : new Date().toISOString(),
         language: 'en',
+        trustScore: 40, // Social media is lower trust
       });
     }
   } catch (error) {

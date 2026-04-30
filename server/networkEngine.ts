@@ -69,6 +69,24 @@ import { storeAnalysisRecord, type AnalysisRecord } from './engines/learningStor
 import { MultiTurnContext } from './multiTurnContext';
 import { generateStyleInstructions, applyConsultantStyle, addHumanTouch, STYLE_PROHIBITIONS } from './cognitiveArchitecture/narrativeStyleEngine';
 import {
+  calculateDigitalConsciousnessField,
+  calculateResonanceIndex,
+  identifyCollectivePhase,
+  calculateDCFTIndices,
+  getEmotionalColor,
+  detectEmotionalWaves,
+  generateEmotionalForecast,
+  checkAlertConditions,
+} from './dcftEngine';
+
+// --- NEW COGNITIVE LAYERS ---
+import { evaluateAmbiguity } from './cognitiveEngine/clarificationLayer';
+import { findSimilarQuestion, storeQuestionResult } from './cognitiveEngine/similarityMatcher';
+import { getUserProfile, updateUserMemory, personalizeResponseContext } from './cognitiveEngine/personalMemory';
+import { retrieveBackgroundKnowledge, formatKnowledgeForPrompt } from './cognitiveEngine/knowledgeBase';
+import { generateVoiceInstructions, formatVoiceForPrompt } from './cognitiveEngine/personalVoice';
+
+import {
   dcftEngine,
   perceptionLayer,
   cognitiveLayer,
@@ -1205,21 +1223,82 @@ export async function analyzeForSmartAnalysis(
   query: string,
   language: string = 'ar',
   conversationId?: string,
-): Promise<SmartAnalysisResult> {
-  // Full network execution (includes DCFT)
-  // Use conversationId for proper multi-turn context per user/conversation
+): Promise<any> {
   const userId = conversationId || 'system';
-  const ctx = await executeNetworkEngine(userId, query, language);
-  const vector = ctx.collection.eventVector;
-  // Use DCFT indices when available (scientifically grounded)
+
+  // 1. Layer 12: Similarity Matching (Fast path)
+  const similarity = await findSimilarQuestion(query, 'موضوع عام');
+  if (similarity.hasSimilar && similarity.similarQuestion) {
+    try {
+      const cachedResult = JSON.parse(similarity.similarQuestion.answer);
+      return { ...cachedResult, isCached: true };
+    } catch (e) {
+      // Ignore parse errors and continue
+    }
+  }
+
+  // Basic intent parsing for layers
+  const questionType = query.includes('لماذا') ? 'why' : query.includes('متى') ? 'when' : 'what_if';
+  const deepUnderstanding = {
+    surface: { topic: query.substring(0, 50), questionType },
+    deep: { realIntent: 'understand_cause' },
+    context: { language }
+  };
+
+  // 2. Layer 11: Clarification Check
+  const clarification = evaluateAmbiguity(query, deepUnderstanding as any);
+  if (clarification.isAmbiguous) {
+    return {
+      query,
+      response: language === 'ar' ? 'سؤالك واسع جداً، أحتاج لتوضيح أكثر.' : 'Your question is too broad, I need more clarification.',
+      questionUnderstanding: {
+        needsClarification: true,
+        clarifications: clarification.clarificationQuestions.map(text => ({ text, confidence: 85 }))
+      },
+      confidence: 0,
+      emotions: { neutral: 1 },
+      dominantEmotion: 'neutral',
+      gmi: 0, cfi: 50, hri: 50,
+      categories: [],
+      trendingKeywords: [],
+      sourceCount: 0,
+      totalItems: 0,
+      topHeadlines: [],
+      isRealData: false,
+      suggestions: [],
+    };
+  }
+
+  // 3. Layer 13: Personal Memory Context
+  const profile = await getUserProfile(userId);
+  const userContext = personalizeResponseContext(profile);
+
+  // 4. Layer 14: General Knowledge Injection
+  const knowledge = await retrieveBackgroundKnowledge(query, [query], language as any);
+  const knowledgeContext = formatKnowledgeForPrompt(knowledge, language as any);
+
+  // 5. Layer 17: Personal Voice
+  const voiceInstructions = generateVoiceInstructions(profile.preferences, 0.5, 'neutral');
+  const voiceContext = formatVoiceForPrompt(voiceInstructions, language as any);
+
+  // Combine query with contexts
+  const enrichedQuery = `${query}\n\n${userContext}\n${knowledgeContext}\n${voiceContext}`;
+
+  // Full network execution
+  const ctx = await executeNetworkEngine(userId, enrichedQuery, language);
+  const vector = ctx.collection.eventVector || {
+    emotions: { neutral: 1 }, dominantEmotion: 'neutral', categories: [], trendingKeywords: [],
+    sourceBreakdown: {}, totalItems: 0, topHeadlines: []
+  };
+  
   const dcftIndices = ctx.dcft.result ? ctx.dcft.indices : null;
-  const fallbackIndices = vectorToMapIndices(vector);
+  const fallbackIndices = vectorToMapIndices(vector as any);
   const indices = dcftIndices || fallbackIndices;
   
-  return {
+  const finalResult = {
     query,
-    response: ctx.generation.languageEnforced.finalResponse || ctx.generation.response,
-    confidence: ctx.analysis.confidence.overall,
+    response: ctx.generation.languageEnforced?.finalResponse || ctx.generation.response || 'No response generated',
+    confidence: ctx.analysis.confidence?.overall || 50,
     emotions: vector.emotions,
     dominantEmotion: ctx.dcft.result?.dominantEmotion || vector.dominantEmotion,
     gmi: indices.gmi, cfi: indices.cfi, hri: indices.hri,
@@ -1229,11 +1308,19 @@ export async function analyzeForSmartAnalysis(
     totalItems: vector.totalItems,
     topHeadlines: vector.topHeadlines,
     isRealData: vector.totalItems > 0,
-    suggestions: ctx.generation.suggestions,
-    breakingNews: ctx.analysis.breakingNews,
+    suggestions: ctx.generation.suggestions || [],
+    breakingNews: ctx.analysis.breakingNews || [],
     quality: ctx.generation.quality,
-    layerTraces: ctx.analytics.layerTraces,
+    layerTraces: ctx.analytics.layerTraces || [],
   };
+
+  // Save to Memory and Similarity Cache
+  await updateUserMemory(userId, query.substring(0, 30), questionType);
+  if (finalResult.isRealData) {
+    await storeQuestionResult(query, JSON.stringify(finalResult), 'موضوع عام');
+  }
+
+  return finalResult;
 }
 
 /**

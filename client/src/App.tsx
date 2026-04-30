@@ -45,6 +45,9 @@ import ResearcherDashboard from "./pages/ResearcherDashboard";
 import SmartAnalysis from "./pages/SmartAnalysis";
 import MetacognitionDashboard from "./pages/MetacognitionDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { AgentDashboard } from "./pages/AgentDashboard";
+import { ApiManagement } from "./pages/ApiManagement";
+import TraderDashboard from "./pages/TraderDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -144,6 +147,8 @@ function Router() {
       {/* Professional Dashboards */}
       <Route path={"/journalist"} component={JournalistDashboard} />
       <Route path={"/researcher"} component={ResearcherDashboard} />
+      <Route path={"/trader"} component={TraderDashboard} />
+      <Route path={"/api-management"} component={ApiManagement} />
       {/* Markets route removed - use Smart Analysis instead */}
       
       {/* AI-Powered Smart Analysis - wrapped with PageErrorBoundary */}
@@ -166,6 +171,7 @@ function Router() {
       <Route path={"/historical-events"} component={HistoricalEvents} />
       <Route path={"/event-comparison"} component={EventComparison} />
       <Route path={"/event-prediction"} component={EventPrediction} />
+      <Route path={"/agents"} component={AgentDashboard} />
       
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

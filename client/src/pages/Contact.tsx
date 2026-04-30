@@ -158,6 +158,32 @@ export default function Contact() {
       {/* Contact Form */}
       <section className="pb-16">
         <div className="container max-w-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <Card className="cosmic-card p-6 border-accent/20 bg-accent/5">
+              <h3 className="text-xl font-bold cosmic-text mb-4 flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-accent" />
+                AI Support Agent
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Have a quick question? Our automated Support Agent is available 24/7 to help you.
+              </p>
+              <SupportChat />
+            </Card>
+
+            <Card className="cosmic-card p-6">
+              <h3 className="text-xl font-bold cosmic-text mb-4 flex items-center gap-2">
+                <Mail className="w-5 h-5 text-accent" />
+                Sales Inquiry
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Fill out the form to the right for business inquiries and custom solutions.
+              </p>
+              <div className="text-xs text-muted-foreground bg-muted p-3 rounded border">
+                Response time: 24-48 hours
+              </div>
+            </Card>
+          </div>
+
           <Card className="cosmic-card p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Contact Information */}
@@ -327,6 +353,73 @@ export default function Contact() {
           <p>Amaalsense Engine © 2025 | Transforming Human Emotion into Data | By Amaal Radwan</p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function SupportChat() {
+  const [query, setQuery] = useState('');
+  const [email, setEmail] = useState('');
+  const [chatLog, setChatLog] = useState<{role: 'user' | 'agent', text: string}[]>([]);
+  
+  const askMutation = trpc.support.askQuestion.useMutation({
+    onSuccess: (data) => {
+      setChatLog(prev => [...prev, { role: 'agent', text: data.answer }]);
+    },
+    onError: () => {
+      toast.error('Agent is currently offline. Please try again later.');
+    }
+  });
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query || !email) {
+      toast.error('Please enter both email and your question.');
+      return;
+    }
+    
+    setChatLog(prev => [...prev, { role: 'user', text: query }]);
+    askMutation.mutate({ query, email });
+    setQuery('');
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="h-48 overflow-y-auto border rounded bg-background/30 p-3 space-y-2 text-sm">
+        {chatLog.length === 0 && (
+          <div className="text-muted-foreground italic">Start a conversation with our AI agent...</div>
+        )}
+        {chatLog.map((msg, i) => (
+          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] p-2 rounded-lg ${msg.role === 'user' ? 'bg-accent text-white' : 'bg-muted border'}`}>
+              {msg.text}
+            </div>
+          </div>
+        ))}
+        {askMutation.isPending && (
+          <div className="text-xs italic text-muted-foreground animate-pulse">Agent is thinking...</div>
+        )}
+      </div>
+      <form onSubmit={handleSend} className="space-y-2">
+        <Input 
+          size="sm" 
+          placeholder="Your Email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          className="text-xs h-8"
+        />
+        <div className="flex gap-2">
+          <Input 
+            placeholder="Ask a question..." 
+            value={query} 
+            onChange={(e) => setQuery(e.target.value)} 
+            className="flex-1 text-xs h-8"
+          />
+          <Button type="submit" size="sm" className="h-8" disabled={askMutation.isPending}>
+            Send
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

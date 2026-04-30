@@ -277,6 +277,30 @@ export const MULTILINGUAL_KEYWORDS: Record<string, EmotionKeyword[]> = {
 };
 
 /**
+ * Arabic Dialect Specific Keywords (Point 4: Dialect Analysis)
+ */
+export const ARABIC_DIALECT_KEYWORDS: Record<string, EmotionKeyword[]> = {
+  ly: [ // Libyan
+    { word: "منور", emotion: "joy", weight: 50, category: "social" },
+    { word: "يا غالي", emotion: "joy", weight: 40, category: "social" },
+    { word: "تي شن", emotion: "curiosity", weight: 30, category: "question" },
+    { word: "مكسد", emotion: "sadness", weight: -20, category: "emotion" },
+    { word: "فاسد", emotion: "anger", weight: -40, category: "social" },
+  ],
+  eg: [ // Egyptian
+    { word: "يا باشا", emotion: "joy", weight: 30, category: "social" },
+    { word: "زي الفل", emotion: "joy", weight: 50, category: "social" },
+    { word: "مش طايق", emotion: "anger", weight: -40, category: "emotion" },
+    { word: "يا لهوي", emotion: "fear", weight: -60, category: "alarm" },
+  ],
+  gcc: [ // Gulf
+    { word: "يا هلا", emotion: "joy", weight: 40, category: "social" },
+    { word: "كفو", emotion: "joy", weight: 50, category: "social" },
+    { word: "ابشر", emotion: "hope", weight: 45, category: "social" },
+  ]
+};
+
+/**
  * Detect language from text
  */
 export function detectLanguage(text: string): { code: string; confidence: number } {
@@ -401,6 +425,20 @@ export function analyzeMultilingual(
       
       totalWeight += Math.abs(kw.weight);
       matchCount++;
+    }
+  }
+  
+  
+  // Apply Dialect adjustments for Arabic
+  if (languageCode === "ar") {
+    for (const [dialect, dialectKeywords] of Object.entries(ARABIC_DIALECT_KEYWORDS)) {
+      for (const kw of dialectKeywords) {
+        if (lowerText.includes(kw.word)) {
+          matchedKeywords.push(`[${dialect}] ${kw.word}`);
+          const adjustment = kw.weight / 2;
+          emotions[kw.emotion] = Math.max(0, Math.min(100, emotions[kw.emotion] + adjustment));
+        }
+      }
     }
   }
   
