@@ -1,17 +1,81 @@
 /**
- * Thinking Engine v3 - AmalSense Narrative Consultant
+ * Thinking Engine v4 - AmalSense Narrative Consultant (AI-Powered)
  * 
- * تحول من "تقارير مضغوطة" إلى "سرد طويل مفصل مثل ChatGPT"
- * 
- * المبادئ:
- * 1. سرد طويل ومفصل - كل نقطة تُشرح بالتفصيل
- * 2. لغة نظيفة - بدون كلمات تقنية
- * 3. إخفاء الأرقام الاقتصادية - إلا في وضع التداول
- * 4. أسباب قوية - عناوين وأخبار حقيقية
- * 
- * كل رد يجب أن يجعل المستخدم يقول:
- * "فهمت الوضع + عرفت شن أعمل"
+ * v4 Changes:
+ * - الطريق الرئيسي الآن عبر الراوي الذكي (intelligentNarrator)
+ * - القوالب القديمة تبقى كـ Fallback فقط عند انقطاع الاتصال
+ * - البيانات الحقيقية تذهب مباشرة للذكاء الاصطناعي
  */
+
+import { narrateAnalysis, type KnowledgePacket } from './cognitiveEngine/intelligentNarrator';
+import { fetchEconomicData } from './economicDataService';
+
+/**
+ * نقطة الدخول الرئيسية الجديدة - تمر عبر الذكاء الاصطناعي
+ * استخدم هذه الدالة بدلاً من buildDynamicResponse في الكود الجديد
+ */
+export async function generateAIResponse(
+  question: string,
+  questionAnalysis: any,
+  data?: {
+    gmi?: number;
+    cfi?: number;
+    hri?: number;
+    trend?: string;
+    news?: Array<{ title: string; source?: string }>;
+    conversationHistory?: any[];
+  }
+): Promise<string> {
+  try {
+    // 1. جلب البيانات الاقتصادية الحقيقية
+    const economicDataRaw = await fetchEconomicData();
+    const gold = economicDataRaw.commodities.find(c => c.symbol === 'XAU');
+    const oil = economicDataRaw.commodities.find(c => c.symbol === 'BRENT');
+    const lyd = economicDataRaw.currencies.find(c => c.code === 'LYD');
+    const egp = economicDataRaw.currencies.find(c => c.code === 'EGP');
+    const eur = economicDataRaw.currencies.find(c => c.code === 'EUR');
+
+    // 2. بناء حزمة المعرفة للراوي الذكي
+    const packet: KnowledgePacket = {
+      question,
+      questionAnalysis: questionAnalysis || {
+        surface: { text: question, topic: 'General', questionType: 'general', keywords: [] },
+        deep: { realIntent: 'learn_concept', implicitQuestions: [], emotionalNeed: 'neutral', urgency: 'learning' },
+        context: { isFollowUp: false, userExpertise: 'beginner', language: 'ar' },
+        requiredSources: ['emotion_indicators'],
+        responseStrategy: { style: 'analytical', depth: 'detailed', includeData: true, includeRecommendation: false, includeScenarios: false, tone: 'conversational' }
+      },
+      economicData: {
+        goldPrice: gold?.price,
+        goldChange: gold?.changePercent,
+        oilPrice: oil?.price,
+        oilChange: oil?.changePercent,
+        usdToLYD: lyd?.rate,
+        usdToEGP: egp?.rate,
+        usdToEUR: eur?.rate,
+        lastUpdated: economicDataRaw.lastUpdated.toLocaleString('ar-LY'),
+      },
+      emotionalIndicators: {
+        gmi: data?.gmi,
+        cfi: data?.cfi,
+        hri: data?.hri,
+        trend: data?.trend,
+      },
+      recentNews: data?.news?.map(n => ({ title: n.title, source: n.source })),
+      conversationContext: data?.conversationHistory
+        ? `المحادثة السابقة تحدثت عن: ${data.conversationHistory.slice(-2).map((m: any) => m.content?.substring(0, 50)).join(' | ')}`
+        : undefined,
+    };
+
+    // 3. الراوي الذكي يكتب الرد
+    return await narrateAnalysis(packet);
+
+  } catch (error) {
+    console.error('[ThinkingEngine.generateAIResponse] Failed:', error);
+    // في حالة الفشل الكامل، نرجع رسالة شفافة بدلاً من قالب مزيف
+    return `عذراً، واجهت صعوبة في تحليل هذا الموضوع حالياً. يرجى المحاولة مرة أخرى. (السؤال: "${question.substring(0, 50)}")`;
+  }
+}
 
 // أنواع النوايا/الأسئلة
 export type QuestionIntent = 

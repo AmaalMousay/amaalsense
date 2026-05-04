@@ -29,6 +29,9 @@ import { Button } from "./ui/button";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+  { icon: Sparkles, label: "Agents & Automation", path: "/agents" },
+  { icon: Zap, label: "API Management", path: "/api-management" },
+  { icon: BarChart3, label: "Trader Hub", path: "/trader" },
   { icon: BarChart3, label: "DCFT Analysis", path: "/dcft" },
   { icon: Zap, label: "Event Vectors", path: "/event-vectors" },
   { icon: TrendingUp, label: "Topic Analysis", path: "/topic-analysis" },

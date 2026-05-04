@@ -1,33 +1,34 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean as mysqlBoolean, float } from "drizzle-orm/mysql-core";
+import { integer, sqliteTable, text, real } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
 
 /**
  * Core user table backing auth flow.
  * Extend this file with additional tables as your product grows.
  * Columns use camelCase to match both database fields and generated types.
  */
-export const users = mysqlTable("users", {
+export const users = sqliteTable("users", {
   /**
    * Surrogate primary key. Auto-incremented numeric value managed by the database.
    * Use this for relations between tables.
    */
-  id: int("id").autoincrement().primaryKey(),
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
+  openId: text("openId").notNull().unique(),
   name: text("name"),
-  email: varchar("email", { length: 320 }),
-  loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  email: text("email"),
+  loginMethod: text("loginMethod"),
+  role: text("role").default("user").notNull(),
   /** Subscription tier: free, pro, enterprise, government */
-  subscriptionTier: mysqlEnum("subscriptionTier", ["free", "pro", "enterprise", "government"]).default("free").notNull(),
+  subscriptionTier: text("subscriptionTier").default("free").notNull(),
   /** Subscription start date */
-  subscriptionStartDate: timestamp("subscriptionStartDate"),
+  subscriptionStartDate: integer("subscriptionStartDate", { mode: "timestamp" }),
   /** Subscription end date */
-  subscriptionEndDate: timestamp("subscriptionEndDate"),
+  subscriptionEndDate: integer("subscriptionEndDate", { mode: "timestamp" }),
   /** Organization name for enterprise/government users */
-  organizationName: varchar("organizationName", { length: 255 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  organizationName: text("organizationName"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  lastSignedIn: integer("lastSignedIn", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -37,19 +38,19 @@ export type InsertUser = typeof users.$inferInsert;
  * Emotion Indices Table - stores the three main indices (GMI, CFI, HRI)
  * Each record represents a snapshot of collective emotions at a specific time
  */
-export const emotionIndices = mysqlTable("emotion_indices", {
-  id: int("id").autoincrement().primaryKey(),
+export const emotionIndices = sqliteTable("emotion_indices", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Global Mood Index: Overall collective mood (-100 to +100) */
-  gmi: int("gmi").notNull().default(0),
+  gmi: integer("gmi").notNull().default(0),
   /** Collective Fear Index: Level of collective fear (0 to 100) */
-  cfi: int("cfi").notNull().default(0),
+  cfi: integer("cfi").notNull().default(0),
   /** Hope Resilience Index: Level of hope and resilience (0 to 100) */
-  hri: int("hri").notNull().default(0),
+  hri: integer("hri").notNull().default(0),
   /** Confidence score for the analysis */
-  confidence: int("confidence").notNull().default(75),
+  confidence: integer("confidence").notNull().default(75),
   /** Timestamp of the analysis */
-  analyzedAt: timestamp("analyzedAt").defaultNow().notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  analyzedAt: integer("analyzedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type EmotionIndex = typeof emotionIndices.$inferSelect;
@@ -58,29 +59,29 @@ export type InsertEmotionIndex = typeof emotionIndices.$inferInsert;
 /**
  * Emotion Analysis Records - stores individual headline analysis results
  */
-export const emotionAnalyses = mysqlTable("emotion_analyses", {
-  id: int("id").autoincrement().primaryKey(),
+export const emotionAnalyses = sqliteTable("emotion_analyses", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** The analyzed headline text */
   headline: text("headline").notNull(),
   /** Emotion vector: joy (0-100) */
-  joy: int("joy").notNull().default(0),
+  joy: integer("joy").notNull().default(0),
   /** Emotion vector: fear (0-100) */
-  fear: int("fear").notNull().default(0),
+  fear: integer("fear").notNull().default(0),
   /** Emotion vector: anger (0-100) */
-  anger: int("anger").notNull().default(0),
+  anger: integer("anger").notNull().default(0),
   /** Emotion vector: sadness (0-100) */
-  sadness: int("sadness").notNull().default(0),
+  sadness: integer("sadness").notNull().default(0),
   /** Emotion vector: hope (0-100) */
-  hope: int("hope").notNull().default(0),
+  hope: integer("hope").notNull().default(0),
   /** Emotion vector: curiosity (0-100) */
-  curiosity: int("curiosity").notNull().default(0),
+  curiosity: integer("curiosity").notNull().default(0),
   /** Dominant emotion detected */
-  dominantEmotion: varchar("dominant_emotion", { length: 32 }).notNull(),
+  dominantEmotion: text("dominant_emotion").notNull(),
   /** Confidence score of the analysis */
-  confidence: int("confidence").notNull().default(75),
+  confidence: integer("confidence").notNull().default(75),
   /** Analysis model used (transformer/vader) */
-  model: varchar("model", { length: 32 }).default("transformer"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  model: text("model").default("transformer"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type EmotionAnalysis = typeof emotionAnalyses.$inferSelect;
@@ -90,23 +91,23 @@ export type InsertEmotionAnalysis = typeof emotionAnalyses.$inferInsert;
  * Country Emotion Indices Table - stores emotion indices for each country
  * Allows tracking emotional state by geographic region
  */
-export const countryEmotionIndices = mysqlTable("country_emotion_indices", {
-  id: int("id").autoincrement().primaryKey(),
+export const countryEmotionIndices = sqliteTable("country_emotion_indices", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** ISO 3166-1 alpha-2 country code (e.g., 'SA', 'US', 'GB') */
-  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  countryCode: text("country_code").notNull(),
   /** Country name */
-  countryName: varchar("country_name", { length: 100 }).notNull(),
+  countryName: text("country_name").notNull(),
   /** Global Mood Index for the country (-100 to +100) */
-  gmi: int("gmi").notNull().default(0),
+  gmi: integer("gmi").notNull().default(0),
   /** Collective Fear Index for the country (0 to 100) */
-  cfi: int("cfi").notNull().default(0),
+  cfi: integer("cfi").notNull().default(0),
   /** Hope Resilience Index for the country (0 to 100) */
-  hri: int("hri").notNull().default(0),
+  hri: integer("hri").notNull().default(0),
   /** Confidence score for the analysis */
-  confidence: int("confidence").notNull().default(75),
+  confidence: integer("confidence").notNull().default(75),
   /** Timestamp of the analysis */
-  analyzedAt: timestamp("analyzedAt").defaultNow().notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  analyzedAt: integer("analyzedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type CountryEmotionIndex = typeof countryEmotionIndices.$inferSelect;
@@ -115,31 +116,31 @@ export type InsertCountryEmotionIndex = typeof countryEmotionIndices.$inferInser
 /**
  * Country Emotion Analyses - stores detailed emotion vectors for each country
  */
-export const countryEmotionAnalyses = mysqlTable("country_emotion_analyses", {
-  id: int("id").autoincrement().primaryKey(),
+export const countryEmotionAnalyses = sqliteTable("country_emotion_analyses", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** ISO 3166-1 alpha-2 country code */
-  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  countryCode: text("country_code").notNull(),
   /** Country name */
-  countryName: varchar("country_name", { length: 100 }).notNull(),
+  countryName: text("country_name").notNull(),
   /** The analyzed headline or news source */
   source: text("source").notNull(),
   /** Emotion vector: joy (0-100) */
-  joy: int("joy").notNull().default(0),
+  joy: integer("joy").notNull().default(0),
   /** Emotion vector: fear (0-100) */
-  fear: int("fear").notNull().default(0),
+  fear: integer("fear").notNull().default(0),
   /** Emotion vector: anger (0-100) */
-  anger: int("anger").notNull().default(0),
+  anger: integer("anger").notNull().default(0),
   /** Emotion vector: sadness (0-100) */
-  sadness: int("sadness").notNull().default(0),
+  sadness: integer("sadness").notNull().default(0),
   /** Emotion vector: hope (0-100) */
-  hope: int("hope").notNull().default(0),
+  hope: integer("hope").notNull().default(0),
   /** Emotion vector: curiosity (0-100) */
-  curiosity: int("curiosity").notNull().default(0),
+  curiosity: integer("curiosity").notNull().default(0),
   /** Dominant emotion detected */
-  dominantEmotion: varchar("dominant_emotion", { length: 32 }).notNull(),
+  dominantEmotion: text("dominant_emotion").notNull(),
   /** Confidence score of the analysis */
-  confidence: int("confidence").notNull().default(75),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  confidence: integer("confidence").notNull().default(75),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type CountryEmotionAnalysis = typeof countryEmotionAnalyses.$inferSelect;
@@ -148,17 +149,17 @@ export type InsertCountryEmotionAnalysis = typeof countryEmotionAnalyses.$inferI
 /**
  * Usage Tracking Table - tracks API calls and analyses per user
  */
-export const usageTracking = mysqlTable("usage_tracking", {
-  id: int("id").autoincrement().primaryKey(),
+export const usageTracking = sqliteTable("usage_tracking", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID */
-  userId: int("userId").notNull(),
+  userId: integer("userId").notNull(),
   /** Type of usage: analysis, api_call, report, map_view */
-  usageType: varchar("usageType", { length: 32 }).notNull(),
+  usageType: text("usageType").notNull(),
   /** Count of usage for this record */
-  count: int("count").notNull().default(1),
+  count: integer("count").notNull().default(1),
   /** Date of usage (for daily tracking) */
-  usageDate: timestamp("usageDate").defaultNow().notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  usageDate: integer("usageDate", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type UsageTracking = typeof usageTracking.$inferSelect;
@@ -167,26 +168,26 @@ export type InsertUsageTracking = typeof usageTracking.$inferInsert;
 /**
  * Enterprise Inquiries Table - stores contact requests from potential enterprise clients
  */
-export const enterpriseInquiries = mysqlTable("enterprise_inquiries", {
-  id: int("id").autoincrement().primaryKey(),
+export const enterpriseInquiries = sqliteTable("enterprise_inquiries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Contact name */
-  contactName: varchar("contactName", { length: 255 }).notNull(),
+  contactName: text("contactName").notNull(),
   /** Contact email */
-  contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
+  contactEmail: text("contactEmail").notNull(),
   /** Organization name */
-  organizationName: varchar("organizationName", { length: 255 }).notNull(),
+  organizationName: text("organizationName").notNull(),
   /** Organization type: government, ngo, media, enterprise, academic */
-  organizationType: varchar("organizationType", { length: 64 }).notNull(),
+  organizationType: text("organizationType").notNull(),
   /** Country */
-  country: varchar("country", { length: 100 }),
+  country: text("country"),
   /** Interested tier: pro, enterprise, government */
-  interestedTier: varchar("interestedTier", { length: 32 }).notNull(),
+  interestedTier: text("interestedTier").notNull(),
   /** Message/requirements */
   message: text("message"),
   /** Status: new, contacted, demo_scheduled, negotiating, closed_won, closed_lost */
-  status: varchar("status", { length: 32 }).default("new").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  status: text("status").default("new").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type EnterpriseInquiry = typeof enterpriseInquiries.$inferSelect;
@@ -197,35 +198,35 @@ export type InsertEnterpriseInquiry = typeof enterpriseInquiries.$inferInsert;
  * Historical Analysis Sessions - stores complete analysis sessions
  * Each session represents a full analysis run with all data sources
  */
-export const analysisSessions = mysqlTable("analysis_sessions", {
-  id: int("id").autoincrement().primaryKey(),
+export const analysisSessions = sqliteTable("analysis_sessions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User who initiated the analysis (null for system/scheduled) */
-  userId: int("userId"),
+  userId: integer("userId"),
   /** Session type: manual, scheduled, api */
-  sessionType: varchar("sessionType", { length: 32 }).default("manual").notNull(),
+  sessionType: text("sessionType").default("manual").notNull(),
   /** Query or topic analyzed */
-  query: varchar("query", { length: 500 }),
+  query: text("query"),
   /** Country code if country-specific */
-  countryCode: varchar("countryCode", { length: 2 }),
+  countryCode: text("countryCode"),
   /** Global Mood Index result */
-  gmi: int("gmi").notNull().default(0),
+  gmi: integer("gmi").notNull().default(0),
   /** Collective Fear Index result */
-  cfi: int("cfi").notNull().default(0),
+  cfi: integer("cfi").notNull().default(0),
   /** Hope Resilience Index result */
-  hri: int("hri").notNull().default(0),
-  /** Overall sentiment score (-1 to 1) stored as int (-100 to 100) */
-  sentimentScore: int("sentimentScore").notNull().default(0),
+  hri: integer("hri").notNull().default(0),
+  /** Overall sentiment score (-1 to 1) stored as integer (-100 to 100) */
+  sentimentScore: integer("sentimentScore").notNull().default(0),
   /** Dominant emotion */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  dominantEmotion: text("dominantEmotion"),
   /** Number of sources analyzed */
-  sourcesCount: int("sourcesCount").notNull().default(0),
+  sourcesCount: integer("sourcesCount").notNull().default(0),
   /** Sources breakdown JSON: {news: 10, reddit: 5, youtube: 3, ...} */
   sourcesBreakdown: text("sourcesBreakdown"),
   /** Average confidence */
-  confidence: int("confidence").notNull().default(75),
+  confidence: integer("confidence").notNull().default(75),
   /** Analysis duration in milliseconds */
-  durationMs: int("durationMs"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  durationMs: integer("durationMs"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type AnalysisSession = typeof analysisSessions.$inferSelect;
@@ -234,39 +235,39 @@ export type InsertAnalysisSession = typeof analysisSessions.$inferInsert;
 /**
  * Source Analysis Records - stores individual source analyses within a session
  */
-export const sourceAnalyses = mysqlTable("source_analyses", {
-  id: int("id").autoincrement().primaryKey(),
+export const sourceAnalyses = sqliteTable("source_analyses", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Reference to parent session */
-  sessionId: int("sessionId").notNull(),
+  sessionId: integer("sessionId").notNull(),
   /** Source platform: news, reddit, youtube, mastodon, bluesky, telegram */
-  platform: varchar("platform", { length: 32 }).notNull(),
+  platform: text("platform").notNull(),
   /** Original content text */
   content: text("content").notNull(),
   /** Source URL */
-  sourceUrl: varchar("sourceUrl", { length: 1000 }),
+  sourceUrl: text("sourceUrl"),
   /** Author/channel name */
-  author: varchar("author", { length: 255 }),
+  author: text("author"),
   /** Sentiment score (-100 to 100) */
-  sentimentScore: int("sentimentScore").notNull().default(0),
+  sentimentScore: integer("sentimentScore").notNull().default(0),
   /** Emotion: joy */
-  joy: int("joy").notNull().default(0),
+  joy: integer("joy").notNull().default(0),
   /** Emotion: fear */
-  fear: int("fear").notNull().default(0),
+  fear: integer("fear").notNull().default(0),
   /** Emotion: anger */
-  anger: int("anger").notNull().default(0),
+  anger: integer("anger").notNull().default(0),
   /** Emotion: sadness */
-  sadness: int("sadness").notNull().default(0),
+  sadness: integer("sadness").notNull().default(0),
   /** Emotion: hope */
-  hope: int("hope").notNull().default(0),
+  hope: integer("hope").notNull().default(0),
   /** Emotion: curiosity */
-  curiosity: int("curiosity").notNull().default(0),
+  curiosity: integer("curiosity").notNull().default(0),
   /** Dominant emotion */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  dominantEmotion: text("dominantEmotion"),
   /** Confidence score */
-  confidence: int("confidence").notNull().default(75),
+  confidence: integer("confidence").notNull().default(75),
   /** Original publish date */
-  publishedAt: timestamp("publishedAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  publishedAt: integer("publishedAt", { mode: "timestamp" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type SourceAnalysis = typeof sourceAnalyses.$inferSelect;
@@ -275,27 +276,27 @@ export type InsertSourceAnalysis = typeof sourceAnalyses.$inferInsert;
 /**
  * Daily Aggregates - pre-computed daily statistics for fast trend queries
  */
-export const dailyAggregates = mysqlTable("daily_aggregates", {
-  id: int("id").autoincrement().primaryKey(),
+export const dailyAggregates = sqliteTable("daily_aggregates", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Date of aggregation (YYYY-MM-DD stored as timestamp) */
-  aggregateDate: timestamp("aggregateDate").notNull(),
+  aggregateDate: integer("aggregateDate", { mode: "timestamp" }).notNull(),
   /** Country code (null for global) */
-  countryCode: varchar("countryCode", { length: 2 }),
+  countryCode: text("countryCode"),
   /** Average GMI for the day */
-  avgGmi: int("avgGmi").notNull().default(0),
+  avgGmi: integer("avgGmi").notNull().default(0),
   /** Average CFI for the day */
-  avgCfi: int("avgCfi").notNull().default(0),
+  avgCfi: integer("avgCfi").notNull().default(0),
   /** Average HRI for the day */
-  avgHri: int("avgHri").notNull().default(0),
+  avgHri: integer("avgHri").notNull().default(0),
   /** Average sentiment score */
-  avgSentiment: int("avgSentiment").notNull().default(0),
+  avgSentiment: integer("avgSentiment").notNull().default(0),
   /** Most frequent dominant emotion */
-  topEmotion: varchar("topEmotion", { length: 32 }),
+  topEmotion: text("topEmotion"),
   /** Total analyses count */
-  analysesCount: int("analysesCount").notNull().default(0),
+  analysesCount: integer("analysesCount").notNull().default(0),
   /** Total sources processed */
-  sourcesCount: int("sourcesCount").notNull().default(0),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  sourcesCount: integer("sourcesCount").notNull().default(0),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type DailyAggregate = typeof dailyAggregates.$inferSelect;
@@ -304,27 +305,27 @@ export type InsertDailyAggregate = typeof dailyAggregates.$inferInsert;
 /**
  * Trend Alerts - stores detected significant changes in emotion trends
  */
-export const trendAlerts = mysqlTable("trend_alerts", {
-  id: int("id").autoincrement().primaryKey(),
+export const trendAlerts = sqliteTable("trend_alerts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Alert type: spike, drop, anomaly, trend_change */
-  alertType: varchar("alertType", { length: 32 }).notNull(),
+  alertType: text("alertType").notNull(),
   /** Affected metric: gmi, cfi, hri, sentiment */
-  metric: varchar("metric", { length: 32 }).notNull(),
+  metric: text("metric").notNull(),
   /** Country code (null for global) */
-  countryCode: varchar("countryCode", { length: 2 }),
+  countryCode: text("countryCode"),
   /** Previous value */
-  previousValue: int("previousValue").notNull(),
+  previousValue: integer("previousValue").notNull(),
   /** Current value */
-  currentValue: int("currentValue").notNull(),
+  currentValue: integer("currentValue").notNull(),
   /** Change percentage */
-  changePercent: int("changePercent").notNull(),
+  changePercent: integer("changePercent").notNull(),
   /** Alert severity: low, medium, high, critical */
-  severity: varchar("severity", { length: 16 }).default("medium").notNull(),
+  severity: text("severity").default("medium").notNull(),
   /** Alert message */
   message: text("message"),
   /** Whether alert has been acknowledged */
-  acknowledged: int("acknowledged").default(0).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  acknowledged: integer("acknowledged").default(0).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type TrendAlert = typeof trendAlerts.$inferSelect;
@@ -334,36 +335,36 @@ export type InsertTrendAlert = typeof trendAlerts.$inferInsert;
 /**
  * Payment Records - stores payment submissions and confirmations
  */
-export const paymentRecords = mysqlTable("payment_records", {
-  id: int("id").autoincrement().primaryKey(),
+export const paymentRecords = sqliteTable("payment_records", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID (null for guest payments) */
-  userId: int("userId"),
+  userId: integer("userId"),
   /** Subscriber email */
-  email: varchar("email", { length: 320 }).notNull(),
+  email: text("email").notNull(),
   /** Subscriber name */
-  name: varchar("name", { length: 255 }).notNull(),
+  name: text("name").notNull(),
   /** Selected plan: pro, enterprise, government */
-  plan: varchar("plan", { length: 32 }).notNull(),
+  plan: text("plan").notNull(),
   /** Payment amount in USD */
-  amount: int("amount").notNull(),
+  amount: integer("amount").notNull(),
   /** Billing period: monthly, annual */
-  billingPeriod: varchar("billingPeriod", { length: 16 }).default("monthly").notNull(),
+  billingPeriod: text("billingPeriod").default("monthly").notNull(),
   /** Payment method: paypal, bank_transfer, western_union, moneygram, crypto */
-  paymentMethod: varchar("paymentMethod", { length: 32 }).notNull(),
+  paymentMethod: text("paymentMethod").notNull(),
   /** Transaction reference/ID provided by user */
-  transactionRef: varchar("transactionRef", { length: 255 }),
+  transactionRef: text("transactionRef"),
   /** Additional payment details (JSON) */
   paymentDetails: text("paymentDetails"),
   /** Payment status: pending, confirmed, rejected, refunded */
-  status: mysqlEnum("status", ["pending", "confirmed", "rejected", "refunded"]).default("pending").notNull(),
+  status: text("status").default("pending").notNull(),
   /** Admin notes */
   adminNotes: text("adminNotes"),
   /** Confirmation date */
-  confirmedAt: timestamp("confirmedAt"),
+  confirmedAt: integer("confirmedAt", { mode: "timestamp" }),
   /** Confirmed by (admin user ID) */
-  confirmedBy: int("confirmedBy"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  confirmedBy: integer("confirmedBy"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type PaymentRecord = typeof paymentRecords.$inferSelect;
@@ -373,32 +374,32 @@ export type InsertPaymentRecord = typeof paymentRecords.$inferInsert;
 /**
  * Custom Alerts - user-defined alert conditions
  */
-export const customAlerts = mysqlTable("custom_alerts", {
-  id: int("id").autoincrement().primaryKey(),
+export const customAlerts = sqliteTable("custom_alerts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID who created the alert */
-  userId: int("userId").notNull(),
+  userId: integer("userId").notNull(),
   /** Alert name */
-  name: varchar("name", { length: 255 }).notNull(),
+  name: text("name").notNull(),
   /** Country code to monitor (null for global) */
-  countryCode: varchar("countryCode", { length: 2 }),
+  countryCode: text("countryCode"),
   /** Country name for display */
-  countryName: varchar("countryName", { length: 100 }),
+  countryName: text("countryName"),
   /** Metric to monitor: gmi, cfi, hri */
-  metric: mysqlEnum("metric", ["gmi", "cfi", "hri"]).notNull(),
+  metric: text("metric").notNull(),
   /** Condition: above, below, change */
-  condition: mysqlEnum("condition", ["above", "below", "change"]).notNull(),
+  condition: text("condition").notNull(),
   /** Threshold value */
-  threshold: int("threshold").notNull(),
+  threshold: integer("threshold").notNull(),
   /** Whether alert is active */
-  isActive: int("isActive").default(1).notNull(),
+  isActive: integer("isActive").default(1).notNull(),
   /** Notification method: email, telegram, both */
-  notifyMethod: mysqlEnum("notifyMethod", ["email", "telegram", "both"]).default("email").notNull(),
+  notifyMethod: text("notifyMethod").default("email").notNull(),
   /** Last triggered timestamp */
-  lastTriggered: timestamp("lastTriggered"),
+  lastTriggered: integer("lastTriggered", { mode: "timestamp" }),
   /** Number of times triggered */
-  triggerCount: int("triggerCount").default(0).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  triggerCount: integer("triggerCount").default(0).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type CustomAlert = typeof customAlerts.$inferSelect;
@@ -408,34 +409,34 @@ export type InsertCustomAlert = typeof customAlerts.$inferInsert;
 /**
  * User Registrations - stores users who registered via email/password
  */
-export const userRegistrations = mysqlTable("user_registrations", {
-  id: int("id").autoincrement().primaryKey(),
+export const userRegistrations = sqliteTable("user_registrations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User's full name */
-  name: varchar("name", { length: 255 }).notNull(),
+  name: text("name").notNull(),
   /** User's email address (unique) */
-  email: varchar("email", { length: 320 }).notNull().unique(),
+  email: text("email").notNull().unique(),
   /** Hashed password (bcrypt) */
-  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  passwordHash: text("passwordHash").notNull(),
   /** Account type: individual or organization */
-  accountType: mysqlEnum("accountType", ["individual", "organization"]).default("individual").notNull(),
+  accountType: text("accountType").default("individual").notNull(),
   /** Organization name (for organization accounts) */
-  organizationName: varchar("organizationName", { length: 255 }),
+  organizationName: text("organizationName"),
   /** Organization website */
-  organizationWebsite: varchar("organizationWebsite", { length: 500 }),
+  organizationWebsite: text("organizationWebsite"),
   /** Company size */
-  companySize: varchar("companySize", { length: 32 }),
+  companySize: text("companySize"),
   /** Job title */
-  jobTitle: varchar("jobTitle", { length: 255 }),
+  jobTitle: text("jobTitle"),
   /** Email verification token */
-  verificationToken: varchar("verificationToken", { length: 64 }),
+  verificationToken: text("verificationToken"),
   /** Token expiration date */
-  tokenExpiresAt: timestamp("tokenExpiresAt"),
+  tokenExpiresAt: integer("tokenExpiresAt", { mode: "timestamp" }),
   /** Whether email is verified */
-  isVerified: int("isVerified").default(0).notNull(),
+  isVerified: integer("isVerified").default(0).notNull(),
   /** Verification date */
-  verifiedAt: timestamp("verifiedAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type UserRegistration = typeof userRegistrations.$inferSelect;
@@ -444,19 +445,19 @@ export type InsertUserRegistration = typeof userRegistrations.$inferInsert;
 /**
  * Password Reset Tokens - stores password reset requests
  */
-export const passwordResetTokens = mysqlTable("password_reset_tokens", {
-  id: int("id").autoincrement().primaryKey(),
+export const passwordResetTokens = sqliteTable("password_reset_tokens", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User's email address */
-  email: varchar("email", { length: 320 }).notNull(),
+  email: text("email").notNull(),
   /** Reset token (unique) */
-  token: varchar("token", { length: 64 }).notNull().unique(),
+  token: text("token").notNull().unique(),
   /** Token expiration date */
-  expiresAt: timestamp("expiresAt").notNull(),
+  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   /** Whether token has been used */
-  isUsed: int("isUsed").default(0).notNull(),
+  isUsed: integer("isUsed").default(0).notNull(),
   /** IP address of requester */
-  ipAddress: varchar("ipAddress", { length: 45 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  ipAddress: text("ipAddress"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
@@ -466,41 +467,41 @@ export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;
 /**
  * Classified Analyses - stores analyses with content classification and sensitivity
  */
-export const classifiedAnalyses = mysqlTable("classified_analyses", {
-  id: int("id").autoincrement().primaryKey(),
+export const classifiedAnalyses = sqliteTable("classified_analyses", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID who performed the analysis */
-  userId: int("userId"),
+  userId: integer("userId"),
   /** The analyzed headline/text */
   headline: text("headline").notNull(),
   /** Content domain: politics, economy, mental_health, medical, education, society, entertainment, general */
-  domain: mysqlEnum("domain", ["politics", "economy", "mental_health", "medical", "education", "society", "entertainment", "general"]).notNull(),
+  domain: text("domain").notNull(),
   /** Sensitivity level: low, medium, high, critical */
-  sensitivity: mysqlEnum("sensitivity", ["low", "medium", "high", "critical"]).notNull(),
+  sensitivity: text("sensitivity").notNull(),
   /** Emotional risk score (0-100) */
-  emotionalRiskScore: int("emotionalRiskScore").notNull().default(50),
+  emotionalRiskScore: integer("emotionalRiskScore").notNull().default(50),
   /** Emotion vector: joy (0-100) */
-  joy: int("joy").notNull().default(0),
+  joy: integer("joy").notNull().default(0),
   /** Emotion vector: fear (0-100) */
-  fear: int("fear").notNull().default(0),
+  fear: integer("fear").notNull().default(0),
   /** Emotion vector: anger (0-100) */
-  anger: int("anger").notNull().default(0),
+  anger: integer("anger").notNull().default(0),
   /** Emotion vector: sadness (0-100) */
-  sadness: int("sadness").notNull().default(0),
+  sadness: integer("sadness").notNull().default(0),
   /** Emotion vector: hope (0-100) */
-  hope: int("hope").notNull().default(0),
+  hope: integer("hope").notNull().default(0),
   /** Emotion vector: curiosity (0-100) */
-  curiosity: int("curiosity").notNull().default(0),
+  curiosity: integer("curiosity").notNull().default(0),
   /** Dominant emotion detected */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }).notNull(),
+  dominantEmotion: text("dominantEmotion").notNull(),
   /** Confidence score of the analysis */
-  confidence: int("confidence").notNull().default(75),
+  confidence: integer("confidence").notNull().default(75),
   /** Analysis model used */
-  model: varchar("model", { length: 32 }).default("hybrid"),
+  model: text("model").default("hybrid"),
   /** DCFT weight percentage */
-  dcftWeight: int("dcftWeight").default(70),
+  dcftWeight: integer("dcftWeight").default(70),
   /** AI weight percentage */
-  aiWeight: int("aiWeight").default(30),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  aiWeight: integer("aiWeight").default(30),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type ClassifiedAnalysis = typeof classifiedAnalyses.$inferSelect;
@@ -509,26 +510,26 @@ export type InsertClassifiedAnalysis = typeof classifiedAnalyses.$inferInsert;
 /**
  * Followed Topics - topics that users want to track for alerts
  */
-export const followedTopics = mysqlTable("followed_topics", {
-  id: int("id").autoincrement().primaryKey(),
+export const followedTopics = sqliteTable("followed_topics", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID who is following */
-  userId: int("userId").notNull(),
+  userId: integer("userId").notNull(),
   /** Topic keyword or phrase */
-  topic: varchar("topic", { length: 500 }).notNull(),
+  topic: text("topic").notNull(),
   /** Content domain filter (null for all domains) */
-  domain: mysqlEnum("domain", ["politics", "economy", "mental_health", "medical", "education", "society", "entertainment", "general"]),
+  domain: text("domain"),
   /** Alert threshold for emotional risk (0-100, null for any change) */
-  riskThreshold: int("riskThreshold"),
+  riskThreshold: integer("riskThreshold"),
   /** Alert on risk increase, decrease, or both */
-  alertDirection: mysqlEnum("alertDirection", ["increase", "decrease", "both"]).default("both").notNull(),
+  alertDirection: text("alertDirection").default("both").notNull(),
   /** Whether following is active */
-  isActive: int("isActive").default(1).notNull(),
+  isActive: integer("isActive").default(1).notNull(),
   /** Last known emotional risk score */
-  lastRiskScore: int("lastRiskScore"),
+  lastRiskScore: integer("lastRiskScore"),
   /** Last analysis timestamp */
-  lastAnalyzedAt: timestamp("lastAnalyzedAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastAnalyzedAt: integer("lastAnalyzedAt", { mode: "timestamp" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type FollowedTopic = typeof followedTopics.$inferSelect;
@@ -537,29 +538,29 @@ export type InsertFollowedTopic = typeof followedTopics.$inferInsert;
 /**
  * Topic Alerts - notifications sent to users about followed topics
  */
-export const topicAlerts = mysqlTable("topic_alerts", {
-  id: int("id").autoincrement().primaryKey(),
+export const topicAlerts = sqliteTable("topic_alerts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID to notify */
-  userId: int("userId").notNull(),
+  userId: integer("userId").notNull(),
   /** Reference to followed topic */
-  followedTopicId: int("followedTopicId").notNull(),
+  followedTopicId: integer("followedTopicId").notNull(),
   /** Alert type: risk_increase, risk_decrease, threshold_exceeded, new_analysis */
-  alertType: mysqlEnum("alertType", ["risk_increase", "risk_decrease", "threshold_exceeded", "new_analysis"]).notNull(),
+  alertType: text("alertType").notNull(),
   /** Topic text */
-  topic: varchar("topic", { length: 500 }).notNull(),
+  topic: text("topic").notNull(),
   /** Previous risk score */
-  previousRiskScore: int("previousRiskScore"),
+  previousRiskScore: integer("previousRiskScore"),
   /** Current risk score */
-  currentRiskScore: int("currentRiskScore").notNull(),
+  currentRiskScore: integer("currentRiskScore").notNull(),
   /** Change amount */
-  changeAmount: int("changeAmount"),
+  changeAmount: integer("changeAmount"),
   /** Alert message */
   message: text("message"),
   /** Whether alert has been read */
-  isRead: int("isRead").default(0).notNull(),
+  isRead: integer("isRead").default(0).notNull(),
   /** Read timestamp */
-  readAt: timestamp("readAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  readAt: integer("readAt", { mode: "timestamp" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type TopicAlert = typeof topicAlerts.$inferSelect;
@@ -576,42 +577,42 @@ export type InsertTopicAlert = typeof topicAlerts.$inferInsert;
  * Learning Patterns - stores successful analysis patterns for active learning
  * The system learns from these patterns to improve future analyses
  */
-export const learningPatterns = mysqlTable("learning_patterns", {
-  id: int("id").autoincrement().primaryKey(),
+export const learningPatterns = sqliteTable("learning_patterns", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Original text that was analyzed */
   originalText: text("originalText").notNull(),
   /** Detected language */
-  language: varchar("language", { length: 32 }).notNull(),
+  language: text("language").notNull(),
   /** Detected dialect (if applicable) */
-  dialect: varchar("dialect", { length: 32 }),
+  dialect: text("dialect"),
   /** Detected event type: death, disaster, celebration, politics, economy, sports, entertainment */
-  eventType: varchar("eventType", { length: 32 }).notNull(),
+  eventType: text("eventType").notNull(),
   /** Detected region: arab_maghreb, arab_gulf, arab_levant, western, asian, african, latin */
-  region: varchar("region", { length: 32 }).notNull(),
+  region: text("region").notNull(),
   /** Context classification confidence (0-100) */
-  contextConfidence: int("contextConfidence").notNull(),
+  contextConfidence: integer("contextConfidence").notNull(),
   /** Final joy score after adjustment */
-  finalJoy: int("finalJoy").notNull(),
+  finalJoy: integer("finalJoy").notNull(),
   /** Final fear score after adjustment */
-  finalFear: int("finalFear").notNull(),
+  finalFear: integer("finalFear").notNull(),
   /** Final anger score after adjustment */
-  finalAnger: int("finalAnger").notNull(),
+  finalAnger: integer("finalAnger").notNull(),
   /** Final sadness score after adjustment */
-  finalSadness: int("finalSadness").notNull(),
+  finalSadness: integer("finalSadness").notNull(),
   /** Final hope score after adjustment */
-  finalHope: int("finalHope").notNull(),
+  finalHope: integer("finalHope").notNull(),
   /** Final curiosity score after adjustment */
-  finalCuriosity: int("finalCuriosity").notNull(),
+  finalCuriosity: integer("finalCuriosity").notNull(),
   /** User feedback: accurate, inaccurate, partially_accurate */
-  userFeedback: mysqlEnum("userFeedback", ["accurate", "inaccurate", "partially_accurate"]),
+  userFeedback: text("userFeedback"),
   /** Feedback timestamp */
-  feedbackAt: timestamp("feedbackAt"),
+  feedbackAt: integer("feedbackAt", { mode: "timestamp" }),
   /** Number of times this pattern was used for learning */
-  usageCount: int("usageCount").default(0).notNull(),
+  usageCount: integer("usageCount").default(0).notNull(),
   /** Whether this pattern is verified and trusted */
-  isVerified: int("isVerified").default(0).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  isVerified: integer("isVerified").default(0).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type LearningPattern = typeof learningPatterns.$inferSelect;
@@ -620,26 +621,26 @@ export type InsertLearningPattern = typeof learningPatterns.$inferInsert;
 /**
  * Keyword Learning - stores learned keywords and their emotional associations
  */
-export const keywordLearning = mysqlTable("keyword_learning", {
-  id: int("id").autoincrement().primaryKey(),
+export const keywordLearning = sqliteTable("keyword_learning", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** The keyword or phrase */
-  keyword: varchar("keyword", { length: 255 }).notNull(),
+  keyword: text("keyword").notNull(),
   /** Language of the keyword */
-  language: varchar("language", { length: 32 }).notNull(),
+  language: text("language").notNull(),
   /** Associated event type */
-  eventType: varchar("eventType", { length: 32 }).notNull(),
+  eventType: text("eventType").notNull(),
   /** Emotional weight: -100 (very negative) to +100 (very positive) */
-  emotionalWeight: int("emotionalWeight").notNull(),
+  emotionalWeight: integer("emotionalWeight").notNull(),
   /** Primary emotion associated: joy, fear, anger, sadness, hope, curiosity */
-  primaryEmotion: varchar("primaryEmotion", { length: 32 }).notNull(),
+  primaryEmotion: text("primaryEmotion").notNull(),
   /** Confidence in this association (0-100) */
-  confidence: int("confidence").notNull().default(50),
+  confidence: integer("confidence").notNull().default(50),
   /** Number of times this keyword was encountered */
-  occurrenceCount: int("occurrenceCount").default(1).notNull(),
+  occurrenceCount: integer("occurrenceCount").default(1).notNull(),
   /** Source: manual, learned, imported */
-  source: varchar("source", { length: 32 }).default("learned").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  source: text("source").default("learned").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type KeywordLearning = typeof keywordLearning.$inferSelect;
@@ -654,37 +655,37 @@ export type InsertKeywordLearning = typeof keywordLearning.$inferInsert;
 /**
  * Topic Emotion History - tracks emotion changes for topics over time
  */
-export const topicEmotionHistory = mysqlTable("topic_emotion_history", {
-  id: int("id").autoincrement().primaryKey(),
+export const topicEmotionHistory = sqliteTable("topic_emotion_history", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Topic or headline being tracked */
-  topic: varchar("topic", { length: 500 }).notNull(),
+  topic: text("topic").notNull(),
   /** Normalized topic for grouping similar topics */
-  normalizedTopic: varchar("normalizedTopic", { length: 500 }).notNull(),
+  normalizedTopic: text("normalizedTopic").notNull(),
   /** GMI at this point */
-  gmi: int("gmi").notNull(),
+  gmi: integer("gmi").notNull(),
   /** CFI at this point */
-  cfi: int("cfi").notNull(),
+  cfi: integer("cfi").notNull(),
   /** HRI at this point */
-  hri: int("hri").notNull(),
+  hri: integer("hri").notNull(),
   /** Joy score */
-  joy: int("joy").notNull(),
+  joy: integer("joy").notNull(),
   /** Fear score */
-  fear: int("fear").notNull(),
+  fear: integer("fear").notNull(),
   /** Anger score */
-  anger: int("anger").notNull(),
+  anger: integer("anger").notNull(),
   /** Sadness score */
-  sadness: int("sadness").notNull(),
+  sadness: integer("sadness").notNull(),
   /** Hope score */
-  hope: int("hope").notNull(),
+  hope: integer("hope").notNull(),
   /** Curiosity score */
-  curiosity: int("curiosity").notNull(),
+  curiosity: integer("curiosity").notNull(),
   /** Dominant emotion at this point */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }).notNull(),
+  dominantEmotion: text("dominantEmotion").notNull(),
   /** Number of sources analyzed */
-  sourcesCount: int("sourcesCount").default(0).notNull(),
+  sourcesCount: integer("sourcesCount").default(0).notNull(),
   /** Analysis timestamp */
-  analyzedAt: timestamp("analyzedAt").defaultNow().notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  analyzedAt: integer("analyzedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type TopicEmotionHistory = typeof topicEmotionHistory.$inferSelect;
@@ -693,33 +694,33 @@ export type InsertTopicEmotionHistory = typeof topicEmotionHistory.$inferInsert;
 /**
  * Emotion Trends - aggregated emotion trends over time periods
  */
-export const emotionTrends = mysqlTable("emotion_trends", {
-  id: int("id").autoincrement().primaryKey(),
+export const emotionTrends = sqliteTable("emotion_trends", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Topic or 'global' for overall trends */
-  topic: varchar("topic", { length: 500 }).default("global").notNull(),
+  topic: text("topic").default("global").notNull(),
   /** Time period: hourly, daily, weekly, monthly */
-  period: mysqlEnum("period", ["hourly", "daily", "weekly", "monthly"]).notNull(),
+  period: text("period").notNull(),
   /** Period start timestamp */
-  periodStart: timestamp("periodStart").notNull(),
+  periodStart: integer("periodStart", { mode: "timestamp" }).notNull(),
   /** Period end timestamp */
-  periodEnd: timestamp("periodEnd").notNull(),
+  periodEnd: integer("periodEnd", { mode: "timestamp" }).notNull(),
   /** Average GMI for the period */
-  avgGmi: int("avgGmi").notNull(),
+  avgGmi: integer("avgGmi").notNull(),
   /** Average CFI for the period */
-  avgCfi: int("avgCfi").notNull(),
+  avgCfi: integer("avgCfi").notNull(),
   /** Average HRI for the period */
-  avgHri: int("avgHri").notNull(),
+  avgHri: integer("avgHri").notNull(),
   /** GMI change from previous period */
-  gmiChange: int("gmiChange").default(0),
+  gmiChange: integer("gmiChange").default(0),
   /** CFI change from previous period */
-  cfiChange: int("cfiChange").default(0),
+  cfiChange: integer("cfiChange").default(0),
   /** HRI change from previous period */
-  hriChange: int("hriChange").default(0),
+  hriChange: integer("hriChange").default(0),
   /** Number of analyses in this period */
-  analysisCount: int("analysisCount").default(0).notNull(),
+  analysisCount: integer("analysisCount").default(0).notNull(),
   /** Most frequent dominant emotion */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  dominantEmotion: text("dominantEmotion"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type EmotionTrend = typeof emotionTrends.$inferSelect;
@@ -734,28 +735,28 @@ export type InsertEmotionTrend = typeof emotionTrends.$inferInsert;
 /**
  * Language Profiles - stores language-specific analysis configurations
  */
-export const languageProfiles = mysqlTable("language_profiles", {
-  id: int("id").autoincrement().primaryKey(),
+export const languageProfiles = sqliteTable("language_profiles", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** ISO 639-1 language code (e.g., 'ar', 'en', 'fr', 'es', 'zh', 'ja') */
-  languageCode: varchar("languageCode", { length: 5 }).notNull().unique(),
+  languageCode: text("languageCode").notNull().unique(),
   /** Language name in English */
-  languageName: varchar("languageName", { length: 100 }).notNull(),
+  languageName: text("languageName").notNull(),
   /** Language name in native script */
-  nativeName: varchar("nativeName", { length: 100 }),
+  nativeName: text("nativeName"),
   /** Text direction: ltr (left-to-right) or rtl (right-to-left) */
-  textDirection: mysqlEnum("textDirection", ["ltr", "rtl"]).default("ltr").notNull(),
+  textDirection: text("textDirection").default("ltr").notNull(),
   /** Associated cultural region */
-  culturalRegion: varchar("culturalRegion", { length: 32 }).notNull(),
+  culturalRegion: text("culturalRegion").notNull(),
   /** Emotional expression style: direct, indirect, reserved, expressive */
-  expressionStyle: mysqlEnum("expressionStyle", ["direct", "indirect", "reserved", "expressive"]).default("direct").notNull(),
+  expressionStyle: text("expressionStyle").default("direct").notNull(),
   /** Default sentiment adjustment factor (-50 to +50) */
-  sentimentAdjustment: int("sentimentAdjustment").default(0).notNull(),
+  sentimentAdjustment: integer("sentimentAdjustment").default(0).notNull(),
   /** Whether this language is fully supported */
-  isFullySupported: int("isFullySupported").default(0).notNull(),
+  isFullySupported: integer("isFullySupported").default(0).notNull(),
   /** Number of keywords in dictionary */
-  keywordCount: int("keywordCount").default(0).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  keywordCount: integer("keywordCount").default(0).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type LanguageProfile = typeof languageProfiles.$inferSelect;
@@ -764,27 +765,27 @@ export type InsertLanguageProfile = typeof languageProfiles.$inferInsert;
 /**
  * Multilingual Keywords - emotion keywords in multiple languages
  */
-export const multilingualKeywords = mysqlTable("multilingual_keywords", {
-  id: int("id").autoincrement().primaryKey(),
+export const multilingualKeywords = sqliteTable("multilingual_keywords", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** ISO 639-1 language code */
-  languageCode: varchar("languageCode", { length: 5 }).notNull(),
+  languageCode: text("languageCode").notNull(),
   /** The keyword in the target language */
-  keyword: varchar("keyword", { length: 255 }).notNull(),
+  keyword: text("keyword").notNull(),
   /** English translation for reference */
-  englishTranslation: varchar("englishTranslation", { length: 255 }),
+  englishTranslation: text("englishTranslation"),
   /** Category: death, disaster, celebration, politics, economy, etc. */
-  category: varchar("category", { length: 32 }).notNull(),
+  category: text("category").notNull(),
   /** Primary emotion: joy, fear, anger, sadness, hope, curiosity */
-  primaryEmotion: varchar("primaryEmotion", { length: 32 }).notNull(),
+  primaryEmotion: text("primaryEmotion").notNull(),
   /** Emotional intensity: low, medium, high, extreme */
-  intensity: mysqlEnum("intensity", ["low", "medium", "high", "extreme"]).default("medium").notNull(),
+  intensity: text("intensity").default("medium").notNull(),
   /** Emotional weight: -100 to +100 */
-  emotionalWeight: int("emotionalWeight").notNull(),
+  emotionalWeight: integer("emotionalWeight").notNull(),
   /** Usage context notes */
   contextNotes: text("contextNotes"),
   /** Source: manual, imported, learned */
-  source: varchar("source", { length: 32 }).default("manual").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  source: text("source").default("manual").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type MultilingualKeyword = typeof multilingualKeywords.$inferSelect;
@@ -795,29 +796,29 @@ export type InsertMultilingualKeyword = typeof multilingualKeywords.$inferInsert
  * AI Conversations - stores conversation history for Smart Analysis
  * Similar to ChatGPT conversation history
  */
-export const aiConversations = mysqlTable("ai_conversations", {
-  id: int("id").autoincrement().primaryKey(),
+export const aiConversations = sqliteTable("ai_conversations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID (null for anonymous users) */
-  userId: int("userId"),
+  userId: integer("userId"),
   /** Conversation title (auto-generated from first topic) */
-  title: varchar("title", { length: 255 }).notNull(),
+  title: text("title").notNull(),
   /** Original topic/query that started the conversation */
   topic: text("topic").notNull(),
   /** Country code if specified */
-  countryCode: varchar("countryCode", { length: 5 }),
+  countryCode: text("countryCode"),
   /** Last GMI value */
-  lastGmi: int("lastGmi"),
+  lastGmi: integer("lastGmi"),
   /** Last CFI value */
-  lastCfi: int("lastCfi"),
+  lastCfi: integer("lastCfi"),
   /** Last HRI value */
-  lastHri: int("lastHri"),
+  lastHri: integer("lastHri"),
   /** Dominant emotion from last analysis */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  dominantEmotion: text("dominantEmotion"),
   /** Number of messages in conversation */
-  messageCount: int("messageCount").default(1).notNull(),
+  messageCount: integer("messageCount").default(1).notNull(),
   /** Last activity timestamp */
-  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastActivityAt: integer("lastActivityAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type AIConversation = typeof aiConversations.$inferSelect;
@@ -826,17 +827,17 @@ export type InsertAIConversation = typeof aiConversations.$inferInsert;
 /**
  * AI Conversation Messages - stores individual messages in a conversation
  */
-export const aiConversationMessages = mysqlTable("ai_conversation_messages", {
-  id: int("id").autoincrement().primaryKey(),
+export const aiConversationMessages = sqliteTable("ai_conversation_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Reference to parent conversation */
-  conversationId: int("conversationId").notNull(),
+  conversationId: integer("conversationId").notNull(),
   /** Message role: user, assistant, system */
-  role: mysqlEnum("role", ["user", "assistant", "system"]).notNull(),
+  role: text("role").notNull(),
   /** Message content */
   content: text("content").notNull(),
   /** Analysis data JSON (for assistant messages with analysis results) */
   analysisData: text("analysisData"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type AIConversationMessage = typeof aiConversationMessages.$inferSelect;
@@ -847,34 +848,34 @@ export type InsertAIConversationMessage = typeof aiConversationMessages.$inferIn
  * User Profiles - stores persistent user context for personalized responses
  * Tracks user level, preferred topics, and interaction patterns
  */
-export const userProfiles = mysqlTable("user_profiles", {
-  id: int("id").autoincrement().primaryKey(),
+export const userProfiles = sqliteTable("user_profiles", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Reference to user */
-  userId: int("userId").notNull().unique(),
+  userId: integer("userId").notNull().unique(),
   /** User expertise level: beginner, intermediate, advanced */
-  userLevel: mysqlEnum("userLevel", ["beginner", "intermediate", "advanced"]).default("beginner").notNull(),
+  userLevel: text("userLevel").default("beginner").notNull(),
   /** Total conversation count */
-  conversationCount: int("conversationCount").default(0).notNull(),
+  conversationCount: integer("conversationCount").default(0).notNull(),
   /** Total message count */
-  messageCount: int("messageCount").default(0).notNull(),
+  messageCount: integer("messageCount").default(0).notNull(),
   /** Preferred topics JSON array */
   preferredTopics: text("preferredTopics"),
   /** Technical terms used count (for level detection) */
-  technicalTermsUsed: int("technicalTermsUsed").default(0).notNull(),
+  technicalTermsUsed: integer("technicalTermsUsed").default(0).notNull(),
   /** Preferred response length: short, medium, detailed */
-  preferredResponseLength: mysqlEnum("preferredResponseLength", ["short", "medium", "detailed"]).default("medium"),
+  preferredResponseLength: text("preferredResponseLength").default("medium"),
   /** Preferred language: ar, en */
-  preferredLanguage: varchar("preferredLanguage", { length: 5 }).default("ar"),
+  preferredLanguage: text("preferredLanguage").default("ar"),
   /** Last detected emotional state */
-  lastEmotionalState: varchar("lastEmotionalState", { length: 32 }),
+  lastEmotionalState: text("lastEmotionalState"),
   /** Countries of interest JSON array */
   countriesOfInterest: text("countriesOfInterest"),
   /** Last active topic */
-  lastActiveTopic: varchar("lastActiveTopic", { length: 255 }),
+  lastActiveTopic: text("lastActiveTopic"),
   /** Profile confidence score (how confident we are in the profile) */
-  profileConfidence: int("profileConfidence").default(50).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  profileConfidence: integer("profileConfidence").default(50).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type UserProfile = typeof userProfiles.$inferSelect;
@@ -889,33 +890,33 @@ export type InsertUserProfile = typeof userProfiles.$inferInsert;
  * Feedback Loop Table - stores user feedback on responses
  * This is the "memory" that allows the system to learn from user reactions
  */
-export const responseFeedback = mysqlTable("response_feedback", {
-  id: int("id").autoincrement().primaryKey(),
+export const responseFeedback = sqliteTable("response_feedback", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User who provided feedback (null for anonymous) */
-  userId: int("userId"),
+  userId: integer("userId"),
   /** The original question asked */
   question: text("question").notNull(),
   /** The response given by AmalSense */
   response: text("response").notNull(),
   /** User rating: 1-5 stars */
-  rating: int("rating").notNull(),
+  rating: integer("rating").notNull(),
   /** Was the response helpful? */
-  wasHelpful: mysqlEnum("wasHelpful", ["yes", "no", "partial"]),
+  wasHelpful: text("wasHelpful"),
   /** Was the analysis accurate? */
-  wasAccurate: mysqlEnum("wasAccurate", ["yes", "no", "unsure"]),
+  wasAccurate: text("wasAccurate"),
   /** Did the user understand the response? */
-  wasUnderstandable: mysqlEnum("wasUnderstandable", ["yes", "no", "partial"]),
+  wasUnderstandable: text("wasUnderstandable"),
   /** User's comment/feedback */
   comment: text("comment"),
   /** Topic/domain of the question */
-  topic: varchar("topic", { length: 100 }),
+  topic: text("topic"),
   /** Cognitive pattern used */
-  cognitivePattern: varchar("cognitivePattern", { length: 50 }),
+  cognitivePattern: text("cognitivePattern"),
   /** Dominant emotion in response */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  dominantEmotion: text("dominantEmotion"),
   /** Response confidence score */
-  responseConfidence: int("responseConfidence"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  responseConfidence: integer("responseConfidence"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type ResponseFeedback = typeof responseFeedback.$inferSelect;
@@ -925,22 +926,22 @@ export type InsertResponseFeedback = typeof responseFeedback.$inferInsert;
  * Self-Evaluation Table - stores the system's self-assessment of each response
  * The system evaluates its own thinking quality after each response
  */
-export const selfEvaluations = mysqlTable("self_evaluations", {
-  id: int("id").autoincrement().primaryKey(),
+export const selfEvaluations = sqliteTable("self_evaluations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Reference to the response (question hash or session ID) */
-  questionHash: varchar("questionHash", { length: 64 }).notNull(),
+  questionHash: text("questionHash").notNull(),
   /** The question asked */
   question: text("question").notNull(),
   /** Was confidence high enough? (0-100) */
-  confidenceScore: int("confidenceScore").notNull(),
+  confidenceScore: integer("confidenceScore").notNull(),
   /** Was data sufficient? (0-100) */
-  dataSufficiencyScore: int("dataSufficiencyScore").notNull(),
+  dataSufficiencyScore: integer("dataSufficiencyScore").notNull(),
   /** Were causes from real data? (0-100) */
-  causesFromDataScore: int("causesFromDataScore").notNull(),
+  causesFromDataScore: integer("causesFromDataScore").notNull(),
   /** Was it analysis vs narration? (0-100, higher = more analysis) */
-  analysisVsNarrationScore: int("analysisVsNarrationScore").notNull(),
+  analysisVsNarrationScore: integer("analysisVsNarrationScore").notNull(),
   /** Overall self-evaluation score (0-100) */
-  overallScore: int("overallScore").notNull(),
+  overallScore: integer("overallScore").notNull(),
   /** Self-identified weaknesses */
   identifiedWeaknesses: text("identifiedWeaknesses"),
   /** Self-identified strengths */
@@ -948,10 +949,10 @@ export const selfEvaluations = mysqlTable("self_evaluations", {
   /** Suggestions for improvement */
   improvementSuggestions: text("improvementSuggestions"),
   /** Number of news sources used */
-  newsSourcesCount: int("newsSourcesCount").default(0),
+  newsSourcesCount: integer("newsSourcesCount").default(0),
   /** Number of relevant headlines found */
-  relevantHeadlinesCount: int("relevantHeadlinesCount").default(0),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  relevantHeadlinesCount: integer("relevantHeadlinesCount").default(0),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type SelfEvaluation = typeof selfEvaluations.$inferSelect;
@@ -961,28 +962,28 @@ export type InsertSelfEvaluation = typeof selfEvaluations.$inferInsert;
  * Cognitive Learning Insights - stores patterns learned from feedback and self-evaluation
  * This is where the system stores its "lessons learned" for cognitive improvement
  */
-export const cognitiveLearningInsights = mysqlTable("cognitive_learning_insights", {
-  id: int("id").autoincrement().primaryKey(),
+export const cognitiveLearningInsights = sqliteTable("cognitive_learning_insights", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Pattern type: weakness, strength, rule_adjustment */
-  patternType: mysqlEnum("patternType", ["weakness", "strength", "rule_adjustment"]).notNull(),
+  patternType: text("patternType").notNull(),
   /** Topic/domain this pattern applies to */
-  topic: varchar("topic", { length: 100 }),
+  topic: text("topic"),
   /** Question type this pattern applies to */
-  questionType: varchar("questionType", { length: 100 }),
+  questionType: text("questionType"),
   /** Description of the pattern */
   description: text("description").notNull(),
   /** Evidence count (how many cases support this pattern) */
-  evidenceCount: int("evidenceCount").default(1).notNull(),
+  evidenceCount: integer("evidenceCount").default(1).notNull(),
   /** Confidence in this pattern (0-100) */
-  patternConfidence: int("patternConfidence").default(50).notNull(),
+  patternConfidence: integer("patternConfidence").default(50).notNull(),
   /** Suggested action/adjustment */
   suggestedAction: text("suggestedAction"),
   /** Is this pattern active/applied? */
-  isActive: mysqlEnum("isActive", ["yes", "no"]).default("no").notNull(),
+  isActive: text("isActive").default("no").notNull(),
   /** When was this pattern last validated */
-  lastValidated: timestamp("lastValidated"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastValidated: integer("lastValidated", { mode: "timestamp" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type CognitiveLearningInsight = typeof cognitiveLearningInsights.$inferSelect;
@@ -992,18 +993,18 @@ export type InsertCognitiveLearningInsight = typeof cognitiveLearningInsights.$i
  * Weekly Self-Reports Table - stores the system's weekly introspection reports
  * Machine Introspection: The system reflects on its performance
  */
-export const weeklySelfReports = mysqlTable("weekly_self_reports", {
-  id: int("id").autoincrement().primaryKey(),
+export const weeklySelfReports = sqliteTable("weekly_self_reports", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Report period start date */
-  periodStart: timestamp("periodStart").notNull(),
+  periodStart: integer("periodStart", { mode: "timestamp" }).notNull(),
   /** Report period end date */
-  periodEnd: timestamp("periodEnd").notNull(),
+  periodEnd: integer("periodEnd", { mode: "timestamp" }).notNull(),
   /** Total responses in this period */
-  totalResponses: int("totalResponses").default(0).notNull(),
+  totalResponses: integer("totalResponses").default(0).notNull(),
   /** Average user rating */
-  averageRating: int("averageRating"),
+  averageRating: integer("averageRating"),
   /** Average self-evaluation score */
-  averageSelfScore: int("averageSelfScore"),
+  averageSelfScore: integer("averageSelfScore"),
   /** Top 10 failure cases (JSON) */
   topFailures: text("topFailures"),
   /** Top 10 success cases (JSON) */
@@ -1018,7 +1019,7 @@ export const weeklySelfReports = mysqlTable("weekly_self_reports", {
   keyInsights: text("keyInsights"),
   /** Recommended rule adjustments */
   recommendedAdjustments: text("recommendedAdjustments"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type WeeklySelfReport = typeof weeklySelfReports.$inferSelect;
@@ -1028,28 +1029,28 @@ export type InsertWeeklySelfReport = typeof weeklySelfReports.$inferInsert;
  * Reasoning Rules Table - stores adjustable reasoning rules
  * These rules can be modified based on learning patterns
  */
-export const reasoningRules = mysqlTable("reasoning_rules", {
-  id: int("id").autoincrement().primaryKey(),
+export const reasoningRules = sqliteTable("reasoning_rules", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Rule name/identifier */
-  ruleName: varchar("ruleName", { length: 100 }).notNull().unique(),
+  ruleName: text("ruleName").notNull().unique(),
   /** Rule category: decision, interpretation, response, query */
-  category: mysqlEnum("category", ["decision", "interpretation", "response", "query"]).notNull(),
+  category: text("category").notNull(),
   /** Rule description */
   description: text("description").notNull(),
   /** Rule weight/priority (0-100) */
-  weight: int("weight").default(50).notNull(),
+  weight: integer("weight").default(50).notNull(),
   /** Rule parameters (JSON) */
   parameters: text("parameters"),
   /** Is this rule active? */
-  isActive: mysqlEnum("isActive", ["yes", "no"]).default("yes").notNull(),
+  isActive: text("isActive").default("yes").notNull(),
   /** Times this rule was applied */
-  timesApplied: int("timesApplied").default(0).notNull(),
+  timesApplied: integer("timesApplied").default(0).notNull(),
   /** Success rate when applied (0-100) */
-  successRate: int("successRate").default(50),
+  successRate: integer("successRate").default(50),
   /** Last modified by (system/admin) */
-  lastModifiedBy: varchar("lastModifiedBy", { length: 50 }).default("system"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastModifiedBy: text("lastModifiedBy").default("system"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type ReasoningRule = typeof reasoningRules.$inferSelect;
@@ -1060,26 +1061,26 @@ export type InsertReasoningRule = typeof reasoningRules.$inferInsert;
  * Conversations Table - stores conversation sessions for users
  * Each conversation represents a multi-turn analysis session
  */
-export const conversations = mysqlTable("conversations", {
-  id: int("id").autoincrement().primaryKey(),
+export const conversations = sqliteTable("conversations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** User ID who owns this conversation */
-  userId: int("userId").notNull(),
+  userId: integer("userId").notNull(),
   /** Conversation title (auto-generated from first question) */
-  title: varchar("title", { length: 255 }).notNull(),
+  title: text("title").notNull(),
   /** Country code if country-specific */
-  countryCode: varchar("countryCode", { length: 2 }),
+  countryCode: text("countryCode"),
   /** Country name */
-  countryName: varchar("countryName", { length: 100 }),
+  countryName: text("countryName"),
   /** Number of turns in this conversation */
-  turnCount: int("turnCount").notNull().default(1),
+  turnCount: integer("turnCount").notNull().default(1),
   /** Last message timestamp */
-  lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
+  lastMessageAt: integer("lastMessageAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
   /** Archived status */
-  isArchived: mysqlBoolean("isArchived").default(false).notNull(),
+  isArchived: integer("isArchived").default(false).notNull(),
   /** Pinned status */
-  isPinned: mysqlBoolean("isPinned").default(false).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  isPinned: integer("isPinned").default(false).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type Conversation = typeof conversations.$inferSelect;
@@ -1089,30 +1090,30 @@ export type InsertConversation = typeof conversations.$inferInsert;
  * Messages Table - stores individual messages within a conversation
  * Each message represents a question and its analysis result
  */
-export const messages = mysqlTable("messages", {
-  id: int("id").autoincrement().primaryKey(),
+export const messages = sqliteTable("messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Reference to parent conversation */
-  conversationId: int("conversationId").notNull(),
+  conversationId: integer("conversationId").notNull(),
   /** User ID */
-  userId: int("userId").notNull(),
+  userId: integer("userId").notNull(),
   /** Question/query text */
   question: text("question").notNull(),
   /** Question type: what, why, how, risks, recommendation, whatif, comparison, followup, clarification */
-  questionType: varchar("questionType", { length: 32 }).notNull(),
+  questionType: text("questionType").notNull(),
   /** Intelligent response from UnifiedPipeline */
   intelligentResponse: text("intelligentResponse"),
   /** Global Mood Index result */
-  gmi: int("gmi").notNull().default(0),
+  gmi: integer("gmi").notNull().default(0),
   /** Collective Fear Index result */
-  cfi: int("cfi").notNull().default(0),
+  cfi: integer("cfi").notNull().default(0),
   /** Hope Resilience Index result */
-  hri: int("hri").notNull().default(0),
+  hri: integer("hri").notNull().default(0),
   /** Antagonism & Conflict Index */
-  aci: int("aci").notNull().default(0),
+  aci: integer("aci").notNull().default(0),
   /** Stability & Dynamics Index */
-  sdi: int("sdi").notNull().default(0),
+  sdi: integer("sdi").notNull().default(0),
   /** Confidence score */
-  confidence: int("confidence").notNull().default(75),
+  confidence: integer("confidence").notNull().default(75),
   /** DCFT breakdown JSON */
   dcftBreakdown: text("dcftBreakdown"),
   /** Temporal analysis JSON */
@@ -1120,17 +1121,17 @@ export const messages = mysqlTable("messages", {
   /** Source attribution JSON */
   sourceAttribution: text("sourceAttribution"),
   /** Dominant emotion */
-  dominantEmotion: varchar("dominantEmotion", { length: 32 }),
+  dominantEmotion: text("dominantEmotion"),
   /** Number of sources analyzed */
-  sourcesCount: int("sourcesCount").notNull().default(0),
+  sourcesCount: integer("sourcesCount").notNull().default(0),
   /** Analysis duration in milliseconds */
-  durationMs: int("durationMs"),
+  durationMs: integer("durationMs"),
   /** User feedback: helpful, not_helpful, neutral */
-  userFeedback: varchar("userFeedback", { length: 32 }),
+  userFeedback: text("userFeedback"),
   /** User feedback comment */
   feedbackComment: text("feedbackComment"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type Message = typeof messages.$inferSelect;
@@ -1141,14 +1142,14 @@ export type InsertMessage = typeof messages.$inferInsert;
  * User Conversations Table - stores user questions and responses (Layer 12)
  * Enables personal memory and conversation history
  */
-export const userConversations = mysqlTable("user_conversations", {
-  id: int("id").autoincrement().primaryKey(),
+export const userConversations = sqliteTable("user_conversations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   /** Reference to user */
-  userId: int("userId").notNull().references(() => users.id),
+  userId: integer("userId").notNull().references(() => users.id),
   /** User's question */
   question: text("question").notNull(),
   /** Question type: factual, emotional, predictive, etc. */
-  questionType: varchar("questionType", { length: 32 }).notNull(),
+  questionType: text("questionType").notNull(),
   /** Detected topics */
   detectedTopics: text("detectedTopics"), // JSON array
   /** Detected countries */
@@ -1156,19 +1157,19 @@ export const userConversations = mysqlTable("user_conversations", {
   /** AI response */
   response: text("response").notNull(),
   /** Emotion analysis */
-  emotionJoy: int("emotionJoy").default(0),
-  emotionHope: int("emotionHope").default(0),
-  emotionSadness: int("emotionSadness").default(0),
-  emotionAnger: int("emotionAnger").default(0),
-  emotionFear: int("emotionFear").default(0),
-  emotionCuriosity: int("emotionCuriosity").default(0),
+  emotionJoy: integer("emotionJoy").default(0),
+  emotionHope: integer("emotionHope").default(0),
+  emotionSadness: integer("emotionSadness").default(0),
+  emotionAnger: integer("emotionAnger").default(0),
+  emotionFear: integer("emotionFear").default(0),
+  emotionCuriosity: integer("emotionCuriosity").default(0),
   /** Language of the question */
-  language: varchar("language", { length: 10 }).default("ar").notNull(),
+  language: text("language").default("ar").notNull(),
   /** Confidence score */
-  confidence: int("confidence").default(75),
+  confidence: integer("confidence").default(75),
   /** Processing time in ms */
-  processingTimeMs: int("processingTimeMs"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  processingTimeMs: integer("processingTimeMs"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type UserConversation = typeof userConversations.$inferSelect;
@@ -1177,29 +1178,29 @@ export type InsertUserConversation = typeof userConversations.$inferInsert;
 /**
  * Predictions Table - stores generated predictions for countries
  */
-export const predictions = mysqlTable("predictions", {
-  id: int("id").autoincrement().primaryKey(),
-  countryCode: varchar("country_code", { length: 2 }).notNull(),
-  countryName: varchar("country_name", { length: 100 }).notNull(),
-  timeframe: varchar("timeframe", { length: 10 }).notNull(),
-  predictedGmi: float("predicted_gmi").notNull(),
-  predictedCfi: float("predicted_cfi").notNull(),
-  predictedHri: float("predicted_hri").notNull(),
-  predictedEmotion: varchar("predicted_emotion", { length: 32 }).notNull(),
-  confidence: float("confidence").notNull(),
-  scenarioName: varchar("scenario_name", { length: 100 }).notNull(),
-  riskScore: int("risk_score").notNull().default(0),
-  riskLevel: varchar("risk_level", { length: 20 }).notNull().default("low"),
+export const predictions = sqliteTable("predictions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  countryCode: text("country_code").notNull(),
+  countryName: text("country_name").notNull(),
+  timeframe: text("timeframe").notNull(),
+  predictedGmi: real("predicted_gmi").notNull(),
+  predictedCfi: real("predicted_cfi").notNull(),
+  predictedHri: real("predicted_hri").notNull(),
+  predictedEmotion: text("predicted_emotion").notNull(),
+  confidence: real("confidence").notNull(),
+  scenarioName: text("scenario_name").notNull(),
+  riskScore: integer("risk_score").notNull().default(0),
+  riskLevel: text("risk_level").notNull().default("low"),
   predictionData: text("prediction_data"),
   aiInterpretation: text("ai_interpretation"),
   aiInterpretationAr: text("ai_interpretation_ar"),
-  verified: mysqlBoolean("verified").default(false),
-  actualGmi: float("actual_gmi"),
-  actualCfi: float("actual_cfi"),
-  actualHri: float("actual_hri"),
-  accuracyScore: float("accuracy_score"),
-  predictedFor: timestamp("predicted_for").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  verified: integer("verified").default(false),
+  actualGmi: real("actual_gmi"),
+  actualCfi: real("actual_cfi"),
+  actualHri: real("actual_hri"),
+  accuracyScore: real("accuracy_score"),
+  predictedFor: integer("predicted_for", { mode: "timestamp" }).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 export type PredictionRecord = typeof predictions.$inferSelect;
 export type InsertPredictionRecord = typeof predictions.$inferInsert;
@@ -1207,35 +1208,35 @@ export type InsertPredictionRecord = typeof predictions.$inferInsert;
 /**
  * Prediction Snapshots - periodic snapshots of emotional state for trend analysis
  */
-export const predictionSnapshots = mysqlTable("prediction_snapshots", {
-  id: int("id").autoincrement().primaryKey(),
-  countryCode: varchar("country_code", { length: 2 }),
-  topic: varchar("topic", { length: 100 }),
-  gmi: float("gmi").notNull(),
-  cfi: float("cfi").notNull(),
-  hri: float("hri").notNull(),
-  dominantEmotion: varchar("dominant_emotion", { length: 32 }),
+export const predictionSnapshots = sqliteTable("prediction_snapshots", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  countryCode: text("country_code"),
+  topic: text("topic"),
+  gmi: real("gmi").notNull(),
+  cfi: real("cfi").notNull(),
+  hri: real("hri").notNull(),
+  dominantEmotion: text("dominant_emotion"),
   emotionSpectrum: text("emotion_spectrum"),
-  sourceCount: int("source_count").default(0),
-  confidence: float("confidence").default(0.75),
-  riskScore: int("risk_score").default(0),
-  trendDirection: varchar("trend_direction", { length: 20 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  sourceCount: integer("source_count").default(0),
+  confidence: real("confidence").default(0.75),
+  riskScore: integer("risk_score").default(0),
+  trendDirection: text("trend_direction"),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 /**
  * Case Studies Table - stores notable predictive successes
  */
-export const caseStudies = mysqlTable("case_studies", {
-  id: int("id").autoincrement().primaryKey(),
-  title: varchar("title", { length: 255 }).notNull(),
+export const caseStudies = sqliteTable("case_studies", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
   description: text("description").notNull(),
-  topic: varchar("topic", { length: 100 }),
-  eventDate: timestamp("eventDate"),
-  predictionAccuracy: int("predictionAccuracy"),
-  impactLevel: mysqlEnum("impactLevel", ["low", "medium", "high", "critical"]),
+  topic: text("topic"),
+  eventDate: integer("eventDate", { mode: "timestamp" }),
+  predictionAccuracy: integer("predictionAccuracy"),
+  impactLevel: text("impactLevel"),
   dataSnapshot: text("dataSnapshot"), // JSON of indices at that time
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export type PredictionSnapshot = typeof predictionSnapshots.$inferSelect;
@@ -1244,17 +1245,17 @@ export type InsertPredictionSnapshot = typeof predictionSnapshots.$inferInsert;
 /**
  * API Keys Table - stores encrypted/hashed API keys for external access
  */
-export const apiKeys = mysqlTable("api_keys", {
-  id: varchar("id", { length: 64 }).primaryKey(),
-  userId: int("userId").notNull().references(() => users.id),
-  keyHash: varchar("keyHash", { length: 255 }).notNull().unique(),
-  partialKey: varchar("partialKey", { length: 32 }).notNull(),
-  tier: mysqlEnum("tier", ["pro", "enterprise", "government"]).notNull(),
-  usage: int("usage").default(0).notNull(),
-  limit: int("limit").default(1000).notNull(),
-  isActive: mysqlBoolean("isActive").default(true).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  lastUsedAt: timestamp("lastUsedAt"),
+export const apiKeys = sqliteTable("api_keys", {
+  id: text("id").primaryKey(),
+  userId: integer("userId").notNull().references(() => users.id),
+  keyHash: text("keyHash").notNull().unique(),
+  partialKey: text("partialKey").notNull(),
+  tier: text("tier").notNull(),
+  usage: integer("usage").default(0).notNull(),
+  limit: integer("limit").default(1000).notNull(),
+  isActive: integer("isActive").default(true).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  lastUsedAt: integer("lastUsedAt", { mode: "timestamp" }),
 });
 
 export type ApiKey = typeof apiKeys.$inferSelect;

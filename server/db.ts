@@ -1,5 +1,6 @@
 import { eq, desc, asc, gte, and, inArray, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
 import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert, classifiedAnalyses, followedTopics, topicAlerts, InsertClassifiedAnalysis, InsertFollowedTopic, InsertTopicAlert, responseFeedback, InsertResponseFeedback } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -7,11 +8,15 @@ let _db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
+  if (!_db) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      // Use sqlite.db as default if no DATABASE_URL provided
+      const dbPath = process.env.DATABASE_URL || "sqlite.db";
+      const sqlite = new Database(dbPath);
+      _db = drizzle(sqlite);
+      console.log(`[Database] Connected to SQLite at ${dbPath}`);
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
+      console.warn("[Database] Failed to connect to SQLite:", error);
       _db = null;
     }
   }
@@ -68,7 +73,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {
@@ -194,7 +200,7 @@ export async function upsertCountryEmotionIndex(data: InsertCountryEmotionIndex)
   const db = await getDb();
   if (!db) return null;
 
-  return await db.insert(countryEmotionIndices).values(data).onDuplicateKeyUpdate({
+  return await db.insert(countryEmotionIndices).values(data).onConflictDoUpdate({ target: countryEmotionIndices.countryCode,
     set: {
       gmi: data.gmi,
       cfi: data.cfi,

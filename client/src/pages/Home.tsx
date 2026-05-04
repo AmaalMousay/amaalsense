@@ -11,7 +11,7 @@ import {
   BookOpen, Building2, HelpCircle, FileText,
   ChevronRight, Globe, Brain, Shield, Users, BarChart3, Clock, Bell, Loader2,
   LogIn, UserPlus, LayoutDashboard, User, Newspaper, GraduationCap, Search, ArrowRight,
-  MessageCircle, Cloud, Map, Activity, LineChart, AlertTriangle, Settings, Compass, Microscope, Layers, Gauge, Target, Calendar
+  MessageCircle, Cloud, Sun, CloudRain, Map, Activity, LineChart, AlertTriangle, Settings, Compass, Microscope, Layers, Gauge, Target, Calendar, Sparkles
 } from 'lucide-react';
 import { LogoIcon } from '@/components/Logo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -326,6 +326,37 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { t, isRTL } = useI18n();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      setDeferredPrompt(e);
+      console.log('beforeinstallprompt event stashed');
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (!deferredPrompt) {
+      alert(isRTL ? "عذراً، المتصفح لم يطلق طلب التثبيت بعد. حاول مجدداً لاحقاً أو استخدم قائمة المتصفح (إضافة إلى الشاشة الرئيسية)." : "Sorry, the install prompt is not available yet. Try again later or use your browser's 'Add to Home Screen' menu.");
+      return;
+    }
+    // Show the install prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    // We've used the prompt, and can't use it again, throw it away
+    setDeferredPrompt(null);
+  };
 
   // Handle analyze button click
   const handleAnalyze = async () => {
@@ -383,16 +414,43 @@ export default function Home() {
   };
 
   // Navigation links - Dashboard only for logged-in users via UserMenu
+  // Dynamic Weather Icon based on real data
+  const getWeatherIcon = () => {
+    if (!indices) return <Cloud className="w-4 h-4" />;
+    
+    // Condition mapping (same as Weather.tsx)
+    const hopeLevel = Math.round((indices.gmi + 100) / 2);
+    if (hopeLevel > 65) return <Sun className="w-4 h-4 text-yellow-400" />;
+    if (hopeLevel > 50) return <Cloud className="w-4 h-4 text-slate-400" />;
+    if (hopeLevel > 35) return <CloudRain className="w-4 h-4 text-blue-400" />;
+    return <Zap className="w-4 h-4 text-red-500 animate-pulse" />;
+  };
+
   const navLinks = [
+    { href: '/agents', label: isRTL ? 'الوكلاء والأتمتة' : 'Agents & Automation', icon: <Sparkles className="w-4 h-4" /> },
+    { href: '/api-management', label: isRTL ? 'إدارة الـ API' : 'API Management', icon: <Zap className="w-4 h-4" /> },
+    { href: '/trader', label: isRTL ? 'مركز المتداولين' : 'Trader Hub', icon: <BarChart3 className="w-4 h-4" /> },
     { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis', icon: <Brain className="w-4 h-4" /> },
-    { href: '/chat', label: isRTL ? 'محادثة' : 'Chat', icon: <MessageCircle className="w-4 h-4" /> },
+    { href: '/chat', label: isRTL ? 'محادثة' : 'Chat', icon: (
+      <div className="relative">
+        <MessageCircle className="w-4 h-4" />
+        <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-background animate-pulse" />
+      </div>
+    ) },
     { href: '/dashboard', label: isRTL ? 'لوحة القيادة' : 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { href: '/emotional-weather', label: isRTL ? 'طقس العاطفي' : 'Emotional Weather', icon: <Cloud className="w-4 h-4" /> },
+    { href: '/emotional-weather', label: isRTL ? 'طقس العاطفي' : 'Emotional Weather', icon: getWeatherIcon() },
     { href: '/indices', label: isRTL ? 'المؤشرات' : 'Indices', icon: <LineChart className="w-4 h-4" /> },
     { href: '/maps', label: isRTL ? 'الخريطة' : 'World Map', icon: <Map className="w-4 h-4" /> },
     { href: '/search', label: isRTL ? 'بحث' : 'Search', icon: <Search className="w-4 h-4" /> },
     { href: '/live-analysis', label: isRTL ? 'تحليل مباشر' : 'Live Analysis', icon: <Activity className="w-4 h-4" /> },
-    { href: '/live-alerts', label: isRTL ? 'التنبيهات' : 'Alerts', icon: <AlertTriangle className="w-4 h-4" /> },
+    { href: '/live-alerts', label: isRTL ? 'التنبيهات' : 'Alerts', icon: (
+      <div className="relative">
+        <AlertTriangle className={`w-4 h-4 ${indices && indices.cfi > 70 ? 'text-red-500 animate-bounce' : ''}`} />
+        {indices && indices.cfi > 50 && (
+          <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-background" />
+        )}
+      </div>
+    ) },
     { href: '/compare', label: isRTL ? 'مقارنة الدول' : 'Compare Countries', icon: <Compass className="w-4 h-4" /> },
     { href: '/theory', label: t.nav.theory, icon: <Microscope className="w-4 h-4" /> },
     { href: '/dcft', label: isRTL ? 'نظرية DCFT' : 'DCFT Theory', icon: <Layers className="w-4 h-4" /> },
@@ -644,6 +702,15 @@ export default function Home() {
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </>
                   )}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  className="w-full h-12 mt-4 border-dashed border-accent/50 hover:border-accent"
+                  onClick={handleInstallApp}
+                >
+                  <Zap className="w-4 h-4 mr-2 text-accent" />
+                  {isRTL ? 'تثبيت AmalSense كـ تطبيق هاتف' : 'Install AmalSense as App'}
                 </Button>
               </div>
             </Card>

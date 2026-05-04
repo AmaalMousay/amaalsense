@@ -47,7 +47,7 @@ export const unifiedConsciousnessRouter = router({
         
         // التحقق من النتيجة
         if (!isResultReady(result)) {
-          const errorMsg = getErrorMessage(result, result.metadata.language);
+          const errorMsg = getErrorMessage(result, result.questionUnderstanding.context.language);
           return {
             success: false,
             error: errorMsg || 'Unable to process question',
@@ -134,7 +134,7 @@ export const unifiedConsciousnessRouter = router({
               return {
                 question: question.substring(0, 100),
                 success: false,
-                error: getErrorMessage(result, result.metadata.language),
+                error: getErrorMessage(result, result.questionUnderstanding.context.language),
               };
             }
           })
@@ -177,7 +177,7 @@ export const unifiedConsciousnessRouter = router({
         });
         
         if (!isResultReady(result)) {
-          const errorMsg = getErrorMessage(result, result.metadata.language);
+          const errorMsg = getErrorMessage(result, result.questionUnderstanding.context.language);
           return {
             success: false,
             error: errorMsg || 'Unable to process question',
@@ -214,7 +214,7 @@ export const unifiedConsciousnessRouter = router({
     }))
     .query(async ({ input }) => {
       try {
-        const { understandQuestion } = await import('./questionUnderstandingLayer');
+        const { understandQuestion } = await import('./cognitiveEngine/questionUnderstanding');
         const understanding = await understandQuestion(input.question);
         
         return {

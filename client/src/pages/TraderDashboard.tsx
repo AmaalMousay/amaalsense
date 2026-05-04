@@ -17,6 +17,11 @@ export default function TraderDashboard() {
   // Fetch historical indices for charts
   const { data: history } = trpc.indices.getHistoricalIndices.useQuery({ hoursBack: 24 });
 
+  // Fetch real trader insights
+  const { data: traderInsights, isLoading: isLoadingInsights } = trpc.engine.getTraderInsights.useQuery({ 
+    asset 
+  });
+
   const currentCFI = indices?.cfi || 50;
   const currentGMI = indices?.gmi || 50;
   
@@ -158,21 +163,24 @@ export default function TraderDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="p-3 bg-red-950/30 border border-red-500/20 rounded-md">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-semibold text-red-400">Institutional Selling</span>
-                    <span className="text-xs text-muted-foreground">Just now</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Analyst Agent detected a 42% spike in negative sentiment regarding Middle East supply chains.</p>
-                </div>
-                
-                <div className="p-3 bg-emerald-950/30 border border-emerald-500/20 rounded-md">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-semibold text-emerald-400">Retail Capitulation</span>
-                    <span className="text-xs text-muted-foreground">5 mins ago</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Fear index hit 85. Historically, buying SPY at this level yields 3.2% return in 5 days.</p>
-                </div>
+                {isLoadingInsights ? (
+                  <div className="flex justify-center p-4"><Activity className="animate-spin h-6 w-6 text-muted-foreground" /></div>
+                ) : (
+                  traderInsights?.insights.map((insight) => (
+                    <div 
+                      key={insight.id}
+                      className={`p-3 bg-${insight.color}-950/30 border border-${insight.color}-500/20 rounded-md`}
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <span className={`text-sm font-semibold text-${insight.color}-400`}>{insight.label}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(insight.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{insight.description}</p>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>

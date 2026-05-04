@@ -481,8 +481,8 @@ export default function SmartAnalysis() {
       <main className="container py-4 md:py-6">
         <div className={`flex ${isChatExpanded ? 'flex-col' : 'flex-col md:flex-row'} gap-4 md:gap-0 min-h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]`}>
           
-          {/* Left Panel - Metrics & Indicators (hidden when chat expanded) */}
-          {!isChatExpanded && (
+          {/* Left Panel - Metrics & Indicators (hidden when chat expanded or is social/greeting) */}
+          {!isChatExpanded && (analysisData?.data?.questionUnderstanding?.topic !== 'social') && (
             <ContextMenu className="flex-1 space-y-3 md:space-y-4 overflow-y-auto p-3 md:p-4 md:pr-4 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-card/80 to-card/40 shadow-lg shadow-accent/5 max-h-[40vh] md:max-h-none">
               <h2 className="text-base md:text-xl font-bold flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-primary" />
@@ -616,7 +616,7 @@ export default function SmartAnalysis() {
           )}
           
           {/* Vertical Divider - Visible separator between panels (hidden on mobile) */}
-          {!isChatExpanded && (
+          {!isChatExpanded && (analysisData?.data?.questionUnderstanding?.topic !== 'social') && (
             <div className="hidden md:flex flex-col items-center justify-center px-2">
               <div className="w-1 h-full bg-gradient-to-b from-primary/30 via-primary/60 to-primary/30 rounded-full" />
             </div>
@@ -624,7 +624,7 @@ export default function SmartAnalysis() {
           
           {/* Right Panel - AI Chat */}
           <div 
-            className={`flex flex-col rounded-xl border-2 border-primary/30 bg-gradient-to-br from-card/80 to-card/40 p-3 md:p-4 shadow-lg shadow-primary/5 transition-all duration-300 ${isChatExpanded ? 'w-full' : 'flex-1'}`}
+            className={`flex flex-col rounded-xl border-2 border-primary/30 bg-gradient-to-br from-card/80 to-card/40 p-3 md:p-4 shadow-lg shadow-primary/5 transition-all duration-300 ${isChatExpanded || (analysisData?.data?.questionUnderstanding?.topic === 'social') ? 'w-full' : 'flex-1'}`}
             style={{ 
               minHeight: '300px'
             }}
@@ -694,13 +694,17 @@ export default function SmartAnalysis() {
                 </div>
               ) : (
                 <>
-                  <ContextualUnderstandingCard 
-                    contextual={analysisData?.data?.humanLikeAI?.contextualUnderstanding || analysisData?.data?.humanIntelligence?.contextualUnderstanding}
-                  />
-                  <EmotionalIntelligenceCard 
-                    emotional={analysisData?.data?.emotionalIntelligence || analysisData?.data?.humanLikeAI?.emotionalIntelligence || analysisData?.data?.humanIntelligence?.emotionalIntelligence}
-                    confidence={analysisData?.data?.confidence}
-                  />
+                  {analysisData?.data?.questionUnderstanding?.topic !== 'social' && (
+                    <>
+                      <ContextualUnderstandingCard 
+                        contextual={analysisData?.data?.humanLikeAI?.contextualUnderstanding || analysisData?.data?.humanIntelligence?.contextualUnderstanding}
+                      />
+                      <EmotionalIntelligenceCard 
+                        emotional={analysisData?.data?.emotionalIntelligence || analysisData?.data?.humanLikeAI?.emotionalIntelligence || analysisData?.data?.humanIntelligence?.emotionalIntelligence}
+                        confidence={analysisData?.data?.confidence}
+                      />
+                    </>
+                  )}
                   {conversation.map((msg, index) => (
                   <div 
                     key={index} 
@@ -755,7 +759,7 @@ export default function SmartAnalysis() {
             </div>
             
             {/* Structured Response */}
-            {analysisComplete && analysisData?.data && (
+            {analysisComplete && analysisData?.data && (analysisData?.data?.questionUnderstanding?.topic !== 'social') && (
               <StructuredResponseUI 
                 analysis={analysisData.data} 
                 isLoading={isAnalyzing} 
@@ -764,7 +768,7 @@ export default function SmartAnalysis() {
             )}
 
             {/* Follow-up Questions */}
-            {analysisComplete && (analysisData?.data?.humanLikeAI?.proactiveSuggestions?.followUpQuestions || analysisData?.data?.humanIntelligence?.proactiveSuggestions) && (
+            {analysisComplete && (analysisData?.data?.questionUnderstanding?.topic !== 'social') && (analysisData?.data?.humanLikeAI?.proactiveSuggestions?.followUpQuestions || analysisData?.data?.humanIntelligence?.proactiveSuggestions) && (
               <FollowUpQuestionsUI 
                 initialQuestions={(analysisData.data.humanLikeAI?.proactiveSuggestions?.followUpQuestions || analysisData.data.humanIntelligence?.proactiveSuggestions || []).map((s: any) => ({ id: Math.random().toString(), text: typeof s === 'string' ? s : s.question || '', category: 'suggestion' as const }))}
                 onAskQuestion={async (question: string) => { await handleAskQuestion(question); return ''; }}
@@ -773,7 +777,7 @@ export default function SmartAnalysis() {
             )}
 
             {/* Predictions & Recommendations */}
-            {analysisComplete && analysisData?.data && (
+            {analysisComplete && analysisData?.data && (analysisData?.data?.questionUnderstanding?.topic !== 'social') && (
               <PredictionsRecommendationsUI 
                 predictions={analysisData.data.predictions || []}
                 recommendations={analysisData.data.recommendations || []}
@@ -782,7 +786,7 @@ export default function SmartAnalysis() {
             )}
 
             {/* What-If Scenarios */}
-            {analysisComplete && analysisData?.data && (
+            {analysisComplete && analysisData?.data && (analysisData?.data?.questionUnderstanding?.topic !== 'social') && (
               <WhatIfScenariosUI 
                 scenarios={analysisData.data.scenarios || []}
                 onScenarioSelect={(scenarioId: string) => handleAskQuestion(`ماذا لو ${scenarioId}?`)}

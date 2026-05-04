@@ -15,6 +15,7 @@
  */
 
 import { type DeepQuestion } from './questionUnderstanding';
+import { smartChat } from '../smartLLM';
 
 // Helper function to detect topic domain
 function detectTopicDomain(topic: string): string {
@@ -276,41 +277,58 @@ export async function activateEngines(
 }
 
 /**
- * Run a specific cognitive engine
+ * Run a specific cognitive engine - All engines now use LLM for dynamic insights
  */
 async function runEngine(
   engine: CognitiveEngine,
   question: DeepQuestion,
   indicators: EmotionIndicators
 ): Promise<EngineOutput> {
-  switch (engine) {
-    case 'emotion_engine':
-      return runEmotionEngine(question, indicators);
-    case 'trend_engine':
-      return runTrendEngine(question, indicators);
-    case 'economic_engine':
-      return runEconomicEngine(question, indicators);
-    case 'media_bias_engine':
-      return runMediaBiasEngine(question, indicators);
-    case 'social_pattern_engine':
-      return runSocialPatternEngine(question, indicators);
-    case 'decision_engine':
-      return runDecisionEngine(question, indicators);
-    case 'comparison_engine':
-      return runComparisonEngine(question, indicators);
-    case 'scenario_engine':
-      return runScenarioEngine(question, indicators);
-    case 'explanation_engine':
-      return runExplanationEngine(question, indicators);
-    default:
-      return runEmotionEngine(question, indicators);
+  const topic = question.surface.topic;
+  const { gmi, cfi, hri, trend } = indicators;
+  const indicatorsContext = `GMI=${gmi.toFixed(0)}, CFI=${cfi.toFixed(0)}%, HRI=${hri.toFixed(0)}%, Trend=${trend || 'stable'}`;
+
+  const enginePrompts: Record<CognitiveEngine, string> = {
+    emotion_engine: `أنت محلل مشاعر. بناءً على المؤشرات (${indicatorsContext}) للموضوع "${topic}"، أعطِ 3 رؤى تحليلية مختصرة عن الحالة العاطفية الجماعية. كن دقيقاً ومستنداً للأرقام.`,
+    trend_engine: `أنت محلل اتجاهات. بناءً على (${indicatorsContext}) للموضوع "${topic}"، حدد اتجاه المشاعر وقدّم 2-3 رؤى عن مسار التحول المتوقع.`,
+    economic_engine: `أنت محلل اقتصادي. الموضوع: "${topic}". المؤشرات النفسية: ${indicatorsContext}. قدّم 3 رؤى اقتصادية حقيقية مرتبطة بهذه المؤشرات. لا تكرر جمل عامة.`,
+    media_bias_engine: `أنت محلل إعلامي. الموضوع: "${topic}". المؤشرات: ${indicatorsContext}. قيّم تأثير الإعلام على هذه المشاعر في 2-3 نقاط محددة.`,
+    social_pattern_engine: `أنت محلل اجتماعي. الموضوع: "${topic}". المؤشرات: ${indicatorsContext}. حدد الأنماط السلوكية الجماعية في 3 نقاط.`,
+    decision_engine: `أنت مستشار قرارات. الموضوع: "${topic}". المؤشرات: ${indicatorsContext}. قدّم توصية قرار واضحة مع المبرر والمخاطر والفرص في 3 نقاط.`,
+    comparison_engine: `أنت محلل مقارنات. الموضوع: "${topic}". المؤشرات: ${indicatorsContext}. قارن الخيارات المطروحة مع السياق النفسي الحالي في 3 نقاط.`,
+    scenario_engine: `أنت محلل سيناريوهات. الموضوع: "${topic}". المؤشرات: ${indicatorsContext}. قدّم 3 سيناريوهات (أفضل، أسوأ، أرجح) بشكل موجز.`,
+    explanation_engine: `أنت محلل أسباب. الموضوع: "${topic}". المؤشرات: ${indicatorsContext}. اشرح الأسباب الحقيقية لهذا الوضع في 3 نقاط مستندة للبيانات.`,
+  };
+
+  try {
+    const prompt = enginePrompts[engine];
+    const rawInsights = await smartChat(
+      'أجب بشكل مختصر ومباشر. أعطِ رؤى تحليلية حقيقية مبنية على البيانات، ليس جملاً عامة.',
+      prompt,
+      'response_generation'
+    );
+    // تحويل النص إلى قائمة رؤى
+    const insights = rawInsights
+      .split(/\n|•|-|\d\./)  
+      .map(s => s.trim())
+      .filter(s => s.length > 10)
+      .slice(0, 4);
+
+    return { engine, insights, confidence: 0.9, reasoning: `LLM-generated: ${indicatorsContext}`, data: { gmi, cfi, hri } };
+  } catch (err) {
+    // Minimal numeric fallback - no fake text
+    return {
+      engine,
+      insights: [`المؤشرات: GMI=${gmi.toFixed(0)}, CFI=${cfi.toFixed(0)}%, HRI=${hri.toFixed(0)}%`],
+      confidence: 0.3,
+      reasoning: 'LLM unavailable - numeric data only',
+      data: { gmi, cfi, hri }
+    };
   }
 }
 
-// ============================================
-// Individual Engine Implementations
-// ============================================
-
+// Individual engine implementations removed - all engines now use LLM via runEngine() above
+// Legacy placeholder to avoid breaking any direct imports:
 function runEmotionEngine(
   question: DeepQuestion,
   indicators: EmotionIndicators

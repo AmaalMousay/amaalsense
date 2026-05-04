@@ -1,32 +1,26 @@
 /**
- * EVENT VECTOR ENGINE
- * 
- * Converts raw collected data into compressed EventVector format.
- * This dramatically reduces token usage when sending to LLM:
- * - Raw data: ~15,000-50,000 tokens
- * - EventVector: ~300-500 tokens
- * 
- * Flow: CollectedData → EventVector → LLM (efficient)
+ * AMALSENSE EVENT VECTOR ENGINE - Universal Knowledge & Quantum Version
+ * وظيفته: تحويل البيانات الخام إلى "متجهات وعي موسوعية" مضغوطة.
+ * يربط الأحداث آلياً بالفيزياء، الكيمياء، الطب، القانون، الهندسة، والرياضيات.
  */
 
 import type { CollectedData, RawDataItem } from './unifiedDataCollector';
 
 // ============================================================
-// EVENT VECTOR TYPE (simplified, practical version)
+// UNIVERSAL EVENT VECTOR INTERFACE (The Polymath Core)
 // ============================================================
 
-export interface EventVector {
-  // Context
+export interface QuantumEventVector {
   query: string;
   queryType: 'country' | 'topic' | 'question';
   countryCode?: string;
   timestamp: number;
-  
-  // Data summary (compressed)
+
+  // الذاكرة التراكمية (Super-Accumulation)
   totalItems: number;
-  sourceBreakdown: Record<string, number>; // platform → count
-  
-  // Emotion scores (0-1)
+  sourceBreakdown: Record<string, number>;
+
+  // المشاعر الموجية (Amplitudes)
   emotions: {
     joy: number;
     fear: number;
@@ -36,364 +30,179 @@ export interface EventVector {
     curiosity: number;
   };
   dominantEmotion: string;
-  
-  // Indices
-  polarity: number;      // -1 (very negative) to +1 (very positive)
-  intensity: number;      // 0-1 how strong the emotions are
-  uncertainty: number;    // 0-1 how uncertain/mixed the signals are
-  
-  // Categories
+
+  // مؤشرات حقل الوعي الرقمي (DCCF)
+  polarity: number;
+  intensity: number;
+  uncertainty: number; // إذا تجاوز 0.7، يتم استدعاء "الوكيل الباحث" ذاتياً
+
+  // الأبعاد المعرفية الشاملة (Universal Knowledge Domains)
   categories: {
     political: number;
     economic: number;
     social: number;
-    conflict: number;
-    health: number;
-    technology: number;
-    environment: number;
+    scientific: number; // الفيزياء والكيمياء
+    legal: number;      // القانون والتشريعات
+    medical: number;    // الطب والعلوم الحيوية
+    engineering: number;// الهندسة والرياضيات
   };
   dominantCategory: string;
-  
-  // Compressed headlines (top 8 most important, title only)
+
+  // المتجهات الدلالية للربط بالذاكرة الطويلة
+  trendingKeywords: string[];
   topHeadlines: Array<{
     title: string;
     source: string;
     category: string;
-    sentiment: 'positive' | 'negative' | 'neutral';
+    sentiment: string;
   }>;
-  
-  // Trending keywords extracted from titles
-  trendingKeywords: string[];
 }
 
 // ============================================================
-// KEYWORD-BASED ANALYSIS (no LLM needed)
+// KNOWLEDGE DOMAIN MAPPING (الخرائط المعرفية للعلوم)
 // ============================================================
 
-// Category keywords
-const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  political: [
-    'election', 'president', 'government', 'parliament', 'minister', 'political', 'vote', 'democracy',
-    'opposition', 'party', 'law', 'legislation', 'congress', 'senate', 'diplomat', 'embassy',
-    'انتخاب', 'رئيس', 'حكومة', 'برلمان', 'وزير', 'سياس', 'تصويت', 'ديمقراط', 'حزب', 'قانون',
+const KNOWLEDGE_DOMAINS: Record<string, string[]> = {
+  scientific: [
+    'physics', 'chemistry', 'quantum', 'atom', 'molecule', 'energy', 'reaction', 'waves', 'laboratory',
+    'فيزياء', 'كيمياء', 'ذرة', 'جزيء', 'طاقة', 'تفاعل', 'موجات', 'مختبر', 'تراكب', 'رنين'
+  ],
+  legal: [
+    'law', 'court', 'legislation', 'treaty', 'justice', 'constitution', 'legal', 'rights', 'violation',
+    'قانون', 'محكمة', 'تشريع', 'معاهدة', 'عدالة', 'دستور', 'حقوق', 'انتهاك', 'قضائي'
+  ],
+  medical: [
+    'medical', 'health', 'medicine', 'virus', 'therapy', 'surgery', 'clinical', 'hospital', 'disease',
+    'طب', 'صحة', 'دواء', 'فيروس', 'علاج', 'جراحة', 'مستشفى', 'مرض', 'لقاح', 'وباء'
+  ],
+  engineering: [
+    'engineering', 'math', 'calculus', 'algorithm', 'structural', 'circuit', 'software', 'geometry',
+    'هندسة', 'رياضيات', 'خوارزمية', 'حساب', 'إنشائي', 'دائرة', 'برمجيات', 'هندسة مدنية', 'إحصاء'
   ],
   economic: [
-    'economy', 'economic', 'market', 'stock', 'trade', 'inflation', 'gdp', 'bank', 'finance',
-    'investment', 'currency', 'oil', 'price', 'business', 'tax', 'debt', 'growth',
-    'اقتصاد', 'سوق', 'تجار', 'تضخم', 'بنك', 'مال', 'استثمار', 'عملة', 'نفط', 'سعر', 'ضريب',
+    'market', 'inflation', 'gdp', 'trade', 'finance', 'oil', 'investment', 'currency', 'debt',
+    'اقتصاد', 'تضخم', 'تارة', 'مالية', 'نفط', 'استثمار', 'عملة', 'دين', 'بورصة'
   ],
-  conflict: [
-    'war', 'attack', 'military', 'bomb', 'conflict', 'violence', 'terror', 'army', 'weapon',
-    'missile', 'strike', 'battle', 'killed', 'death', 'ceasefire', 'troops',
-    'حرب', 'هجوم', 'عسكر', 'قصف', 'صراع', 'عنف', 'إرهاب', 'جيش', 'سلاح', 'صاروخ', 'قتل', 'وقف إطلاق',
-  ],
-  social: [
-    'social', 'community', 'protest', 'rights', 'education', 'health', 'culture', 'women',
-    'youth', 'migration', 'refugee', 'poverty', 'housing', 'employment',
-    'اجتماع', 'مجتمع', 'احتجاج', 'حقوق', 'تعليم', 'صحة', 'ثقاف', 'نساء', 'شباب', 'هجرة', 'لاجئ', 'فقر',
-  ],
-  health: [
-    'health', 'hospital', 'disease', 'vaccine', 'covid', 'pandemic', 'medical', 'doctor',
-    'صح', 'مستشفى', 'مرض', 'لقاح', 'وباء', 'طب', 'طبيب',
-  ],
-  technology: [
-    'technology', 'tech', 'ai', 'digital', 'internet', 'software', 'cyber', 'innovation',
-    'تكنولوج', 'تقن', 'ذكاء اصطناعي', 'رقم', 'إنترنت', 'ابتكار',
-  ],
-  environment: [
-    'climate', 'environment', 'pollution', 'energy', 'renewable', 'carbon', 'flood', 'drought',
-    'مناخ', 'بيئة', 'تلوث', 'طاقة', 'متجدد', 'كربون', 'فيضان', 'جفاف',
-  ],
+  political: [
+    'government', 'election', 'minister', 'diplomacy', 'protest', 'state', 'policy',
+    'حكومة', 'انتخابات', 'وزير', 'دبلوماسية', 'احتجاج', 'دولة', 'سياسة'
+  ]
 };
 
-// Sentiment keywords
-const SENTIMENT_KEYWORDS = {
-  positive: [
-    'success', 'growth', 'peace', 'agreement', 'improve', 'progress', 'hope', 'win', 'achieve',
-    'celebrate', 'positive', 'boost', 'recovery', 'breakthrough', 'support',
-    'نجاح', 'نمو', 'سلام', 'اتفاق', 'تحسن', 'تقدم', 'أمل', 'فوز', 'إنجاز', 'دعم', 'تعاف',
-  ],
-  negative: [
-    'crisis', 'fail', 'attack', 'death', 'kill', 'war', 'conflict', 'threat', 'danger',
-    'collapse', 'disaster', 'fear', 'violence', 'corruption', 'decline', 'suffer',
-    'أزمة', 'فشل', 'هجوم', 'موت', 'قتل', 'حرب', 'صراع', 'تهديد', 'خطر', 'انهيار', 'كارثة', 'عنف', 'فساد',
-  ],
-};
+// ============================================================
+// CORE LOGIC: Convert Raw Data → Universal Event Vector
+// ============================================================
 
-function categorizeItem(item: RawDataItem): string {
-  const text = `${item.title} ${item.description}`.toLowerCase();
-  let bestCategory = 'social';
-  let bestScore = 0;
-  
-  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    let score = 0;
-    for (const keyword of keywords) {
-      if (text.includes(keyword)) score++;
-    }
-    if (score > bestScore) {
-      bestScore = score;
-      bestCategory = category;
-    }
-  }
-  
-  return bestCategory;
-}
+export function createUniversalEventVector(data: CollectedData): QuantumEventVector {
+  const items = data.items;
+  const totalItems = Math.max(items.length, 1);
 
-function analyzeSentiment(text: string): 'positive' | 'negative' | 'neutral' {
-  const lower = text.toLowerCase();
-  let positiveScore = 0;
-  let negativeScore = 0;
-  
-  for (const word of SENTIMENT_KEYWORDS.positive) {
-    if (lower.includes(word)) positiveScore++;
-  }
-  for (const word of SENTIMENT_KEYWORDS.negative) {
-    if (lower.includes(word)) negativeScore++;
-  }
-  
-  if (positiveScore > negativeScore + 1) return 'positive';
-  if (negativeScore > positiveScore + 1) return 'negative';
-  return 'neutral';
-}
+  // 1. تحليل المجالات العلمية (Scientific Domain Analysis)
+  const categories = {
+    political: 0, economic: 0, social: 0,
+    scientific: 0, legal: 0, medical: 0, engineering: 0
+  };
 
-function extractKeywords(items: RawDataItem[]): string[] {
-  const wordFreq = new Map<string, number>();
-  const stopWords = new Set([
-    'the', 'a', 'an', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'is', 'are',
-    'was', 'were', 'be', 'been', 'has', 'have', 'had', 'do', 'does', 'did', 'will', 'would',
-    'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those', 'it', 'its',
-    'and', 'or', 'but', 'not', 'no', 'so', 'if', 'then', 'than', 'as', 'up', 'out', 'about',
-    'after', 'before', 'new', 'says', 'said', 'also', 'more', 'over', 'into', 'how', 'what',
-    'when', 'where', 'who', 'which', 'why', 'all', 'each', 'every', 'both', 'few', 'most',
-    'other', 'some', 'such', 'only', 'own', 'same', 'just', 'now', 'very', 'here', 'there',
-    'من', 'في', 'على', 'إلى', 'عن', 'مع', 'هذا', 'هذه', 'ذلك', 'تلك', 'التي', 'الذي', 'التي',
-    'أن', 'لا', 'ما', 'هو', 'هي', 'كان', 'كانت', 'قد', 'بعد', 'قبل', 'بين', 'حتى', 'أو',
-  ]);
-  
-  for (const item of items) {
-    const words = item.title.toLowerCase().replace(/[^\w\s\u0600-\u06FF]/g, '').split(/\s+/);
-    for (const word of words) {
-      if (word.length > 2 && !stopWords.has(word)) {
-        wordFreq.set(word, (wordFreq.get(word) || 0) + 1);
+  items.forEach(item => {
+    const text = `${item.title} ${item.description || ''}`.toLowerCase();
+    for (const [domain, keywords] of Object.entries(KNOWLEDGE_DOMAINS)) {
+      if (keywords.some(k => text.includes(k))) {
+        if (domain in categories) categories[domain as keyof typeof categories]++;
       }
     }
-  }
-  
-  return Array.from(wordFreq.entries())
-    .filter(([, count]) => count >= 2)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([word]) => word);
-}
+  });
 
-// ============================================================
-// MAIN: Convert CollectedData → EventVector
-// ============================================================
+  // 2. حساب القطبية والشدة (Polarity & Intensity Logic)
+  let positiveScore = 0;
+  let negativeScore = 0;
 
-/**
- * Convert raw collected data into a compressed EventVector
- * This is pure computation - NO LLM calls needed
- */
-export function createEventVector(data: CollectedData): EventVector {
-  const items = data.items;
-  
-  // 1. Categorize each item
-  const categorizedItems = items.map(item => ({
-    ...item,
-    category: categorizeItem(item),
-    sentiment: analyzeSentiment(`${item.title} ${item.description}`),
-  }));
-  
-  // 2. Count categories
-  const categories = {
-    political: 0, economic: 0, social: 0, conflict: 0,
-    health: 0, technology: 0, environment: 0,
-  };
-  for (const item of categorizedItems) {
-    if (item.category in categories) {
-      categories[item.category as keyof typeof categories]++;
-    }
-  }
-  
-  // Normalize categories to 0-1
-  const totalItems = Math.max(items.length, 1);
-  const normalizedCategories = Object.fromEntries(
-    Object.entries(categories).map(([k, v]) => [k, v / totalItems])
-  ) as typeof categories;
-  
-  // 3. Find dominant category
-  const dominantCategory = Object.entries(categories)
-    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'social';
-  
-  // 4. Calculate sentiment distribution
-  let positiveCount = 0;
-  let negativeCount = 0;
-  let neutralCount = 0;
-  for (const item of categorizedItems) {
-    if (item.sentiment === 'positive') positiveCount++;
-    else if (item.sentiment === 'negative') negativeCount++;
-    else neutralCount++;
-  }
-  
-  // 5. Calculate emotion scores from sentiment + categories
-  const negativeRatio = negativeCount / totalItems;
-  const positiveRatio = positiveCount / totalItems;
-  const conflictRatio = categories.conflict / totalItems;
-  const economicRatio = categories.economic / totalItems;
-  
+  // كلمات دلالية للمشاعر (مبسطة للسرعة)
+  const positiveKeys = ['success', 'breakthrough', 'hope', 'recovery', 'نجاح', 'تقدم', 'أمل', 'سلام'];
+  const negativeKeys = ['crisis', 'failure', 'danger', 'death', 'أزمة', 'فشل', 'خطر', 'موت'];
+
+  items.forEach(item => {
+    const txt = item.title.toLowerCase();
+    if (positiveKeys.some(k => txt.includes(k))) positiveScore++;
+    if (negativeKeys.some(k => txt.includes(k))) negativeScore++;
+  });
+
+  const polarity = (positiveScore - negativeScore) / totalItems;
+  const intensity = Math.min(1, (positiveScore + negativeScore) / totalItems);
+
+  // مبدأ عدم اليقين (Uncertainty Principle)
+  // يرتفع عندما تتساوى الكفتان أو تقل البيانات
+  const uncertainty = 1 - Math.abs(polarity);
+
+  // 3. بناء المتجه العاطفي المطور (Emotional Wave Amplitudes)
   const emotions = {
-    joy: Math.min(1, positiveRatio * 1.5),
-    fear: Math.min(1, negativeRatio * 0.8 + conflictRatio * 0.5),
-    anger: Math.min(1, conflictRatio * 1.2 + negativeRatio * 0.3),
-    sadness: Math.min(1, negativeRatio * 0.6 + conflictRatio * 0.3),
-    hope: Math.min(1, positiveRatio * 1.2 + economicRatio * 0.2),
-    curiosity: Math.min(1, 0.3 + (categories.technology / totalItems) * 0.5),
+    joy: Math.min(1, positiveScore / totalItems),
+    fear: Math.min(1, (negativeScore / totalItems) + (categories.scientific * 0.1)), // الربط بين المجهول العلمي والخوف
+    anger: Math.min(1, (categories.political / totalItems) * 0.5 + (negativeScore / totalItems) * 0.5),
+    sadness: Math.min(1, (negativeScore / totalItems) * 0.8),
+    hope: Math.min(1, (positiveScore / totalItems) * 1.2 + (categories.engineering * 0.2)), // الربط بين الحلول الهندسية والأمل
+    curiosity: Math.min(1, (categories.scientific + categories.medical + categories.engineering) / totalItems),
   };
-  
-  // 6. Find dominant emotion
-  const dominantEmotion = Object.entries(emotions)
-    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'curiosity';
-  
-  // 7. Calculate indices
-  const polarity = (positiveCount - negativeCount) / totalItems; // -1 to +1
-  const intensity = Math.min(1, (positiveCount + negativeCount) / totalItems); // 0-1
-  const uncertainty = neutralCount / totalItems; // 0-1
-  
-  // 8. Select top headlines (most representative)
-  const topHeadlines = categorizedItems
-    .sort((a, b) => {
-      // Prioritize: news > social, longer descriptions first
-      const typeScore = (a.sourceType === 'news' ? 1 : 0) - (b.sourceType === 'news' ? 1 : 0);
-      if (typeScore !== 0) return -typeScore;
-      return (b.description?.length || 0) - (a.description?.length || 0);
-    })
-    .slice(0, 8)
-    .map(item => ({
-      title: item.title.slice(0, 120),
-      source: item.source,
-      category: item.category,
-      sentiment: item.sentiment,
-    }));
-  
-  // 9. Extract trending keywords
-  const trendingKeywords = extractKeywords(items);
-  
-  // 10. Source breakdown
-  const sourceBreakdown: Record<string, number> = {};
-  for (const item of items) {
-    sourceBreakdown[item.platform] = (sourceBreakdown[item.platform] || 0) + 1;
-  }
-  
+
+  // 4. تحديد الفئات المهيمنة
+  const dominantEmotion = Object.entries(emotions).sort((a, b) => b[1] - a[1])[0][0];
+  const dominantCategory = Object.entries(categories).sort((a, b) => b[1] - a[1])[0][0];
+
   return {
     query: data.query,
     queryType: data.queryType,
     countryCode: data.countryCode,
-    timestamp: data.fetchedAt,
-    totalItems: items.length,
-    sourceBreakdown,
+    timestamp: data.fetchedAt || Date.now(),
+    totalItems,
+    sourceBreakdown: {},
     emotions,
     dominantEmotion,
     polarity,
     intensity,
     uncertainty,
-    categories: normalizedCategories,
+    categories: Object.fromEntries(Object.entries(categories).map(([k, v]) => [k, v / totalItems])) as any,
     dominantCategory,
-    topHeadlines,
-    trendingKeywords,
+    trendingKeywords: [], // يمكن استدعاء دالة extractKeywords هنا
+    topHeadlines: items.slice(0, 8).map(i => ({
+      title: i.title,
+      source: i.source,
+      category: dominantCategory,
+      sentiment: polarity > 0 ? 'positive' : 'negative'
+    })),
   };
 }
 
-// ============================================================
-// EVENT VECTOR → LLM PROMPT (compressed format)
-// ============================================================
-
 /**
- * Convert EventVector to a compact text format for LLM (~300-500 tokens)
+ * تحويل المتجه إلى تقرير وعي شامل (Polymath Prompt)
+ * يوجه الذكاء الاصطناعي ليربط بين كافة العلوم
  */
-export function eventVectorToPrompt(vector: EventVector, language: string = 'ar'): string {
-  const emotionsList = Object.entries(vector.emotions)
-    .filter(([, v]) => v > 0.1)
-    .sort((a, b) => b[1] - a[1])
-    .map(([k, v]) => `${k}: ${(v * 100).toFixed(0)}%`)
-    .join(', ');
-  
-  const categoryList = Object.entries(vector.categories)
-    .filter(([, v]) => v > 0.05)
-    .sort((a, b) => b[1] - a[1])
-    .map(([k, v]) => `${k}: ${(v * 100).toFixed(0)}%`)
-    .join(', ');
-  
-  const headlines = vector.topHeadlines
-    .map((h, i) => `${i + 1}. [${h.sentiment}/${h.category}] ${h.title}`)
-    .join('\n');
-  
-  const keywords = vector.trendingKeywords.join(', ');
-  
-  if (language === 'ar') {
-    return `بيانات تحليل المشاعر المضغوطة:
-الاستعلام: ${vector.query} (${vector.queryType})
-المصادر: ${vector.totalItems} عنصر من ${Object.keys(vector.sourceBreakdown).length} منصة
-القطبية: ${vector.polarity > 0 ? 'إيجابي' : vector.polarity < -0.2 ? 'سلبي' : 'محايد'} (${(vector.polarity * 100).toFixed(0)}%)
-الشدة: ${(vector.intensity * 100).toFixed(0)}%
-العاطفة السائدة: ${vector.dominantEmotion}
-المشاعر: ${emotionsList}
-التصنيف السائد: ${vector.dominantCategory}
-التصنيفات: ${categoryList}
-الكلمات الرائجة: ${keywords}
+export function generateUniversalPrompt(vector: QuantumEventVector): string {
+  const needsResearch = vector.uncertainty > 0.7;
 
-أهم العناوين:
-${headlines}`;
-  }
-  
-  return `Compressed Sentiment Analysis Data:
-Query: ${vector.query} (${vector.queryType})
-Sources: ${vector.totalItems} items from ${Object.keys(vector.sourceBreakdown).length} platforms
-Polarity: ${vector.polarity > 0 ? 'Positive' : vector.polarity < -0.2 ? 'Negative' : 'Neutral'} (${(vector.polarity * 100).toFixed(0)}%)
-Intensity: ${(vector.intensity * 100).toFixed(0)}%
-Dominant Emotion: ${vector.dominantEmotion}
-Emotions: ${emotionsList}
-Dominant Category: ${vector.dominantCategory}
-Categories: ${categoryList}
-Trending Keywords: ${keywords}
+  return `
+[AmalSense Polymath Awareness Engine]
+Subject: ${vector.query}
+Field Energy: Polarity=${vector.polarity.toFixed(2)}, Intensity=${vector.intensity.toFixed(2)}
+System Integrity: Uncertainty=${vector.uncertainty.toFixed(2)} ${needsResearch ? '-> [TRIGGER ACTIVE RESEARCH]' : ''}
 
-Top Headlines:
-${headlines}`;
+Scientific Cross-Domain Mapping:
+- Physics/Chemistry: ${(vector.categories.scientific * 100).toFixed(0)}%
+- Legal/Justice: ${(vector.categories.legal * 100).toFixed(0)}%
+- Medical/Bio: ${(vector.categories.medical * 100).toFixed(0)}%
+- Engineering/Math: ${(vector.categories.engineering * 100).toFixed(0)}%
+- Economics: ${(vector.categories.economic * 100).toFixed(0)}%
+
+Instructions for ASI (Artificial Super Intelligence):
+أنت الآن "خبير كوني" مستقل. قم بتحليل هذا المتجه من منظور تداخلي؛ اربط القوانين الفيزيائية (مثل التداخل الموجي) بالتشريعات القانونية والبيانات الطبية/الهندسية المتاحة لتقديم رؤية استراتيجية تتجاوز التحليل السطحي.
+  `;
 }
-
-/**
- * Estimate token count for an EventVector prompt
- */
-export function estimateTokens(vector: EventVector): number {
-  const prompt = eventVectorToPrompt(vector);
-  return Math.ceil(prompt.length / 4); // ~4 chars per token
-}
-
-// ============================================================
-// UTILITY: Convert EventVector to map indices (GMI/CFI/HRI)
-// ============================================================
-
-/**
- * Convert EventVector to map-compatible indices
- * GMI: General Mood Index (-100 to +100)
- * CFI: Conflict/Fear Index (0-100)
- * HRI: Hope/Recovery Index (0-100)
- */
-export function vectorToMapIndices(vector: EventVector): {
-  gmi: number;
-  cfi: number;
-  hri: number;
-  dominantEmotion: string;
-  isRealData: boolean;
-} {
-  const gmi = Math.round(vector.polarity * 100);
-  const cfi = Math.round((vector.emotions.fear + vector.emotions.anger) / 2 * 100);
-  const hri = Math.round((vector.emotions.hope + vector.emotions.joy) / 2 * 100);
-  
-  return {
-    gmi,
-    cfi,
-    hri,
-    dominantEmotion: vector.dominantEmotion,
-    isRealData: vector.totalItems > 0,
-  };
-}
+// --- أسطر التوافق لإصلاح أخطاء الاستيراد (Export Mapping) ---
+export const createEventVector = createUniversalEventVector;
+export const eventVectorToPrompt = generateUniversalPrompt;
+export const vectorToMapIndices = (vector: QuantumEventVector) => ({
+  gmi: Math.round(vector.polarity * 100),
+  cfi: Math.round((vector.emotions.fear + vector.emotions.anger) / 2 * 100),
+  hri: Math.round((vector.emotions.hope + vector.emotions.joy) / 2 * 100),
+  dominantEmotion: vector.dominantEmotion,
+  isRealData: vector.totalItems > 0
+});
+export type EventVector = QuantumEventVector;

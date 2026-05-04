@@ -167,38 +167,42 @@ export default function Chat() {
 
       setMessages(prev => [...prev, assistantMessage]);
 
-      // Save conversation to DB
-      if (!currentConversationId) {
-        // Create new conversation
-        const created = await createConversation.mutateAsync({
-          topic: userInput.substring(0, 200),
-          initialAnalysis: {
-            gmi: result.gmi ?? 0,
-            cfi: result.cfi ?? 0,
-            hri: result.hri ?? 0,
-            dominantEmotion: result.dominantEmotion ?? 'neutral',
-            aiResponse: result.response,
-          },
-        });
-        setCurrentConversationId(created.id as number);
-      } else {
-        // Add messages to existing conversation
-        await addMessage.mutateAsync({
-          conversationId: currentConversationId,
-          role: 'user',
-          content: userInput,
-        });
-        await addMessage.mutateAsync({
-          conversationId: currentConversationId,
-          role: 'assistant',
-          content: result.response,
-          analysisData: {
-            gmi: result.gmi ?? 0,
-            cfi: result.cfi ?? 0,
-            hri: result.hri ?? 0,
-            dominantEmotion: result.dominantEmotion ?? 'neutral',
-          },
-        });
+      // Save conversation to DB (Silent fail to allow offline usage)
+      try {
+        if (!currentConversationId) {
+          // Create new conversation
+          const created = await createConversation.mutateAsync({
+            topic: userInput.substring(0, 200),
+            initialAnalysis: {
+              gmi: result.gmi ?? 0,
+              cfi: result.cfi ?? 0,
+              hri: result.hri ?? 0,
+              dominantEmotion: result.dominantEmotion ?? 'neutral',
+              aiResponse: result.response,
+            },
+          });
+          setCurrentConversationId(created.id as number);
+        } else {
+          // Add messages to existing conversation
+          await addMessage.mutateAsync({
+            conversationId: currentConversationId,
+            role: 'user',
+            content: userInput,
+          });
+          await addMessage.mutateAsync({
+            conversationId: currentConversationId,
+            role: 'assistant',
+            content: result.response,
+            analysisData: {
+              gmi: result.gmi ?? 0,
+              cfi: result.cfi ?? 0,
+              hri: result.hri ?? 0,
+              dominantEmotion: result.dominantEmotion ?? 'neutral',
+            },
+          });
+        }
+      } catch (dbErr) {
+        console.warn('[Chat] Database saving skipped (Offline/No DB):', dbErr);
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -395,7 +399,7 @@ export default function Chat() {
               }`}>
                 <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
 
-                {msg.metadata && (
+                {msg.metadata && (msg.metadata.dominantEmotion !== 'neutral' || (msg.metadata.indices && (msg.metadata.indices.gmi !== 0 || msg.metadata.indices.cfi !== 50 || msg.metadata.indices.hri !== 50))) && (
                   <div className="text-xs mt-3 pt-3 border-t border-white/10 space-y-2">
                     {msg.metadata.dominantEmotion && (
                       <div className="flex items-center gap-2">

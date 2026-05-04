@@ -39,6 +39,9 @@ let cachedData: EconomicData | null = null;
 let lastFetchTime: number = 0;
 const CACHE_DURATION = 15 * 60 * 1000; // 15 دقيقة
 
+// آخر أسعار معروفة - تُستخدم كـ Fallback عند فشل الاتصال (بدلاً من Math.random)
+let lastKnownCommodities: CommodityPrice[] | null = null;
+
 /**
  * جلب أسعار العملات من Frankfurter API (مجاني بدون مفتاح)
  */
@@ -67,9 +70,10 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
     };
     
     for (const [code, rate] of Object.entries(data.rates)) {
-      // محاكاة التغيير (في الواقع نحتاج بيانات تاريخية)
-      const change = (Math.random() - 0.5) * 0.02 * (rate as number);
-      const changePercent = (change / (rate as number)) * 100;
+      // لا نستخدم Math.random() - نعرض فقط الرقم الحقيقي من API
+      // التغيير اليومي يحتاج بيانات تاريخية - نضع صفر بدلاً من رقم عشوائي
+      const change = 0;
+      const changePercent = 0;
       
       rates.push({
         code,
@@ -101,63 +105,86 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
 }
 
 /**
- * جلب أسعار الذهب والفضة والنفط
- * نستخدم بيانات تقريبية مع تحديث دوري
+ * جلب أسعار الذهب والفضة والنفط من API مجاني حقيقي
+ * نستخدم metals-api.com البديل المجاني أو Open Exchange Rates
  */
 async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
   try {
-    // محاولة جلب من API مجاني
-    // ملاحظة: معظم APIs للسلع تحتاج اشتراك
-    // نستخدم بيانات تقريبية مع تحديث يدوي
-    
-    const commodities: CommodityPrice[] = [
-      {
-        name: 'الذهب',
-        symbol: 'XAU',
-        price: 2650 + (Math.random() - 0.5) * 50, // سعر تقريبي
-        currency: 'USD',
-        change: (Math.random() - 0.5) * 30,
-        changePercent: (Math.random() - 0.5) * 1.5,
-        direction: Math.random() > 0.5 ? 'up' : 'down',
-        lastUpdated: new Date()
-      },
-      {
-        name: 'الفضة',
-        symbol: 'XAG',
-        price: 31 + (Math.random() - 0.5) * 2,
-        currency: 'USD',
-        change: (Math.random() - 0.5) * 0.5,
-        changePercent: (Math.random() - 0.5) * 2,
-        direction: Math.random() > 0.5 ? 'up' : 'down',
-        lastUpdated: new Date()
-      },
-      {
-        name: 'نفط برنت',
-        symbol: 'BRENT',
-        price: 78 + (Math.random() - 0.5) * 5,
-        currency: 'USD',
-        change: (Math.random() - 0.5) * 2,
-        changePercent: (Math.random() - 0.5) * 3,
-        direction: Math.random() > 0.5 ? 'up' : 'down',
-        lastUpdated: new Date()
-      },
-      {
-        name: 'نفط WTI',
-        symbol: 'WTI',
-        price: 74 + (Math.random() - 0.5) * 5,
-        currency: 'USD',
-        change: (Math.random() - 0.5) * 2,
-        changePercent: (Math.random() - 0.5) * 3,
-        direction: Math.random() > 0.5 ? 'up' : 'down',
-        lastUpdated: new Date()
+    // 1. محاولة جلب سعر الذهب من metals.live (API مجاني)
+    const goldRes = await fetch('https://metals.live/api/spot');
+    if (goldRes.ok) {
+      const metals = await goldRes.json();
+      // metals.live يعيد [{metal:'gold',price:...}, ...]
+      const goldEntry = Array.isArray(metals)
+        ? metals.find((m: any) => m.metal?.toLowerCase() === 'gold')
+        : null;
+      const silverEntry = Array.isArray(metals)
+        ? metals.find((m: any) => m.metal?.toLowerCase() === 'silver')
+        : null;
+
+      if (goldEntry) {
+        const commodities: CommodityPrice[] = [
+          {
+            name: 'الذهب',
+            symbol: 'XAU',
+            price: goldEntry.price,
+            currency: 'USD',
+            change: 0, // بيانات التغيير تحتاج مشتركة
+            changePercent: 0,
+            direction: 'stable',
+            lastUpdated: new Date()
+          },
+          {
+            name: 'الفضة',
+            symbol: 'XAG',
+            price: silverEntry?.price ?? 31,
+            currency: 'USD',
+            change: 0,
+            changePercent: 0,
+            direction: 'stable',
+            lastUpdated: new Date()
+          },
+          // النفط ليس في metals.live - نستخدم القيمة المخزنة أو الافتراضية
+          lastKnownCommodities?.find(c => c.symbol === 'BRENT') ?? {
+            name: 'نفط برنت',
+            symbol: 'BRENT',
+            price: 78,
+            currency: 'USD',
+            change: 0,
+            changePercent: 0,
+            direction: 'stable',
+            lastUpdated: new Date()
+          },
+          lastKnownCommodities?.find(c => c.symbol === 'WTI') ?? {
+            name: 'نفط WTI',
+            symbol: 'WTI',
+            price: 74,
+            currency: 'USD',
+            change: 0,
+            changePercent: 0,
+            direction: 'stable',
+            lastUpdated: new Date()
+          }
+        ];
+
+        // حفظ آخر قيم معروفة
+        lastKnownCommodities = commodities;
+        return commodities;
       }
-    ];
-    
-    return commodities;
-  } catch (error) {
-    console.error('Error fetching commodity prices:', error);
-    return getDefaultCommodityPrices();
+    }
+  } catch (err) {
+    console.warn('[EconomicDataService] metals.live API failed:', err);
   }
+
+  // 2. إذا فشل الاتصال، نستخدم آخر أسعار معروفة (مستقرة وليست عشوائية)
+  if (lastKnownCommodities) {
+    console.log('[EconomicDataService] Using last known commodity prices as fallback');
+    return lastKnownCommodities;
+  }
+
+  // 3. لا بيانات على الإطلاق - نستخدم الأسعار الافتراضية الثابتة
+  console.warn('[EconomicDataService] No commodity data available, using static defaults');
+  return getDefaultCommodityPrices();
 }
 
 /**

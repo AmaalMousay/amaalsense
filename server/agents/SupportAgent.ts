@@ -1,51 +1,60 @@
 /**
- * AmalSense Support & Communications Agent
- * Handles user queries, FAQs, and automates email communications.
+ * AMALSENSE SUPPORT & KNOWLEDGE AGENT - Autonomous Counselor
+ * لا يكتفي بالرد على الأسئلة الشائعة، بل يغوص في قاعدة المعرفة العلمية لتقديم إجابات رصينة.
  */
+
 import { notifyOwner } from "../_core/notification";
+import { buildRAGContext } from "../knowledge/ragSystem"; // ربط مع الذاكرة الموسوعية
 
 export class SupportAgent {
-  private faqData = [
-    { q: "ما هو AmalSense؟", a: "AmalSense هو محرك ذكاء اصطناعي معرفي يقوم بتحليل العواطف الجماعية العالمية باستخدام نظرية DCFT." },
-    { q: "كيف أحصل على مفتاح API؟", a: "يمكنك الحصول على مفتاح API من صفحة Developer API بعد الترقية لخطة Pro أو Enterprise." },
-    { q: "هل يدعم اللغة العربية؟", a: "نعم، AmalSense مصمم خصيصاً لفهم السياقات الثقافية واللغوية العربية بدقة عالية." }
+  private baseFaq = [
+    { q: "ما هو AmalSense؟", a: "هو محرك ذكاء اصطناعي موسوعي يحلل الوعي الرقمي عبر 24 طبقة معرفية تعتمد على نظرية DCFT." },
+    { q: "اللغة العربية", a: "نعم، النظام يمتلك وعياً دلالياً عميقاً باللغة العربية وسياقاتها الثقافية." }
   ];
 
   /**
-   * Responds to user queries using internal knowledge base
+   * معالجة استفسارات المستخدمين بربطها بالذاكرة الطويلة (RAG)
    */
   async handleQuery(query: string, userEmail: string): Promise<string> {
-    console.log(`[SupportAgent] Processing query from ${userEmail}: ${query}`);
-    
-    // Simple FAQ matching logic
-    const matchedFaq = this.faqData.find(faq => query.includes(faq.q) || faq.q.includes(query));
-    
-    let response: string;
-    if (matchedFaq) {
-      response = matchedFaq.a;
-    } else {
-      response = "شكراً لتواصلك معنا. استفسارك قيد المعالجة من قبل فريقنا التقني، وسنرد عليك عبر البريد الإلكتروني قريباً.";
-    }
+    console.log(`[SupportAgent] 🧠 Analyzing query from ${userEmail}...`);
 
-    // Automate email notification to the team
-    await notifyOwner({
-      title: `Support Request from ${userEmail}`,
-      content: `User Query: ${query}\nAgent Response: ${response}`
-    });
+    // 1. التحقق من الأسئلة الشائعة البسيطة أولاً
+    const matchedFaq = this.baseFaq.find(faq => query.includes(faq.q) || faq.q.includes(query));
+    if (matchedFaq) return matchedFaq.a;
+
+    // 2. إذا كان السؤال علمياً أو عميقاً، استدعاء الـ RAG (الذكاء التوليدي المعزز)
+    console.log(`[SupportAgent] 🔎 Searching Knowledge Base for expert answer...`);
+    const ragContext = buildRAGContext(query, { maxResults: 3 });
+
+    let response: string;
+
+    if (ragContext.scientificKnowledge.length > 0) {
+      // بناء رد مستند إلى العلم (فيزياء، قانون، طب)
+      const topFact = ragContext.scientificKnowledge[0];
+      response = `بناءً على قاعدة معرفة AmalSense في مجال (${topFact.domain}):\n${topFact.content}\n\nهل تود استكشاف المزيد حول هذا الموضوع من منظور عاطفي؟`;
+    } else {
+      response = "شكراً لتواصلك. استفسارك يقع في منطقة 'عدم يقين' حالياً. سأقوم بتفعيل الوكيل الباحث (Observer) لجلب إجابة دقيقة والرد عليك عبر البريد.";
+
+      // تفعيل تنبيه للمالك بضرورة تحديث المعرفة في هذا الجانب
+      await notifyOwner({
+        title: `Knowledge Gap Found: ${userEmail}`,
+        content: `User asked about: ${query}. No specific scientific data found.`
+      });
+    }
 
     return response;
   }
 
   /**
-   * Sends proactive notification to a user
+   * إرسال تنبيهات استباقية (مثل رصد رنين عاطفي حاد في منطقة المستخدم)
    */
-  async sendUserEmail(email: string, subject: string, message: string): Promise<boolean> {
-    console.log(`[SupportAgent] Sending email to ${email}: ${subject}`);
-    
-    // In production, this would use SendGrid/AWS SES. 
-    // For now, we log it and notify owner to simulate the flow.
+  async sendProactiveAlert(email: string, topic: string, severity: string): Promise<boolean> {
+    const subject = `⚠️ تنبيه وعي رقمي: ${topic}`;
+    const message = `تم رصد نشاط عاطفي غير مستقر (${severity}) في منطقتك. ينصح بالاطلاع على التقرير المفصل عبر المنصة.`;
+
+    console.log(`[SupportAgent] Sending proactive alert to ${email}`);
     return await notifyOwner({
-      title: `Outgoing Email to ${email}: ${subject}`,
+      title: `Outgoing Proactive Alert to ${email}`,
       content: message
     });
   }

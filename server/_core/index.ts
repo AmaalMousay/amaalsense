@@ -8,6 +8,8 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { applySecurityMiddleware } from "./security";
+import { multiAgentSystem } from "../agents/multiAgentSystem";
+
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -67,6 +69,15 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    
+    // Start Multi-Agent System (MAS) Background Loop (Point 3: Automation)
+    console.log("[SYSTEM] 🤖 Starting Multi-Agent Background Loop...");
+    // Run immediately on start
+    multiAgentSystem.runPeriodicObservation().catch(console.error);
+    // Then run every 10 minutes
+    setInterval(() => {
+      multiAgentSystem.runPeriodicObservation().catch(console.error);
+    }, 10 * 60 * 1000);
   });
 }
 

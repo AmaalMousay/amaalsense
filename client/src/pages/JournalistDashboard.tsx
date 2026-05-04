@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { trpc } from '@/lib/trpc';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -86,150 +87,6 @@ const countries: CountryData[] = [
   { code: 'BH', name: 'Bahrain', nameAr: 'البحرين', flag: '🇧🇭' },
 ];
 
-// Simulated trending stories data
-const allStories: Story[] = [
-  {
-    id: 1,
-    topic: 'قرارات الجنسية في الكويت',
-    topicEn: 'Kuwait Citizenship Decisions',
-    emotions: { anger: 68, fear: 21, hope: 5, sadness: 4, joy: 1, neutral: 1 },
-    trend: 'up',
-    trendPercent: 34,
-    sources: 2450,
-    urgency: 'critical',
-    countries: ['KW', 'SA', 'AE'],
-    timestamp: '2026-02-01T10:30:00',
-    dominantEmotion: 'غضب',
-    engagementScore: 94
-  },
-  {
-    id: 2,
-    topic: 'أزمة الوقود في لبنان',
-    topicEn: 'Lebanon Fuel Crisis',
-    emotions: { anger: 45, fear: 35, hope: 8, sadness: 10, joy: 1, neutral: 1 },
-    trend: 'up',
-    trendPercent: 28,
-    sources: 1890,
-    urgency: 'high',
-    countries: ['LB', 'SY', 'JO'],
-    timestamp: '2026-02-01T09:15:00',
-    dominantEmotion: 'غضب',
-    engagementScore: 87
-  },
-  {
-    id: 3,
-    topic: 'مباحثات السلام في اليمن',
-    topicEn: 'Yemen Peace Talks',
-    emotions: { anger: 12, fear: 18, hope: 52, sadness: 8, joy: 8, neutral: 2 },
-    trend: 'up',
-    trendPercent: 45,
-    sources: 1650,
-    urgency: 'high',
-    countries: ['YE', 'SA', 'AE', 'OM'],
-    timestamp: '2026-02-01T08:45:00',
-    dominantEmotion: 'أمل',
-    engagementScore: 82
-  },
-  {
-    id: 4,
-    topic: 'انهيار العملة في مصر',
-    topicEn: 'Egypt Currency Collapse',
-    emotions: { anger: 38, fear: 42, hope: 8, sadness: 10, joy: 1, neutral: 1 },
-    trend: 'up',
-    trendPercent: 22,
-    sources: 3200,
-    urgency: 'critical',
-    countries: ['EG', 'SD', 'LY'],
-    timestamp: '2026-02-01T11:00:00',
-    dominantEmotion: 'خوف',
-    engagementScore: 91
-  },
-  {
-    id: 5,
-    topic: 'كأس آسيا 2027',
-    topicEn: 'AFC Asian Cup 2027',
-    emotions: { anger: 5, fear: 3, hope: 35, sadness: 2, joy: 52, neutral: 3 },
-    trend: 'stable',
-    trendPercent: 5,
-    sources: 4500,
-    urgency: 'low',
-    countries: ['SA', 'AE', 'QA', 'KW', 'BH', 'OM'],
-    timestamp: '2026-02-01T07:30:00',
-    dominantEmotion: 'فرح',
-    engagementScore: 76
-  },
-  {
-    id: 6,
-    topic: 'الاحتجاجات في السودان',
-    topicEn: 'Sudan Protests',
-    emotions: { anger: 55, fear: 28, hope: 12, sadness: 4, joy: 0, neutral: 1 },
-    trend: 'up',
-    trendPercent: 67,
-    sources: 980,
-    urgency: 'critical',
-    countries: ['SD', 'EG', 'SA'],
-    timestamp: '2026-02-01T06:00:00',
-    dominantEmotion: 'غضب',
-    engagementScore: 89
-  },
-  {
-    id: 7,
-    topic: 'مشاريع نيوم السعودية',
-    topicEn: 'NEOM Saudi Projects',
-    emotions: { anger: 8, fear: 5, hope: 48, sadness: 2, joy: 35, neutral: 2 },
-    trend: 'stable',
-    trendPercent: 8,
-    sources: 2100,
-    urgency: 'medium',
-    countries: ['SA', 'AE', 'EG'],
-    timestamp: '2026-02-01T10:00:00',
-    dominantEmotion: 'أمل',
-    engagementScore: 72
-  },
-  {
-    id: 8,
-    topic: 'أزمة المياه في العراق',
-    topicEn: 'Iraq Water Crisis',
-    emotions: { anger: 42, fear: 38, hope: 10, sadness: 8, joy: 1, neutral: 1 },
-    trend: 'up',
-    trendPercent: 19,
-    sources: 1450,
-    urgency: 'high',
-    countries: ['IQ', 'SY', 'JO'],
-    timestamp: '2026-02-01T09:30:00',
-    dominantEmotion: 'غضب',
-    engagementScore: 84
-  },
-  {
-    id: 9,
-    topic: 'إعادة إعمار غزة',
-    topicEn: 'Gaza Reconstruction',
-    emotions: { anger: 25, fear: 15, hope: 38, sadness: 18, joy: 2, neutral: 2 },
-    trend: 'up',
-    trendPercent: 31,
-    sources: 5200,
-    urgency: 'high',
-    countries: ['PS', 'EG', 'JO', 'QA', 'AE'],
-    timestamp: '2026-02-01T08:00:00',
-    dominantEmotion: 'أمل',
-    engagementScore: 93
-  },
-  {
-    id: 10,
-    topic: 'الانتخابات الليبية',
-    topicEn: 'Libyan Elections',
-    emotions: { anger: 22, fear: 28, hope: 35, sadness: 8, joy: 5, neutral: 2 },
-    trend: 'up',
-    trendPercent: 41,
-    sources: 890,
-    urgency: 'medium',
-    countries: ['LY', 'EG', 'TN', 'DZ'],
-    timestamp: '2026-02-01T07:00:00',
-    dominantEmotion: 'أمل',
-    engagementScore: 78
-  }
-];
-
 // Country comparison data
 const countryComparison = {
   'قرارات الجنسية في الكويت': [
@@ -241,32 +98,35 @@ const countryComparison = {
 };
 
 export default function JournalistDashboard() {
-  const [searchTopic, setSearchTopic] = useState('');
+  const [isArabic, setIsArabic] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState('all');
-  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Real-time trending stories query
+  const { data: trendingStories, isLoading, refetch, isRefetching } = trpc.engine.getTrendingStories.useQuery({
+    countryCode: selectedCountry,
+    limit: 20
+  });
 
-  // Filter stories by country
+  const allStories = useMemo(() => {
+    if (!trendingStories) return [];
+    return trendingStories as unknown as Story[];
+  }, [trendingStories]);
+
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+
+  // Filter stories
   const filteredStories = useMemo(() => {
     let stories = allStories;
     
-    if (selectedCountry !== 'all') {
-      stories = stories.filter(story => story.countries.includes(selectedCountry));
-    }
-    
-    if (searchTopic) {
+    if (searchQuery) {
       stories = stories.filter(story => 
-        story.topic.includes(searchTopic) || story.topicEn.toLowerCase().includes(searchTopic.toLowerCase())
+        story.topic.includes(searchQuery) || story.topicEn.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
     
     return stories.sort((a, b) => b.engagementScore - a.engagementScore);
-  }, [selectedCountry, searchTopic]);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 2000);
-  };
+  }, [allStories, searchQuery]);
 
   const getUrgencyStyle = (urgency: string) => {
     switch (urgency) {
@@ -325,15 +185,16 @@ export default function JournalistDashboard() {
                 Journalist Pro
               </Badge>
             </div>
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-muted-foreground hover:text-foreground"
-                onClick={handleRefresh}
-              >
-                <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-              </Button>
+            <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => refetch()}
+              disabled={isLoading || isRefetching}
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${isLoading || isRefetching ? 'animate-spin' : ''}`} />
+              {isArabic ? 'تحديث' : 'Refresh'}
+            </Button>
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                 <Bell className="w-5 h-5" />
               </Button>
@@ -387,8 +248,8 @@ export default function JournalistDashboard() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="ابحث عن موضوع..."
-              value={searchTopic}
-              onChange={(e) => setSearchTopic(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pr-10 bg-card border-border"
             />
           </div>

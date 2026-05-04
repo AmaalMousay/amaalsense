@@ -12,12 +12,8 @@
 import { z } from 'zod';
 import { 
   understandQuestion, 
-  shouldAnalyze, 
-  canAnswerDirectly, 
-  getDirectAnswer,
-  QuestionUnderstandingResult,
-  QuestionType,
-} from './questionUnderstandingLayer';
+  DeepQuestion,
+} from './cognitiveEngine/questionUnderstanding';
 import { analyzeHybrid, HybridAnalysisResult } from './hybridAnalyzer';
 import { graphPipeline, reasoningEngine, EventVector } from './graphPipeline';
 import { AffectiveVector } from './dcft/affectiveVector';
@@ -27,7 +23,7 @@ import { AffectiveVector } from './dcft/affectiveVector';
  */
 export interface UnifiedAnalysisResult {
   // معلومات السؤال
-  questionUnderstanding: QuestionUnderstandingResult;
+  questionUnderstanding: DeepQuestion;
   
   // الإجابة المباشرة (إن وجدت)
   directAnswer?: string;
@@ -91,51 +87,25 @@ export async function unifiedAnalyze(
   let analysisTime = 0;
   
   // ============================================
-  // Step 1: فهم السؤال
+  // Step 1: فهم السؤال (AI Driven)
   // ============================================
   const step1Start = Date.now();
-  const questionUnderstanding = await understandQuestion(question);
+  const questionUnderstanding = await understandQuestion(question, context?.previousMessages);
   questionUnderstandingTime = Date.now() - step1Start;
   
-  console.log(`[UnifiedEngine] Question Type: ${questionUnderstanding.questionType}`);
-  console.log(`[UnifiedEngine] Needs Analysis: ${questionUnderstanding.needsAnalysis}`);
-  console.log(`[UnifiedEngine] Confidence: ${(questionUnderstanding.confidence * 100).toFixed(1)}%`);
+  console.log(`[UnifiedEngine] Topic: ${questionUnderstanding.surface.topic}`);
+  console.log(`[UnifiedEngine] Intent: ${questionUnderstanding.deep.realIntent}`);
+  console.log(`[UnifiedEngine] Language: ${questionUnderstanding.context.language}`);
   
   // ============================================
-  // Step 2: هل يمكن الإجابة مباشرة؟
+  // Step 2: هل يحتاج تحليل؟
   // ============================================
-  if (canAnswerDirectly(questionUnderstanding)) {
-    const directAnswer = getDirectAnswer(questionUnderstanding);
-    console.log(`[UnifiedEngine] Direct answer available - no analysis needed`);
-    
-    return {
-      questionUnderstanding,
-      directAnswer: directAnswer || undefined,
-      performance: {
-        totalProcessingTime: Date.now() - startTime,
-        questionUnderstandingTime,
-        systemsUsed: {
-          questionUnderstanding: true,
-          directAnswer: true,
-          hybridDCFT: false,
-          graphPipeline: false,
-          groq: false,
-        },
-      },
-      metadata: {
-        timestamp: new Date(),
-        language: questionUnderstanding.language,
-        confidence: questionUnderstanding.confidence,
-        processingStrategy: 'Direct Answer - No Analysis Needed',
-      },
-    };
-  }
+  // Note: All questions now go through LLM, but some might be identified as simple greetings/social
+  const needsAnalysis = questionUnderstanding.surface.questionType !== 'greeting' && 
+                        questionUnderstanding.deep.realIntent !== 'socialize';
   
-  // ============================================
-  // Step 3: هل يحتاج تحليل؟
-  // ============================================
-  if (!shouldAnalyze(questionUnderstanding)) {
-    console.log(`[UnifiedEngine] Question doesn't need analysis - confidence too low`);
+  if (!needsAnalysis) {
+    console.log(`[UnifiedEngine] Question identified as social/greeting - simple response sufficient`);
     
     return {
       questionUnderstanding,
@@ -152,9 +122,9 @@ export async function unifiedAnalyze(
       },
       metadata: {
         timestamp: new Date(),
-        language: questionUnderstanding.language,
-        confidence: questionUnderstanding.confidence,
-        processingStrategy: 'Question Unclear - Requesting Clarification',
+        language: questionUnderstanding.context.language,
+        confidence: 1.0,
+        processingStrategy: 'Social/Greeting Handling',
       },
     };
   }
@@ -177,7 +147,8 @@ export async function unifiedAnalyze(
     // ============================================
     // 4.1: DCFT Analysis (دائماً للدقة)
     // ============================================
-    if (questionUnderstanding.needsAnalysis) {
+    const requiredSources = questionUnderstanding.requiredSources;
+    if (requiredSources.includes('emotion_indicators') || requiredSources.includes('economic_data')) {
       console.log(`[UnifiedEngine] Running Hybrid DCFT-AI Analysis...`);
       
       const hybridResult = await analyzeHybrid(
@@ -208,7 +179,7 @@ export async function unifiedAnalyze(
     // ============================================
     // 4.2: Graph Pipeline (للسرعة والتفاصيل)
     // ============================================
-    if (questionUnderstanding.needsAnalysis) {
+    if (requiredSources.includes('news') || requiredSources.includes('historical')) {
       console.log(`[UnifiedEngine] Running Graph Pipeline...`);
       
       const eventVector = await graphPipeline(question);
@@ -221,7 +192,7 @@ export async function unifiedAnalyze(
     // ============================================
     // 4.3: Groq Reasoning (للتحليل الذكي)
     // ============================================
-    if (questionUnderstanding.needsGroq && analysis.eventVector) {
+    if (analysis.eventVector) {
       console.log(`[UnifiedEngine] Running Groq Reasoning...`);
       
       const reasoning = await reasoningEngine(analysis.eventVector, question);
@@ -248,8 +219,8 @@ export async function unifiedAnalyze(
       },
       metadata: {
         timestamp: new Date(),
-        language: questionUnderstanding.language,
-        confidence: questionUnderstanding.confidence,
+        language: questionUnderstanding.context.language,
+        confidence: 1.0,
         processingStrategy: 'Partial Analysis - Some Systems Failed',
       },
     };
@@ -271,8 +242,8 @@ export async function unifiedAnalyze(
     },
     metadata: {
       timestamp: new Date(),
-      language: questionUnderstanding.language,
-      confidence: questionUnderstanding.confidence,
+      language: questionUnderstanding.context.language,
+      confidence: 1.0,
       processingStrategy: generateStrategy(questionUnderstanding, systemsUsed),
     },
   };
@@ -282,7 +253,7 @@ export async function unifiedAnalyze(
  * توليد وصف الاستراتيجية المستخدمة
  */
 function generateStrategy(
-  understanding: QuestionUnderstandingResult,
+  understanding: DeepQuestion,
   systemsUsed: UnifiedAnalysisResult['performance']['systemsUsed']
 ): string {
   const parts: string[] = [];
@@ -320,7 +291,7 @@ export function formatUnifiedResult(result: UnifiedAnalysisResult): {
   details: any;
   performance: any;
 } {
-  const { language } = result.metadata;
+  const { language } = result.questionUnderstanding.context;
   
   // الإجابة الرئيسية
   let answer = '';
@@ -337,13 +308,13 @@ export function formatUnifiedResult(result: UnifiedAnalysisResult): {
   
   // التفاصيل
   const details = {
-    questionType: result.questionUnderstanding.questionType,
-    detectedTopic: result.questionUnderstanding.detectedTopic,
-    detectedEntities: result.questionUnderstanding.detectedEntities,
+    questionType: result.questionUnderstanding.surface.questionType,
+    detectedTopic: result.questionUnderstanding.surface.topic,
+    detectedEntities: result.questionUnderstanding.surface.keywords,
     emotions: result.analysis?.emotions,
     indices: result.analysis?.indices,
     eventVector: result.analysis?.eventVector,
-    confidence: result.metadata.confidence,
+    confidence: 1.0,
   };
   
   // الأداء
@@ -374,10 +345,10 @@ export function isResultReady(result: UnifiedAnalysisResult): boolean {
  * دالة مساعدة: الحصول على رسالة الخطأ
  */
 export function getErrorMessage(result: UnifiedAnalysisResult, language: 'ar' | 'en' = 'ar'): string | null {
-  if (result.questionUnderstanding.confidence < 0.3) {
+  if (result.questionUnderstanding.surface.text.length < 3) {
     return language === 'ar'
-      ? 'السؤال غير واضح. يرجى إعادة الصياغة بشكل أفضل.'
-      : 'Question is unclear. Please rephrase it better.';
+      ? 'السؤال قصير جداً. يرجى التوضيح.'
+      : 'Question is too short. Please clarify.';
   }
   
   if (!isResultReady(result)) {

@@ -1,25 +1,37 @@
 {
   "short_name": "AmalSense",
   "name": "AmalSense - Cognitive Emotion Engine",
+  "description": "Deep-tech platform for analyzing collective emotions and predicting social dynamics.",
   "icons": [
     {
       "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any"
     },
     {
-      "src": "/logo192.png",
+      "src": "/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "maskable"
     },
     {
-      "src": "/logo512.png",
+      "src": "/icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
   "theme_color": "#0f172a",
-  "background_color": "#0f172a"
+  "background_color": "#0f172a",
+  "categories": ["finance", "news", "productivity"],
+  "dir": "rtl",
+  "lang": "ar"
 }
+
+

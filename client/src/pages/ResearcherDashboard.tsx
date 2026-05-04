@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { trpc } from '@/lib/trpc';
 import { Progress } from '@/components/ui/progress';
 import { LogoIcon } from '@/components/Logo';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -122,24 +123,7 @@ const RESEARCH_VARIABLES: ResearchVariable[] = [
   }
 ];
 
-// Cross-cultural comparison data
-const COUNTRY_DATA: CountryData[] = [
-  { country: 'Libya', countryAr: 'ليبيا', flag: '🇱🇾', fear: 72, hope: 28, anger: 65, joy: 18, sadness: 58, polarization: 78, dataPoints: 125000, lastUpdate: '2026-01-31' },
-  { country: 'Egypt', countryAr: 'مصر', flag: '🇪🇬', fear: 48, hope: 45, anger: 42, joy: 35, sadness: 38, polarization: 55, dataPoints: 450000, lastUpdate: '2026-01-31' },
-  { country: 'Saudi Arabia', countryAr: 'السعودية', flag: '🇸🇦', fear: 32, hope: 58, anger: 28, joy: 52, sadness: 25, polarization: 35, dataPoints: 380000, lastUpdate: '2026-01-31' },
-  { country: 'UAE', countryAr: 'الإمارات', flag: '🇦🇪', fear: 25, hope: 68, anger: 22, joy: 62, sadness: 18, polarization: 28, dataPoints: 220000, lastUpdate: '2026-01-31' },
-  { country: 'Kuwait', countryAr: 'الكويت', flag: '🇰🇼', fear: 38, hope: 52, anger: 45, joy: 42, sadness: 32, polarization: 58, dataPoints: 95000, lastUpdate: '2026-01-31' },
-  { country: 'Jordan', countryAr: 'الأردن', flag: '🇯🇴', fear: 42, hope: 48, anger: 38, joy: 38, sadness: 35, polarization: 45, dataPoints: 85000, lastUpdate: '2026-01-31' },
-  { country: 'Morocco', countryAr: 'المغرب', flag: '🇲🇦', fear: 35, hope: 55, anger: 32, joy: 48, sadness: 28, polarization: 42, dataPoints: 180000, lastUpdate: '2026-01-31' },
-  { country: 'Tunisia', countryAr: 'تونس', flag: '🇹🇳', fear: 45, hope: 42, anger: 48, joy: 32, sadness: 42, polarization: 62, dataPoints: 75000, lastUpdate: '2026-01-31' },
-  { country: 'Algeria', countryAr: 'الجزائر', flag: '🇩🇿', fear: 40, hope: 45, anger: 42, joy: 35, sadness: 38, polarization: 48, dataPoints: 120000, lastUpdate: '2026-01-31' },
-  { country: 'Iraq', countryAr: 'العراق', flag: '🇮🇶', fear: 68, hope: 32, anger: 58, joy: 22, sadness: 55, polarization: 72, dataPoints: 145000, lastUpdate: '2026-01-31' },
-  { country: 'Syria', countryAr: 'سوريا', flag: '🇸🇾', fear: 75, hope: 25, anger: 62, joy: 15, sadness: 68, polarization: 65, dataPoints: 65000, lastUpdate: '2026-01-31' },
-  { country: 'Lebanon', countryAr: 'لبنان', flag: '🇱🇧', fear: 58, hope: 35, anger: 55, joy: 28, sadness: 52, polarization: 75, dataPoints: 95000, lastUpdate: '2026-01-31' },
-  { country: 'Palestine', countryAr: 'فلسطين', flag: '🇵🇸', fear: 78, hope: 35, anger: 72, joy: 18, sadness: 75, polarization: 45, dataPoints: 55000, lastUpdate: '2026-01-31' },
-  { country: 'Yemen', countryAr: 'اليمن', flag: '🇾🇪', fear: 82, hope: 22, anger: 68, joy: 12, sadness: 72, polarization: 68, dataPoints: 42000, lastUpdate: '2026-01-31' },
-  { country: 'Sudan', countryAr: 'السودان', flag: '🇸🇩', fear: 70, hope: 28, anger: 62, joy: 18, sadness: 58, polarization: 65, dataPoints: 38000, lastUpdate: '2026-01-31' },
-];
+// Removed simulated COUNTRY_DATA constant
 
 // API Endpoints
 const API_ENDPOINTS = [
@@ -167,6 +151,13 @@ export default function ResearcherDashboard() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [copiedCitation, setCopiedCitation] = useState(false);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+
+  // Real-time research insights query
+  const { data: insights, isLoading } = trpc.engine.getResearcherInsights.useQuery();
+
+  const COUNTRY_DATA = useMemo(() => {
+    return (insights?.countryData || []) as unknown as CountryData[];
+  }, [insights]);
 
   // Sort countries
   const sortedCountries = useMemo(() => {

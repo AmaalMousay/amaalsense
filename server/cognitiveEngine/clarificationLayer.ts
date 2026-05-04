@@ -22,6 +22,16 @@ export function evaluateAmbiguity(
   question: string,
   deepUnderstanding: DeepQuestion
 ): ClarificationResult {
+  // 0. Immediate bypass for greetings
+  if (deepUnderstanding.surface.questionType === 'greeting') {
+    return {
+      isAmbiguous: false,
+      ambiguityScore: 0,
+      missingElements: [],
+      clarificationQuestions: []
+    };
+  }
+
   let ambiguityScore = 0;
   const missingElements: string[] = [];
   const clarificationQuestions: string[] = [];
