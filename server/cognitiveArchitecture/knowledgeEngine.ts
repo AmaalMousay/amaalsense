@@ -1,18 +1,19 @@
 /**
- * Knowledge/Fact Engine
- * 
- * Purpose: Separate pathway for factual questions (who/when/where/how many)
- * - Retrieves facts from knowledge base
- * - Provides direct answers without full analysis
- * - Admits when information is not available
+ * Knowledge/Fact Engine - Accumulative ASI Edition
+ * * Purpose: 
+ * 1. Humanized responses in English.
+ * 2. Retrieves facts from the "Accumulative Learning Store" (The deep memory).
+ * 3. Admits ignorance gracefully but looks into learned vectors first.
  */
 
 import { invokeLLM } from "../_core/llm";
+import { getCumulativeInsight } from "../engines/learningStore"; // الربط بالذاكرة التراكمية
 
 export interface FactualQuery {
   question: string;
   context?: string;
   domain?: string;
+  topic?: string; // أضفنا الموضوع للبحث في الذاكرة
 }
 
 export interface FactualResponse {
@@ -20,36 +21,40 @@ export interface FactualResponse {
   confidence: 'high' | 'medium' | 'low' | 'unknown';
   sources?: string[];
   admitsIgnorance: boolean;
+  cumulativeContext?: any; // تفاصيل من الذاكرة التراكمية
 }
 
 class KnowledgeEngineClass {
   /**
-   * Answer a factual question directly
+   * Answer a factual question by consulting deep memory first
    */
   async answerFactualQuestion(query: FactualQuery): Promise<FactualResponse> {
-    const { question, context, domain } = query;
+    const { question, context, domain, topic } = query;
 
-    // Build prompt for factual question
-    const prompt = this.buildFactualPrompt(question, context, domain);
+    // 1. البحث في الذاكرة التراكمية أولاً (The Self-Learning Check)
+    const memoryInsight = topic ? getCumulativeInsight(topic) : null;
+
+    // 2. بناء سياق مطور للـ LLM يحتوي على ما تعلمه النظام ذاتياً
+    const memoryContext = memoryInsight && typeof memoryInsight !== 'string'
+      ? `System Deep Memory: I have observed this topic ${memoryInsight.observationsCount} times. Average intensity: ${memoryInsight.totalIntensity}.`
+      : "No prior cumulative memory on this specific vector.";
+
+    const prompt = this.buildFactualPrompt(question, `${context || ''}\n${memoryContext}`, domain);
 
     try {
       const response = await invokeLLM({
         messages: [
           {
             role: 'system',
-            content: `أنت محرك معرفة واقعية. مهمتك الإجابة على الأسئلة الواقعية بشكل مباشر ومختصر.
-
-قواعد مهمة:
-1. إذا كنت تعرف الإجابة بثقة عالية، أجب مباشرة
-2. إذا كانت الإجابة غير مؤكدة، قل "المعلومات المتاحة تشير إلى..."
-3. إذا لم تعرف الإجابة، قل بصراحة "لا أملك معلومات دقيقة عن هذا"
-4. لا تخترع معلومات أو تخمن
-5. أجب بجملة أو جملتين فقط، بدون مقدمات أو خلاصات
-
-أمثلة:
-- "من اغتال سيف الإسلام القذافي؟" → "لم يتم تحديد الفاعل رسمياً حتى الآن، والتحقيقات جارية"
-- "متى حدث ذلك؟" → "وقع الحادث في [التاريخ المحدد]"
-- "من صنع AmalSense؟" → "صنعتني أمال رضوان بشير، باحثة في الذكاء الاصطناعي من سبها، ليبيا"`,
+            content: `You are the AmalSense Fact Engine (ASI). 
+            Your goal is to provide sophisticated, humanized English responses.
+            
+            RULES:
+            1. Use the provided "System Deep Memory" to inform your answer. 
+            2. If memory exists, speak as someone who has "observed" the data over time.
+            3. English ONLY. Professional yet conscious tone.
+            4. If unknown, say: "My current cognitive field does not have enough verified vectors for this."
+            5. Keep it concise (1-3 sentences).`,
           },
           {
             role: 'user',
@@ -63,135 +68,50 @@ class KnowledgeEngineClass {
 
       if (!answer) {
         return {
-          answer: 'عذراً، لم أتمكن من الحصول على إجابة.',
+          answer: 'My cognitive field is currently unresponsive to this query.',
           confidence: 'unknown',
           admitsIgnorance: true,
         };
       }
 
-      // Detect if the answer admits ignorance
       const admitsIgnorance = this.detectIgnorance(answer);
-
-      // Estimate confidence
       const confidence = this.estimateConfidence(answer, admitsIgnorance);
 
       return {
         answer,
         confidence,
         admitsIgnorance,
+        cumulativeContext: memoryInsight
       };
     } catch (error) {
       console.error('Knowledge Engine error:', error);
       return {
-        answer: 'عذراً، لا أستطيع الإجابة على هذا السؤال حالياً.',
+        answer: 'I am experiencing a temporary disconnection from my factual repository.',
         confidence: 'unknown',
         admitsIgnorance: true,
       };
     }
   }
 
-  /**
-   * Build prompt for factual question
-   */
   private buildFactualPrompt(question: string, context?: string, domain?: string): string {
-    let prompt = `السؤال: ${question}`;
-
-    if (context) {
-      prompt += `\n\nالسياق: ${context}`;
-    }
-
-    if (domain) {
-      prompt += `\n\nالمجال: ${domain}`;
-    }
-
-    return prompt;
+    return `Query: ${question}\nContext: ${context || 'None'}\nDomain: ${domain || 'General'}`;
   }
 
-  /**
-   * Detect if the answer admits ignorance
-   */
   private detectIgnorance(answer: string): boolean {
-    const ignorancePatterns = [
-      /لا أملك/i,
-      /لا أعرف/i,
-      /لا أستطيع/i,
-      /غير متأكد/i,
-      /غير واضح/i,
-      /لا توجد معلومات/i,
-      /لم يتم تحديد/i,
-      /don't know/i,
-      /not sure/i,
-      /unclear/i,
-      /no information/i,
-    ];
-
+    const ignorancePatterns = [/don't have/i, /not enough/i, /unclear/i, /unknown/i, /no information/i];
     return ignorancePatterns.some(pattern => pattern.test(answer));
   }
 
-  /**
-   * Estimate confidence level from answer
-   */
   private estimateConfidence(answer: string, admitsIgnorance: boolean): 'high' | 'medium' | 'low' | 'unknown' {
-    if (admitsIgnorance) {
-      return 'unknown';
-    }
-
-    // Check for uncertainty markers
-    const uncertaintyMarkers = [
-      /ربما/i,
-      /قد/i,
-      /محتمل/i,
-      /يبدو/i,
-      /على الأرجح/i,
-      /possibly/i,
-      /maybe/i,
-      /likely/i,
-      /seems/i,
-    ];
-
-    const hasUncertainty = uncertaintyMarkers.some(pattern => pattern.test(answer));
-
-    if (hasUncertainty) {
-      return 'medium';
-    }
-
-    // Check for high-confidence markers
-    const confidenceMarkers = [
-      /بالتأكيد/i,
-      /بالفعل/i,
-      /حقيقة/i,
-      /رسمياً/i,
-      /مؤكد/i,
-      /definitely/i,
-      /certainly/i,
-      /confirmed/i,
-      /officially/i,
-    ];
-
-    const hasConfidence = confidenceMarkers.some(pattern => pattern.test(answer));
-
-    if (hasConfidence) {
-      return 'high';
-    }
-
-    // Default to medium confidence
+    if (admitsIgnorance) return 'unknown';
+    if (/verified|officially|confirmed|statistically/i.test(answer)) return 'high';
+    if (/perhaps|likely|seems/i.test(answer)) return 'medium';
     return 'medium';
   }
 
-  /**
-   * Check if a question is suitable for the knowledge engine
-   */
   isSuitableForKnowledgeEngine(question: string): boolean {
-    const factualPatterns = [
-      /^(who|من|مين)/i,
-      /^(when|متى|وقت)/i,
-      /^(where|أين|وين)/i,
-      /^(how many|كم عدد|كم)/i,
-      /^(how much|كم|بكم)/i,
-      /^(what is|ما هو|ما هي|شنو)/i,
-    ];
-
-    return factualPatterns.some(pattern => pattern.test(question.trim()));
+    const factualPatterns = [/who/i, /when/i, /where/i, /how many/i, /what is/i, /tell me about/i];
+    return factualPatterns.some(pattern => pattern.test(question.trim().toLowerCase()));
   }
 }
 

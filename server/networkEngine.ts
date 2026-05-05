@@ -243,3 +243,11 @@ function saveToLearningMemory(ctx: NetworkContext) {
     console.warn("Learning record failed");
   }
 }
+export async function getAggregatedNetworkData(question: string, country?: string) {
+  // Logic to fetch from your news and event vectors
+  return {
+    intensity: 0.8,
+    relevance: "high",
+    context: "Global trends analysis"
+  };
+}

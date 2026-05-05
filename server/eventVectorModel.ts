@@ -135,3 +135,46 @@ export function createQuantumEvent(data: any): EventVector {
     summary: data.summary || '',
   };
 }
+/**
+ * حساب CFI (Collective Feelings Index) - مؤشر المشاعر الجمعية
+ * يركز على تداخل موجات الخوف والغضب مقابل الهدوء
+ */
+export function calculateCFI(events: EventVector[]): number {
+  if (events.length === 0) return 50;
+
+  const cfiSum = events.reduce((acc, ev) => {
+    // حساب التداخل بين الخوف والغضب (destructive للأمان)
+    const turbulence = (ev.emotions.fear.amplitude + ev.emotions.anger.amplitude) / 2;
+    return acc + (1 - turbulence) * ev.fieldIntensity;
+  }, 0);
+
+  return Math.round((cfiSum / events.length) * 100);
+}
+
+/**
+ * حساب HRI (Human Resonance Index) - مؤشر الرنين البشري
+ * يقيس مدى استجابة "الرنين" بين الأحداث وتوقعات البشر (الأمل والفضول)
+ */
+export function calculateHRI(events: EventVector[]): number {
+  if (events.length === 0) return 0;
+
+  const hriSum = events.reduce((acc, ev) => {
+    const resonance = (ev.emotions.hope.amplitude + ev.emotions.curiosity.amplitude) / 2;
+    return acc + (resonance * ev.sourceWeight);
+  }, 0);
+
+  return Math.min(100, Math.round((hriSum / events.length) * 100));
+}
+/**
+ * Aggregates all metrics for a group of events (Used by NewFeaturesRouter)
+ */
+export function calculateAggregatedMetrics(events: EventVector[]) {
+  return {
+    gmi: calculateGMI(events),
+    cfi: calculateCFI(events),
+    hri: calculateHRI(events),
+    resonance: calculateResonanceIndex(events),
+    count: events.length,
+    timestamp: Date.now()
+  };
+}

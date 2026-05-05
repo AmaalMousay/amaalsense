@@ -1,148 +1,29 @@
 /**
- * Intelligent Pipeline
- * 
- * The main orchestrator that connects all cognitive components:
- * 1. Smart Query Builder - understands what to search for
- * 2. LLM Interpreter - understands what the news means
- * 3. Decision Engine - makes decisive judgments
- * 4. Fluent Response Builder - speaks naturally
- * 
- * This replaces the old template-based system with a truly intelligent one.
+ * Intelligent Pipeline - The Accumulative ASI Orchestrator
+ * Orchestrates Smart Query, Memory consultation, and Humanized Response.
  */
 
 import { buildSmartQuery, type SmartQuery } from './smartQueryBuilder';
-import { 
-  interpretNewsCauses, 
+import {
+  interpretNewsCauses,
   makeEmotionalDecision,
   type InterpretedCauses,
   type DecisionResult
 } from './llmInterpreter';
-import { 
+import {
   buildFluentResponse,
-  type FluentResponse 
+  type FluentResponse
 } from './fluentResponseBuilder';
 import {
   detectCognitivePattern,
   type CognitiveOutput,
-  type CognitivePattern,
   COGNITIVE_PATTERNS
 } from './humanCognitiveLayer';
-// المكونات الجديدة - Phase 54
 import { getFullContext } from './sessionContext';
-import { determineResponseStructure, generateFormattingInstructions, type ResponseStructure } from './dynamicResponseEngine';
-import { generateStyleInstructions, applyConsultantStyle, generateConsultantQuestions } from './narrativeStyleEngine';
-
-/**
- * Format FluentResponse object to string - DYNAMIC based on response structure
- * Phase 62: Make response format dynamic, not fixed templates
- */
-function formatResponseAsString(response: FluentResponse, responseStructure?: ResponseStructure): string {
-  const parts: string[] = [];
-  
-  // If no structure specified, use full format (backward compatibility)
-  if (!responseStructure || responseStructure.format === 'full_analysis') {
-    // Full format - all sections
-    if (response.summary) {
-      parts.push(`الخلاصة: ${response.summary}`);
-    }
-    
-    if (response.whySection) {
-      parts.push(`\nلماذا هذا المزاج؟ ${response.whySection}`);
-    }
-    
-    if (response.causesSection) {
-      parts.push(`\nالأسباب الرئيسية: ${response.causesSection}`);
-    }
-    
-    if (response.meaningSection) {
-      parts.push(`\nماذا يعني للمجتمع؟ ${response.meaningSection}`);
-    }
-    
-    if (response.cognitiveInsight) {
-      parts.push(`\nكيف يفكر الناس؟ ${response.cognitiveInsight}`);
-    }
-    
-    if (response.recommendationSection) {
-      parts.push(`\nالتوصية: ${response.recommendationSection}`);
-    }
-  } else if (responseStructure.format === 'direct_answer') {
-    // Direct answer format - just the summary
-    if (response.summary) {
-      parts.push(response.summary);
-    }
-  } else if (responseStructure.format === 'deep_explanation') {
-    // Analytical format - summary + causes + decision
-    if (response.summary) {
-      parts.push(`الخلاصة: ${response.summary}`);
-    }
-    
-    if (response.causesSection) {
-      parts.push(`\nالأسباب الرئيسية: ${response.causesSection}`);
-    }
-    
-    if (response.recommendationSection) {
-      parts.push(`\nالتوصية: ${response.recommendationSection}`);
-    }
-  } else if (responseStructure.format === 'brief_followup') {
-    // Follow-up format - brief answer + next steps
-    if (response.summary) {
-      parts.push(response.summary);
-    }
-    
-    if (response.recommendationSection) {
-      parts.push(`\n${response.recommendationSection}`);
-    }
-  }
-  
-  // Add follow-up questions if available
-  if (response.followUpQuestions && response.followUpQuestions.length > 0) {
-    parts.push(`\nأسئلة للاستكشاف:`);
-    response.followUpQuestions.forEach((q, i) => {
-      parts.push(`${i + 1}. ${q}`);
-    });
-  }
-  
-  return parts.join('\n');
-}
-
-/**
- * اختصار رد المتابعة
- * لأن سؤال المتابعة لا يحتاج تحليل كامل
- */
-function shortenFollowUpResponse(response: string, maxLength: 'short' | 'medium' | 'long'): string {
-  const lines = response.split('\n');
-  
-  if (maxLength === 'short') {
-    // فقط الخلاصة والتوصية
-    const summary = lines.find(l => l.includes('الخلاصة'));
-    const recommendation = lines.find(l => l.includes('التوصية'));
-    const questions = lines.filter(l => l.match(/^\d+\./));
-    
-    const parts: string[] = [];
-    if (summary) parts.push(summary);
-    if (recommendation) parts.push(recommendation);
-    if (questions.length > 0) {
-      parts.push('\n**أسئلة للاستكشاف:**');
-      parts.push(...questions.slice(0, 2));
-    }
-    
-    return parts.join('\n');
-  }
-  
-  if (maxLength === 'medium') {
-    // حذف قسم "كيف يفكر الناس" و"ماذا يعني للمجتمع"
-    const filtered = lines.filter(l => {
-      if (l.includes('كيف يفكر الناس')) return false;
-      if (l.includes('النمط المعرفي:')) return false;
-      if (l.includes('السؤال الداخلي:')) return false;
-      if (l.includes('ماذا يعني هذا للمجتمع')) return false;
-      return true;
-    });
-    return filtered.join('\n');
-  }
-  
-  return response;
-}
+import { determineResponseStructure, type ResponseStructure } from './dynamicResponseEngine';
+import { applyConsultantStyle } from './narrativeStyleEngine';
+import { smartInvokeLLM } from '../smartLLM';
+import { getCumulativeInsight } from '../engines/learningStore'; // الربط بالذاكرة التراكمية
 
 export interface PipelineInput {
   question: string;
@@ -161,142 +42,94 @@ export interface PipelineInput {
     cfi: number;
     hri: number;
   };
-  // المعلمات الجديدة - Phase 54
   sessionId?: string;
   conversationHistory?: Array<{ role: 'user' | 'assistant'; content: string }>;
   userRole?: string;
+  networkContext?: any;
 }
 
 export interface PipelineOutput {
-  // The formatted response text
   formattedResponse: string;
-  
-  // Structured response for UI
   response: FluentResponse;
-  
-  // Interpretation details
   interpretation: InterpretedCauses;
-  
-  // Decision details
   decision: DecisionResult;
-  
-  // Human cognitive pattern - HOW people are THINKING
   cognitivePattern: CognitiveOutput;
-  
-  // Smart query used
   smartQuery?: SmartQuery;
-  
-  // Metadata
   metadata: {
     newsAnalyzed: number;
     sourcesUsed: number;
     confidence: number;
     processingSteps: string[];
     cognitivePatternName: string;
+    memoryRecall?: string; // أضفنا مؤشر استرجاع الذاكرة
   };
 }
 
 /**
- * Run the intelligent pipeline
- * This is the main entry point for generating intelligent responses
+ * Modern Humanized Formatter with Memory Injection
+ * يدمج المعلومات اللحظية مع البصيرة التراكمية في سرد واحد
  */
-/**
- * Phase 62: Updated to pass responseStructure to formatResponseAsString
- */
+async function generateHumanNarrative(
+  response: FluentResponse,
+  networkContext?: any,
+  deepMemory?: any
+): Promise<string> {
+  // بناء سياق الذاكرة إذا وجد
+  const memoryContext = deepMemory && typeof deepMemory !== 'string'
+    ? `Recall from deep memory: Based on ${deepMemory.observationsCount} previous observations, the field shows ${deepMemory.totalIntensity} intensity.`
+    : "Field context: This is a fresh vector observation.";
+
+  const prompt = `
+    As AmalSense ASI, synthesize this into a professional English narrative:
+    - Current Analysis: ${response.summary}
+    - Historical Memory: ${memoryContext}
+    - Underlying Causes: ${response.whySection || response.causesSection}
+    - Physical Context: ${JSON.stringify(networkContext || "Stable field")}
+    
+    Task: Write a single, fluid, conscious paragraph. No headers. No labels. 
+    Connect the past (memory) with the present (news) to provide a unified insight.
+  `;
+
+  const result = await smartInvokeLLM({ prompt: prompt });
+  return typeof result === 'string' ? result : result?.text || response.summary;
+}
+
 export async function runIntelligentPipeline(input: PipelineInput): Promise<PipelineOutput> {
-  console.log('[IntelligentPipeline] Starting pipeline for:', input.question.substring(0, 50));
-  
+  console.log('[IntelligentPipeline] Processing query with Memory Sync:', input.question.substring(0, 50));
+
   const processingSteps: string[] = [];
-  
-  // Step 0: الحصول على السياق من Session Context
   const sessionId = input.sessionId || 'default';
   const { session, effectiveContext } = getFullContext(sessionId, input.question);
-  
-  // تحديد هل هذا سؤال متابعة
+
   const isFollowUp = effectiveContext.isFollowUp;
   const questionNumber = effectiveContext.questionNumber;
-  
-  console.log('[IntelligentPipeline] Session context:', {
-    isFollowUp,
-    questionNumber,
-    country: effectiveContext.country,
-    topic: effectiveContext.topic
-  });
-  
-  // Step 0.5: تحديد هيكل الرد بناء على نوع السؤال
-  const lastIntent = session.questionHistory[session.questionHistory.length - 1]?.intent;
+
+  // Step 1: Logic & Structure
   const responseStructure = determineResponseStructure({
-    questionIntent: lastIntent || { type: 'what', isFollowUp: false, requiresContext: false },
+    questionIntent: session.questionHistory[session.questionHistory.length - 1]?.intent || { type: 'what', isFollowUp: false, requiresContext: false },
     questionNumber,
     userRole: input.userRole || 'general',
     isFollowUp,
     hasContext: !!effectiveContext.topic
   });
-  
-  console.log('[IntelligentPipeline] Response structure:', {
-    format: responseStructure.format,
-    maxLength: responseStructure.maxLength,
-    isFollowUp
-  });
-  processingSteps.push('Session Context Loaded');
-  
-  // Step 1: Build smart query (for logging/debugging)
-  let smartQuery: SmartQuery | undefined;
-  try {
-    smartQuery = await buildSmartQuery(input.question);
-    processingSteps.push('Smart Query Built');
-    console.log('[IntelligentPipeline] Smart query:', smartQuery.primaryTerms);
-  } catch (error) {
-    console.error('[IntelligentPipeline] Smart query failed:', error);
-  }
-  
-  // Step 2: Interpret news causes
-  const interpretation = await interpretNewsCauses(
-    input.newsItems,
-    input.question,
-    {
-      fear: input.emotionData.fear,
-      hope: input.emotionData.hope,
-      anger: input.emotionData.anger
-    }
-  );
-  processingSteps.push('News Interpreted');
-  console.log('[IntelligentPipeline] Interpretation:', {
-    causes: interpretation.psychologicalCauses.length,
-    tone: interpretation.emotionalTone
-  });
-  
-  // Step 3: Make emotional decision
-  const decision = await makeEmotionalDecision(
-    input.question,
-    interpretation,
-    input.emotionData
-  );
-  processingSteps.push('Decision Made');
-  console.log('[IntelligentPipeline] Decision:', {
-    emotion: decision.dominantEmotion,
-    type: decision.emotionType
-  });
-  
-  // Step 4: Detect cognitive pattern - HOW people are THINKING
-  // This is the Human Cognitive Layer - it determines the thinking pattern
+  processingSteps.push('Session Context & Structure Defined');
+
+  // Step 2: Cumulative Memory Recall (الفكرة التراكمية)
+  processingSteps.push('Recalling Deep Memory Store');
+  const deepMemory = getCumulativeInsight(input.topic || 'general');
+
+  // Step 3: Real-time Interpretation
+  const interpretation = await interpretNewsCauses(input.newsItems, input.question, input.emotionData);
+  const decision = await makeEmotionalDecision(input.question, interpretation, input.emotionData);
   const cognitivePattern = await detectCognitivePattern({
     question: input.question,
     interpretation,
     decision,
     emotionData: input.emotionData
   });
-  processingSteps.push('Cognitive Pattern Detected');
-  
-  const patternInfo = COGNITIVE_PATTERNS[cognitivePattern.primaryPattern];
-  console.log('[IntelligentPipeline] Cognitive Pattern:', {
-    pattern: cognitivePattern.primaryPattern,
-    nameAr: patternInfo.nameAr,
-    innerQuestion: cognitivePattern.innerQuestion,
-    confidence: cognitivePattern.confidence
-  });
-  
-  // Step 5: Build fluent response WITH cognitive pattern AND session context
+  processingSteps.push('Cognitive Patterns & Decisions Resolved');
+
+  // Step 4: Build Response Components
   const response = await buildFluentResponse({
     question: input.question,
     interpretedCauses: interpretation,
@@ -305,56 +138,33 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
     newsCount: input.newsItems.length,
     sourcesCount: new Set(input.newsItems.map(n => n.source)).size,
     cognitivePattern,
-    // المعلمات الجديدة - Phase 54
     isFollowUp,
     questionNumber,
     responseStructure,
-    sessionContext: effectiveContext
+    sessionContext: { ...effectiveContext, deepMemory } // حقن الذاكرة في السياق
   });
-  processingSteps.push('Response Built');
-  
-  // Format the response - استخدام أسلوب المستشار
-  // Phase 62: Format is now dynamic based on responseStructure
-  let formattedResponse = formatResponseAsString(response, responseStructure);
-  
-  // تطبيق أسلوب المستشار على الرد
+
+  // Step 5: Final Humanized Synthesis (past + present)
+  let formattedResponse = await generateHumanNarrative(response, input.networkContext, deepMemory);
   formattedResponse = applyConsultantStyle(formattedResponse);
-  
-  // إذا كان سؤال متابعة، اختصر الرد
-  if (isFollowUp && responseStructure.maxLength !== 'long') {
-    formattedResponse = shortenFollowUpResponse(formattedResponse, responseStructure.maxLength);
-  }
-  
-  console.log('[IntelligentPipeline] Pipeline complete');
-  
+
   return {
     formattedResponse,
     response,
     interpretation,
     decision,
     cognitivePattern,
-    smartQuery,
     metadata: {
       newsAnalyzed: input.newsItems.length,
       sourcesUsed: new Set(input.newsItems.map(n => n.source)).size,
       confidence: interpretation.confidence,
       processingSteps,
-      cognitivePatternName: patternInfo.nameAr
+      cognitivePatternName: COGNITIVE_PATTERNS[cognitivePattern.primaryPattern].nameEn,
+      memoryRecall: deepMemory && typeof deepMemory !== 'string' ? `${deepMemory.observationsCount} nodes` : 'Fresh'
     }
   };
 }
 
-/**
- * Quick response for simple questions
- * Uses cached interpretations when available
- */
-export async function quickResponse(
-  question: string,
-  cachedInterpretation?: InterpretedCauses
-): Promise<string> {
-  if (cachedInterpretation) {
-    return cachedInterpretation.summary;
-  }
-  
-  return `جاري تحليل: ${question}`;
+export async function quickResponse(question: string, cached?: InterpretedCauses): Promise<string> {
+  return cached ? cached.summary : `Accessing cognitive vectors for: ${question}`;
 }
