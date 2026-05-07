@@ -73,7 +73,8 @@ export async function topicEngine(input: string): Promise<PartialEventVector> {
 export async function emotionEngine(input: string): Promise<PartialEventVector> {
   try {
     const emotions = analyzeEmotions(input);
-    const dominantEmotion = Object.entries(emotions).reduce((a, b) => a[1] > b[1] ? a : b)[0] || 'neutral';
+    const emotionsTyped = emotions as Record<string, number>;
+    const dominantEmotion = Object.entries(emotionsTyped).reduce((a, b) => a[1] > b[1] ? a : b)[0] || 'neutral';
     
     return {
       emotions,

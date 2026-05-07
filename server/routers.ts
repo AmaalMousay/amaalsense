@@ -16,6 +16,7 @@ import { searchRouter } from "./searchRouter";
 import { unifiedEngineRouter } from "./unifiedEngineRouter";
 import { historicalEventsRouter } from "./historicalEventsRouter";
 import { agentRouter } from "./agentRouter";
+import { predictionRouter } from "./predictionRouter";
 // Old pipeline imports removed - now using networkEngine via unifiedRouters.ts
 
 export const appRouter = router({
