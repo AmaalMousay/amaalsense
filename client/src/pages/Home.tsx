@@ -429,22 +429,15 @@ export default function Home() {
   };
 
   const navLinks = [
-    { href: '/agents', label: isRTL ? 'الوكلاء والأتمتة' : 'Agents & Automation', icon: <Sparkles className="w-4 h-4" /> },
     { href: '/api-management', label: isRTL ? 'إدارة الـ API' : 'API Management', icon: <Zap className="w-4 h-4" /> },
-    { href: '/trader', label: isRTL ? 'مركز المتداولين' : 'Trader Hub', icon: <BarChart3 className="w-4 h-4" /> },
-    { href: '/smart-analysis', label: isRTL ? 'التحليل الذكي' : 'Smart Analysis', icon: <Brain className="w-4 h-4" /> },
     { href: '/chat', label: isRTL ? 'محادثة' : 'Chat', icon: (
       <div className="relative">
         <MessageCircle className="w-4 h-4" />
         <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-background animate-pulse" />
       </div>
     ) },
-    { href: '/dashboard', label: isRTL ? 'لوحة القيادة' : 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { href: '/emotional-weather', label: isRTL ? 'طقس العاطفي' : 'Emotional Weather', icon: getWeatherIcon() },
     { href: '/indices', label: isRTL ? 'المؤشرات' : 'Indices', icon: <LineChart className="w-4 h-4" /> },
-    { href: '/maps', label: isRTL ? 'الخريطة' : 'World Map', icon: <Map className="w-4 h-4" /> },
     { href: '/search', label: isRTL ? 'بحث' : 'Search', icon: <Search className="w-4 h-4" /> },
-    { href: '/live-analysis', label: isRTL ? 'تحليل مباشر' : 'Live Analysis', icon: <Activity className="w-4 h-4" /> },
     { href: '/live-alerts', label: isRTL ? 'التنبيهات' : 'Alerts', icon: (
       <div className="relative">
         <AlertTriangle className={`w-4 h-4 ${indices && indices.cfi > 70 ? 'text-red-500 animate-bounce' : ''}`} />
@@ -457,7 +450,7 @@ export default function Home() {
     { href: '/theory', label: t.nav.theory, icon: <Microscope className="w-4 h-4" /> },
     { href: '/dcft', label: isRTL ? 'نظرية DCFT' : 'DCFT Theory', icon: <Layers className="w-4 h-4" /> },
     { href: '/engine-dashboard', label: isRTL ? 'لوحة المحرك' : 'Engine Dashboard', icon: <Gauge className="w-4 h-4" /> },
-    { href: '/predictions', label: isRTL ? 'التنبؤات' : 'Predictions', icon: <Target className="w-4 h-4" /> },
+    { href: '/event-prediction', label: isRTL ? 'التنبؤات' : 'Predictions', icon: <Target className="w-4 h-4" /> },
     { href: '/historical-events', label: isRTL ? 'الأحداث التاريخية' : 'Historical Events', icon: <Calendar className="w-4 h-4" /> },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
@@ -470,7 +463,6 @@ export default function Home() {
     { href: '/blog', label: t.nav.blog, icon: <BookOpen className="w-4 h-4" /> },
     { href: '/api-docs', label: isRTL ? 'وثائق API' : 'API Docs', icon: <FileText className="w-4 h-4" /> },
     { href: '/use-cases', label: isRTL ? 'حالات الاستخدام' : 'Use Cases', icon: <Users className="w-4 h-4" /> },
-    { href: '/markets', label: isRTL ? 'الأسواق' : 'Markets', icon: <BarChart3 className="w-4 h-4" /> },
     { href: '/settings', label: isRTL ? 'الإعدادات' : 'Settings', icon: <Settings className="w-4 h-4" /> },
   ];
 
