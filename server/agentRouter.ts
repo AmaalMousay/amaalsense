@@ -54,10 +54,11 @@ export const agentRouter = router({
   addToWatchlist: publicProcedure
     .input(z.object({
       name: z.string(),
-      code: z.string()
+      code: z.string(),
+      domain: z.string().default('general')
     }))
     .mutation(({ input }) => {
-      multiAgentSystem.addToWatchlist(input.name, input.code);
+      multiAgentSystem.addToWatchlist(input.name, input.code, input.domain);
       return { success: true };
     }),
 

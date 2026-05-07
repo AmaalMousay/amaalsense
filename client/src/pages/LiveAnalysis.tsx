@@ -155,7 +155,7 @@ export default function LiveAnalysis() {
                 <div className="grid grid-cols-3 gap-4">
                   <IndexCard
                     title="GMI"
-                    value={analyzeWithAI.data.gmi}
+                    value={analyzeWithAI.data.dcft.indices.gmi}
                     min={-100}
                     max={100}
                     unit=""
@@ -164,7 +164,7 @@ export default function LiveAnalysis() {
                   />
                   <IndexCard
                     title="CFI"
-                    value={analyzeWithAI.data.cfi}
+                    value={analyzeWithAI.data.dcft.indices.cfi}
                     min={0}
                     max={100}
                     unit=""
@@ -173,7 +173,7 @@ export default function LiveAnalysis() {
                   />
                   <IndexCard
                     title="HRI"
-                    value={analyzeWithAI.data.hri}
+                    value={analyzeWithAI.data.dcft.indices.hri}
                     min={0}
                     max={100}
                     unit=""
@@ -184,7 +184,7 @@ export default function LiveAnalysis() {
 
                 {/* Emotion Vector */}
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-                  {Object.entries(analyzeWithAI.data.emotions).map(([emotion, value]) => (
+                  {Object.entries(analyzeWithAI.data.analysis.emotions).map(([emotion, value]) => (
                     <div key={emotion} className="p-3 bg-background/30 rounded-lg text-center">
                       <p className="text-xs text-muted-foreground capitalize">{emotion}</p>
                       <p className="text-lg font-bold cosmic-text">{value}</p>
@@ -194,13 +194,13 @@ export default function LiveAnalysis() {
 
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-muted-foreground">
-                    Dominant: <span className="text-accent font-semibold">{analyzeWithAI.data.dominantEmotion}</span>
+                    Dominant: <span className="text-accent font-semibold">{analyzeWithAI.data.analysis.dominantEmotion}</span>
                   </span>
                   <span className="text-muted-foreground">
-                    Sentiment: <span className="text-accent font-semibold">{analyzeWithAI.data.sentiment}</span>
+                    Sentiment: <span className="text-accent font-semibold">{analyzeWithAI.data.analysis.sentiment || 'neutral'}</span>
                   </span>
                   <span className="text-muted-foreground">
-                    Confidence: <span className="text-accent font-semibold">{analyzeWithAI.data.confidence}%</span>
+                    Confidence: <span className="text-accent font-semibold">{analyzeWithAI.data.analysis.confidence}%</span>
                   </span>
                 </div>
               </div>
@@ -243,14 +243,12 @@ export default function LiveAnalysis() {
                 {/* Status Badges */}
                 <div className="flex items-center gap-4">
                   <span className={`px-3 py-1 rounded-full text-xs ${
-                    countryAnalysis.isRealNews ? 'bg-green-900/30 text-green-400' : 'bg-yellow-900/30 text-yellow-400'
+                    countryAnalysis.dcft.result ? 'bg-green-900/30 text-green-400' : 'bg-yellow-900/30 text-yellow-400'
                   }`}>
-                    {countryAnalysis.isRealNews ? 'Real News Data' : 'Simulated Data'}
+                    {countryAnalysis.dcft.result ? 'Real Engine Data' : 'Simulated Data'}
                   </span>
-                  <span className={`px-3 py-1 rounded-full text-xs ${
-                    countryAnalysis.isAIAnalyzed ? 'bg-purple-900/30 text-purple-400' : 'bg-gray-900/30 text-gray-400'
-                  }`}>
-                    {countryAnalysis.isAIAnalyzed ? 'AI Analyzed' : 'Keyword Analysis'}
+                  <span className={`px-3 py-1 rounded-full text-xs bg-purple-900/30 text-purple-400`}>
+                    AI Analyzed
                   </span>
                   <Button
                     onClick={() => refetchCountry()}
@@ -265,7 +263,7 @@ export default function LiveAnalysis() {
                 <div className="grid grid-cols-3 gap-4">
                   <IndexCard
                     title="GMI"
-                    value={countryAnalysis.analysis.gmi}
+                    value={countryAnalysis.dcft.indices.gmi}
                     min={-100}
                     max={100}
                     unit=""
@@ -274,7 +272,7 @@ export default function LiveAnalysis() {
                   />
                   <IndexCard
                     title="CFI"
-                    value={countryAnalysis.analysis.cfi}
+                    value={countryAnalysis.dcft.indices.cfi}
                     min={0}
                     max={100}
                     unit=""
@@ -283,7 +281,7 @@ export default function LiveAnalysis() {
                   />
                   <IndexCard
                     title="HRI"
-                    value={countryAnalysis.analysis.hri}
+                    value={countryAnalysis.dcft.indices.hri}
                     min={0}
                     max={100}
                     unit=""
@@ -296,8 +294,8 @@ export default function LiveAnalysis() {
                 <div>
                   <h3 className="text-lg font-semibold cosmic-text mb-4">Analyzed Headlines</h3>
                   <div className="space-y-3">
-                    {countryAnalysis.articles.map((article: NewsArticle, index: number) => {
-                      const result = countryAnalysis.detailedResults[index] as AnalysisResult | undefined;
+                    {(countryAnalysis as any).sources?.news?.articles?.map((article: NewsArticle, index: number) => {
+                      const result = (countryAnalysis as any).detailedResults?.[index] as AnalysisResult | undefined;
                       return (
                         <div
                           key={index}

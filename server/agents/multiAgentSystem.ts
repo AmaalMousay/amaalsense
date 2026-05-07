@@ -38,6 +38,65 @@ class EvaluatorAgent {
 }
 
 // ============================================================
+// 2. ANALYST AGENT (المحلل العميق - Layer 18/24)
+// ============================================================
+class AnalystAgent {
+  /**
+   * تحليل موضوع معين وربطه بالذكاء التراكمي
+   */
+  async analyzeTopic(name: string, code: string) {
+    console.log(`[AnalystAgent] 🔍 تحليل النبض لـ: ${name} (${code})`);
+    try {
+      // استخدام المحرك الموحد لتحليل الحالة
+      const analysis = await analyzeForWeather(code, name);
+      return analysis;
+    } catch (error) {
+      console.error(`[AnalystAgent] Error analyzing ${name}:`, error);
+      return null;
+    }
+  }
+}
+
+// ============================================================
+// 3. ACTION AGENT (المنفذ - Executive Layer)
+// ============================================================
+class ActionAgent {
+  /**
+   * اتخاذ إجراء بناءً على التحليل (تنبيه، تقرير، دراسة حالة)
+   */
+  async takeAction(topic: string, result: any) {
+    if (!result) return;
+
+    // إذا كانت شدة الخوف عالية جداً، يتم إرسال تنبيه طوارئ تلقائي
+    if (result.fearLevel?.index > 85) {
+      await tool_sendEmergencyAlert({
+        topic,
+        severity: 'critical',
+        reason: `Critical fear detected: ${result.fearLevel.label}`,
+        indices: {
+          gmi: result.globalMood?.index || 50,
+          cfi: result.fearLevel?.index || 50,
+          hri: result.hopeIndex?.index || 50
+        }
+      });
+    }
+
+    // إذا كان هناك رنين عالي في الذاكرة، يتم تسجيل دراسة حالة
+    if (result.resonanceCount > 10) {
+      await tool_recordCaseStudy({
+        title: `Quantum Resonance in ${topic}`,
+        description: `Autonomous detection of high resonance patterns in ${topic} field.`,
+        topic,
+        snapshot: result
+      });
+    }
+
+    // توليد تقرير عميق إذا طلب النظام
+    await tool_generateDeepReport(topic, result);
+  }
+}
+
+// ============================================================
 // 4. OBSERVER AGENT (المستكشف المستقل - Active Research)
 // ============================================================
 class ObserverAgent {
@@ -47,6 +106,14 @@ class ObserverAgent {
     { name: 'ميكانيكا الكم', code: 'PHYS', domain: 'physics' },
     { name: 'ليبيا - سبها', code: 'LY_SB', domain: 'general' }
   ];
+
+  /**
+   * إضافة موضوع إلى قائمة المراقبة
+   */
+  addToWatchlist(name: string, code: string, domain: string) {
+    console.log(`[ObserverAgent] ➕ إضافة إلى قائمة المراقبة: ${name} (${code})`);
+    this.watchlist.push({ name, code, domain });
+  }
 
   /**
    * تنفيذ الاستشعار مع "البحث النشط" عند وجود نقص في المعلومات (الفضول البرمجي)

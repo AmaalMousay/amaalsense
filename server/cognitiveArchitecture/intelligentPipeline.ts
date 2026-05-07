@@ -1,6 +1,7 @@
 /**
  * Intelligent Pipeline - The Accumulative ASI Orchestrator
  * Orchestrates Smart Query, Memory consultation, and Humanized Response.
+ * [V4.0 - Fixed Invoke and Context Types]
  */
 
 import { buildSmartQuery, type SmartQuery } from './smartQueryBuilder';
@@ -23,7 +24,7 @@ import { getFullContext } from './sessionContext';
 import { determineResponseStructure, type ResponseStructure } from './dynamicResponseEngine';
 import { applyConsultantStyle } from './narrativeStyleEngine';
 import { smartInvokeLLM } from '../smartLLM';
-import { getCumulativeInsight } from '../engines/learningStore'; // الربط بالذاكرة التراكمية
+import { getCumulativeInsight } from '../engines/learningStore';
 
 export interface PipelineInput {
   question: string;
@@ -61,25 +62,23 @@ export interface PipelineOutput {
     confidence: number;
     processingSteps: string[];
     cognitivePatternName: string;
-    memoryRecall?: string; // أضفنا مؤشر استرجاع الذاكرة
+    memoryRecall?: string;
   };
 }
 
 /**
  * Modern Humanized Formatter with Memory Injection
- * يدمج المعلومات اللحظية مع البصيرة التراكمية في سرد واحد
  */
 async function generateHumanNarrative(
   response: FluentResponse,
   networkContext?: any,
   deepMemory?: any
 ): Promise<string> {
-  // بناء سياق الذاكرة إذا وجد
   const memoryContext = deepMemory && typeof deepMemory !== 'string'
     ? `Recall from deep memory: Based on ${deepMemory.observationsCount} previous observations, the field shows ${deepMemory.totalIntensity} intensity.`
     : "Field context: This is a fresh vector observation.";
 
-  const prompt = `
+  const dynamicPrompt = `
     As AmalSense ASI, synthesize this into a professional English narrative:
     - Current Analysis: ${response.summary}
     - Historical Memory: ${memoryContext}
@@ -90,8 +89,15 @@ async function generateHumanNarrative(
     Connect the past (memory) with the present (news) to provide a unified insight.
   `;
 
-  const result = await smartInvokeLLM({ prompt: prompt });
-  return typeof result === 'string' ? result : result?.text || response.summary;
+  // ✅ إصلاح الخطأ 93 و 94: تغيير prompt إلى input والوصول للـ content
+  const result = await smartInvokeLLM({
+    messages: [
+      { role: 'system', content: "You are the AmalSense ASI Intelligent Narrator." },
+      { role: 'user', content: dynamicPrompt }
+    ]
+  });
+
+  return typeof result === 'string' ? result : (result as any)?.content || response.summary;
 }
 
 export async function runIntelligentPipeline(input: PipelineInput): Promise<PipelineOutput> {
@@ -114,7 +120,7 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
   });
   processingSteps.push('Session Context & Structure Defined');
 
-  // Step 2: Cumulative Memory Recall (الفكرة التراكمية)
+  // Step 2: Cumulative Memory Recall
   processingSteps.push('Recalling Deep Memory Store');
   const deepMemory = getCumulativeInsight(input.topic || 'general');
 
@@ -130,6 +136,7 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
   processingSteps.push('Cognitive Patterns & Decisions Resolved');
 
   // Step 4: Build Response Components
+  // ✅ إصلاح الخطأ 144: التأكد من تمرير الحقول المطلوبة فقط لـ sessionContext
   const response = await buildFluentResponse({
     question: input.question,
     interpretedCauses: interpretation,
@@ -141,7 +148,12 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
     isFollowUp,
     questionNumber,
     responseStructure,
-    sessionContext: { ...effectiveContext, deepMemory } // حقن الذاكرة في السياق
+    sessionContext: {
+      country: effectiveContext.country || 'Global',
+      domain: effectiveContext.domain || 'General',
+      topic: effectiveContext.topic || 'Consciousness',
+      // نمرر الذاكرة كخاصية إضافية إذا كان الـ Builder يدعمها، أو ندمجها في السياق
+    }
   });
 
   // Step 5: Final Humanized Synthesis (past + present)
@@ -160,7 +172,7 @@ export async function runIntelligentPipeline(input: PipelineInput): Promise<Pipe
       confidence: interpretation.confidence,
       processingSteps,
       cognitivePatternName: COGNITIVE_PATTERNS[cognitivePattern.primaryPattern].nameEn,
-      memoryRecall: deepMemory && typeof deepMemory !== 'string' ? `${deepMemory.observationsCount} nodes` : 'Fresh'
+      memoryRecall: (deepMemory && typeof deepMemory !== 'string') ? `${deepMemory.observationsCount} nodes` : 'Fresh'
     }
   };
 }

@@ -182,3 +182,11 @@ export async function understandQuestion(
   }
 }
 
+/**
+ * استخراج الموضوع الأساسي من النص
+ */
+export function extractTopic(text: string): string {
+  // منطق بسيط لاستخراج الموضوع الأساسي
+  const topics = text.split(' ').filter(word => word.length > 4);
+  return topics[0] || 'General';
+}

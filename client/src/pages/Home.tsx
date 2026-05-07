@@ -362,8 +362,10 @@ export default function Home() {
   const handleAnalyze = async () => {
     if (!analysisTopic.trim()) return;
     setIsAnalyzing(true);
-    // Navigate to new AI-powered analysis page (country auto-detected)
-    navigate(`/smart-analysis?topic=${encodeURIComponent(analysisTopic)}`);
+    // Simulate "conscious pulse" loading before transition
+    setTimeout(() => {
+      navigate(`/chat?topic=${encodeURIComponent(analysisTopic)}`);
+    }, 600);
   };
 
   // Fetch global mood from Unified Engine

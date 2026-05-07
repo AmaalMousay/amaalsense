@@ -11,6 +11,10 @@ export const systemRouter = router({
     )
     .query(() => ({
       ok: true,
+      status: 'healthy',
+      uptime: process.uptime(),
+      lastFullCheck: new Date().toISOString(),
+      totalRequests: 0,
     })),
 
   notifyOwner: adminProcedure

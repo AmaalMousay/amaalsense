@@ -12,7 +12,6 @@ import {
   fetchFromPlatforms,
 } from "./socialMediaService";
 import { analyzeTextsWithAI } from "./aiSentimentAnalyzer";
-import { analyzeHybrid } from "./hybridAnalyzer";
 
 export const searchRouter = router({
   /**

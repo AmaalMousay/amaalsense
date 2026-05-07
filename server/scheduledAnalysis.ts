@@ -285,7 +285,7 @@ async function analyzeCountryViaEngine(countryCode: string): Promise<{ success: 
       hri: ctx.dcft?.indices?.hri ?? 50,
       sentimentScore: 0,
       dominantEmotion: ctx.collection?.eventVector?.dominantEmotion || 'neutral',
-      confidence: ctx.analysis?.confidence?.overall || 0,
+      confidence: ctx.analysis?.confidence || 0,
       sources: [],
     };
     await saveAnalysisSession(result, {

@@ -41,7 +41,11 @@ export interface Layer1Output {
   
   // معلومات إضافية
   timeContext?: string; // "past", "present", "future"
-  geographicContext?: string;
+  geographicContext?: {
+    countryCode?: string;
+    locationName?: string;
+    region?: string;
+  };
   isComparative: boolean;
   isOpinionBased: boolean;
   
@@ -222,6 +226,10 @@ function getLayer1Fallback(
     hasFactualError: false,
     clarificationNeeded: false,
     confidence: 60,
+    geographicContext: {
+      countryCode: isArabic ? 'GLOBAL' : 'GLOBAL',
+      locationName: isArabic ? 'عالمي' : 'Global'
+    },
     isComparative: false,
     readyForAnalysis: true,
     suggestedAnalysisType: determineSuggestedAnalysisType(questionType, false)

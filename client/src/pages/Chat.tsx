@@ -40,6 +40,18 @@ export default function Chat() {
   const [currentConversationId, setCurrentConversationId] = useState<number | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Auto-trigger if topic is passed in URL (from Omni-Bar)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const initialTopic = params.get('topic');
+    if (initialTopic && !isLoading && messages.length === 0) {
+      setInput(initialTopic);
+      window.history.replaceState({}, document.title, '/chat');
+      // Use setTimeout to ensure state is settled before sending
+      setTimeout(() => handleSendMessage(initialTopic), 100);
+    }
+  }, []);
+
   // Use the unified engine (engine.smartAnalyze) instead of old consciousness.analyze
   const smartAnalyze = trpc.engine.smartAnalyze.useMutation();
 
@@ -118,10 +130,11 @@ export default function Chat() {
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSendMessage = async (overrideInput?: string | any) => {
+    const textToSubmit = typeof overrideInput === 'string' ? overrideInput : input;
+    if (!textToSubmit.trim() || isLoading) return;
 
-    const userInput = input.trim();
+    const userInput = textToSubmit.trim();
 
     // Add user message to UI
     const userMessage: ChatMessage = {
@@ -139,11 +152,12 @@ export default function Chat() {
       // Use the unified network engine via engine.smartAnalyze
       // Pass conversationId for multi-turn context memory
       const convId = currentConversationId ? `chat_${currentConversationId}` : `chat_new_${Date.now()}`;
-      const result = await smartAnalyze.mutateAsync({
+      const resultRaw = await smartAnalyze.mutateAsync({
         query: userInput,
         language: 'ar',
         conversationId: convId,
       });
+      const result = resultRaw as any;
 
       // Build assistant message from unified engine result
       const assistantMessage: ChatMessage = {

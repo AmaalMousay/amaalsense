@@ -72,8 +72,11 @@ async function generateHumanNarrative(report: any): Promise<string> {
   `;
 
   try {
-    const result = await smartInvokeLLM({ prompt: prompt });
-    return aiResponse || "I am observing a calm wave interference in the collective consciousness today, with minor anxiety fluctuations in specific geopolitical regions.";
+    const result = await smartInvokeLLM({
+      messages: [{ role: 'user', content: prompt }]
+    });
+    const content = result.choices[0]?.message?.content || "";
+    return typeof content === 'string' ? content : JSON.stringify(content);
   } catch (error) {
     return "Stable patterns detected across the consciousness field, with positive vectors forming towards general emotional recovery.";
   }

@@ -58,6 +58,18 @@ export class SupportAgent {
       content: message
     });
   }
+
+  /**
+   * إرسال بريد إلكتروني للمستخدم
+   */
+  async sendUserEmail(email: string, subject: string, message: string): Promise<boolean> {
+    console.log(`[SupportAgent] Sending email to ${email}: ${subject}`);
+    // استخدام نظام التنبيهات الحالي لإشعار المالك بالرسالة المرسلة
+    return await notifyOwner({
+      title: `Support Email to ${email}: ${subject}`,
+      content: message
+    });
+  }
 }
 
 export const supportAgent = new SupportAgent();

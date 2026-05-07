@@ -7,7 +7,6 @@ import PageErrorBoundary from "./components/PageErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 // Analyzer page removed - analysis now works directly from Home page
-import Dashboard from "./pages/Dashboard";
 // Map, Live, Trends, Weather pages removed - functionality integrated into results pages
 import Theory from "./pages/Theory";
 import About from "./pages/About";
@@ -23,13 +22,13 @@ import NotificationSettings from "./pages/NotificationSettings";
 import Checkout from "./pages/Checkout";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
-import TopicAnalysisResults from "./pages/TopicAnalysisResults";
+import Privacy from "./pages/Privacy";
 import CountryResults from "./pages/CountryResults";
 import UseCases from "./pages/UseCases";
 import CompareCountries from "./pages/CompareCountries";
 import CustomAlerts from "./pages/CustomAlerts";
 import ApiDocs from "./pages/ApiDocs";
-import EnterpriseDashboard from "./pages/EnterpriseDashboard";
+import ApiDocs from "./pages/ApiDocs";
 import TopicTimeline from "./pages/TopicTimeline";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -39,17 +38,11 @@ import UserDashboard from "./pages/UserDashboard";
 import Profile from "./pages/Profile";
 import Reports from "./pages/Reports";
 import FollowedTopics from "./pages/FollowedTopics";
-import JournalistDashboard from "./pages/JournalistDashboard";
-import ResearcherDashboard from "./pages/ResearcherDashboard";
 // Markets page removed - functionality integrated into Smart Analysis
-import SmartAnalysis from "./pages/SmartAnalysis";
-import MetacognitionDashboard from "./pages/MetacognitionDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
-import { AgentDashboard } from "./pages/AgentDashboard";
 import { ApiManagement } from "./pages/ApiManagement";
-import TraderDashboard from "./pages/TraderDashboard";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
-import { NewFeaturesDashboard } from "./pages/NewFeaturesDashboard";
+import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import SearchPageBound from "./pages/SearchPageBound";
 import MapsBound from "./pages/MapsBound";
@@ -60,7 +53,7 @@ import Markets from "./pages/Markets";
 import SettingsPage from "./pages/SettingsPage";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import Chat from "./pages/Chat";
-import Weather from "./pages/Weather";
+import Chat from "./pages/Chat";
 import Indices from "./pages/Indices";
 import SystemHealth from "./pages/SystemHealth";
 import SourceMonitor from "./pages/SourceMonitor";
@@ -68,13 +61,9 @@ import EmotionalWeather from "./pages/EmotionalWeather";
 import NotificationsPage from "./pages/NotificationsPage";
 import { DCFTPage } from "./pages/DCFTPage";
 import { EventVectorPage } from "./pages/EventVectorPage";
-import { TopicAnalysisPage } from "./pages/TopicAnalysisPage";
-import EmotionAnalysisPage from "./pages/EmotionAnalysisPage";
-import RegionAnalysisPage from "./pages/RegionAnalysisPage";
-import ImpactAnalysisPage from "./pages/ImpactAnalysisPage";
-import FusionEngineAnalysisPage from "./pages/FusionEngineAnalysisPage";
+import { EventVectorPage } from "./pages/EventVectorPage";
 import EngineDashboard from "./pages/EngineDashboard";
-import PredictionsDashboard from "./pages/PredictionsDashboard";
+import EngineDashboard from "./pages/EngineDashboard";
 import HistoricalEvents from "./pages/HistoricalEvents";
 import EventComparison from "./pages/EventComparison";
 import EventPrediction from "./pages/EventPrediction";
@@ -85,16 +74,13 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       {/* Analyzer route removed - analysis now works from Home page */}
-      <Route path={"/dashboard"} component={Dashboard} />
+      {/* Analyzer route removed - analysis now works from Home page */}
       <Route path={"/system-health"} component={SystemHealth} />
       <Route path={"/source-monitor"} component={SourceMonitor} />
       
       {/* Results Pages - wrapped with PageErrorBoundary */}
-      <Route path="/analysis-results">{() => <PageErrorBoundary pageName="TopicAnalysis"><TopicAnalysisResults /></PageErrorBoundary>}</Route>
-      <Route path="/country/:code">{(params) => <PageErrorBoundary pageName="CountryResults"><CountryResults /></PageErrorBoundary>}</Route>
-      <Route path={"/new-features"} component={NewFeaturesDashboard} />
       <Route path="/chat">{() => <PageErrorBoundary pageName="Chat"><Chat /></PageErrorBoundary>}</Route>
-       <Route path={"/weather"} component={Weather} />
+      <Route path="/country/:code">{(params) => <PageErrorBoundary pageName="CountryResults"><CountryResults /></PageErrorBoundary>}</Route>
       <Route path={"/emotional-weather"} component={EmotionalWeather} />
       <Route path={"/indices"} component={Indices} />
       
@@ -115,11 +101,7 @@ function Router() {
       <Route path={"/notifications"} component={NotificationsPage} />
       <Route path={"/dcft"} component={DCFTPage} />
       <Route path={"/event-vectors"} component={EventVectorPage} />
-      <Route path={"/topic-analysis"} component={TopicAnalysisPage} />
-      <Route path={"/emotion-analysis"} component={EmotionAnalysisPage} />
-      <Route path={"/region-analysis"} component={RegionAnalysisPage} />
-      <Route path={"/impact-analysis"} component={ImpactAnalysisPage} />
-      <Route path={"/fusion-analysis"} component={FusionEngineAnalysisPage} />
+      <Route path={"/event-vectors"} component={EventVectorPage} />
       <Route path={"/engine-dashboard"} component={EngineDashboard} />
       <Route path={"/notification-settings"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
@@ -129,7 +111,7 @@ function Router() {
       <Route path={"/compare"} component={CompareCountries} />
       <Route path={"/alerts"} component={CustomAlerts} />
       <Route path={"/api-docs"} component={ApiDocs} />
-      <Route path={"/enterprise"} component={EnterpriseDashboard} />
+      <Route path={"/api-docs"} component={ApiDocs} />
       <Route path={"/topic-timeline"} component={TopicTimeline} />
       
       {/* Auth Pages */}
@@ -145,14 +127,8 @@ function Router() {
       <Route path={"/followed-topics"} component={FollowedTopics} />
       
       {/* Professional Dashboards */}
-      <Route path={"/journalist"} component={JournalistDashboard} />
-      <Route path={"/researcher"} component={ResearcherDashboard} />
-      <Route path={"/trader"} component={TraderDashboard} />
+      {/* Professional Dashboards Removed */}
       <Route path={"/api-management"} component={ApiManagement} />
-      {/* Markets route removed - use Smart Analysis instead */}
-      
-      {/* AI-Powered Smart Analysis - wrapped with PageErrorBoundary */}
-      <Route path="/smart-analysis">{() => <PageErrorBoundary pageName="SmartAnalysis"><SmartAnalysis /></PageErrorBoundary>}</Route>
       
       {/* Search & Data Pages */}
       <Route path={"/search"} component={SearchPageBound} />
@@ -164,14 +140,11 @@ function Router() {
       <Route path={"/settings"} component={SettingsPage} />
       
       {/* Metacognition Dashboard */}
-      <Route path={"/metacognition"} component={MetacognitionDashboard} />
-      
       {/* Advanced Predictions */}
-      <Route path={"/predictions"} component={PredictionsDashboard} />
       <Route path={"/historical-events"} component={HistoricalEvents} />
       <Route path={"/event-comparison"} component={EventComparison} />
       <Route path={"/event-prediction"} component={EventPrediction} />
-      <Route path={"/agents"} component={AgentDashboard} />
+      <Route path={"/event-prediction"} component={EventPrediction} />
       
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

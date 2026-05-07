@@ -260,12 +260,13 @@ export default function CountryResults() {
     );
   }
 
-  const moodStatus = getMoodStatus(countryData?.gmi || 0);
-  const politicalNews = countryData?.news?.political || [];
-  const economicNews = countryData?.news?.economic || [];
-  const socialNews = countryData?.news?.social || [];
+  const data = countryData as any;
+  const moodStatus = getMoodStatus(data?.gmi || data?.dcft?.indices?.gmi || 0);
+  const politicalNews = data?.news?.political || [];
+  const economicNews = data?.news?.economic || [];
+  const socialNews = data?.news?.social || [];
   const allNews = [...politicalNews, ...economicNews, ...socialNews];
-  const trendingTopics = countryData?.trendingKeywords || [];
+  const trendingTopics = data?.trendingKeywords || data?.analysis?.themes?.map((t: string) => ({ topic: t, category: 'General' })) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -287,7 +288,7 @@ export default function CountryResults() {
               <Badge className={`text-lg px-4 py-2 ${moodStatus.bgColor} ${moodStatus.color} ${moodStatus.borderColor}`}>
                 {isRTL ? moodStatus.labelAr : moodStatus.label}
               </Badge>
-              {countryData?.isRealData && (
+              {data?.isRealData && (
                 <Badge variant="outline" className="text-green-500 border-green-500/30">
                   <CheckCircle className="w-3 h-3 mr-1" />
                   {isRTL ? 'بيانات حقيقية' : 'Real Data'}
@@ -317,13 +318,13 @@ export default function CountryResults() {
                   <div>
                     <p className="text-sm text-muted-foreground">GMI - {isRTL ? 'مؤشر المزاج العام' : 'Global Mood Index'}</p>
                     <div className="flex items-baseline gap-2">
-                      <p className="text-4xl font-bold">{(countryData?.gmi ?? 0).toFixed(1)}</p>
+                      <p className="text-4xl font-bold">{(data?.gmi ?? 0).toFixed(1)}</p>
                       <span className="text-muted-foreground text-sm">/ 100</span>
                     </div>
                   </div>
                   <div className={`w-14 h-14 rounded-full flex items-center justify-center ${moodStatus.bgColor}`}>
                     <span className={`text-2xl font-bold ${moodStatus.color}`}>
-                      {(countryData?.gmi ?? 0) >= 0 ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
+                      {(data?.gmi ?? 0) >= 0 ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
                     </span>
                   </div>
                 </div>
@@ -332,43 +333,43 @@ export default function CountryResults() {
             </Card>
 
             {/* CFI */}
-            <Card className={`border-2 ${(countryData?.cfi ?? 50) > 60 ? 'border-red-500/30' : (countryData?.cfi ?? 50) > 40 ? 'border-yellow-500/30' : 'border-green-500/30'}`}>
+            <Card className={`border-2 ${(data?.cfi ?? 50) > 60 ? 'border-red-500/30' : (data?.cfi ?? 50) > 40 ? 'border-yellow-500/30' : 'border-green-500/30'}`}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-2">
                   <div>
                     <p className="text-sm text-muted-foreground">CFI - {isRTL ? 'مؤشر الخوف الجماعي' : 'Crisis Fear Index'}</p>
                     <div className="flex items-baseline gap-2">
-                      <p className="text-4xl font-bold">{(countryData?.cfi ?? 50).toFixed(1)}</p>
+                      <p className="text-4xl font-bold">{(data?.cfi ?? 50).toFixed(1)}</p>
                       <span className="text-muted-foreground text-sm">/ 100</span>
                     </div>
                   </div>
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${(countryData?.cfi ?? 50) > 60 ? 'bg-red-500/10' : 'bg-yellow-500/10'}`}>
-                    <AlertTriangle className={`w-6 h-6 ${(countryData?.cfi ?? 50) > 60 ? 'text-red-500' : 'text-yellow-500'}`} />
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${(data?.cfi ?? 50) > 60 ? 'bg-red-500/10' : 'bg-yellow-500/10'}`}>
+                    <AlertTriangle className={`w-6 h-6 ${(data?.cfi ?? 50) > 60 ? 'text-red-500' : 'text-yellow-500'}`} />
                   </div>
                 </div>
-                <p className={`text-sm font-medium ${(countryData?.cfi ?? 50) > 60 ? 'text-red-500' : (countryData?.cfi ?? 50) > 40 ? 'text-yellow-500' : 'text-green-500'}`}>
-                  {(countryData?.cfi ?? 50) > 60 ? (isRTL ? 'مرتفع' : 'High') : (countryData?.cfi ?? 50) > 40 ? (isRTL ? 'متوسط' : 'Medium') : (isRTL ? 'منخفض' : 'Low')}
+                <p className={`text-sm font-medium ${(data?.cfi ?? 50) > 60 ? 'text-red-500' : (data?.cfi ?? 50) > 40 ? 'text-yellow-500' : 'text-green-500'}`}>
+                  {(data?.cfi ?? 50) > 60 ? (isRTL ? 'مرتفع' : 'High') : (data?.cfi ?? 50) > 40 ? (isRTL ? 'متوسط' : 'Medium') : (isRTL ? 'منخفض' : 'Low')}
                 </p>
               </CardContent>
             </Card>
 
             {/* HRI */}
-            <Card className={`border-2 ${(countryData?.hri ?? 50) > 60 ? 'border-green-500/30' : (countryData?.hri ?? 50) > 40 ? 'border-yellow-500/30' : 'border-red-500/30'}`}>
+            <Card className={`border-2 ${(data?.hri ?? 50) > 60 ? 'border-green-500/30' : (data?.hri ?? 50) > 40 ? 'border-yellow-500/30' : 'border-red-500/30'}`}>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-2">
                   <div>
                     <p className="text-sm text-muted-foreground">HRI - {isRTL ? 'مؤشر الأمل والمرونة' : 'Hope Resilience Index'}</p>
                     <div className="flex items-baseline gap-2">
-                      <p className="text-4xl font-bold">{(countryData?.hri ?? 50).toFixed(1)}</p>
+                      <p className="text-4xl font-bold">{(data?.hri ?? 50).toFixed(1)}</p>
                       <span className="text-muted-foreground text-sm">/ 100</span>
                     </div>
                   </div>
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${(countryData?.hri ?? 50) > 60 ? 'bg-green-500/10' : 'bg-yellow-500/10'}`}>
-                    <TrendingUp className={`w-6 h-6 ${(countryData?.hri ?? 50) > 60 ? 'text-green-500' : 'text-yellow-500'}`} />
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${(data?.hri ?? 50) > 60 ? 'bg-green-500/10' : 'bg-yellow-500/10'}`}>
+                    <TrendingUp className={`w-6 h-6 ${(data?.hri ?? 50) > 60 ? 'text-green-500' : 'text-yellow-500'}`} />
                   </div>
                 </div>
-                <p className={`text-sm font-medium ${(countryData?.hri ?? 50) > 60 ? 'text-green-500' : (countryData?.hri ?? 50) > 40 ? 'text-yellow-500' : 'text-red-500'}`}>
-                  {(countryData?.hri ?? 50) > 60 ? (isRTL ? 'مرتفع' : 'High') : (countryData?.hri ?? 50) > 40 ? (isRTL ? 'متوسط' : 'Medium') : (isRTL ? 'منخفض' : 'Low')}
+                <p className={`text-sm font-medium ${(data?.hri ?? 50) > 60 ? 'text-green-500' : (data?.hri ?? 50) > 40 ? 'text-yellow-500' : 'text-red-500'}`}>
+                  {(data?.hri ?? 50) > 60 ? (isRTL ? 'مرتفع' : 'High') : (data?.hri ?? 50) > 40 ? (isRTL ? 'متوسط' : 'Medium') : (isRTL ? 'منخفض' : 'Low')}
                 </p>
               </CardContent>
             </Card>
@@ -376,7 +377,7 @@ export default function CountryResults() {
         </section>
 
         {/* Summary */}
-        {countryData?.aiSummary && (
+        {data?.aiSummary && (
           <section>
             <Card className={`${moodStatus.bgColor} border ${moodStatus.borderColor}`}>
               <CardContent className="pt-6">
@@ -385,12 +386,12 @@ export default function CountryResults() {
                   {isRTL ? 'ملخص التحليل' : 'Analysis Summary'}
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  {countryData?.aiSummary}
+                  {data?.aiSummary}
                 </p>
                 <div className="flex items-center gap-4 mt-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Newspaper className="w-3 h-3" />
-                    {countryData?.sourceCount || allNews.length} {isRTL ? 'مصدر' : 'sources'}
+                    {data?.sourceCount || allNews.length} {isRTL ? 'مصدر' : 'sources'}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />

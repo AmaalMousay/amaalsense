@@ -402,7 +402,6 @@ function SupportChat() {
       </div>
       <form onSubmit={handleSend} className="space-y-2">
         <Input 
-          size="sm" 
           placeholder="Your Email" 
           value={email} 
           onChange={(e) => setEmail(e.target.value)} 

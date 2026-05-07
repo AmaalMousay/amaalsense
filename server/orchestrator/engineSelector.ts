@@ -26,8 +26,14 @@ export interface EngineResults {
   scienceContext: any[];
   executionTime: number;
   status: string;
+  enginesUsed: string[];
+  dcft?: { gmi: number; cfi: number; hri: number };
+  emotion?: { dominantEmotion: string; emotions: Record<string, number> };
+  meta?: { confidence: number };
   realNews?: {
     items: RealNewsItem[];
+    topKeywords: string[];
+    topSources: string[];
   };
 }
 
@@ -38,7 +44,8 @@ export interface EngineResults {
 /**
  * تنفيذ المعالجة الشاملة: (بيانات -> متجه -> معرفة -> ذكاء اصطناعي)
  */
-export async function executeUniversalEngine(
+export async function executeEngines(
+  intent: any,
   topic: string,
   country?: string,
   question?: string
@@ -71,7 +78,24 @@ export async function executeUniversalEngine(
       scienceContext: ragContext.scientificKnowledge,
       executionTime,
       status: scientificCheck.isValid ? 'Validated' : 'Needs Review',
-      realNews: { items: rawData.items }
+      enginesUsed: ['news', 'dcft', 'rag', 'science'],
+      dcft: {
+        gmi: Math.round(vector.polarity * 100),
+        cfi: Math.round((vector.emotions.fear + vector.emotions.anger) / 2 * 100),
+        hri: Math.round((vector.emotions.hope + vector.emotions.joy) / 2 * 100),
+      },
+      emotion: {
+        dominantEmotion: vector.dominantEmotion,
+        emotions: vector.emotions,
+      },
+      meta: {
+        confidence: 1 - vector.uncertainty,
+      },
+      realNews: { 
+        items: rawData.items,
+        topKeywords: vector.trendingKeywords || [],
+        topSources: [...new Set(rawData.items.map(i => i.source))]
+      }
     };
 
   } catch (error) {
@@ -111,3 +135,24 @@ export async function fetchRealNewsData(
     return { items: [] };
   }
 }
+
+/**
+ * تنسيق النتائج للذكاء الاصطناعي
+ */
+export function formatResultsForLLM(results: EngineResults): string {
+  return `
+[Engine Analysis Result]
+Topic: ${results.vector?.query || 'Unknown'}
+Status: ${results.status}
+Reasoning: ${results.reasoning}
+
+[Indicators]
+GMI (Mood): ${results.dcft?.gmi || 0}
+CFI (Fear): ${results.dcft?.cfi || 50}
+HRI (Hope): ${results.dcft?.hri || 50}
+Dominant Emotion: ${results.emotion?.dominantEmotion || 'Neutral'}
+
+[News Context]
+${results.realNews?.items.slice(0, 3).map(i => `- ${i.title} (${i.source})`).join('\n') || 'No recent news available.'}
+  `;
+}

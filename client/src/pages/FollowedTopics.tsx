@@ -363,7 +363,7 @@ export default function FollowedTopics() {
                             </div>
                             <div className="flex items-center gap-2">
                               <Switch
-                                checked={topic.isActive === 1}
+                                checked={!!topic.isActive}
                                 onCheckedChange={(checked) => 
                                   toggleActiveMutation.mutate({ id: topic.id, isActive: checked })
                                 }

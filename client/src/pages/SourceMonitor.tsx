@@ -307,9 +307,9 @@ export default function SourceMonitor() {
                 />
               )}
             </div>
-            {healthData?.lastFullCheck && (
+            {(healthData as any)?.lastFullCheck && (
               <p className="text-[10px] text-gray-500 mt-2">
-                Last full check: {formatTime(healthData.lastFullCheck)}
+                Last full check: {(healthData as any).lastFullCheck}
               </p>
             )}
           </CardContent>

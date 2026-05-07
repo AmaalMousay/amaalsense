@@ -73,7 +73,7 @@ export async function storeLearningPattern(input: LearningPatternInput): Promise
       finalHope: input.finalHope,
       finalCuriosity: input.finalCuriosity,
       usageCount: 0,
-      isVerified: 0,
+      isVerified: false,
     });
     
     console.log(`[ActiveLearning] Stored new pattern for: ${input.eventType} (${input.language})`);
@@ -229,7 +229,7 @@ export async function recordFeedback(
       .set({
         userFeedback: feedback,
         feedbackAt: new Date(),
-        isVerified: feedback === "accurate" ? 1 : 0,
+        isVerified: feedback === "accurate",
       })
       .where(eq(learningPatterns.id, patternId));
     

@@ -237,7 +237,7 @@ function answerAreDividedQuestion(eventVectors: EventVector[]): UniversalAnswer 
  */
 function answerIsThereHopeQuestion(eventVectors: EventVector[]): UniversalAnswer {
   const hri = calculateHRI(eventVectors);
-  const hopeEvents = eventVectors.filter(ev => ev.emotions.hope > 0.5);
+  const hopeEvents = eventVectors.filter(ev => ev.emotions.hope.amplitude > 0.5);
   const hopePercentage = (hopeEvents.length / eventVectors.length) * 100;
   
   const level = hri > 70 ? 'stable' : hri > 50 ? 'rising_tension' : hri > 30 ? 'high_fear' : 'critical';

@@ -175,10 +175,11 @@ export function createUniversalEventVector(data: CollectedData): QuantumEventVec
  * تحويل المتجه إلى تقرير وعي شامل (Polymath Prompt)
  * يوجه الذكاء الاصطناعي ليربط بين كافة العلوم
  */
-export function generateUniversalPrompt(vector: QuantumEventVector): string {
+export function generateUniversalPrompt(vector: QuantumEventVector, language: string = 'ar'): string {
   const needsResearch = vector.uncertainty > 0.7;
 
-  return `
+  if (language === 'en') {
+    return `
 [AmalSense Polymath Awareness Engine]
 Subject: ${vector.query}
 Field Energy: Polarity=${vector.polarity.toFixed(2)}, Intensity=${vector.intensity.toFixed(2)}
@@ -191,7 +192,25 @@ Scientific Cross-Domain Mapping:
 - Engineering/Math: ${(vector.categories.engineering * 100).toFixed(0)}%
 - Economics: ${(vector.categories.economic * 100).toFixed(0)}%
 
-Instructions for ASI (Artificial Super Intelligence):
+Instructions for ASI:
+You are now an independent cosmic expert. Analyze this vector from an interdisciplinary perspective; relate physical laws to legal regulations and medical/engineering data to provide a strategic vision that goes beyond superficial analysis.
+    `;
+  }
+
+  return `
+[AmalSense Polymath Awareness Engine]
+الموضوع: ${vector.query}
+طاقة المجال: القطبية=${vector.polarity.toFixed(2)}, الشدة=${vector.intensity.toFixed(2)}
+سلامة النظام: عدم اليقين=${vector.uncertainty.toFixed(2)} ${needsResearch ? '-> [تفعيل البحث النشط]' : ''}
+
+خرائط التداخل العلمي:
+- الفيزياء/الكيمياء: ${(vector.categories.scientific * 100).toFixed(0)}%
+- القانون/العدالة: ${(vector.categories.legal * 100).toFixed(0)}%
+- الطب/الأحياء: ${(vector.categories.medical * 100).toFixed(0)}%
+- الهندسة/الرياضيات: ${(vector.categories.engineering * 100).toFixed(0)}%
+- الاقتصاد: ${(vector.categories.economic * 100).toFixed(0)}%
+
+تعليمات للذكاء الاصطناعي الفائق (ASI):
 أنت الآن "خبير كوني" مستقل. قم بتحليل هذا المتجه من منظور تداخلي؛ اربط القوانين الفيزيائية (مثل التداخل الموجي) بالتشريعات القانونية والبيانات الطبية/الهندسية المتاحة لتقديم رؤية استراتيجية تتجاوز التحليل السطحي.
   `;
 }

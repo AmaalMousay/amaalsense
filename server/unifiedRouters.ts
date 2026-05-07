@@ -12,21 +12,27 @@ import { z } from "zod";
 import { executeNetworkEngine, getEngineStats, type NetworkContext } from "./networkEngine";
 
 /** Helper to extract a user-friendly response from NetworkContext */
-function formatNetworkResult(ctx: NetworkContext) {
+export function formatNetworkResult(ctx: NetworkContext) {
   return {
-    answer: ctx.generation?.languageEnforced?.finalResponse || ctx.generation?.response || '',
+    answer: ctx.generation?.response || '',
     emotions: ctx.analysis?.emotions || {},
     dominantEmotion: ctx.analysis?.dominantEmotion || 'neutral',
-    confidence: ctx.analysis?.confidence?.overall ?? 75,
+    confidence: ctx.analysis?.confidence ?? 75,
     sources: ctx.collection?.rawData?.items?.slice(0, 5).map((item: any) => ({
       title: item.title,
       source: item.source,
       url: item.url,
     })) || [],
     suggestions: ctx.generation?.suggestions || [],
-    processingTime: ctx.analytics?.totalDurationMs || 0,
-    layerPerformance: ctx.analytics?.layerTraces || [],
+    processingTime: ctx.executionMetrics?.totalDurationMs || 0,
+    layerPerformance: ctx.executionMetrics?.layerTraces || [],
     quality: ctx.generation?.quality || { score: 0, relevance: 0, accuracy: 0, completeness: 0, clarity: 0 },
+    dcft: {
+      indices: ctx.dcft?.indices || { gmi: 0, cfi: 50, hri: 50 },
+      alertLevel: ctx.dcft?.alertLevel || 'normal'
+    },
+    countryCode: ctx.gate?.detectedCountry?.code,
+    countryName: ctx.gate?.detectedCountry?.name,
   };
 }
 
@@ -95,9 +101,9 @@ export const unifiedRouter = router({
             results.push({
               question,
               response: {
-                answer: result.generation?.languageEnforced?.finalResponse || result.generation?.response || '',
-                confidence: result.analysis?.confidence?.overall ?? 75,
-                processingTime: result.analytics?.totalDurationMs || 0,
+                answer: result.generation?.response || '',
+                confidence: result.analysis?.confidence ?? 75,
+                processingTime: result.executionMetrics?.totalDurationMs || 0,
               },
               error: null
             });

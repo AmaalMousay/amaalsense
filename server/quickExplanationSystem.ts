@@ -5,7 +5,7 @@
  * Answers: "What is the world experiencing right now?"
  */
 
-import { EventVector } from './eventVectorModel';
+import { type EventVector } from './eventVectorEngine';
 
 export interface QuickExplanation {
   timestamp: number;
@@ -47,9 +47,9 @@ export interface QuickExplanation {
 function getTopEvents(eventVectors: EventVector[], limit: number = 5): EventVector[] {
   return eventVectors
     .sort((a, b) => {
-      // Sort by intensity * relevance * recency
-      const scoreA = a.intensity * a.relevanceWeight * a.timeWeight;
-      const scoreB = b.intensity * b.relevanceWeight * b.timeWeight;
+      // Sort by intensity and data volume
+      const scoreA = a.intensity * (a.totalItems / 100);
+      const scoreB = b.intensity * (b.totalItems / 100);
       return scoreB - scoreA;
     })
     .slice(0, limit);
@@ -62,7 +62,7 @@ function determineMainTheme(topEvents: EventVector[]): { theme: string; themeAra
   const topicCounts: Record<string, number> = {};
   
   for (const ev of topEvents) {
-    topicCounts[ev.topic] = (topicCounts[ev.topic] || 0) + 1;
+    topicCounts[ev.dominantCategory] = (topicCounts[ev.dominantCategory] || 0) + 1;
   }
   
   const dominantTopic = Object.entries(topicCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'global';
@@ -106,8 +106,9 @@ function generateExplanation(topEvents: EventVector[]): { explanation: QuickExpl
   
   // Sentence 1: What is happening
   const event1 = top3[0];
-  const sentence1 = `The world is experiencing significant ${event1.topic} challenges, particularly in ${event1.region}.`;
-  const sentence1Arabic = `يشهد العالم تحديات كبيرة في ${event1.topic}، خاصة في ${event1.region}.`;
+  const regionName = event1.countryCode || 'the global stage';
+  const sentence1 = `The world is experiencing significant ${event1.dominantCategory} challenges, particularly in ${regionName}.`;
+  const sentence1Arabic = `يشهد العالم تحديات كبيرة في ${event1.dominantCategory}، خاصة في ${regionName}.`;
   
   // Sentence 2: Why it matters
   const affectedCount = top3.length;
@@ -147,8 +148,9 @@ function identifyConnections(topEvents: EventVector[]): QuickExplanation['connec
   // Find events in same region
   const regionGroups: Record<string, EventVector[]> = {};
   for (const ev of topEvents) {
-    if (!regionGroups[ev.region]) regionGroups[ev.region] = [];
-    regionGroups[ev.region].push(ev);
+    const region = ev.countryCode || 'global';
+    if (!regionGroups[region]) regionGroups[region] = [];
+    regionGroups[region].push(ev);
   }
   
   // Create connections for events in same region
@@ -156,11 +158,12 @@ function identifyConnections(topEvents: EventVector[]): QuickExplanation['connec
     if (events.length >= 2) {
       const ev1 = events[0];
       const ev2 = events[1];
+      const regionName = ev1.countryCode || 'global';
       connections.push({
-        event1: ev1.summary,
-        event2: ev2.summary,
-        connection: `Both events are occurring in ${region} and may be interconnected.`,
-        connectionArabic: `كلا الحدثين يحدثان في ${region} وقد يكونان مترابطين.`,
+        event1: ev1.query,
+        event2: ev2.query,
+        connection: `Both events are occurring in ${regionName} and may be interconnected.`,
+        connectionArabic: `كلا الحدثين يحدثان في ${regionName} وقد يكونان مترابطين.`,
       });
     }
   }
@@ -168,8 +171,8 @@ function identifyConnections(topEvents: EventVector[]): QuickExplanation['connec
   // Find events with same topic
   const topicGroups: Record<string, EventVector[]> = {};
   for (const ev of topEvents) {
-    if (!topicGroups[ev.topic]) topicGroups[ev.topic] = [];
-    topicGroups[ev.topic].push(ev);
+    if (!topicGroups[ev.dominantCategory]) topicGroups[ev.dominantCategory] = [];
+    topicGroups[ev.dominantCategory].push(ev);
   }
   
   for (const [topic, events] of Object.entries(topicGroups)) {
@@ -177,8 +180,8 @@ function identifyConnections(topEvents: EventVector[]): QuickExplanation['connec
       const ev1 = events[0];
       const ev2 = events[1];
       connections.push({
-        event1: ev1.summary,
-        event2: ev2.summary,
+        event1: ev1.query,
+        event2: ev2.query,
         connection: `Both events relate to ${topic} and may have cascading effects.`,
         connectionArabic: `كلا الحدثين يتعلقان بـ ${topic} وقد يكون لهما تأثيرات متسلسلة.`,
       });
@@ -237,10 +240,10 @@ export function generateQuickExplanation(eventVectors: EventVector[]): QuickExpl
   const recentEvents = topEvents.map(ev => {
     const impact: 'low' | 'medium' | 'high' | 'critical' = ev.intensity > 0.7 ? 'critical' : ev.intensity > 0.5 ? 'high' : ev.intensity > 0.3 ? 'medium' : 'low';
     return {
-      event: ev.summary,
-      eventArabic: `${ev.topic} في ${ev.region}`, // Simplified Arabic
-      topic: ev.topic as string,
-      region: ev.region as string,
+      event: ev.query,
+      eventArabic: `${ev.dominantCategory} في ${ev.countryCode || 'العالم'}`, // Simplified Arabic
+      topic: ev.dominantCategory,
+      region: ev.countryCode || 'global',
       impact,
     };
   });

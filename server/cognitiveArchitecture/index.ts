@@ -127,7 +127,7 @@ export async function processCognitively(input: CognitiveInput): Promise<Cogniti
   
   // ========== LAYER 4: COMPREHENSION ==========
   // Deep understanding of the question
-  const understanding = understandQuestion(question);
+  const understanding = await understandQuestion(question);
   const topic = understanding.surface.topic;
   const realIntent = understanding.deep.realIntent;
   

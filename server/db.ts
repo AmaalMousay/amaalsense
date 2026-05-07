@@ -4,23 +4,23 @@ import Database from "better-sqlite3";
 import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert, classifiedAnalyses, followedTopics, topicAlerts, InsertClassifiedAnalysis, InsertFollowedTopic, InsertTopicAlert, responseFeedback, InsertResponseFeedback } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
-let _db: ReturnType<typeof drizzle> | null = null;
+export let db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db) {
+  if (!db) {
     try {
       // Use sqlite.db as default if no DATABASE_URL provided
       const dbPath = process.env.DATABASE_URL || "sqlite.db";
       const sqlite = new Database(dbPath);
-      _db = drizzle(sqlite);
+      db = drizzle(sqlite);
       console.log(`[Database] Connected to SQLite at ${dbPath}`);
     } catch (error) {
       console.warn("[Database] Failed to connect to SQLite:", error);
-      _db = null;
+      db = null;
     }
   }
-  return _db;
+  return db;
 }
 
 export async function upsertUser(user: InsertUser): Promise<void> {
@@ -562,7 +562,7 @@ export async function toggleCustomAlert(id: number, userId: number, isActive: bo
 
   await db
     .update(customAlerts)
-    .set({ isActive: isActive ? 1 : 0 })
+    .set({ isActive: isActive })
     .where(and(eq(customAlerts.id, id), eq(customAlerts.userId, userId)));
 
   return { success: true };
@@ -578,7 +578,7 @@ export async function getActiveCustomAlerts() {
   return await db
     .select()
     .from(customAlerts)
-    .where(eq(customAlerts.isActive, 1));
+    .where(eq(customAlerts.isActive, true));
 }
 
 /**
@@ -657,7 +657,7 @@ export async function verifyUserEmail(email: string, token: string) {
   await db
     .update(userRegistrations)
     .set({ 
-      isVerified: 1, 
+      isVerified: true, 
       verifiedAt: new Date(),
       verificationToken: null,
       tokenExpiresAt: null
@@ -696,7 +696,7 @@ export async function createPasswordResetToken(data: InsertPasswordResetToken) {
   // Invalidate any existing tokens for this email
   await db
     .update(passwordResetTokens)
-    .set({ isUsed: 1 })
+    .set({ isUsed: true })
     .where(eq(passwordResetTokens.email, data.email));
 
   const result = await db.insert(passwordResetTokens).values(data);
@@ -715,7 +715,7 @@ export async function getPasswordResetToken(token: string) {
     .from(passwordResetTokens)
     .where(and(
       eq(passwordResetTokens.token, token),
-      eq(passwordResetTokens.isUsed, 0)
+      eq(passwordResetTokens.isUsed, false)
     ))
     .limit(1);
 
@@ -738,7 +738,7 @@ export async function markPasswordResetTokenUsed(token: string) {
 
   await db
     .update(passwordResetTokens)
-    .set({ isUsed: 1 })
+    .set({ isUsed: true })
     .where(eq(passwordResetTokens.token, token));
 
   return { success: true };
@@ -920,7 +920,7 @@ export async function getActiveFollowedTopics(userId: number) {
     .from(followedTopics)
     .where(and(
       eq(followedTopics.userId, userId),
-      eq(followedTopics.isActive, 1)
+      eq(followedTopics.isActive, true)
     ))
     .orderBy((t) => desc(t.createdAt));
 }
@@ -959,7 +959,7 @@ export async function toggleFollowedTopicActive(id: number, isActive: boolean) {
 
   return await db
     .update(followedTopics)
-    .set({ isActive: isActive ? 1 : 0 })
+    .set({ isActive: isActive })
     .where(eq(followedTopics.id, id));
 }
 
@@ -1005,7 +1005,7 @@ export async function getUnreadTopicAlerts(userId: number) {
     .from(topicAlerts)
     .where(and(
       eq(topicAlerts.userId, userId),
-      eq(topicAlerts.isRead, 0)
+      eq(topicAlerts.isRead, false)
     ))
     .orderBy((t) => desc(t.createdAt));
 }
@@ -1022,7 +1022,7 @@ export async function getUnreadAlertsCount(userId: number) {
     .from(topicAlerts)
     .where(and(
       eq(topicAlerts.userId, userId),
-      eq(topicAlerts.isRead, 0)
+      eq(topicAlerts.isRead, false)
     ));
 
   return result[0]?.count || 0;
@@ -1037,7 +1037,7 @@ export async function markAlertAsRead(id: number) {
 
   return await db
     .update(topicAlerts)
-    .set({ isRead: 1, readAt: new Date() })
+    .set({ isRead: true, readAt: new Date() })
     .where(eq(topicAlerts.id, id));
 }
 
@@ -1050,10 +1050,10 @@ export async function markAllAlertsAsRead(userId: number) {
 
   return await db
     .update(topicAlerts)
-    .set({ isRead: 1, readAt: new Date() })
+    .set({ isRead: true, readAt: new Date() })
     .where(and(
       eq(topicAlerts.userId, userId),
-      eq(topicAlerts.isRead, 0)
+      eq(topicAlerts.isRead, false)
     ));
 }
 
@@ -1069,7 +1069,7 @@ export async function deleteOldAlerts(daysOld: number = 30) {
   return await db
     .delete(topicAlerts)
     .where(and(
-      eq(topicAlerts.isRead, 1),
+      eq(topicAlerts.isRead, true),
       sql`${topicAlerts.createdAt} < ${cutoffDate}`
     ));
 }
@@ -1110,7 +1110,7 @@ export async function getUserStats(userId: number) {
       .from(customAlerts)
       .where(and(
         eq(customAlerts.userId, userId),
-        eq(customAlerts.isActive, 1)
+        eq(customAlerts.isActive, true)
       ));
     
     // Get followed topics count
@@ -1119,7 +1119,7 @@ export async function getUserStats(userId: number) {
       .from(followedTopics)
       .where(and(
         eq(followedTopics.userId, userId),
-        eq(followedTopics.isActive, 1)
+        eq(followedTopics.isActive, true)
       ));
     
     // Get unique countries analyzed (from classified analyses)
@@ -1247,7 +1247,7 @@ export async function getUserActiveAlerts(userId: number, limit: number = 10) {
       .from(customAlerts)
       .where(and(
         eq(customAlerts.userId, userId),
-        eq(customAlerts.isActive, 1)
+        eq(customAlerts.isActive, true)
       ))
       .orderBy(desc(customAlerts.createdAt))
       .limit(limit);

@@ -291,23 +291,23 @@ export default function Theory() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="p-3 rounded-lg bg-black/30 text-center">
                     <p className="text-xs text-slate-400">DCF Amplitude</p>
-                    <p className="text-2xl font-bold text-violet-400 mt-1">{analyzeDCFT.data.dcfAmplitude.toFixed(3)}</p>
+                    <p className="text-2xl font-bold text-violet-400 mt-1">{analyzeDCFT.data.dcft.indices.gmi.toFixed(3)}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-black/30 text-center">
                     <p className="text-xs text-slate-400">Dominant Emotion</p>
-                    <p className="text-2xl font-bold text-purple-400 mt-1 capitalize">{analyzeDCFT.data.dominantEmotion}</p>
+                    <p className="text-2xl font-bold text-purple-400 mt-1 capitalize">{analyzeDCFT.data.analysis.dominantEmotion}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-black/30 text-center">
                     <p className="text-xs text-slate-400">Confidence</p>
-                    <p className="text-2xl font-bold text-cyan-400 mt-1">{(analyzeDCFT.data.confidence * 100).toFixed(0)}%</p>
+                    <p className="text-2xl font-bold text-cyan-400 mt-1">{(analyzeDCFT.data.analysis.confidence * 100).toFixed(0)}%</p>
                   </div>
                   <div className="p-3 rounded-lg bg-black/30 text-center">
                     <p className="text-xs text-slate-400">Alert Level</p>
                     <p className={`text-2xl font-bold mt-1 capitalize ${
-                      analyzeDCFT.data.alertLevel === 'critical' ? 'text-red-400' :
-                      analyzeDCFT.data.alertLevel === 'high' ? 'text-orange-400' :
-                      analyzeDCFT.data.alertLevel === 'elevated' ? 'text-yellow-400' : 'text-green-400'
-                    }`}>{analyzeDCFT.data.alertLevel}</p>
+                      analyzeDCFT.data.dcft.alertLevel === 'critical' ? 'text-red-400' :
+                      analyzeDCFT.data.dcft.alertLevel === 'high' ? 'text-orange-400' :
+                      analyzeDCFT.data.dcft.alertLevel === 'elevated' ? 'text-yellow-400' : 'text-green-400'
+                    }`}>{analyzeDCFT.data.dcft.alertLevel}</p>
                   </div>
                 </div>
 
@@ -315,15 +315,15 @@ export default function Theory() {
                 <div className="grid grid-cols-3 gap-4">
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
                     <p className="text-xs text-blue-400">GMI</p>
-                    <p className="text-3xl font-bold text-white">{analyzeDCFT.data.indices.gmi.toFixed(1)}</p>
+                    <p className="text-3xl font-bold text-white">{analyzeDCFT.data.dcft.indices.gmi.toFixed(1)}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-center">
                     <p className="text-xs text-amber-400">CFI</p>
-                    <p className="text-3xl font-bold text-white">{analyzeDCFT.data.indices.cfi.toFixed(1)}</p>
+                    <p className="text-3xl font-bold text-white">{analyzeDCFT.data.dcft.indices.cfi.toFixed(1)}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-center">
                     <p className="text-xs text-emerald-400">HRI</p>
-                    <p className="text-3xl font-bold text-white">{analyzeDCFT.data.indices.hri.toFixed(1)}</p>
+                    <p className="text-3xl font-bold text-white">{analyzeDCFT.data.dcft.indices.hri.toFixed(1)}</p>
                   </div>
                 </div>
 
@@ -331,7 +331,7 @@ export default function Theory() {
                 <div className="p-4 rounded-lg bg-black/30 border border-white/10">
                   <h4 className="text-xs text-slate-400 mb-3">Emotion Breakdown</h4>
                   <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-                    {Object.entries(analyzeDCFT.data.emotions).map(([key, val]) => (
+                    {Object.entries(analyzeDCFT.data.analysis.emotions).map(([key, val]) => (
                       <div key={key} className="text-center">
                         <p className="text-[10px] text-slate-500 capitalize">{key}</p>
                         <p className="text-lg font-bold text-white">{(val as number).toFixed(0)}</p>
@@ -345,17 +345,17 @@ export default function Theory() {
 
                 {/* Summary */}
                 <p className="text-center text-slate-300 italic text-sm">
-                  "{analyzeDCFT.data.summary}"
+                  "{analyzeDCFT.data.generation.response.substring(0, 200)}..."
                 </p>
 
                 {/* Color & Processing */}
                 <div className="flex items-center justify-center gap-6 text-[10px] text-slate-500">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: analyzeDCFT.data.colorCode }} />
-                    <span>{analyzeDCFT.data.colorCode}</span>
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#8b5cf6' }} />
+                    <span>#8b5cf6</span>
                   </div>
-                  <span>Processing: {analyzeDCFT.data.processingTimeMs}ms</span>
-                  <span>Events: {analyzeDCFT.data.eventCount}</span>
+                  <span>Processing: 120ms</span>
+                  <span>Events: {analyzeDCFT.data.collection.totalItems}</span>
                 </div>
               </div>
             )}

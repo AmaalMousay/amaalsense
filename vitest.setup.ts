@@ -1,15 +1,15 @@
 import { afterEach, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
+// التعديل الجوهري هنا: استخدام المسار المتوافق مع Vitest
+import '@testing-library/jest-dom/vitest';
 
-// Only run browser-specific setup when in jsdom environment
+// تنظيف البيئة بعد كل اختبار لضمان استقرار النتائج
+afterEach(() => {
+  cleanup();
+});
+
+// محاكاة الخصائص التي يفتقدها متصفح الاختبار (JSDOM)
 if (typeof window !== 'undefined') {
-  await import('@testing-library/jest-dom');
-  const { cleanup } = await import('@testing-library/react');
-
-  // Cleanup after each test
-  afterEach(() => {
-    cleanup();
-  });
-
   // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -17,11 +17,18 @@ if (typeof window !== 'undefined') {
       matches: false,
       media: query,
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
+      addListener: vi.fn(), // قديم
+      removeListener: vi.fn(), // قديم
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     })),
   });
+
+  // إضافة محاكاة لـ ResizeObserver إذا احتاجتها الواجهة
+  global.ResizeObserver = vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  }));
 }

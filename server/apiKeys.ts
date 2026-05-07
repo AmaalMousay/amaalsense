@@ -4,7 +4,7 @@
  */
 import { nanoid } from 'nanoid';
 import { hash, compare } from 'bcryptjs';
-import { db } from './db';
+import { getDb } from './db';
 import { apiKeys } from '../drizzle/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { SubscriptionTier } from './subscriptionLimits';
@@ -42,6 +42,9 @@ export async function generateApiKey(userId: number, tier: SubscriptionTier): Pr
   const partialKey = `${rawKey.substring(0, 8)}...${rawKey.substring(rawKey.length - 4)}`;
 
   // Store in database
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
   await db.insert(apiKeys).values({
     id: keyId,
     userId,
@@ -75,6 +78,9 @@ export async function validateApiKey(key: string): Promise<boolean> {
   // Here we do a lookup by partial key or just scan (optimized for small scale).
   
   // In a real high-scale system, we'd store a 'key_id' in the header or use Redis.
+  const db = await getDb();
+  if (!db) return false;
+  
   const allKeys = await db.select().from(apiKeys).where(eq(apiKeys.isActive, true));
   
   for (const keyRecord of allKeys) {
@@ -100,6 +106,9 @@ export async function validateApiKey(key: string): Promise<boolean> {
  * Increments usage for an API key
  */
 export async function incrementApiUsage(keyId: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
   await db.update(apiKeys)
     .set({ usage: sql`${apiKeys.usage} + 1` })
     .where(eq(apiKeys.id, keyId));
@@ -109,6 +118,9 @@ export async function incrementApiUsage(keyId: string): Promise<void> {
  * Retrieves all API keys for a specific user
  */
 export async function getUserApiKeys(userId: number): Promise<ApiKeyData[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
   const records = await db.select().from(apiKeys).where(eq(apiKeys.userId, userId));
   
   return records.map(r => ({
@@ -127,6 +139,9 @@ export async function getUserApiKeys(userId: number): Promise<ApiKeyData[]> {
  * Revokes an API key
  */
 export async function revokeApiKey(userId: number, keyId: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
   const result = await db.update(apiKeys)
     .set({ isActive: false })
     .where(and(eq(apiKeys.userId, userId), eq(apiKeys.id, keyId)));

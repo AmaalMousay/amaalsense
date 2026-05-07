@@ -324,7 +324,7 @@ export const trendAlerts = sqliteTable("trend_alerts", {
   /** Alert message */
   message: text("message"),
   /** Whether alert has been acknowledged */
-  acknowledged: integer("acknowledged").default(0).notNull(),
+  acknowledged: integer("acknowledged", { mode: "boolean" }).default(false).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
@@ -391,7 +391,7 @@ export const customAlerts = sqliteTable("custom_alerts", {
   /** Threshold value */
   threshold: integer("threshold").notNull(),
   /** Whether alert is active */
-  isActive: integer("isActive").default(1).notNull(),
+  isActive: integer("isActive", { mode: "boolean" }).default(true).notNull(),
   /** Notification method: email, telegram, both */
   notifyMethod: text("notifyMethod").default("email").notNull(),
   /** Last triggered timestamp */
@@ -432,7 +432,7 @@ export const userRegistrations = sqliteTable("user_registrations", {
   /** Token expiration date */
   tokenExpiresAt: integer("tokenExpiresAt", { mode: "timestamp" }),
   /** Whether email is verified */
-  isVerified: integer("isVerified").default(0).notNull(),
+  isVerified: integer("isVerified", { mode: "boolean" }).default(false).notNull(),
   /** Verification date */
   verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
@@ -454,7 +454,7 @@ export const passwordResetTokens = sqliteTable("password_reset_tokens", {
   /** Token expiration date */
   expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   /** Whether token has been used */
-  isUsed: integer("isUsed").default(0).notNull(),
+  isUsed: integer("isUsed", { mode: "boolean" }).default(false).notNull(),
   /** IP address of requester */
   ipAddress: text("ipAddress"),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
@@ -523,7 +523,7 @@ export const followedTopics = sqliteTable("followed_topics", {
   /** Alert on risk increase, decrease, or both */
   alertDirection: text("alertDirection").default("both").notNull(),
   /** Whether following is active */
-  isActive: integer("isActive").default(1).notNull(),
+  isActive: integer("isActive", { mode: "boolean" }).default(true).notNull(),
   /** Last known emotional risk score */
   lastRiskScore: integer("lastRiskScore"),
   /** Last analysis timestamp */
@@ -557,7 +557,7 @@ export const topicAlerts = sqliteTable("topic_alerts", {
   /** Alert message */
   message: text("message"),
   /** Whether alert has been read */
-  isRead: integer("isRead").default(0).notNull(),
+  isRead: integer("isRead", { mode: "boolean" }).default(false).notNull(),
   /** Read timestamp */
   readAt: integer("readAt", { mode: "timestamp" }),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
@@ -610,7 +610,7 @@ export const learningPatterns = sqliteTable("learning_patterns", {
   /** Number of times this pattern was used for learning */
   usageCount: integer("usageCount").default(0).notNull(),
   /** Whether this pattern is verified and trusted */
-  isVerified: integer("isVerified").default(0).notNull(),
+  isVerified: integer("isVerified", { mode: "boolean" }).default(false).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
@@ -752,7 +752,7 @@ export const languageProfiles = sqliteTable("language_profiles", {
   /** Default sentiment adjustment factor (-50 to +50) */
   sentimentAdjustment: integer("sentimentAdjustment").default(0).notNull(),
   /** Whether this language is fully supported */
-  isFullySupported: integer("isFullySupported").default(0).notNull(),
+  isFullySupported: integer("isFullySupported", { mode: "boolean" }).default(false).notNull(),
   /** Number of keywords in dictionary */
   keywordCount: integer("keywordCount").default(0).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
@@ -1076,9 +1076,9 @@ export const conversations = sqliteTable("conversations", {
   /** Last message timestamp */
   lastMessageAt: integer("lastMessageAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
   /** Archived status */
-  isArchived: integer("isArchived").default(false).notNull(),
+  isArchived: integer("isArchived", { mode: "boolean" }).default(false).notNull(),
   /** Pinned status */
-  isPinned: integer("isPinned").default(false).notNull(),
+  isPinned: integer("isPinned", { mode: "boolean" }).default(false).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
@@ -1194,7 +1194,7 @@ export const predictions = sqliteTable("predictions", {
   predictionData: text("prediction_data"),
   aiInterpretation: text("ai_interpretation"),
   aiInterpretationAr: text("ai_interpretation_ar"),
-  verified: integer("verified").default(false),
+  verified: integer("verified", { mode: "boolean" }).default(false),
   actualGmi: real("actual_gmi"),
   actualCfi: real("actual_cfi"),
   actualHri: real("actual_hri"),
@@ -1253,7 +1253,7 @@ export const apiKeys = sqliteTable("api_keys", {
   tier: text("tier").notNull(),
   usage: integer("usage").default(0).notNull(),
   limit: integer("limit").default(1000).notNull(),
-  isActive: integer("isActive").default(true).notNull(),
+  isActive: integer("isActive", { mode: "boolean" }).default(true).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`).notNull(),
   lastUsedAt: integer("lastUsedAt", { mode: "timestamp" }),
 });

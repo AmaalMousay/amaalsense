@@ -474,7 +474,7 @@ function detectCountryInQuery(query: string): { code: string; name: string } | n
 
 export function getEngineStats(): {
   analysisCacheSize: number;
-  dataCacheStats: { entries: number; oldestAge: number };
+  dataCacheStats: any;
 } {
   return {
     analysisCacheSize: analysisCache.size,

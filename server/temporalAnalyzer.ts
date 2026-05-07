@@ -350,7 +350,7 @@ export async function getTrendData(
       .limit(limit);
     
     return trends.map(t => ({
-      period: t.period,
+      period: t.period as "hourly" | "daily" | "weekly" | "monthly",
       periodStart: t.periodStart,
       periodEnd: t.periodEnd,
       avgGmi: t.avgGmi,

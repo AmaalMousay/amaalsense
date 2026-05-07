@@ -67,7 +67,7 @@ export async function cognitiveProcess(
   
   // Step 1: Understand the question deeply
   processingPath.push('Question Understanding');
-  const understanding = understandQuestion(question, conversationHistory);
+  const understanding = await understandQuestion(question, conversationHistory);
   
   // Step 2: Route to appropriate cognitive engines (NOT external sources!)
   processingPath.push('Cognitive Routing');

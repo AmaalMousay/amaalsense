@@ -40,6 +40,9 @@ export function buildRAGContext(
   options: {
     country?: string;
     maxResults?: number;
+    includeAnalyses?: boolean;
+    includeConversations?: boolean;
+    includeKnowledge?: boolean;
   } = {}
 ): RAGContext {
   const { country, maxResults = 5 } = options;
@@ -154,3 +157,17 @@ export function formatRAGForPrompt(context: RAGContext): string {
   if (!context.contextSummary) return '';
   return `\n=== AMALSENSE KNOWLEDGE CONTEXT ===\n${context.contextSummary}\n==================================\n`;
 }
+
+/**
+ * تخزين محادثة للـ RAG المستقبلي
+ */
+export function storeConversationForRAG(
+  userId: string,
+  question: string,
+  answer: string,
+  topic: string,
+  country?: string
+): void {
+  VectorStore.storeConversation(userId, question, answer, topic, country);
+}
+

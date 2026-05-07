@@ -978,39 +978,39 @@ export default function EngineDashboard() {
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                           <div className="p-3 rounded-lg bg-black/30 text-center">
                             <p className="text-xs text-gray-400">DCF Amplitude</p>
-                            <p className="text-3xl font-bold text-violet-400 mt-1">{typeof dcftCalc.data.dcfAmplitude === 'number' ? dcftCalc.data.dcfAmplitude.toFixed(3) : '—'}</p>
+                            <p className="text-3xl font-bold text-violet-400 mt-1">{typeof dcftCalc.data.dcft.indices.gmi === 'number' ? dcftCalc.data.dcft.indices.gmi.toFixed(3) : '—'}</p>
                             <p className="text-[10px] text-gray-500 mt-1">D(t) value</p>
                           </div>
                           <div className="p-3 rounded-lg bg-black/30 text-center">
                             <p className="text-xs text-gray-400">Dominant Emotion</p>
-                            <p className="text-2xl font-bold text-purple-400 mt-1 capitalize">{dcftCalc.data.dominantEmotion || '—'}</p>
-                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.emotionalPhase?.description || 'Emotional direction'}</p>
+                            <p className="text-2xl font-bold text-purple-400 mt-1 capitalize">{dcftCalc.data.analysis.dominantEmotion || '—'}</p>
+                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.dcft.alertLevel || 'Emotional direction'}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-black/30 text-center">
                             <p className="text-xs text-gray-400">Field Color</p>
                             <div className="flex items-center justify-center mt-1">
-                              <div className="w-10 h-10 rounded-full" style={{ backgroundColor: dcftCalc.data.colorCode || '#4169E1' }} />
+                              <div className="w-10 h-10 rounded-full" style={{ backgroundColor: '#4169E1' }} />
                             </div>
-                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.colorCode || '#4169E1'}</p>
+                            <p className="text-[10px] text-gray-500 mt-1">#4169E1</p>
                           </div>
                           <div className="p-3 rounded-lg bg-black/30 text-center">
                             <p className="text-xs text-gray-400">Alert Level</p>
-                            <p className={`text-2xl font-bold mt-1 capitalize ${dcftCalc.data.alertLevel === 'critical' ? 'text-red-400' : dcftCalc.data.alertLevel === 'high' ? 'text-orange-400' : dcftCalc.data.alertLevel === 'elevated' ? 'text-yellow-400' : 'text-green-400'}`}>{dcftCalc.data.alertLevel}</p>
-                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.eventCount} events</p>
+                            <p className={`text-2xl font-bold mt-1 capitalize ${dcftCalc.data.dcft.alertLevel === 'critical' ? 'text-red-400' : dcftCalc.data.dcft.alertLevel === 'high' ? 'text-orange-400' : dcftCalc.data.dcft.alertLevel === 'elevated' ? 'text-yellow-400' : 'text-green-400'}`}>{dcftCalc.data.dcft.alertLevel}</p>
+                            <p className="text-[10px] text-gray-500 mt-1">{dcftCalc.data.collection.totalItems} events</p>
                           </div>
                         </div>
 
                         {/* DCFT Indices */}
-                        {dcftCalc.data.indices && (
+                        {dcftCalc.data.dcft.indices && (
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="p-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
                               <div className="flex items-center justify-between">
                                 <p className="text-xs text-blue-400">GMI - Global Mood Index</p>
                                 <TrendingUp className="w-4 h-4 text-blue-400" />
                               </div>
-                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.indices.gmi?.toFixed(1) ?? '—'}</p>
+                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.dcft.indices.gmi?.toFixed(1) ?? '—'}</p>
                               <div className="mt-2 h-2 rounded-full bg-black/30 overflow-hidden">
-                                <div className="h-full rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 transition-all duration-700" style={{ width: `${Math.max(0, Math.min(100, ((dcftCalc.data.indices.gmi ?? 0) + 100) / 2))}%` }} />
+                                <div className="h-full rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 transition-all duration-700" style={{ width: `${Math.max(0, Math.min(100, ((dcftCalc.data.dcft.indices.gmi ?? 0) + 100) / 2))}%` }} />
                               </div>
                               <p className="text-[10px] text-gray-500 mt-1">Range: -100 (negative) to +100 (positive)</p>
                             </div>
@@ -1019,9 +1019,9 @@ export default function EngineDashboard() {
                                 <p className="text-xs text-amber-400">CFI - Collective Focus Index</p>
                                 <BarChart3 className="w-4 h-4 text-amber-400" />
                               </div>
-                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.indices.cfi?.toFixed(1) ?? '—'}</p>
+                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.dcft.indices.cfi?.toFixed(1) ?? '—'}</p>
                               <div className="mt-2 h-2 rounded-full bg-black/30 overflow-hidden">
-                                <div className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-700" style={{ width: `${dcftCalc.data.indices.cfi ?? 0}%` }} />
+                                <div className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-700" style={{ width: `${dcftCalc.data.dcft.indices.cfi ?? 0}%` }} />
                               </div>
                               <p className="text-[10px] text-gray-500 mt-1">Range: 0 (scattered) to 100 (focused)</p>
                             </div>
@@ -1030,9 +1030,9 @@ export default function EngineDashboard() {
                                 <p className="text-xs text-emerald-400">HRI - Hope-Resilience Index</p>
                                 <TrendingUp className="w-4 h-4 text-emerald-400" />
                               </div>
-                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.indices.hri?.toFixed(1) ?? '—'}</p>
+                              <p className="text-4xl font-bold text-white mt-2">{dcftCalc.data.dcft.indices.hri?.toFixed(1) ?? '—'}</p>
                               <div className="mt-2 h-2 rounded-full bg-black/30 overflow-hidden">
-                                <div className="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-700" style={{ width: `${dcftCalc.data.indices.hri ?? 0}%` }} />
+                                <div className="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-700" style={{ width: `${dcftCalc.data.dcft.indices.hri ?? 0}%` }} />
                               </div>
                               <p className="text-[10px] text-gray-500 mt-1">Range: 0 (despair) to 100 (hopeful)</p>
                             </div>
@@ -1040,16 +1040,16 @@ export default function EngineDashboard() {
                         )}
 
                         {/* Resonance */}
-                        {dcftCalc.data.resonanceIndices && (
+                        {dcftCalc.data.analysis.emotions && (
                           <div className="p-4 rounded-lg bg-black/30 border border-white/10">
                             <h4 className="text-xs text-gray-400 mb-3">Resonance Indices</h4>
                             <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-                              {Object.entries(dcftCalc.data.resonanceIndices).map(([key, val]) => (
+                              {Object.entries(dcftCalc.data.analysis.emotions).map(([key, val]) => (
                                 <div key={key} className="text-center">
                                   <p className="text-[10px] text-gray-500 capitalize">{key}</p>
-                                  <p className="text-lg font-bold text-white">{typeof val === 'number' ? val.toFixed(2) : String(val)}</p>
+                                  <p className="text-lg font-bold text-white">{typeof val === 'number' ? (val as number).toFixed(2) : String(val)}</p>
                                   <div className="mt-1 h-1.5 rounded-full bg-black/30 overflow-hidden">
-                                    <div className="h-full rounded-full bg-violet-500/60 transition-all duration-500" style={{ width: `${typeof val === 'number' ? val * 100 : 0}%` }} />
+                                    <div className="h-full rounded-full bg-violet-500/60 transition-all duration-500" style={{ width: `${typeof val === 'number' ? (val as number) * 100 : 0}%` }} />
                                   </div>
                                 </div>
                               ))}
