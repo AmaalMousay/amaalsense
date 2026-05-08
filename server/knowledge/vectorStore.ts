@@ -4,6 +4,8 @@
  */
 
 import { generateEmbedding, cosineSimilarity, findSimilar } from './embeddings';
+import fs from 'fs';
+import path from 'path';
 
 export type EntryType = 'analysis' | 'conversation' | 'knowledge' | 'scientific_rule' | 'legal_statute' | 'feedback';
 
@@ -35,6 +37,28 @@ export interface SearchResult {
 let vectorStore: VectorEntry[] = [];
 let idCounter = 0;
 
+const DB_FILE = path.join(process.cwd(), 'server', 'knowledge', 'vector_db.json');
+
+// تحميل الذاكرة السابقة إن وجدت
+try {
+  if (fs.existsSync(DB_FILE)) {
+    const data = fs.readFileSync(DB_FILE, 'utf-8');
+    vectorStore = JSON.parse(data);
+    idCounter = vectorStore.length;
+    console.log(`[VectorStore] Loaded ${vectorStore.length} entries from disk.`);
+  }
+} catch (e) {
+  console.error('[VectorStore] Failed to load db:', e);
+}
+
+function saveToDisk() {
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(vectorStore), 'utf-8');
+  } catch (e) {
+    console.error('[VectorStore] Failed to save db:', e);
+  }
+}
+
 /**
  * 1. دالة إضافة مدخل (Exported)
  */
@@ -59,9 +83,12 @@ export function addEntry(
 
   vectorStore.push(entry);
 
-  if (vectorStore.length > 1500) {
-    vectorStore = vectorStore.slice(-1200);
+  if (vectorStore.length > 2000) {
+    vectorStore = vectorStore.slice(-1500); // زيادة سعة الذاكرة
   }
+
+  // حفظ التغييرات على القرص
+  saveToDisk();
 
   return entry;
 }
@@ -154,3 +181,8 @@ export function initializeKnowledge(): void {
 
 // تنفيذ التهيئة
 initializeKnowledge();
+
+export function getStats() {
+  const uniqueArticles = new Set(vectorStore.filter(e => e.type === 'scientific_rule').map(e => e.metadata.topic)).size;
+  return { totalEntries: vectorStore.length, uniqueArticlesRead: uniqueArticles };
+}

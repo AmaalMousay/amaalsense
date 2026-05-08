@@ -8,7 +8,7 @@ import { layer1QuestionUnderstanding, type Layer1Output } from './layer1Question
 import { collectCountryData, collectTopicData, type CollectedData } from './unifiedDataCollector';
 import { createUniversalEventVector, generateUniversalPrompt, type QuantumEventVector } from './eventVectorEngine';
 import { smartInvokeLLM } from './smartLLM';
-import { analyzeEmotions } from './realTextAnalyzer';
+import { analyzeTextWithAI } from './aiSentimentAnalyzer';
 import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from './dcft';
 import { buildRAGContext, formatRAGForPrompt } from './knowledge/ragSystem';
 import { storeAnalysisRecord, getCumulativeInsight } from './engines/learningStore';
@@ -349,10 +349,8 @@ function saveToLearningMemory(ctx: NetworkContext) {
 
 async function analyzeEmotionsFromData(data: CollectedData) {
   const text = data.items.map(i => i.title).join(' ');
-  const vector = analyzeEmotions(text);
-  const vectorTyped = vector as Record<string, number>;
-  const dominantEmotion = Object.entries(vectorTyped).sort((a, b) => b[1] - a[1])[0]?.[0] || 'neutral';
-  return { vector, dominantEmotion };
+  const aiResult = await analyzeTextWithAI(text);
+  return { vector: aiResult.emotions as unknown as Record<string, number>, dominantEmotion: aiResult.dominantEmotion };
 }
 
 async function executeDCFTProcess(data: CollectedData): Promise<DCFTAnalysisResult | null> {

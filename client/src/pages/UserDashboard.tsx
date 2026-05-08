@@ -133,7 +133,7 @@ export default function UserDashboard() {
                 {isRTL ? 'الرئيسية' : 'Home'}
               </Button>
             </Link>
-            <Link href="/analyzer">
+            <Link href="/chat">
               <Button variant="ghost" size="sm" className="gap-2">
                 <Brain className="w-4 h-4" />
                 {isRTL ? 'المحلل' : 'Analyzer'}
@@ -169,7 +169,7 @@ export default function UserDashboard() {
                   {isRTL ? 'الرئيسية' : 'Home'}
                 </Button>
               </Link>
-              <Link href="/analyzer">
+              <Link href="/chat">
                 <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
                   <Brain className="w-4 h-4" />
                   {isRTL ? 'المحلل' : 'Analyzer'}

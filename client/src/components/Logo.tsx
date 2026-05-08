@@ -20,11 +20,7 @@ export function Logo({ size = 'md', showText = true, className = '' }: LogoProps
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <img 
-        src="/logo-icon.png" 
-        alt="Amaalsense Logo" 
-        className={`${sizes[size].icon} object-contain`}
-      />
+      <LogoSVG size={size} />
       {showText && (
         <span className={`font-bold gradient-text ${sizes[size].text}`}>
           Amaalsense
@@ -45,13 +41,7 @@ export function LogoIcon({ size = 'md', className = '' }: Omit<LogoProps, 'showT
     xl: 'w-12 h-12',
   };
 
-  return (
-    <img 
-      src="/logo-icon.png" 
-      alt="Amaalsense" 
-      className={`${sizes[size]} object-contain ${className}`}
-    />
-  );
+  return <LogoSVG size={size} className={className} />;
 }
 
 /**

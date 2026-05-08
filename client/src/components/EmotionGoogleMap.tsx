@@ -27,7 +27,10 @@ function loadMapScript() {
       return;
     }
     const script = document.createElement("script");
-    script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
+    // Load directly from Google Maps in development mode if no key is provided
+    script.src = API_KEY 
+      ? `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`
+      : "https://maps.googleapis.com/maps/api/js?v=weekly&libraries=marker,places,geocoding,geometry";
     script.async = true;
     script.crossOrigin = "anonymous";
     script.onload = () => {

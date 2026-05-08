@@ -22,8 +22,7 @@ import { useI18n } from '@/i18n';
 import { EmotionGoogleMap } from '@/components/EmotionGoogleMap';
 import { UserMenu } from '@/components/UserMenu';
 import { useAuth } from '@/_core/hooks/useAuth';
-import { TestimonialsSection } from '@/components/TestimonialsSection';
-import { FAQSection } from '@/components/FAQSection';
+
 import { COUNTRIES } from '@/data/countries';
 
 // Country positions for the map
@@ -430,9 +429,9 @@ export default function Home() {
 
   const navLinks = [
     { href: '/api-management', label: isRTL ? 'إدارة الـ API' : 'API Management', icon: <Zap className="w-4 h-4" /> },
-    { href: '/chat', label: isRTL ? 'محادثة' : 'Chat', icon: (
+    { href: '/chat', label: isRTL ? 'المحلل (العدسة المعرفية)' : 'Analyzer Lens', icon: (
       <div className="relative">
-        <MessageCircle className="w-4 h-4" />
+        <Brain className="w-4 h-4" />
         <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-background animate-pulse" />
       </div>
     ) },
@@ -926,20 +925,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Testimonials */}
-          <TestimonialsSection testimonials={[
-            { name: 'Dr. Sarah Chen', role: 'Data Scientist', company: 'MIT', content: 'AmalSense provides unprecedented insights into collective emotions across regions.', rating: 5 },
-            { name: 'Prof. Ahmed Al-Rashid', role: 'Political Analyst', company: 'Al Jazeera', content: 'The DCFT framework offers a unique scientific approach to understanding societal mood shifts.', rating: 5 },
-            { name: 'Maria Gonzalez', role: 'Journalist', company: 'Reuters', content: 'An invaluable tool for understanding public sentiment on global events.', rating: 4 }
-          ]} />
 
-          {/* FAQ */}
-          <FAQSection faqs={[
-            { question: 'What is AmalSense?', answer: 'AmalSense is a Digital Collective Emotion Analyzer that uses AI and real-time data to measure global emotional states.' },
-            { question: 'What is DCFT?', answer: 'Digital Collective Feeling Theory - a scientific framework for quantifying and analyzing collective human emotions from digital sources.' },
-            { question: 'Where does the data come from?', answer: 'We aggregate data from news sources (NewsAPI, GNews), social media (Reddit, Mastodon, Bluesky, YouTube), and RSS feeds.' },
-            { question: 'How accurate is the analysis?', answer: 'Our hybrid AI analysis combines DCFT algorithms (70%) with AI sentiment analysis (30%) for high accuracy with confidence scores.' }
-          ]} />
 
           {/* Emotion Color Legend */}
           <FooterLegend />

@@ -69,6 +69,9 @@ export async function smartInvokeLLM(
 
   // المحاولة 2: المحرك المفتوح (Pollinations AI) - مجاني وبدون قيود
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 ثواني كحد أقصى
+    
     const response = await fetch(`https://text.pollinations.ai/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -76,12 +79,25 @@ export async function smartInvokeLLM(
         messages: unifiedMessages,
         model: 'openai',
         seed: 42
-      })
+      }),
+      signal: controller.signal
     });
-    const text = await response.text();
-    return formatToInvokeResult(text, 'web-sovereign-ai');
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const text = await response.text();
+      return formatToInvokeResult(text, 'web-sovereign-ai');
+    }
   } catch (error) {
-    console.error("[SmartLLM] All free engines failed.");
+    console.log("[SmartLLM] Pollinations AI failed or timed out. Trying Core Engine...");
+  }
+
+  // المحاولة 3: المحرك الأساسي (Forge/Groq API) كبديل أخير لضمان الرد
+  try {
+    const { invokeLLM } = await import('./_core/llm');
+    return await invokeLLM(params);
+  } catch (error) {
+    console.error("[SmartLLM] All engines failed.");
     throw new Error("No available LLM engine.");
   }
 }

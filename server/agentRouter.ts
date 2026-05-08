@@ -7,6 +7,8 @@
 import { publicProcedure, router } from './_core/trpc';
 import { z } from 'zod';
 import { multiAgentSystem } from './agents/multiAgentSystem';
+import { triggerAutonomousResearch, researcherState, toggleContinuousReading } from './knowledge/autonomousResearcher';
+import { getStats } from './knowledge/vectorStore';
 
 // We store some in-memory logs for the dashboard since we just built the agents
 const agentLogs: Array<{ id: string, timestamp: number, message: string, agent: string }> = [];
@@ -76,5 +78,31 @@ export const agentRouter = router({
     // Start in background
     multiAgentSystem.runPeriodicObservation().catch(console.error);
     return { success: true, message: 'Observation cycle started' };
-  })
+  }),
+
+  /**
+   * Autonomous Knowledge Researcher
+   */
+  getResearchStatus: publicProcedure.query(() => {
+    try {
+      const stats = getStats();
+      researcherState.articlesRead = stats.uniqueArticlesRead;
+    } catch (e) {
+      // ignore
+    }
+    return researcherState;
+  }),
+
+  triggerResearch: publicProcedure.mutation(async () => {
+    // Run async in background so we don't block the request
+    triggerAutonomousResearch().catch(console.error);
+    return { success: true, message: 'Autonomous Researcher Awakened' };
+  }),
+
+  toggleContinuousResearch: publicProcedure
+    .input(z.object({ enable: z.boolean() }))
+    .mutation(({ input }) => {
+      const isEnabled = toggleContinuousReading(input.enable);
+      return { success: true, isEnabled };
+    })
 });
