@@ -4,7 +4,7 @@
  * هذا الملف يعالج كافة طلبات الواجهة الأمامية دون الحاجة لملفات خارجية محذوفة.
  */
 
-import { router, publicProcedure } from './_core/trpc';
+import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
 // استيراد المحرك المركزي الجديد
 import {
@@ -13,7 +13,7 @@ import {
   getCumulativeInsight,
   pipelineMetrics,
   processBatchRecords
-} from './engines/learningStore';
+} from '../engines/learningStore';
 
 export const pipelineRouter = router({
   /**

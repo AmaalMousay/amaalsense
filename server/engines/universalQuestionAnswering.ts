@@ -7,7 +7,7 @@
  * - Is there hope for the future?
  */
 
-import { EventVector, calculateCFI, calculateHRI } from './eventVectorModel';
+import { EventVector, calculateCFI, calculateHRI } from '../utils/eventVectorModel';
 
 export type UniversalQuestion = 
   | 'is_world_dangerous'

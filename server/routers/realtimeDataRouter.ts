@@ -3,10 +3,10 @@
  * يربط واجهة المستخدم بمحرك جلب البيانات المحدث (tRPC)
  */
 
-import { router, publicProcedure } from './_core/trpc';
+import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
 // استيراد الدوال من الـ Pipeline المطور
-import { fetchRealTimeData, fetchGDELTEvents, fetchWorldBankIndicators } from './realtimeDataPipeline';
+import { fetchRealTimeData, fetchGDELTEvents, fetchWorldBankIndicators } from '../engines/realtimeDataPipeline';
 
 export const realtimeDataRouter = router({
 

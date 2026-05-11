@@ -5,7 +5,7 @@
  * يحفظ: مستوى المستخدم، المواضيع المفضلة، أنماط التفاعل
  */
 
-import { getDb } from './db';
+import { getDb } from '../_core/db';
 import { userProfiles, type UserProfile, type InsertUserProfile } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 

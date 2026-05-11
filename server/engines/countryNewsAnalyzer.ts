@@ -6,8 +6,8 @@
  * 
  * NO mock data. NO hardcoded values. Everything is derived from actual news.
  */
-import { fetchGoogleNewsByTopic, fetchGoogleNewsByCountry, type NewsItem } from './googleRssService';
-import { fetchCountryNews, type NewsArticle } from './newsService';
+import { fetchGoogleNewsByTopic, fetchGoogleNewsByCountry, type NewsItem } from '../services/googleRssService';
+import { fetchCountryNews, type NewsArticle } from '../services/newsService';
 import { smartJsonChat } from './smartLLM';
 
 // Country metadata for search queries

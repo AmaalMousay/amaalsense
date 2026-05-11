@@ -1,4 +1,4 @@
-import { smartJsonChat } from '../smartLLM';
+import { smartJsonChat } from '../engines/smartLLM';
 
 // Types of questions
 export type QuestionType = 

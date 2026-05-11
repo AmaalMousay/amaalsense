@@ -15,7 +15,7 @@
  */
 
 import { type DeepQuestion } from './questionUnderstanding';
-import { smartChat } from '../smartLLM';
+import { smartChat } from '../engines/smartLLM';
 
 // Helper function to detect topic domain
 function detectTopicDomain(topic: string): string {

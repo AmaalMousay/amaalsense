@@ -5,7 +5,7 @@
  */
 
 import { eq, desc, asc, gte, lte, and, inArray, sql } from "drizzle-orm";
-import { getDb } from "./db";
+import { getDb } from '../_core/db';
 import {
   emotionIndices,
   countryEmotionIndices,

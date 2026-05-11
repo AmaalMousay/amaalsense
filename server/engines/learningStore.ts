@@ -3,7 +3,7 @@
  * نسخة مطورة (V3.5): تحافظ على فلسفة أمال رادوان وتدعم متطلبات النظام التقنية.
  */
 
-import { calculateAggregatedMetrics } from '../eventVectorModel';
+import { calculateAggregatedMetrics } from '../utils/eventVectorModel';
 
 // --- 1. تعريف الواجهات (Interfaces) ---
 export interface AnalysisRecord {

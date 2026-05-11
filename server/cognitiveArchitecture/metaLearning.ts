@@ -7,10 +7,10 @@
  * "النظام يتطور لأنه يشك في نفسه"
  */
 
-import { getDb } from '../db';
+import { getDb } from '../_core/db';
 import { cognitiveLearningInsights, reasoningRules, weeklySelfReports } from '../../drizzle/schema';
 import { desc, eq, sql, and, gte, lte } from 'drizzle-orm';
-import { getFeedbackStats, getLowRatedFeedback, getHighRatedFeedback } from './feedbackLoop';
+import { getFeedbackStats, getLowRatedFeedback, getHighRatedFeedback } from '../utils/feedbackLoop';
 import { getSelfEvaluationSummary, getLowScoringEvaluations } from './selfEvaluation';
 
 // ============================================================================

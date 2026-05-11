@@ -7,7 +7,7 @@
  * "النظام يتطور لأنه يشك في نفسه"
  */
 
-import { getDb } from '../db';
+import { getDb } from '../_core/db';
 import { selfEvaluations } from '../../drizzle/schema';
 import { desc, avg, sql } from 'drizzle-orm';
 import crypto from 'crypto';

@@ -16,11 +16,11 @@
 
 import { classifyIntent, type ClassifiedIntent, describeIntent } from './intentClassifier';
 import { executeEngines, formatResultsForLLM, type EngineResults } from './engineSelector';
-import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from '../llmProvider';
+import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from '../engines/llmProvider';
 import { buildRAGContext, formatRAGForPrompt, storeForRAG, storeConversationForRAG } from '../knowledge/ragSystem';
-import { buildStructuredResponse, type AnalysisData } from '../responseBuilder';
-import { fetchEconomicData, type EconomicData } from '../economicDataService';
-import { think, analyzeQuestionIntent, type ResponseData } from '../thinkingEngine';
+import { buildStructuredResponse, type AnalysisData } from '../engines/responseBuilder';
+import { fetchEconomicData, type EconomicData } from '../services/economicDataService';
+import { think, analyzeQuestionIntent, type ResponseData } from '../engines/thinkingEngine';
 import { 
   buildAwarenessResponse, 
   formatAwarenessResponse,

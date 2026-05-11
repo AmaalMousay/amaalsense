@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
-import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { getSessionCookieOptions } from '../_core/cookies';
+import { systemRouter } from '../_core/systemRouter';
+import { publicProcedure, router } from '../_core/trpc';
 import { z } from "zod";
 import { newFeaturesRouter } from "./newFeaturesRouter";
 import { realtimeDataRouter } from "./realtimeDataRouter";

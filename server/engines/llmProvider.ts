@@ -8,8 +8,8 @@
  * The system automatically selects the best available provider.
  */
 
-import { invokeLLM } from './_core/llm';
-import { invokeGroq, isGroqConfigured, GROQ_MODELS, type GroqMessage } from './groqService';
+import { invokeLLM } from '../_core/llm';
+import { invokeGroq, isGroqConfigured, GROQ_MODELS, type GroqMessage } from '../services/groqService';
 
 // Provider types
 export type LLMProvider = 'manus' | 'groq';

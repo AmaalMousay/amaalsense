@@ -4,9 +4,9 @@
  * Provides API endpoints for accessing 231 historical events
  * with search, filter, and detailed impacts data
  */
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, router } from '../_core/trpc';
 import { z } from "zod";
-import { historicalEvents } from "./historicalEventsData";
+import { historicalEvents } from '../utils/historicalEventsData';
 
 // Type for a single event from the array
 type HistoricalEvent = (typeof historicalEvents)[number];

@@ -4,8 +4,8 @@
  */
 
 // 1. الاستيرادات الضرورية (تأكدي من صحة المسارات في مشروعك)
-import { EventVector, createQuantumEvent } from './eventVectorModel';
-import { storeAnalysisRecord } from './engines/learningStore';
+import { EventVector, createQuantumEvent } from '../utils/eventVectorModel';
+import { storeAnalysisRecord } from './learningStore';
 
 // --- 2. المبدل الذكي: تحويل أكواد GDELT إلى مواضيع AmalSense ---
 function mapGDELTToTopic(code: string): 'politics' | 'conflict' | 'economy' | 'society' {

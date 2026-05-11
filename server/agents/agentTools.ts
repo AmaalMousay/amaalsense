@@ -3,7 +3,7 @@
  * الأدوات التي تمنح الوكلاء القدرة على التحرك المستقل والبحث العلمي النشط.
  */
 
-import { type EventVector } from '../eventVectorEngine';
+import { type EventVector } from '../engines/eventVectorEngine';
 
 export interface AlertContext {
   topic: string;

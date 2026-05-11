@@ -4,7 +4,7 @@
  * تم تعديله لإصلاح أخطاء توافق النصوص (String Assignment).
  */
 
-import { InvokeParams, InvokeResult } from './_core/llm';
+import { InvokeParams, InvokeResult } from '../_core/llm';
 
 // تعريف أنواع المهام المتوافقة مع كافة أجزاء النظام
 export type TaskType =

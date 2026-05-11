@@ -4,8 +4,8 @@
  * نظام مراقبة صحة النظام وعرض المقاييس الحية
  */
 
-import { feedbackManager } from './feedbackLoop';
-import { analysisCache, predictionCache, userCache, generalCache } from './simpleCache';
+import { feedbackManager } from '../utils/feedbackLoop';
+import { analysisCache, predictionCache, userCache, generalCache } from '../utils/simpleCache';
 
 // ============================================================================
 // Health Status Types

@@ -4,7 +4,7 @@
  * Handles saving and retrieving analysis data for historical trends
  */
 
-import { getDb } from "./db";
+import { getDb } from '../_core/db';
 import {
   analysisSessions,
   sourceAnalyses,

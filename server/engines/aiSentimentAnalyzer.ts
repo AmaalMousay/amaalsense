@@ -3,7 +3,7 @@
  * Analyzes news headlines and extracts emotion vectors using AI
  */
 
-import { invokeLLM } from './_core/llm';
+import { invokeLLM } from '../_core/llm';
 
 export interface EmotionVector {
   joy: number;

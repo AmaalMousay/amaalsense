@@ -3,15 +3,15 @@
  * Integrates: NewsAPI, GNews, Reddit, Mastodon, Bluesky, YouTube, Telegram
  */
 
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, router } from '../_core/trpc';
 import { z } from "zod";
-import { fetchNewsArticles, fetchTrendingTopics } from "./newsDataFetcher";
-import { fetchGNewsHeadlines, searchGNews } from "./gnewsService";
+import { fetchNewsArticles, fetchTrendingTopics } from '../engines/newsDataFetcher';
+import { fetchGNewsHeadlines, searchGNews } from '../services/gnewsService';
 import {
   fetchAllSocialMedia,
   fetchFromPlatforms,
-} from "./socialMediaService";
-import { analyzeTextsWithAI } from "./aiSentimentAnalyzer";
+} from '../services/socialMediaService';
+import { analyzeTextsWithAI } from '../engines/aiSentimentAnalyzer';
 
 export const searchRouter = router({
   /**

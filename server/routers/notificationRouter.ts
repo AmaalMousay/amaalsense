@@ -7,9 +7,9 @@
  * - تحديث إعدادات التنبيهات
  */
 
-import { router, publicProcedure, protectedProcedure } from './_core/trpc';
+import { router, publicProcedure, protectedProcedure } from '../_core/trpc';
 import { z } from 'zod';
-import { notificationSystem, AlertThreshold } from './notificationSystem';
+import { notificationSystem, AlertThreshold } from '../engines/notificationSystem';
 
 export const notificationRouter = router({
   /**

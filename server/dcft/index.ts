@@ -21,7 +21,7 @@ export {
   analyzeTextDCFT, 
   analyzeTextsDCFT,
   type DCFTAnalysisResult 
-} from './dcftEngine';
+} from '../engines/dcftEngine';
 
 // Layer 1: Perception
 export { 
@@ -110,4 +110,4 @@ export {
   type UserFeedback,
   type AccuracyRecord,
   type ABTest
-} from './feedbackLoop';
+} from '../utils/feedbackLoop';

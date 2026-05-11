@@ -5,15 +5,15 @@
  */
 
 import { layer1QuestionUnderstanding, type Layer1Output } from './layer1QuestionUnderstanding';
-import { collectCountryData, collectTopicData, type CollectedData } from './unifiedDataCollector';
+import { collectCountryData, collectTopicData, type CollectedData } from '../services/unifiedDataCollector';
 import { createUniversalEventVector, generateUniversalPrompt, type QuantumEventVector } from './eventVectorEngine';
 import { smartInvokeLLM } from './smartLLM';
 import { analyzeTextWithAI } from './aiSentimentAnalyzer';
 import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from './dcft';
-import { buildRAGContext, formatRAGForPrompt } from './knowledge/ragSystem';
-import { storeAnalysisRecord, getCumulativeInsight } from './engines/learningStore';
+import { buildRAGContext, formatRAGForPrompt } from '../knowledge/ragSystem';
+import { storeAnalysisRecord, getCumulativeInsight } from './learningStore';
 import { MultiTurnContext } from './multiTurnContext';
-import { applyConsultantStyle } from './cognitiveArchitecture/narrativeStyleEngine';
+import { applyConsultantStyle } from '../cognitiveArchitecture/narrativeStyleEngine';
 
 // ============================================================
 // TYPES & INTERFACES

@@ -7,7 +7,7 @@
  * "النظام لا يتطور لأنه ذكي، بل لأنه يشك في نفسه"
  */
 
-import { getDb } from '../db';
+import { getDb } from '../_core/db';
 import { responseFeedback } from '../../drizzle/schema';
 import { eq, desc, avg, count, sql } from 'drizzle-orm';
 

@@ -7,7 +7,7 @@
  * 3. Improves future analyses based on learned patterns
  */
 
-import { getDb } from "./db";
+import { getDb } from '../_core/db';
 import { learningPatterns, keywordLearning } from "../drizzle/schema";
 import { eq, desc, and, gte } from "drizzle-orm";
 

@@ -5,7 +5,7 @@
  * Eliminates JSON parsing failures in production
  */
 
-import { invokeLLM } from './_core/llm';
+import { invokeLLM } from '../_core/llm';
 import { sanitizeResponse, parseJSONSafely, getSanitizationReport } from './responseSanitizationLayer';
 
 export interface LLMCallOptions {

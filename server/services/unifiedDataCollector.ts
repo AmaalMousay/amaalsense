@@ -7,8 +7,8 @@ import { fetchGoogleNewsByCountry, fetchGoogleNewsByTopic } from './googleRssSer
 import { fetchCountryNews } from './newsService';
 import { searchGNews } from './gnewsService';
 import { fetchRedditPosts, fetchMastodonPosts, fetchBlueskyPosts } from './socialMediaService';
-import { storeAnalysisRecord } from './engines/learningStore';
-import { createQuantumEvent } from './eventVectorModel';
+import { storeAnalysisRecord } from '../engines/learningStore';
+import { createQuantumEvent } from '../utils/eventVectorModel';
 
 // ============================================================
 // TYPES & INTERFACES

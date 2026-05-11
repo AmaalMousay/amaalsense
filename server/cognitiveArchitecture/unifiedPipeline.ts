@@ -10,7 +10,7 @@ import { DialogicalConsciousness } from './dialogicalConsciousness';
 import { CognitiveConsistencyCheck } from './cognitiveConsistencyCheck';
 import { CognitiveAnswerGate } from './cognitiveAnswerGate';
 import { runIntelligentPipeline, type PipelineInput } from './intelligentPipeline';
-import { getAggregatedNetworkData } from '../networkEngine';
+import { getAggregatedNetworkData } from '../engines/networkEngine';
 
 export interface UnifiedPipelineInput {
   question: string;

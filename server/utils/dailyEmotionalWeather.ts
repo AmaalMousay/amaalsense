@@ -5,7 +5,7 @@
  */
 
 import { EventVector, calculateGMI, calculateCFI, calculateHRI } from './eventVectorModel';
-import { smartInvokeLLM } from './smartLLM'; // Ensure this matches your AI invocation function
+import { smartInvokeLLM } from '../engines/smartLLM'; // Ensure this matches your AI invocation function
 
 export interface EmotionalWeatherReport {
   timestamp: number;

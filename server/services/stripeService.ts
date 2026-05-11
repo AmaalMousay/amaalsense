@@ -3,7 +3,7 @@
  */
 
 import Stripe from 'stripe';
-import { SubscriptionTier } from './subscriptionLimits';
+import { SubscriptionTier } from '../engines/subscriptionLimits';
 
 // Note: This should ideally come from environment variables.
 // Using a placeholder for development/demo purposes.

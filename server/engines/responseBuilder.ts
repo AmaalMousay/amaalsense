@@ -25,13 +25,13 @@ import {
   type TemplateContext,
   type TemplateStyle,
   type UserProfileContext
-} from './dynamicTemplate';
+} from '../utils/dynamicTemplate';
 import {
   fetchEconomicData,
   analyzeEconomicSentiment,
   formatEconomicDataForResponse,
   type EconomicData
-} from './economicDataService';
+} from '../services/economicDataService';
 
 export interface AnalysisData {
   topic: string;

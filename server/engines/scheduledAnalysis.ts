@@ -3,9 +3,9 @@
  * Automatically analyzes news and social media data at regular intervals
  */
 
-import { saveAnalysisSession, AnalysisResult, SourceResult } from "./analyticsStorage";
-import { getNewsWithFallback, fetchGlobalNews, generateMockNews } from "./newsService";
-import { fetchAllSocialMedia, SocialPost } from "./socialMediaService";
+import { saveAnalysisSession, AnalysisResult, SourceResult } from '../utils/analyticsStorage';
+import { getNewsWithFallback, fetchGlobalNews, generateMockNews } from '../services/newsService';
+import { fetchAllSocialMedia, SocialPost } from '../services/socialMediaService';
 import { analyzeTextsWithAI, SentimentAnalysisResult } from "./aiSentimentAnalyzer";
 import { executeNetworkEngine, getGlobalMood } from "./networkEngine";
 

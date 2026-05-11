@@ -10,7 +10,7 @@
  * call THIS engine, which returns results formatted for each view.
  */
 
-import { collectCountryData, collectTopicData, getCacheStats as getCacheStatsFromCollector, clearCache as clearCollectorCache, type CollectedData } from './unifiedDataCollector';
+import { collectCountryData, collectTopicData, getCacheStats as getCacheStatsFromCollector, clearCache as clearCollectorCache, type CollectedData } from '../services/unifiedDataCollector';
 import { createEventVector, eventVectorToPrompt, vectorToMapIndices, type EventVector } from './eventVectorEngine';
 import { smartChat, smartJsonChat, type TaskType } from './smartLLM';
 

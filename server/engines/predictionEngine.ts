@@ -10,7 +10,7 @@
  * 6. LLM-Enhanced Interpretation - لتفسير ذكي بالعربية والإنجليزية
  */
 
-import { invokeLLM } from './_core/llm';
+import { invokeLLM } from '../_core/llm';
 
 // ============================================
 // TYPES

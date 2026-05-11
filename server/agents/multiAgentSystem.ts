@@ -3,7 +3,7 @@
  * يدمج هذا النظام بين الاستشعار المتوازي والتحقق العلمي الموسوعي.
  */
 
-import { analyzeForWeather } from '../unifiedAnalysisEngine';
+import { analyzeForWeather } from '../engines/unifiedAnalysisEngine';
 import {
   tool_performActiveSearch,
   tool_validateScientificFact,

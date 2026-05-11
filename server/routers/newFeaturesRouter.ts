@@ -3,16 +3,16 @@
  * تم التحديث لإصلاح أخطاء التعريفات (answer) وتوافق استدعاء LLM
  */
 
-import { router, publicProcedure } from './_core/trpc';
+import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import {
   createQuantumEvent,
   calculateAggregatedMetrics,
-} from './eventVectorModel';
+} from '../utils/eventVectorModel';
 import {
   generateEmotionalWeatherReport,
-} from './dailyEmotionalWeather';
-import { smartInvokeLLM } from './smartLLM';
+} from '../utils/dailyEmotionalWeather';
+import { smartInvokeLLM } from '../engines/smartLLM';
 
 /**
  * Modernized Sample Data using Quantum Wave Structure

@@ -20,7 +20,7 @@ import {
   determineResponseDirective,
   type PerceptionContext,
   type ResponseDirective
-} from './perceptionLayer';
+} from '../dcft/perceptionLayer';
 
 export interface FluentResponseInput {
   question: string;

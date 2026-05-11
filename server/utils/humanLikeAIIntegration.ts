@@ -11,7 +11,7 @@
  * 6. Ethical Reasoning - التفكير الأخلاقي
  */
 
-import { invokeLLM } from "./_core/llm";
+import { invokeLLM } from '../_core/llm';
 
 // ============================================================================
 // 1. CONTEXTUAL UNDERSTANDING - فهم السياق

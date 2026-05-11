@@ -5,7 +5,7 @@
  * يطبق منطق التراكب والتداخل (Superposition & Interference)
  */
 
-import { CompressedNews } from './newsCompressionLayer';
+import { CompressedNews } from '../engines/newsCompressionLayer';
 
 export interface QuantumEventVector {
   id: string;

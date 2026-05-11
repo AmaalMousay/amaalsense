@@ -8,7 +8,7 @@
  * 4. Meta-Decision AI - converts analysis to recommendations/warnings/scenarios
  */
 
-import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from './llmProvider';
+import { invokeLLMProvider, getActiveProvider, getProviderInfo, type LLMMessage } from '../engines/llmProvider';
 import { frameResponse, enhanceAIResponse, quickQuestionTemplates, whatIfScenarios, type ToneType } from './conversationFramer';
 import { 
   parseQuestion, 
@@ -16,15 +16,15 @@ import {
   classifyIntent,
   type SemanticFrame,
   type InjectedContext 
-} from './semanticUnderstanding';
-import { LearningLayer, type IntentType } from './learningLayer';
-import { MultiTurnContext } from './multiTurnContext';
+} from '../engines/semanticUnderstanding';
+import { LearningLayer, type IntentType } from '../engines/learningLayer';
+import { MultiTurnContext } from '../engines/multiTurnContext';
 import { restructureAIResponse, compressResponse, type CompressedResponse } from './decisionCompressor';
-import { buildStructuredResponse, type AnalysisData as ResponseAnalysisData } from './responseBuilder';
-import { think, analyzeQuestionIntent, type ResponseData as ThinkingResponseData } from './thinkingEngine';
+import { buildStructuredResponse, type AnalysisData as ResponseAnalysisData } from '../engines/responseBuilder';
+import { think, analyzeQuestionIntent, type ResponseData as ThinkingResponseData } from '../engines/thinkingEngine';
 import { cognitiveProcess, type EmotionIndicators as CognitiveEmotionIndicators } from './cognitiveEngine';
 import { analyzeNewsForCauses, buildWhySection, type NewsItem } from './causalExplainability';
-import { getOrCreateProfile, updateProfileFromInteraction, type UserProfileData } from './userProfileService';
+import { getOrCreateProfile, updateProfileFromInteraction, type UserProfileData } from '../services/userProfileService';
 
 // Types for the conversational AI
 export interface AnalysisContext {

@@ -9,7 +9,7 @@
  * ثم يرسلها إلى Ollama/Groq ليكتب تحليلاً سردياً طبيعياً وذكياً
  */
 
-import { smartInvokeLLM } from '../smartLLM';
+import { smartInvokeLLM } from '../engines/smartLLM';
 import type { DeepQuestion } from './questionUnderstanding';
 
 /**

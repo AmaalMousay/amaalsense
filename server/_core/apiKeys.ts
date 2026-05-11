@@ -7,7 +7,7 @@ import { hash, compare } from 'bcryptjs';
 import { getDb } from './db';
 import { apiKeys } from '../drizzle/schema';
 import { eq, and, sql } from 'drizzle-orm';
-import { SubscriptionTier } from './subscriptionLimits';
+import { SubscriptionTier } from '../engines/subscriptionLimits';
 
 export interface ApiKeyData {
   id: string;

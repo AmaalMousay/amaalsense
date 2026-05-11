@@ -3,7 +3,7 @@
  * Automatically generates predictions at regular intervals and notifies on critical tipping points
  */
 
-import { getCountryHistoricalIndices, getAllCountriesHistoricalIndices, getDb } from "./db";
+import { getCountryHistoricalIndices, getAllCountriesHistoricalIndices, getDb } from '../_core/db';
 import { predictions, predictionSnapshots } from "../drizzle/schema";
 import {
   analyzeTrend,
@@ -15,7 +15,7 @@ import {
   type TippingPoint,
   type RiskScore,
 } from "./predictionEngine";
-import { notifyOwner } from "./_core/notification";
+import { notifyOwner } from '../_core/notification';
 
 // Scheduler state
 let isPredictionSchedulerRunning = false;

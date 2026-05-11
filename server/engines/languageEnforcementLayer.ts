@@ -5,7 +5,7 @@
  * يضمن أن الإجابة بنفس لغة السؤال حتى في نفس الدردشة
  */
 
-import { invokeGroqLLM } from './groqIntegration';
+import { invokeGroqLLM } from '../utils/groqIntegration';
 
 export type SupportedLanguage = 'ar' | 'en' | 'fr' | 'es' | 'de' | 'zh' | 'ja';
 

@@ -7,7 +7,7 @@
  * Now powered by the NETWORK ENGINE (network topology, parallel execution).
  */
 
-import { publicProcedure, router } from './_core/trpc';
+import { publicProcedure, router } from '../_core/trpc';
 import { z } from 'zod';
 import {
   analyzeForMap,
@@ -21,8 +21,8 @@ import {
   executeNetworkEngine,
   runEngineLearningCycle,
   evaluateEnginePrediction,
-} from './networkEngine';
-import { getRecentAnalyses, submitAccuracyFeedback, getLearningState, getAdjustmentHistory } from './engines/learningStore';
+} from '../engines/networkEngine';
+import { getRecentAnalyses, submitAccuracyFeedback, getLearningState, getAdjustmentHistory } from '../engines/learningStore';
 import {
   dcftEngine,
   type GlobalIndices,
@@ -36,7 +36,7 @@ import {
   detectEmotionalWaves,
   generateEmotionalForecast,
   checkAlertConditions,
-} from './dcftEngine';
+} from '../engines/dcftEngine';
 
 // Global Epicenters for Phase 2 (Financial, Political, Social)
 const PRIORITY_COUNTRIES = [

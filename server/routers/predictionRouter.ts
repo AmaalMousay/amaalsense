@@ -10,7 +10,7 @@
  * - حلقة تعلم (Feedback Loop)
  */
 import { z } from 'zod';
-import { publicProcedure, protectedProcedure, router } from './_core/trpc';
+import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 import {
   generatePredictionReport,
   generateGlobalPredictionReport,
@@ -18,13 +18,13 @@ import {
   detectTippingPoints,
   calculateRiskScore,
   type EmotionalDataPoint,
-} from './predictionEngine';
+} from '../engines/predictionEngine';
 import {
   getCountryHistoricalIndices,
   getAllCountriesHistoricalIndices,
   getEmotionIndicesHistory,
   getDb,
-} from './db';
+} from '../_core/db';
 import { predictions } from '../drizzle/schema';
 import { desc, eq } from 'drizzle-orm';
 

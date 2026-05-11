@@ -23,7 +23,7 @@ import {
 import { getFullContext } from './sessionContext';
 import { determineResponseStructure, type ResponseStructure } from './dynamicResponseEngine';
 import { applyConsultantStyle } from './narrativeStyleEngine';
-import { smartInvokeLLM } from '../smartLLM';
+import { smartInvokeLLM } from '../engines/smartLLM';
 import { getCumulativeInsight } from '../engines/learningStore';
 
 export interface PipelineInput {

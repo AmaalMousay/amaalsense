@@ -4,11 +4,11 @@
  * Exposes the Multi-Agent System to the frontend.
  */
 
-import { publicProcedure, router } from './_core/trpc';
+import { publicProcedure, router } from '../_core/trpc';
 import { z } from 'zod';
-import { multiAgentSystem } from './agents/multiAgentSystem';
-import { triggerAutonomousResearch, researcherState, toggleContinuousReading } from './knowledge/autonomousResearcher';
-import { getStats } from './knowledge/vectorStore';
+import { multiAgentSystem } from '../agents/multiAgentSystem';
+import { triggerAutonomousResearch, researcherState, toggleContinuousReading } from '../knowledge/autonomousResearcher';
+import { getStats } from '../knowledge/vectorStore';
 
 // We store some in-memory logs for the dashboard since we just built the agents
 const agentLogs: Array<{ id: string, timestamp: number, message: string, agent: string }> = [];

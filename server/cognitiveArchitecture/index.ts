@@ -510,11 +510,11 @@ export {
 // Phase 59: Patent Layers (5 layers)
 // ============================================
 export * from './workingMemory';
-export * from './longTermMemory';
+export * from '../engines/longTermMemory';
 export * from './contextualBinding';
 export * from './causalInference';
 export * from './metacognition';
-export * from './perceptionLayer';
+export * from '../dcft/perceptionLayer';
 
 // ============================================
 // Phase 60: Critical Layers (8 layers)

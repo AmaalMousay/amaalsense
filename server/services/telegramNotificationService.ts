@@ -3,7 +3,7 @@
  * Sends automatic alerts when mood changes significantly
  */
 
-import { ENV } from './_core/env';
+import { ENV } from '../_core/env';
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org/bot';
 

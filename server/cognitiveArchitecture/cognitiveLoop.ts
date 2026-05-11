@@ -9,9 +9,9 @@
  * "النظام لا يتطور لأنه ذكي، بل لأنه يشك في نفسه"
  */
 
-import { saveFeedback, type FeedbackInput, analyzeFeedback } from './feedbackLoop';
+import { saveFeedback, type FeedbackInput, analyzeFeedback } from '../utils/feedbackLoop';
 import { evaluateAndSave, type SelfEvaluationInput, type SelfEvaluationResult } from './selfEvaluation';
-import { runLearningLoop, generateWeeklyReport, getActiveInsights, getActiveRules } from './metaLearning';
+import { runLearningLoop, generateWeeklyReport, getActiveInsights, getActiveRules } from '../dcft/metaLearning';
 
 // ============================================================================
 // TYPES

@@ -7,8 +7,8 @@
  * - البيانات الحقيقية تذهب مباشرة للذكاء الاصطناعي
  */
 
-import { narrateAnalysis, type KnowledgePacket } from './cognitiveEngine/intelligentNarrator';
-import { fetchEconomicData } from './economicDataService';
+import { narrateAnalysis, type KnowledgePacket } from '../cognitiveEngine/intelligentNarrator';
+import { fetchEconomicData } from '../services/economicDataService';
 
 /**
  * نقطة الدخول الرئيسية الجديدة - تمر عبر الذكاء الاصطناعي

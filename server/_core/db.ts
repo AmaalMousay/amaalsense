@@ -2,7 +2,7 @@ import { eq, desc, asc, gte, and, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
 import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert, classifiedAnalyses, followedTopics, topicAlerts, InsertClassifiedAnalysis, InsertFollowedTopic, InsertTopicAlert, responseFeedback, InsertResponseFeedback } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import { ENV } from './env';
 
 export let db: ReturnType<typeof drizzle> | null = null;
 

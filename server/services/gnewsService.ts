@@ -5,7 +5,7 @@
  */
 
 import axios from 'axios';
-import { ENV } from './_core/env';
+import { ENV } from '../_core/env';
 
 interface GNewsArticle {
   title: string;

@@ -4,8 +4,8 @@
  */
 
 import { buildRAGContext, formatRAGForPrompt } from '../knowledge/ragSystem';
-import { createUniversalEventVector, generateUniversalPrompt } from '../eventVectorEngine';
-import { analyzeEventVectorWithUniversalModel } from '../eventVectorReasoning';
+import { createUniversalEventVector, generateUniversalPrompt } from '../engines/eventVectorEngine';
+import { analyzeEventVectorWithUniversalModel } from '../utils/eventVectorReasoning';
 import { tool_validateScientificFact } from '../agents/agentTools';
 
 // ============================================

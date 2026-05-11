@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { publicProcedure, protectedProcedure, router } from './_core/trpc';
+import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 
 /**
  * Alerts & Notifications Router

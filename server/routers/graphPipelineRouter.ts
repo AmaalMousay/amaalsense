@@ -5,9 +5,9 @@
  * Integrates Groq LLM for reasoning engine
  */
 
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, router } from '../_core/trpc';
 import { z } from "zod";
-import { graphPipeline, reasoningEngine, completePipeline, EventVectorSchema } from "./graphPipeline";
+import { graphPipeline, reasoningEngine, completePipeline, EventVectorSchema } from '../utils/graphPipeline';
 
 export const graphPipelineRouter = router({
   /**

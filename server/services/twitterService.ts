@@ -3,7 +3,7 @@
  * Provides real Twitter data without API keys
  */
 
-import { callDataApi } from "./_core/dataApi";
+import { callDataApi } from '../_core/dataApi';
 
 export interface TwitterPost {
   id: string;

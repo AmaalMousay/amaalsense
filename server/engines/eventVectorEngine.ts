@@ -4,7 +4,7 @@
  * يربط الأحداث آلياً بالفيزياء، الكيمياء، الطب، القانون، الهندسة، والرياضيات.
  */
 
-import type { CollectedData, RawDataItem } from './unifiedDataCollector';
+import type { CollectedData, RawDataItem } from '../services/unifiedDataCollector';
 
 // ============================================================
 // UNIVERSAL EVENT VECTOR INTERFACE (The Polymath Core)

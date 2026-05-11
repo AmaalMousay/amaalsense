@@ -7,9 +7,9 @@
  * تم التحديث: يستخدم الآن networkEngine بدل الـ pipeline القديم
  */
 
-import { router, publicProcedure, protectedProcedure } from "./_core/trpc";
+import { router, publicProcedure, protectedProcedure } from '../_core/trpc';
 import { z } from "zod";
-import { executeNetworkEngine, getEngineStats, type NetworkContext } from "./networkEngine";
+import { executeNetworkEngine, getEngineStats, type NetworkContext } from '../engines/networkEngine';
 
 /** Helper to extract a user-friendly response from NetworkContext */
 export function formatNetworkResult(ctx: NetworkContext) {
