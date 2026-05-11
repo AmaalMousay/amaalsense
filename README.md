@@ -1,22 +1,105 @@
+# AmalSense: Advanced Cognitive Analysis Platform
 
-🌐 AmalSense:
- Artificial Super Intelligence (ASI) Consciousness EngineAmalSense is a next-generation Deep-Tech platform engineered to quantify the "Digital Field of Consciousness." Moving beyond traditional sentiment analysis, AmalSense utilizes the proprietary Digital Collective Field Theory (DCFT) to detect semantic resonance, provide causal reasoning, and forecast global social dynamics with physical-mathematical precision.
+## Overview
+AmalSense is an innovative platform designed to provide real-time emotional and cognitive analysis of global events. It aims to mimic human cognitive processes to understand, interpret, and predict the impact of news and social media narratives. By leveraging a sophisticated multi-agent system and a unique 24-layer cognitive architecture, AmalSense transforms raw data into actionable insights, offering a deeper understanding of public sentiment and potential future developments.
 
-🚀 Key Technical Milestones (Q2 2026)Cognitive Depth:
- Powered by a 24-layer cognitive architecture mimicking human information processing (Perception to Metacognition).Data Velocity: Real-time processing of 10,000+ global news nodes daily with a high-frequency 2-hour refresh cycle.Predictive Accuracy: Achieving 85%+ precision in forecasting social trends through Accumulative Memory Resonance.Code Integrity: A robust codebase of 160,000+ lines supported by 1,078 automated tests ensuring enterprise-grade stability.
+## Vision
+Our vision is to empower users with an unparalleled understanding of the global emotional landscape. AmalSense moves beyond traditional sentiment analysis by incorporating contextual understanding, historical data, and a multi-faceted cognitive model to deliver more accurate and nuanced insights into how events shape collective human emotions and behaviors.
 
-🏗️ System Architecture:
- The Accumulative ASI CoreThe platform operates on a unified, multi-layered engine designed for low-latency and high-contextual awareness:Perception Layer (Gateway): High-speed ingestion and sanitization of multilingual data streams (News, RSS, Social).Cognitive Engine (Processing): Converts raw text into Affective Vectors (AV) using hybrid LLM reasoning (Qwen 2.5/Groq).Accumulative Memory (ASI Core): A proprietary Learning Store that identifies "Semantic Resonance"—connecting current events with historical patterns.DCFT Quantum Layer: Mathematical quantization of field indicators: GMI, CFI, and HRI.Awareness Layer (Generation): An intelligent narrator providing humanized, contextual insights and automated strategic reporting.
+## Key Features
+*   **Real-time Data Ingestion:** Gathers news and social media data from diverse sources.
+*   **24-Layer Cognitive Architecture:** Processes information through a sophisticated model inspired by human cognition, enabling deep contextual and emotional understanding.
+*   **Multi-Agent System:** Utilizes specialized AI agents for various tasks, from data collection to complex analysis and insight generation.
+*   **Advanced Emotional & Cognitive Analysis:** Identifies subtle emotional nuances, causal relationships, and predicts potential impacts of events.
+*   **Interactive Dashboards:** Provides intuitive visualizations of global sentiment, regional heatmaps, and trend analysis.
+*   **Customizable Alerts:** Notifies users of significant shifts in sentiment or emerging events based on predefined criteria.
+*   **Explainable AI (XAI):** Offers transparency into how insights are generated, fostering trust and understanding.
 
-🧪 Proprietary Framework:
- DCFT IndicatorsWe quantify "Digital Collective Consciousness" through three primary indices:IndicatorRangeTechnical DescriptionGMI (Global Mood Index)0-100The baseline emotional amplitude of a specific region or topic.CFI (Collective Friction Index)0-100Measures vector divergence and potential for systemic unrest.HRI (Hope & Resilience Index)0-100Quantifies the "Field Recovery" capacity and collective optimism.
+## Architecture
+AmalSense follows a robust Client-Server architecture, designed for scalability, maintainability, and high performance. The server-side is built with Node.js and TypeScript, while the client-side utilizes React and TypeScript.
 
-🛠️ Technology StackAI/ML:
- Hybrid architecture utilizing Groq-accelerated Inference and custom Vector Emotion Models.Backend: TypeScript/Node.js with a modular 24-layer cognitive pipeline and tRPC for type-safe communication.Memory: Advanced RAG (Retrieval-Augmented Generation) integrated with a Temporal Decay Vector Store.Frontend: React/Tailwind featuring real-time "Emotional Weather" maps and dynamic pulse visualization.
+### Server-Side Structure
+The server has been meticulously refactored into a clean and modular structure to enhance clarity and facilitate future development:
 
-📈 Strategic RoadmapShort-term:
- Expansion to 30 countries and integration of multi-modal video/audio sentiment analysis.Mid-term: Deployment of the AmalSense Public API and specialized Enterprise SaaS modules.Long-term: Evolution into a fully Autonomous Knowledge Agent capable of independent research and historical self-correction.
+*   `_core/`: Contains fundamental services and configurations, such as database connections (`db.ts`), API keys (`apiKeys.ts`), and health monitoring (`apiHealthMonitor.ts`).
+*   `engines/`: Houses the core analytical and processing units, including the 24 cognitive layers, sentiment analysis (`aiSentimentAnalyzer.ts`), prediction models (`predictionEngine.ts`), and unified analysis orchestrators (`unifiedAnalysisEngine.ts`).
+*   `services/`: Provides external integrations and data fetching capabilities, such as news aggregation (`gnewsService.ts`), social media data (`twitterService.ts`), and user profile management (`userProfileService.ts`).
+*   `routers/`: Defines the API endpoints and handles incoming requests, directing them to the appropriate engines and services. Examples include `predictionRouter.ts` and `agentRouter.ts`.
+*   `utils/`: Contains shared utility functions, helper modules, and common logic used across various parts of the server, such as validation (`validation.ts`) and caching (`cacheManager.ts`).
+*   `agents/`: Manages the multi-agent system, defining agent behaviors and interactions.
+*   `cognitiveArchitecture/`: Contains the implementation details of the 24 cognitive layers, organized for modularity.
+*   `dcft/`: Dedicated module for the DCFT (Dynamic Cognitive Flow Transformation) framework, including its core engine.
 
-📧 Contact & Leadership
-Amaal Rodwan – Founder & Visionary Architect.
-Website: amaalsense.comEmail: amaalmousay@gmail.com
+### Client-Side Structure
+The client-side is a React application structured for maintainability and user experience:
+
+*   `src/components/`: Reusable UI components (e.g., `WorldMap.tsx`, `DCFTVisualization.tsx`).
+*   `src/pages/`: Top-level components representing different views or routes in the application (e.g., `Home.tsx`, `Admin.tsx`).
+*   `src/hooks/`: Custom React hooks for encapsulating reusable logic (e.g., `useAnalysisData.ts`).
+*   `src/utils/`: Client-side utility functions and helper modules.
+*   `src/assets/`: Static assets like images, icons, and fonts.
+
+## Technology Stack
+*   **Backend:** Node.js, TypeScript, Express.js, Drizzle ORM, PostgreSQL (or compatible)
+*   **Frontend:** React, TypeScript, Tailwind CSS, Chart.js
+*   **Database:** PostgreSQL (or compatible)
+*   **AI/ML:** Custom LLM integrations (e.g., Groq), Vector Embeddings, Proprietary Cognitive Models
+*   **Deployment:** Docker, GitHub Actions (for CI/CD)
+
+## Getting Started
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+*   Node.js (v18 or higher)
+*   npm or yarn
+*   Docker (optional, for database setup)
+
+### Installation
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/AmaalMousay/amaalsense.git
+    cd amaalsense
+    ```
+2.  **Install server dependencies:**
+    ```bash
+    cd server
+    npm install
+    cd ..
+    ```
+3.  **Install client dependencies:**
+    ```bash
+    cd client
+    npm install
+    cd ..
+    ```
+4.  **Set up environment variables:**
+    Create a `.env` file in the `server/` directory based on `server/.env.example` and fill in your database credentials, API keys, etc.
+
+### Running the Application
+1.  **Start the server:**
+    ```bash
+    cd server
+    npm run dev
+    ```
+2.  **Start the client:**
+    ```bash
+    cd client
+    npm run dev
+    ```
+    The client application will typically run on `http://localhost:5173`.
+
+## Contributing
+We welcome contributions to AmalSense! Please read our `CONTRIBUTING.md` (to be created) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## License
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Contact
+Amaal Rodwan – Founder & Visionary Architect
+Website: [amaalsense.com](https://amaalsense.com)
+Email: [amaalmousay@gmail.com](mailto:amaalmousay@gmail.com)
+
+Project Link: [https://github.com/AmaalMousay/amaalsense](https://github.com/AmaalMousay/amaalsense)
+
+---
+*This README.md was generated and updated by Manus AI during an optimization and refactoring session.*
