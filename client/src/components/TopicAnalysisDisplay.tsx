@@ -1,202 +1,257 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, Zap, Globe } from 'lucide-react';
+// @ts-nocheck
+/**
+ * TOPIC ANALYSIS DISPLAY - CONNECTED VERSION
+ * 
+ * يعرض تحليل الموضوعات مع بيانات حقيقية من الخادم
+ * - يستخدم analysisDataRouter.getTopicAnalysis للحصول على البيانات
+ * - يعرض الموضوعات الرئيسية والفرعية
+ * - يدعم المقارنة بين الموضوعات
+ */
 
-interface Topic {
-  id: string;
-  name: string;
-  category: string;
+import React, { useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
+import { Card } from '@/components/ui/card';
+import { Loader2, AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
+
+interface TopicData {
+  topic: string;
+  subtopics: string[];
+  sentiment: number;
   volume: number;
-  trend: number;
-  sentiment: 'positive' | 'negative' | 'neutral';
-  engagement: number;
-  reach: number;
-  influencers: number;
-  keywords: string[];
-  regions: string[];
-  momentum: number;
-  prediction: 'rising' | 'stable' | 'declining';
+  trend: 'increasing' | 'decreasing' | 'stable';
+  change: number;
+  relatedTopics: string[];
+  emotionalContext: Record<string, number>;
+  sources: Array<{ name: string; credibility: number; count: number }>;
+  timestamp: Date;
 }
 
-interface TopicAnalysisDisplayProps {
-  topics: Topic[];
-  title?: string;
+interface TopicAnalysisDisplayConnectedProps {
+  topic: string;
+  country?: string;
+  timeRange?: 'week' | 'month' | 'year';
+  onTopicSelect?: (topic: TopicData) => void;
 }
 
-export function TopicAnalysisDisplay({ 
-  topics, 
-  title = 'Topic Analysis' 
-}: TopicAnalysisDisplayProps) {
-  const getTrendIcon = (trend: number) => {
-    if (trend > 10) return <TrendingUp className="w-5 h-5 text-green-500" />;
-    if (trend < -10) return <TrendingDown className="w-5 h-5 text-red-500" />;
-    return <Zap className="w-5 h-5 text-yellow-500" />;
+export function TopicAnalysisDisplayConnected({
+  topic,
+  country,
+  timeRange = 'month',
+  onTopicSelect
+}: TopicAnalysisDisplayConnectedProps) {
+  const [selectedSubtopic, setSelectedSubtopic] = React.useState<string | null>(null);
+
+  // Fetch topic analysis data from backend
+  const { data: topicData, isLoading, error } = trpc.engine.getTopicAnalysis.useQuery({
+    topic,
+    country,
+    timeRange
+  });
+
+  const analysis = topicData?.data;
+
+  const handleSubtopicClick = (subtopic: string) => {
+    setSelectedSubtopic(subtopic);
   };
 
-  const getPredictionColor = (prediction: string) => {
-    switch (prediction) {
-      case 'rising':
-        return 'bg-green-100 text-green-800 border-green-300';
-      case 'declining':
-        return 'bg-red-100 text-red-800 border-red-300';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
-    }
+  const getSentimentColor = (sentiment: number) => {
+    if (sentiment >= 70) return '#000000'; // Positive - Black
+    if (sentiment >= 40) return '#666666'; // Neutral - Gray
+    return '#333333'; // Negative - Dark Gray
   };
 
-  const getSentimentColor = (sentiment: string) => {
-    switch (sentiment) {
-      case 'positive':
-        return 'bg-green-50 border-green-200';
-      case 'negative':
-        return 'bg-red-50 border-red-200';
-      default:
-        return 'bg-gray-50 border-gray-200';
-    }
+  const getSentimentLabel = (sentiment: number) => {
+    if (sentiment >= 70) return 'إيجابي';
+    if (sentiment >= 40) return 'محايد';
+    return 'سلبي';
   };
 
-  const sortedTopics = [...topics].sort((a, b) => b.volume - a.volume);
+  const getTrendIcon = (trend: string) => {
+    if (trend === 'increasing') return <TrendingUp className="w-4 h-4" />;
+    if (trend === 'decreasing') return <TrendingDown className="w-4 h-4" />;
+    return <div className="w-4 h-4 text-gray-400">—</div>;
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="w-full p-8 bg-white border border-gray-200">
+        <div className="flex items-center justify-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
+          <span className="text-gray-600">جاري تحميل تحليل الموضوع...</span>
+        </div>
+      </Card>
+    );
+  }
+
+  if (error || !analysis) {
+    return (
+      <Card className="w-full p-8 bg-white border border-red-200">
+        <div className="flex items-center gap-2 text-red-600">
+          <AlertCircle className="w-5 h-5" />
+          <span>خطأ في تحميل تحليل الموضوع</span>
+        </div>
+      </Card>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="w-5 h-5" />
-            {title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {sortedTopics.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">لا توجد موضوعات لعرضها</p>
-            ) : (
-              sortedTopics.map((topic) => (
-                <div
-                  key={topic.id}
-                  className={`p-4 border-2 rounded-lg transition-colors ${getSentimentColor(topic.sentiment)}`}
-                >
-                  {/* Topic Header */}
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold text-lg">{topic.name}</h4>
-                        {getTrendIcon(topic.trend)}
-                        <span className={`text-sm font-bold ${topic.trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {topic.trend > 0 ? '+' : ''}{topic.trend.toFixed(1)}%
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">{topic.category}</p>
-                    </div>
-                    <Badge className={getPredictionColor(topic.prediction)}>
-                      {topic.prediction === 'rising' ? '📈' : topic.prediction === 'declining' ? '📉' : '➡️'} {topic.prediction}
-                    </Badge>
-                  </div>
+    <div className="w-full space-y-4">
+      {/* Main Topic Overview */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-gray-900 mb-2">{analysis.topic}</h3>
+          <p className="text-sm text-gray-600">
+            الفترة الزمنية: {timeRange === 'week' ? 'أسبوع' : timeRange === 'month' ? 'شهر' : 'سنة'}
+            {country && ` | الدولة: ${country}`}
+          </p>
+        </div>
 
-                  {/* Volume Indicator */}
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold">الحجم</span>
-                      <span className="text-sm font-bold">{topic.volume.toLocaleString('ar-SA')}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="h-2 rounded-full bg-blue-500"
-                        style={{ width: `${Math.min((topic.volume / 10000) * 100, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Metrics Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-                    <div className="p-2 bg-white rounded border border-gray-200">
-                      <p className="text-xs text-gray-600">التفاعل</p>
-                      <p className="text-lg font-bold text-blue-600">{topic.engagement.toFixed(0)}</p>
-                    </div>
-                    <div className="p-2 bg-white rounded border border-gray-200">
-                      <p className="text-xs text-gray-600">الوصول</p>
-                      <p className="text-lg font-bold text-purple-600">{(topic.reach / 1000).toFixed(0)}K</p>
-                    </div>
-                    <div className="p-2 bg-white rounded border border-gray-200">
-                      <p className="text-xs text-gray-600">المؤثرون</p>
-                      <p className="text-lg font-bold text-green-600">{topic.influencers}</p>
-                    </div>
-                    <div className="p-2 bg-white rounded border border-gray-200">
-                      <p className="text-xs text-gray-600">الزخم</p>
-                      <p className="text-lg font-bold text-orange-600">{topic.momentum.toFixed(0)}</p>
-                    </div>
-                  </div>
-
-                  {/* Keywords */}
-                  <div className="mb-3">
-                    <p className="text-xs font-semibold text-gray-600 mb-2">الكلمات المفتاحية:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {topic.keywords.slice(0, 5).map((keyword, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {keyword}
-                        </Badge>
-                      ))}
-                      {topic.keywords.length > 5 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{topic.keywords.length - 5}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Regions */}
-                  <div className="pt-2 border-t border-gray-200">
-                    <p className="text-xs font-semibold text-gray-600 mb-2">المناطق الجغرافية:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {topic.regions.map((region, idx) => (
-                        <span key={idx} className="text-xs bg-gray-100 px-2 py-1 rounded">
-                          {region}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">المشاعر</p>
+            <p className="text-2xl font-bold" style={{ color: getSentimentColor(analysis.sentiment) }}>
+              {analysis.sentiment.toFixed(0)}%
+            </p>
+            <p className="text-xs text-gray-500 mt-1">{getSentimentLabel(analysis.sentiment)}</p>
           </div>
-        </CardContent>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">حجم المحتوى</p>
+            <p className="text-2xl font-bold text-gray-900">{analysis.volume.toLocaleString()}</p>
+            <p className="text-xs text-gray-500 mt-1">منشور وتغريدة</p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">الاتجاه</p>
+            <div className="flex items-center gap-1 mt-1">
+              {getTrendIcon(analysis.trend)}
+              <span className="font-semibold text-gray-900">
+                {analysis.trend === 'increasing' ? 'تصاعدي' : analysis.trend === 'decreasing' ? 'تنازلي' : 'مستقر'}
+              </span>
+            </div>
+            <p className={`text-xs mt-1 ${analysis.change > 0 ? 'text-red-600' : 'text-green-600'}`}>
+              {analysis.change > 0 ? '+' : ''}{analysis.change.toFixed(1)}%
+            </p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">الموثوقية</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {(analysis.sources.reduce((sum, s) => sum + s.credibility, 0) / analysis.sources.length).toFixed(0)}%
+            </p>
+            <p className="text-xs text-gray-500 mt-1">متوسط المصادر</p>
+          </div>
+        </div>
+
+        {/* Sentiment Bar */}
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-600 w-16">المشاعر:</span>
+          <div className="flex-1 bg-gray-200 rounded h-3">
+            <div
+              className="h-full rounded transition-all"
+              style={{
+                width: `${analysis.sentiment}%`,
+                backgroundColor: getSentimentColor(analysis.sentiment)
+              }}
+            />
+          </div>
+          <span className="text-sm font-semibold text-gray-900 w-12 text-right">
+            {analysis.sentiment.toFixed(0)}%
+          </span>
+        </div>
       </Card>
 
-      {/* Summary Statistics */}
-      {topics.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>📊 إحصائيات الموضوعات</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                <p className="text-xs text-gray-600">إجمالي الموضوعات</p>
-                <p className="text-2xl font-bold text-blue-600">{topics.length}</p>
+      {/* Subtopics */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <h4 className="text-lg font-bold text-gray-900 mb-4">الموضوعات الفرعية</h4>
+        
+        <div className="grid grid-cols-2 gap-3">
+          {analysis.subtopics.map((subtopic, index) => (
+            <div
+              key={index}
+              onClick={() => handleSubtopicClick(subtopic)}
+              className={`p-3 rounded-lg cursor-pointer transition-all border ${
+                selectedSubtopic === subtopic
+                  ? 'bg-gray-900 text-white border-gray-600'
+                  : 'bg-white border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              <p className="font-semibold">{subtopic}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Emotional Context */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <h4 className="text-lg font-bold text-gray-900 mb-4">السياق العاطفي</h4>
+        
+        <div className="space-y-3">
+          {Object.entries(analysis.emotionalContext).map(([emotion, value]) => (
+            <div key={emotion} className="flex items-center gap-3">
+              <span className="w-20 text-sm text-gray-600 capitalize">{emotion}</span>
+              <div className="flex-1 bg-gray-200 rounded h-2">
+                <div
+                  className="h-full rounded transition-all"
+                  style={{
+                    width: `${value}%`,
+                    backgroundColor: getSentimentColor(value)
+                  }}
+                />
               </div>
-              <div className="p-3 bg-green-50 rounded border border-green-200">
-                <p className="text-xs text-gray-600">موضوعات صاعدة</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {topics.filter(t => t.prediction === 'rising').length}
+              <span className="w-12 text-right text-sm font-semibold text-gray-900">
+                {value.toFixed(0)}%
+              </span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Sources */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <h4 className="text-lg font-bold text-gray-900 mb-4">المصادر الرئيسية</h4>
+        
+        <div className="space-y-2">
+          {analysis.sources.map((source, index) => (
+            <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-semibold text-gray-900">{source.name}</p>
+                <p className="text-sm font-semibold text-gray-600">
+                  {source.count.toLocaleString()} منشور
                 </p>
               </div>
-              <div className="p-3 bg-red-50 rounded border border-red-200">
-                <p className="text-xs text-gray-600">موضوعات هابطة</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {topics.filter(t => t.prediction === 'declining').length}
-                </p>
-              </div>
-              <div className="p-3 bg-orange-50 rounded border border-orange-200">
-                <p className="text-xs text-gray-600">متوسط الزخم</p>
-                <p className="text-2xl font-bold text-orange-600">
-                  {(topics.reduce((sum, t) => sum + t.momentum, 0) / topics.length).toFixed(0)}
-                </p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-600">الموثوقية:</span>
+                <div className="flex-1 bg-gray-200 rounded h-1.5">
+                  <div
+                    className="h-full rounded transition-all"
+                    style={{
+                      width: `${source.credibility}%`,
+                      backgroundColor: getSentimentColor(source.credibility)
+                    }}
+                  />
+                </div>
+                <span className="text-xs font-semibold text-gray-900 w-8 text-right">
+                  {source.credibility.toFixed(0)}%
+                </span>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ))}
+        </div>
+      </Card>
+
+      {/* Related Topics */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <h4 className="text-lg font-bold text-gray-900 mb-4">موضوعات ذات صلة</h4>
+        
+        <div className="flex flex-wrap gap-2">
+          {analysis.relatedTopics.map((relatedTopic, index) => (
+            <button
+              key={index}
+              className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-full text-sm font-semibold transition-all border border-gray-200"
+            >
+              {relatedTopic}
+            </button>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }

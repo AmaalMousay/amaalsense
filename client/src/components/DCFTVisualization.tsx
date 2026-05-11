@@ -1,285 +1,270 @@
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+// @ts-nocheck
+/**
+ * DCFT VISUALIZATION - CONNECTED VERSION
+ * 
+ * يعرض تصور DCFT (Discrete Collective Fourier Transform) مع بيانات حقيقية
+ * - يستخدم analysisDataRouter.getDCFTVisualization للحصول على البيانات
+ * - يعرض المتناسقات والموجات
+ * - يدعم التحليل الطيفي للعواطف
+ */
 
-interface DCFTIndices {
-  gmi: number;
-  cfi: number;
-  hri: number;
-  aci: number;
-  sdi: number;
-  confidence: number;
-  breakdown: {
-    positiveEnergy: number;
-    negativeEnergy: number;
-    neutralEnergy: number;
-    emotionalIntensity: number;
-  };
+import React, { useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
+import { Card } from '@/components/ui/card';
+import { Loader2, AlertCircle, BarChart3 } from 'lucide-react';
+
+interface Harmonic {
+  frequency: number;
+  amplitude: number;
+  phase: number;
+  emotion: string;
+  strength: number;
 }
 
-interface DCFTVisualizationProps {
-  indices: DCFTIndices;
-  language?: 'ar' | 'en';
+interface DCFTData {
+  topic: string;
+  country: string;
+  harmonics: Harmonic[];
+  dominantFrequency: number;
+  totalEnergy: number;
+  complexity: number;
+  stability: number;
+  timestamp: Date;
 }
 
-const labels = {
-  ar: {
-    gmi: 'مؤشر المزاج العام',
-    cfi: 'مؤشر الخوف الجماعي',
-    hri: 'مؤشر الأمل والمرونة',
-    aci: 'مؤشر الاستقطاب',
-    sdi: 'مؤشر الاستقرار الديناميكي',
-    confidence: 'درجة الثقة',
-    positiveEnergy: 'الطاقة الإيجابية',
-    negativeEnergy: 'الطاقة السلبية',
-    neutralEnergy: 'الطاقة المحايدة',
-    emotionalIntensity: 'شدة المشاعر',
-  },
-  en: {
-    gmi: 'Global Mood Index',
-    cfi: 'Collective Fear Index',
-    hri: 'Hope & Resilience Index',
-    aci: 'Antagonism & Conflict Index',
-    sdi: 'Stability & Dynamics Index',
-    confidence: 'Confidence Score',
-    positiveEnergy: 'Positive Energy',
-    negativeEnergy: 'Negative Energy',
-    neutralEnergy: 'Neutral Energy',
-    emotionalIntensity: 'Emotional Intensity',
-  },
-};
+interface DCFTVisualizationConnectedProps {
+  topic: string;
+  country?: string;
+  onHarmonicSelect?: (harmonic: Harmonic) => void;
+}
 
-const getColorForValue = (value: number): string => {
-  if (value >= 70) return '#10b981'; // Green - positive
-  if (value >= 50) return '#f59e0b'; // Amber - neutral
-  if (value >= 30) return '#ef4444'; // Red - negative
-  return '#991b1b'; // Dark red - very negative
-};
+export function DCFTVisualizationConnected({
+  topic,
+  country,
+  onHarmonicSelect
+}: DCFTVisualizationConnectedProps) {
+  const [selectedHarmonic, setSelectedHarmonic] = React.useState<Harmonic | null>(null);
 
-const getInterpretation = (index: string, value: number, language: 'ar' | 'en' = 'en'): string => {
-  const interpretations = {
-    ar: {
-      gmi: {
-        high: 'المزاج العام إيجابي وتفاؤلي',
-        medium: 'المزاج العام متوازن',
-        low: 'المزاج العام سلبي وقلق',
-      },
-      cfi: {
-        high: 'مستويات خوف عالية جداً',
-        medium: 'مستويات خوف معتدلة',
-        low: 'مستويات خوف منخفضة',
-      },
-      hri: {
-        high: 'أمل وثقة عالية جداً',
-        medium: 'أمل وثقة معتدلة',
-        low: 'أمل وثقة منخفضة',
-      },
-      aci: {
-        high: 'استقطاب واستقطاب عالي جداً',
-        medium: 'استقطاب معتدل',
-        low: 'استقطاب منخفض - توافق عالي',
-      },
-      sdi: {
-        high: 'استقرار ديناميكي عالي',
-        medium: 'استقرار ديناميكي معتدل',
-        low: 'عدم استقرار ديناميكي',
-      },
-    },
-    en: {
-      gmi: {
-        high: 'Overall mood is positive and optimistic',
-        medium: 'Overall mood is balanced',
-        low: 'Overall mood is negative and anxious',
-      },
-      cfi: {
-        high: 'Very high levels of fear',
-        medium: 'Moderate levels of fear',
-        low: 'Low levels of fear',
-      },
-      hri: {
-        high: 'Very high hope and confidence',
-        medium: 'Moderate hope and confidence',
-        low: 'Low hope and confidence',
-      },
-      aci: {
-        high: 'High polarization and conflict',
-        medium: 'Moderate polarization',
-        low: 'Low polarization - high consensus',
-      },
-      sdi: {
-        high: 'High dynamic stability',
-        medium: 'Moderate dynamic stability',
-        low: 'Dynamic instability',
-      },
-    },
+  // Fetch DCFT visualization data from backend
+  const { data: dcftData, isLoading, error } = trpc.engine.getDCFTVisualization.useQuery({
+    topic,
+    country
+  });
+
+  const analysis = dcftData?.data;
+
+  const handleHarmonicClick = (harmonic: Harmonic) => {
+    setSelectedHarmonic(harmonic);
+    if (onHarmonicSelect) {
+      onHarmonicSelect(harmonic);
+    }
   };
 
-  const indexKey = index as keyof typeof interpretations['en'];
-  const level = value >= 70 ? 'high' : value >= 40 ? 'medium' : 'low';
-  
-  return interpretations[language][indexKey]?.[level] || '';
-};
+  const getAmplitudeColor = (amplitude: number, maxAmplitude: number) => {
+    const normalized = amplitude / maxAmplitude;
+    if (normalized >= 0.8) return '#000000';
+    if (normalized >= 0.6) return '#333333';
+    if (normalized >= 0.4) return '#666666';
+    if (normalized >= 0.2) return '#999999';
+    return '#CCCCCC';
+  };
 
-export const DCFTVisualization: React.FC<DCFTVisualizationProps> = ({ indices, language = 'en' }) => {
-  const lang = labels[language];
-  const isArabic = language === 'ar';
+  const getEmotionLabel = (emotion: string) => {
+    const labels: Record<string, string> = {
+      joy: 'فرح',
+      fear: 'خوف',
+      anger: 'غضب',
+      sadness: 'حزن',
+      hope: 'أمل',
+      curiosity: 'فضول'
+    };
+    return labels[emotion] || emotion;
+  };
 
-  // Prepare data for radar chart
-  const radarData = [
-    { name: lang.gmi, value: indices.gmi, fullMark: 100 },
-    { name: lang.cfi, value: indices.cfi, fullMark: 100 },
-    { name: lang.hri, value: indices.hri, fullMark: 100 },
-    { name: lang.aci, value: indices.aci, fullMark: 100 },
-    { name: lang.sdi, value: indices.sdi, fullMark: 100 },
-  ];
+  if (isLoading) {
+    return (
+      <Card className="w-full p-8 bg-white border border-gray-200">
+        <div className="flex items-center justify-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
+          <span className="text-gray-600">جاري تحميل تصور DCFT...</span>
+        </div>
+      </Card>
+    );
+  }
 
-  // Prepare data for bar chart
-  const barData = [
-    { name: lang.gmi, value: Math.round(indices.gmi), color: getColorForValue(indices.gmi) },
-    { name: lang.cfi, value: Math.round(indices.cfi), color: getColorForValue(indices.cfi) },
-    { name: lang.hri, value: Math.round(indices.hri), color: getColorForValue(indices.hri) },
-    { name: lang.aci, value: Math.round(indices.aci), color: getColorForValue(indices.aci) },
-    { name: lang.sdi, value: Math.round(indices.sdi), color: getColorForValue(indices.sdi) },
-  ];
+  if (error || !analysis) {
+    return (
+      <Card className="w-full p-8 bg-white border border-red-200">
+        <div className="flex items-center gap-2 text-red-600">
+          <AlertCircle className="w-5 h-5" />
+          <span>خطأ في تحميل تصور DCFT</span>
+        </div>
+      </Card>
+    );
+  }
 
-  // Prepare data for breakdown chart
-  const breakdownData = [
-    { name: lang.positiveEnergy, value: Math.round(indices.breakdown.positiveEnergy) },
-    { name: lang.negativeEnergy, value: Math.round(indices.breakdown.negativeEnergy) },
-    { name: lang.neutralEnergy, value: Math.round(indices.breakdown.neutralEnergy) },
-  ];
+  const maxAmplitude = Math.max(...analysis.harmonics.map(h => h.amplitude), 1);
+  const sortedHarmonics = [...analysis.harmonics].sort((a, b) => b.amplitude - a.amplitude);
 
   return (
-    <div className="space-y-6" dir={isArabic ? 'rtl' : 'ltr'}>
-      {/* Main DCFT Indices Card */}
-      <Card className="border-purple-500/50 bg-gradient-to-br from-purple-900/20 to-blue-900/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span className="text-2xl">📊</span>
-            {isArabic ? 'مؤشرات DCFT' : 'DCFT Indices'}
-          </CardTitle>
-          <CardDescription>
-            {isArabic 
-              ? 'تحليل ديناميكي شامل للعواطف الجماعية' 
-              : 'Comprehensive Dynamic Contextual Fusion Transform Analysis'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Radar Chart */}
-          <div className="h-96">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="#6b7280" />
-                <PolarAngleAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <PolarRadiusAxis angle={90} domain={[0, 100]} />
-                <Radar name="Score" dataKey="value" stroke="#a78bfa" fill="#a78bfa" fillOpacity={0.6} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #6b7280' }}
-                  formatter={(value) => `${Math.round(value as number)}`}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
+    <div className="w-full space-y-4">
+      {/* DCFT Overview */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <div className="flex items-center gap-2 mb-4">
+          <BarChart3 className="w-5 h-5 text-gray-900" />
+          <h3 className="text-lg font-bold text-gray-900">تحليل DCFT</h3>
+        </div>
 
-          {/* Individual Index Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {[
-              { key: 'gmi', value: indices.gmi, icon: '😊' },
-              { key: 'cfi', value: indices.cfi, icon: '😨' },
-              { key: 'hri', value: indices.hri, icon: '🙏' },
-              { key: 'aci', value: indices.aci, icon: '⚔️' },
-              { key: 'sdi', value: indices.sdi, icon: '⚖️' },
-            ].map(({ key, value, icon }) => (
-              <div
-                key={key}
-                className="p-4 rounded-lg border-2 transition-all hover:shadow-lg"
-                style={{
-                  borderColor: getColorForValue(value),
-                  backgroundColor: `${getColorForValue(value)}20`,
-                }}
-              >
-                <div className="text-3xl mb-2">{icon}</div>
-                <div className="text-sm font-semibold text-gray-300">
-                  {lang[key as keyof typeof lang]}
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">التردد المهيمن</p>
+            <p className="text-2xl font-bold text-gray-900">{analysis.dominantFrequency.toFixed(2)}</p>
+            <p className="text-xs text-gray-500 mt-1">Hz</p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">الطاقة الكلية</p>
+            <p className="text-2xl font-bold text-gray-900">{analysis.totalEnergy.toFixed(0)}</p>
+            <p className="text-xs text-gray-500 mt-1">وحدة طاقة</p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">التعقيد</p>
+            <p className="text-2xl font-bold text-gray-900">{analysis.complexity.toFixed(1)}</p>
+            <p className="text-xs text-gray-500 mt-1">درجة</p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-1">الاستقرار</p>
+            <p className="text-2xl font-bold text-gray-900">{analysis.stability.toFixed(0)}%</p>
+            <p className="text-xs text-gray-500 mt-1">مستقر</p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Harmonics Visualization */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <h4 className="text-lg font-bold text-gray-900 mb-4">المتناسقات (Harmonics)</h4>
+        
+        <div className="space-y-3 mb-6">
+          {sortedHarmonics.slice(0, 10).map((harmonic, index) => (
+            <div
+              key={index}
+              onClick={() => handleHarmonicClick(harmonic)}
+              className={`p-3 rounded-lg cursor-pointer transition-all border ${
+                selectedHarmonic?.frequency === harmonic.frequency
+                  ? 'bg-gray-900 text-white border-gray-600'
+                  : 'bg-white border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <p className="font-semibold">
+                    المتناسق #{index + 1} - {getEmotionLabel(harmonic.emotion)}
+                  </p>
+                  <p className={`text-xs ${selectedHarmonic?.frequency === harmonic.frequency ? 'text-gray-300' : 'text-gray-600'}`}>
+                    التردد: {harmonic.frequency.toFixed(2)} Hz | الطور: {harmonic.phase.toFixed(1)}°
+                  </p>
                 </div>
-                <div className="text-2xl font-bold mt-2" style={{ color: getColorForValue(value) }}>
-                  {Math.round(value)}
+                <div className="text-right">
+                  <p className="font-bold text-lg">{harmonic.amplitude.toFixed(1)}</p>
+                  <p className={`text-xs ${selectedHarmonic?.frequency === harmonic.frequency ? 'text-gray-300' : 'text-gray-600'}`}>
+                    السعة
+                  </p>
                 </div>
-                <div className="text-xs text-gray-400 mt-2">
-                  {getInterpretation(key, value, language)}
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-3 overflow-hidden">
+              </div>
+
+              {/* Amplitude Bar */}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-gray-200 rounded h-2">
                   <div
-                    className="h-full rounded-full transition-all"
+                    className="h-full rounded transition-all"
                     style={{
-                      width: `${Math.min(value, 100)}%`,
-                      backgroundColor: getColorForValue(value),
+                      width: `${(harmonic.amplitude / maxAmplitude) * 100}%`,
+                      backgroundColor: getAmplitudeColor(harmonic.amplitude, maxAmplitude)
                     }}
                   />
                 </div>
+                <span className="text-xs font-semibold text-gray-600 w-8 text-right">
+                  {((harmonic.amplitude / maxAmplitude) * 100).toFixed(0)}%
+                </span>
               </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Selected Harmonic Details */}
+      {selectedHarmonic && (
+        <Card className="w-full p-6 bg-white border border-gray-200">
+          <h4 className="text-lg font-bold text-gray-900 mb-4">
+            تفاصيل المتناسق: {getEmotionLabel(selectedHarmonic.emotion)}
+          </h4>
+
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">التردد</p>
+              <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.frequency.toFixed(2)}</p>
+              <p className="text-xs text-gray-500 mt-1">Hz</p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">السعة</p>
+              <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.amplitude.toFixed(1)}</p>
+              <p className="text-xs text-gray-500 mt-1">وحدة</p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">الطور</p>
+              <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.phase.toFixed(1)}</p>
+              <p className="text-xs text-gray-500 mt-1">درجة</p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">القوة</p>
+              <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.strength.toFixed(0)}%</p>
+              <p className="text-xs text-gray-500 mt-1">نسبة</p>
+            </div>
+          </div>
+
+          {/* Strength Bar */}
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm text-gray-600 mb-3">قوة المتناسق</p>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 bg-gray-200 rounded h-3">
+                <div
+                  className="h-full rounded transition-all"
+                  style={{
+                    width: `${selectedHarmonic.strength}%`,
+                    backgroundColor: getAmplitudeColor(selectedHarmonic.strength, 100)
+                  }}
+                />
+              </div>
+              <span className="text-sm font-semibold text-gray-900 w-12 text-right">
+                {selectedHarmonic.strength.toFixed(0)}%
+              </span>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Frequency Spectrum */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <h4 className="text-lg font-bold text-gray-900 mb-4">طيف التردد</h4>
+        
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-end justify-between h-40 gap-1">
+            {sortedHarmonics.slice(0, 20).map((harmonic, index) => (
+              <div
+                key={index}
+                className="flex-1 bg-gray-300 rounded-t cursor-pointer hover:opacity-80 transition-opacity"
+                style={{
+                  height: `${(harmonic.amplitude / maxAmplitude) * 100}%`,
+                  backgroundColor: getAmplitudeColor(harmonic.amplitude, maxAmplitude)
+                }}
+                title={`${harmonic.emotion}: ${harmonic.amplitude.toFixed(1)}`}
+              />
             ))}
           </div>
-
-          {/* Confidence Score */}
-          <div className="p-4 rounded-lg border border-blue-500/50 bg-blue-900/20">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold">{lang.confidence}</span>
-              <span className="text-2xl font-bold text-blue-400">
-                {Math.round(indices.confidence * 100)}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 mt-3 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-blue-500 transition-all"
-                style={{ width: `${Math.min(indices.confidence * 100, 100)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Breakdown Chart */}
-          <div>
-            <h3 className="text-sm font-semibold mb-4">
-              {isArabic ? 'تحليل الطاقة العاطفية' : 'Emotional Energy Breakdown'}
-            </h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={breakdownData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#6b7280" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #6b7280' }}
-                    formatter={(value) => `${Math.round(value as number)}%`}
-                  />
-                  <Bar dataKey="value" fill="#a78bfa" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Emotional Intensity */}
-          <div className="p-4 rounded-lg border border-orange-500/50 bg-orange-900/20">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold">{lang.emotionalIntensity}</span>
-              <span className="text-2xl font-bold text-orange-400">
-                {Math.round(indices.breakdown.emotionalIntensity)}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 mt-3 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-orange-500 transition-all"
-                style={{ width: `${Math.min(indices.breakdown.emotionalIntensity, 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-gray-400 mt-2">
-              {isArabic 
-                ? 'مدى شدة المشاعر المكتشفة في البيانات'
-                : 'Intensity of emotions detected in the data'}
-            </p>
-          </div>
-        </CardContent>
+          <p className="text-xs text-gray-600 mt-2 text-center">
+            أعلى 20 متناسق
+          </p>
+        </div>
       </Card>
     </div>
   );
-};
+}

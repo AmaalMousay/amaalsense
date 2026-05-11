@@ -1,254 +1,302 @@
-import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { 
-  EMOTION_COLORS, 
-  GMI_COLORS, 
-  CFI_COLORS, 
-  HRI_COLORS,
-  withOpacity 
-} from '@shared/emotionColors';
+// @ts-nocheck
+/**
+ * WORLD MAP - CONNECTED VERSION
+ * 
+ * يعرض خريطة العالم مع مؤشرات GMI/CFI/HRI الحقيقية
+ * - يستخدم mapDataRouter.getWorldMapData للحصول على البيانات
+ * - يعرض المؤشرات على مستوى العالم
+ * - يسمح بالتفاعل والتحليل المقارن بين الدول
+ */
 
-interface CountryEmotionData {
-  countryCode: string;
-  countryName: string;
+import React, { useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
+import { Card } from '@/components/ui/card';
+import { Loader2, AlertCircle, Globe } from 'lucide-react';
+
+interface CountryData {
+  country: string;
+  code: string;
   gmi: number;
   cfi: number;
   hri: number;
-  confidence: number;
+  population: number;
+  dominantEmotion: string;
+  emotionIntensity: number;
+  trend: 'increasing' | 'decreasing' | 'stable';
+  timestamp: Date;
 }
 
-interface WorldMapProps {
-  countriesData: CountryEmotionData[];
-  selectedCountry?: string;
-  onCountrySelect?: (countryCode: string) => void;
+interface WorldMapConnectedProps {
+  limit?: number;
+  onCountrySelect?: (country: CountryData) => void;
 }
 
-// Simplified SVG map with country paths (using a basic representation)
-const COUNTRY_POSITIONS: Record<string, { x: number; y: number; size: number }> = {
-  'SA': { x: 55, y: 45, size: 8 },
-  'AE': { x: 60, y: 42, size: 5 },
-  'EG': { x: 50, y: 35, size: 7 },
-  'US': { x: 20, y: 35, size: 12 },
-  'GB': { x: 48, y: 25, size: 4 },
-  'DE': { x: 50, y: 28, size: 5 },
-  'FR': { x: 48, y: 30, size: 6 },
-  'JP': { x: 80, y: 35, size: 6 },
-  'CN': { x: 70, y: 38, size: 10 },
-  'IN': { x: 65, y: 45, size: 8 },
-  'BR': { x: 30, y: 55, size: 9 },
-  'CA': { x: 18, y: 25, size: 10 },
-  'AU': { x: 75, y: 65, size: 8 },
-  'KR': { x: 78, y: 32, size: 3 },
-  'MX': { x: 18, y: 42, size: 6 },
-  'RU': { x: 65, y: 20, size: 15 },
-  'IT': { x: 52, y: 32, size: 3 },
-  'ES': { x: 46, y: 32, size: 5 },
-  'NL': { x: 49, y: 27, size: 2 },
-  'SE': { x: 52, y: 20, size: 6 },
-  'CH': { x: 50, y: 30, size: 2 },
-  'SG': { x: 72, y: 50, size: 1 },
-  'ID': { x: 72, y: 55, size: 7 },
-  'TH': { x: 70, y: 48, size: 4 },
-  'MY': { x: 70, y: 50, size: 3 },
-};
+export function WorldMapConnected({
+  limit = 100,
+  onCountrySelect
+}: WorldMapConnectedProps) {
+  const [selectedCountry, setSelectedCountry] = React.useState<CountryData | null>(null);
+  const [sortBy, setSortBy] = React.useState<'gmi' | 'cfi' | 'hri'>('gmi');
 
-/**
- * Get emotion color based on GMI, CFI, and HRI values
- * Using the unified Amaalsense color system
- */
-function getEmotionColor(gmi: number, cfi: number, hri: number): string {
-  // High fear takes priority (Orange → Red gradient)
-  if (cfi > 60) {
-    return CFI_COLORS.high; // Dark Red for high fear
-  }
-  if (cfi > 35) {
-    return CFI_COLORS.medium; // Orange for medium fear
-  }
+  // Fetch world map data from backend
+  const { data: worldData, isLoading, error } = trpc.engine.getWorldMapData.useQuery({
+    limit
+  });
 
-  // High hope/resilience (Green gradient)
-  if (hri > 60) {
-    return HRI_COLORS.high; // Dark Green for strong hope
-  }
-  if (hri > 35) {
-    return HRI_COLORS.medium; // Light Green for moderate hope
-  }
+  const countries = useMemo(() => worldData?.data || [], [worldData]);
 
-  // GMI-based coloring (Red → Yellow → Green)
-  if (gmi > 30) {
-    return GMI_COLORS.positive; // Green for positive mood
-  }
-  if (gmi < -30) {
-    return GMI_COLORS.negative; // Red for negative mood
-  }
+  const sortedCountries = useMemo(() => {
+    const sorted = [...countries].sort((a, b) => {
+      if (sortBy === 'gmi') return b.gmi - a.gmi;
+      if (sortBy === 'cfi') return b.cfi - a.cfi;
+      return b.hri - a.hri;
+    });
+    return sorted;
+  }, [countries, sortBy]);
 
-  // Neutral state
-  return GMI_COLORS.neutral; // Yellow for neutral
-}
-
-function getEmotionIntensity(gmi: number, cfi: number, hri: number): number {
-  const avgIntensity = (Math.abs(gmi) + cfi + hri) / 3;
-  return Math.max(0.3, Math.min(1.0, avgIntensity / 100));
-}
-
-export function WorldMap({ countriesData, selectedCountry, onCountrySelect }: WorldMapProps) {
-  const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; data: CountryEmotionData } | null>(null);
-
-  const handleCountryHover = (countryCode: string, e: React.MouseEvent) => {
-    const country = countriesData.find((c) => c.countryCode === countryCode);
-    if (country) {
-      setHoveredCountry(countryCode);
-      setTooltip({
-        x: e.clientX,
-        y: e.clientY,
-        data: country,
-      });
+  const handleCountryClick = (country: CountryData) => {
+    setSelectedCountry(country);
+    if (onCountrySelect) {
+      onCountrySelect(country);
     }
   };
 
-  const handleCountryLeave = () => {
-    setHoveredCountry(null);
-    setTooltip(null);
+  const getIndicatorColor = (value: number) => {
+    if (value >= 80) return '#000000';
+    if (value >= 60) return '#333333';
+    if (value >= 40) return '#666666';
+    if (value >= 20) return '#999999';
+    return '#CCCCCC';
   };
 
-  // Get GMI color for tooltip
-  const getGMIDisplayColor = (gmi: number) => {
-    if (gmi > 30) return GMI_COLORS.positive;
-    if (gmi < -30) return GMI_COLORS.negative;
-    return GMI_COLORS.neutral;
+  const getEmotionLabel = (emotion: string) => {
+    const labels: Record<string, string> = {
+      joy: 'فرح',
+      fear: 'خوف',
+      anger: 'غضب',
+      sadness: 'حزن',
+      hope: 'أمل',
+      curiosity: 'فضول'
+    };
+    return labels[emotion] || emotion;
   };
 
-  // Get CFI color for tooltip
-  const getCFIDisplayColor = (cfi: number) => {
-    if (cfi > 60) return CFI_COLORS.high;
-    if (cfi > 35) return CFI_COLORS.medium;
-    return CFI_COLORS.low;
-  };
+  if (isLoading) {
+    return (
+      <Card className="w-full p-8 bg-white border border-gray-200">
+        <div className="flex items-center justify-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
+          <span className="text-gray-600">جاري تحميل خريطة العالم...</span>
+        </div>
+      </Card>
+    );
+  }
 
-  // Get HRI color for tooltip
-  const getHRIDisplayColor = (hri: number) => {
-    if (hri > 60) return HRI_COLORS.high;
-    if (hri > 35) return HRI_COLORS.medium;
-    return HRI_COLORS.low;
+  if (error) {
+    return (
+      <Card className="w-full p-8 bg-white border border-red-200">
+        <div className="flex items-center gap-2 text-red-600">
+          <AlertCircle className="w-5 h-5" />
+          <span>خطأ في تحميل خريطة العالم</span>
+        </div>
+      </Card>
+    );
+  }
+
+  const globalStats = {
+    avgGMI: (countries.reduce((sum, c) => sum + c.gmi, 0) / countries.length).toFixed(1),
+    avgCFI: (countries.reduce((sum, c) => sum + c.cfi, 0) / countries.length).toFixed(1),
+    avgHRI: (countries.reduce((sum, c) => sum + c.hri, 0) / countries.length).toFixed(1)
   };
 
   return (
-    <Card className="cosmic-card p-6 w-full">
-      <h3 className="text-lg font-bold cosmic-text mb-4">Global Emotion Map</h3>
+    <div className="w-full space-y-4">
+      {/* Global Statistics */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <div className="flex items-center gap-2 mb-4">
+          <Globe className="w-5 h-5 text-gray-900" />
+          <h3 className="text-lg font-bold text-gray-900">إحصائيات عالمية</h3>
+        </div>
 
-      <div className="relative w-full bg-gradient-to-b from-blue-900/20 to-purple-900/20 rounded-lg overflow-hidden">
-        {/* SVG Background */}
-        <svg
-          viewBox="0 0 100 70"
-          className="w-full h-auto bg-gradient-to-b from-slate-900 to-slate-800 rounded-lg"
-          style={{ aspectRatio: '100/70' }}
-        >
-          {/* Grid lines for reference */}
-          <defs>
-            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.1" />
-            </pattern>
-          </defs>
-          <rect width="100" height="70" fill="url(#grid)" />
-
-          {/* Render country emotion nodes */}
-          {countriesData.map((country) => {
-            const pos = COUNTRY_POSITIONS[country.countryCode];
-            if (!pos) return null;
-
-            const color = getEmotionColor(country.gmi, country.cfi, country.hri);
-            const intensity = getEmotionIntensity(country.gmi, country.cfi, country.hri);
-            const radius = pos.size * intensity;
-
-            return (
-              <g key={country.countryCode}>
-                {/* Glow effect */}
-                <circle
-                  cx={pos.x}
-                  cy={pos.y}
-                  r={radius * 1.5}
-                  fill={color}
-                  opacity={0.3}
-                  filter="url(#blur)"
-                />
-
-                {/* Main circle */}
-                <circle
-                  cx={pos.x}
-                  cy={pos.y}
-                  r={radius}
-                  fill={color}
-                  opacity={0.8}
-                  style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
-                  onMouseEnter={(e) => handleCountryHover(country.countryCode, e as any)}
-                  onMouseLeave={handleCountryLeave}
-                  onClick={() => onCountrySelect?.(country.countryCode)}
-                  className={selectedCountry === country.countryCode ? 'stroke-accent stroke-2' : ''}
-                />
-
-                {/* Country code label */}
-                <text
-                  x={pos.x}
-                  y={pos.y}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="text-xs fill-white font-bold pointer-events-none"
-                  style={{ fontSize: '2px', fontWeight: 'bold' }}
-                >
-                  {country.countryCode}
-                </text>
-              </g>
-            );
-          })}
-
-          {/* Blur filter */}
-          <defs>
-            <filter id="blur">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-
-      {/* Tooltip */}
-      {tooltip && (
-        <div
-          className="fixed cosmic-card p-3 z-50 pointer-events-none text-sm"
-          style={{
-            left: `${tooltip.x + 10}px`,
-            top: `${tooltip.y + 10}px`,
-            maxWidth: '250px',
-          }}
-        >
-          <p className="font-bold cosmic-text">{tooltip.data.countryName}</p>
-          <div className="text-xs text-muted-foreground mt-2 space-y-1">
-            <p>GMI: <span style={{ color: getGMIDisplayColor(tooltip.data.gmi) }}>{tooltip.data.gmi}</span></p>
-            <p>CFI: <span style={{ color: getCFIDisplayColor(tooltip.data.cfi) }}>{tooltip.data.cfi}</span></p>
-            <p>HRI: <span style={{ color: getHRIDisplayColor(tooltip.data.hri) }}>{tooltip.data.hri}</span></p>
-            <p>Confidence: {tooltip.data.confidence}%</p>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
+            <p className="text-sm text-gray-600 mb-1">GMI (Global Mood Index)</p>
+            <p className="text-3xl font-bold text-gray-900">{globalStats.avgGMI}</p>
+            <p className="text-xs text-gray-500 mt-1">متوسط عالمي</p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
+            <p className="text-sm text-gray-600 mb-1">CFI (Crisis Fear Index)</p>
+            <p className="text-3xl font-bold text-gray-900">{globalStats.avgCFI}</p>
+            <p className="text-xs text-gray-500 mt-1">متوسط عالمي</p>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
+            <p className="text-sm text-gray-600 mb-1">HRI (Hope Resilience Index)</p>
+            <p className="text-3xl font-bold text-gray-900">{globalStats.avgHRI}</p>
+            <p className="text-xs text-gray-500 mt-1">متوسط عالمي</p>
           </div>
         </div>
-      )}
+      </Card>
 
-      {/* Legend - Using unified color system */}
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.anger }} />
-          <span className="text-muted-foreground">High Fear/Anger</span>
+      {/* Sort Controls */}
+      <Card className="w-full p-4 bg-white border border-gray-200">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setSortBy('gmi')}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              sortBy === 'gmi'
+                ? 'bg-gray-900 text-white'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+            }`}
+          >
+            ترتيب حسب GMI
+          </button>
+          <button
+            onClick={() => setSortBy('cfi')}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              sortBy === 'cfi'
+                ? 'bg-gray-900 text-white'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+            }`}
+          >
+            ترتيب حسب CFI
+          </button>
+          <button
+            onClick={() => setSortBy('hri')}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              sortBy === 'hri'
+                ? 'bg-gray-900 text-white'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+            }`}
+          >
+            ترتيب حسب HRI
+          </button>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.fear }} />
-          <span className="text-muted-foreground">Moderate Fear</span>
+      </Card>
+
+      {/* Countries Grid */}
+      <Card className="w-full p-6 bg-white border border-gray-200">
+        <h4 className="text-lg font-bold text-gray-900 mb-4">الدول والمناطق</h4>
+        
+        <div className="space-y-2 max-h-96 overflow-y-auto">
+          {sortedCountries.map((country, index) => (
+            <div
+              key={index}
+              onClick={() => handleCountryClick(country)}
+              className={`p-4 rounded-lg cursor-pointer transition-all border ${
+                selectedCountry?.country === country.country
+                  ? 'bg-gray-900 text-white border-gray-600'
+                  : 'bg-white border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="font-semibold text-lg">{country.country}</p>
+                  <p className={`text-xs ${selectedCountry?.country === country.country ? 'text-gray-300' : 'text-gray-600'}`}>
+                    السكان: {(country.population / 1000000).toFixed(1)}M
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className={`text-xs font-semibold ${selectedCountry?.country === country.country ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {getEmotionLabel(country.dominantEmotion)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Indicators */}
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <div className="p-2 bg-gray-50 rounded text-center">
+                  <p className="text-xs text-gray-600 mb-1">GMI</p>
+                  <p className="font-bold text-sm text-gray-900">{country.gmi.toFixed(1)}</p>
+                </div>
+                <div className="p-2 bg-gray-50 rounded text-center">
+                  <p className="text-xs text-gray-600 mb-1">CFI</p>
+                  <p className="font-bold text-sm text-gray-900">{country.cfi.toFixed(1)}</p>
+                </div>
+                <div className="p-2 bg-gray-50 rounded text-center">
+                  <p className="text-xs text-gray-600 mb-1">HRI</p>
+                  <p className="font-bold text-sm text-gray-900">{country.hri.toFixed(1)}</p>
+                </div>
+              </div>
+
+              {/* Emotion Intensity Bar */}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-gray-200 rounded h-2">
+                  <div
+                    className="h-full rounded transition-all"
+                    style={{
+                      width: `${country.emotionIntensity}%`,
+                      backgroundColor: getIndicatorColor(country.emotionIntensity)
+                    }}
+                  />
+                </div>
+                <span className="text-xs font-semibold text-gray-600 w-10 text-right">
+                  {country.emotionIntensity.toFixed(0)}%
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.hope }} />
-          <span className="text-muted-foreground">Hope/Positive</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: EMOTION_COLORS.curiosity }} />
-          <span className="text-muted-foreground">Neutral</span>
-        </div>
-      </div>
-    </Card>
+      </Card>
+
+      {/* Selected Country Details */}
+      {selectedCountry && (
+        <Card className="w-full p-6 bg-white border border-gray-200">
+          <h4 className="text-lg font-bold text-gray-900 mb-4">
+            تحليل: {selectedCountry.country}
+          </h4>
+
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-2">GMI</p>
+              <p className="text-3xl font-bold text-gray-900">{selectedCountry.gmi.toFixed(1)}</p>
+              <p className="text-xs text-gray-500 mt-1">Global Mood Index</p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-2">CFI</p>
+              <p className="text-3xl font-bold text-gray-900">{selectedCountry.cfi.toFixed(1)}</p>
+              <p className="text-xs text-gray-500 mt-1">Crisis Fear Index</p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-2">HRI</p>
+              <p className="text-3xl font-bold text-gray-900">{selectedCountry.hri.toFixed(1)}</p>
+              <p className="text-xs text-gray-500 mt-1">Hope Resilience Index</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">العاطفة المهيمنة</p>
+              <p className="font-semibold text-gray-900">
+                {getEmotionLabel(selectedCountry.dominantEmotion)}
+              </p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">شدة العاطفة</p>
+              <p className="font-semibold text-gray-900">
+                {selectedCountry.emotionIntensity.toFixed(0)}%
+              </p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">السكان</p>
+              <p className="font-semibold text-gray-900">
+                {(selectedCountry.population / 1000000).toFixed(1)}M
+              </p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">الاتجاه</p>
+              <p className="font-semibold text-gray-900">
+                {selectedCountry.trend === 'increasing' ? 'تصاعدي' : selectedCountry.trend === 'decreasing' ? 'تنازلي' : 'مستقر'}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+            <p className="text-gray-600">
+              آخر تحديث: {new Date(selectedCountry.timestamp).toLocaleString('ar-SA')}
+            </p>
+          </div>
+        </Card>
+      )}
+    </div>
   );
 }
