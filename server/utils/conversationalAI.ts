@@ -22,7 +22,7 @@ import { MultiTurnContext } from '../engines/multiTurnContext';
 import { restructureAIResponse, compressResponse, type CompressedResponse } from './decisionCompressor';
 import { buildStructuredResponse, type AnalysisData as ResponseAnalysisData } from '../engines/responseBuilder';
 import { think, analyzeQuestionIntent, type ResponseData as ThinkingResponseData } from '../engines/thinkingEngine';
-import { cognitiveProcess, type EmotionIndicators as CognitiveEmotionIndicators } from './cognitiveEngine';
+import { cognitiveProcess, type EmotionIndicators as CognitiveEmotionIndicators } from '../cognitiveEngine/questionUnderstanding';
 import { analyzeNewsForCauses, buildWhySection, type NewsItem } from './causalExplainability';
 import { getOrCreateProfile, updateProfileFromInteraction, type UserProfileData } from '../services/userProfileService';
 

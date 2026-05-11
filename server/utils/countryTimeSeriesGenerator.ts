@@ -3,7 +3,7 @@
  * Simulates emotion trends over time with realistic patterns and variations
  */
 
-import { generateCountryEmotionData, getEmotionColor, getEmotionIntensity } from './countryEmotionAnalyzer';
+import { generateCountryEmotionData, getEmotionColor, getEmotionIntensity } from '../engines/aiSentimentAnalyzer';
 
 export interface CountryTimeSeriesData {
   countryCode: string;

@@ -11,7 +11,7 @@
  */
 
 import { z } from 'zod';
-import { analyzeTopics, analyzeEmotions, analyzeRegions, analyzeSeverity, analyzeImpact } from './realTextAnalyzer';
+import { analyzeTopics, analyzeEmotions, analyzeRegions, analyzeSeverity, analyzeImpact } from '../engines/aiSentimentAnalyzer';
 
 // Define the shape of partial results from each engine
 export const PartialEventVectorSchema = z.object({

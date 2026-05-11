@@ -26,7 +26,7 @@ import { getRecentAnalyses, submitAccuracyFeedback, getLearningState, getAdjustm
 import {
   dcftEngine,
   type GlobalIndices,
-} from './dcft';
+} from '../engines/dcftEngine';
 import {
   calculateDigitalConsciousnessField,
   calculateResonanceIndex,

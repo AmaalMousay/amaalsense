@@ -9,7 +9,7 @@ import { collectCountryData, collectTopicData, type CollectedData } from '../ser
 import { createUniversalEventVector, generateUniversalPrompt, type QuantumEventVector } from './eventVectorEngine';
 import { smartInvokeLLM } from './smartLLM';
 import { analyzeTextWithAI } from './aiSentimentAnalyzer';
-import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from './dcft';
+import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from './dcftEngine';
 import { buildRAGContext, formatRAGForPrompt } from '../knowledge/ragSystem';
 import { storeAnalysisRecord, getCumulativeInsight } from './learningStore';
 import { MultiTurnContext } from './multiTurnContext';
