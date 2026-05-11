@@ -9,6 +9,7 @@ import { searchGNews } from './gnewsService';
 import { fetchRedditPosts, fetchMastodonPosts, fetchBlueskyPosts } from './socialMediaService';
 import { storeAnalysisRecord } from '../engines/learningStore';
 import { createQuantumEvent } from '../utils/eventVectorModel';
+import { WebScraperService } from './webScraperService';
 
 // ============================================================
 // TYPES & INTERFACES
@@ -16,7 +17,7 @@ import { createQuantumEvent } from '../utils/eventVectorModel';
 
 export interface RawDataItem {
   id: string;
-  timestamp: number; // مضاف لضمان التوافق مع الخطأ 86
+  timestamp: number; 
   title: string;
   description: string;
   source: string;
@@ -26,9 +27,9 @@ export interface RawDataItem {
   publishedAt: string;
   language: string;
   country?: string;
-  region: "global" | "europe" | "asia" | "africa" | "americas" | "oceania"; // مضاف للتوافق
+  region: "global" | "europe" | "asia" | "africa" | "americas" | "oceania"; 
   topic: "health" | "economy" | "politics" | "conflict" | "society" | "environment" | "technology" | "culture" | "other";
-  intensity: number; // ✅ حل الخطأ رقم 86: إضافة الخاصية المفقودة
+  intensity: number; 
   trustScore: number;
 }
 
@@ -41,6 +42,11 @@ export interface CollectedData {
   queryType: 'country' | 'topic' | 'question';
   countryCode?: string;
 }
+
+// ============================================================
+// SERVICES INITIALIZATION
+// ============================================================
+const scraper = new WebScraperService();
 
 // ============================================================
 // CACHE SYSTEM
@@ -75,7 +81,7 @@ function learnFromRawData(item: RawDataItem) {
       userType: 'autonomous_collector',
       language: item.language,
       originalQuery: item.title,
-      newsText: item.description // تمرير النص للذاكرة التراكمية
+      newsText: item.description 
     },
     {
       domain: quantumEvent.topic,
@@ -116,9 +122,6 @@ function deduplicateItems(items: RawDataItem[]): RawDataItem[] {
 // MAIN COLLECTION FUNCTIONS
 // ============================================================
 
-/**
- * ✅ حل مشكلة الموديول: إضافة الدالة التي يطلبها networkEngine.ts
- */
 export async function collectTopicData(topic: string, region: string = 'global'): Promise<CollectedData> {
   const allData = await collectAllSources(topic);
   const items = allData.filter(item =>
@@ -137,8 +140,29 @@ export async function collectTopicData(topic: string, region: string = 'global')
 }
 
 async function collectAllSources(query: string): Promise<RawDataItem[]> {
-  // محاكاة جلب البيانات من كافة المصادر المتاحة
-  return [];
+  // Try to scrape real data first
+  try {
+    const scraped = await scraper.scrapeNews(`https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=nws`);
+    return scraped.map(item => ({
+      id: Math.random().toString(36),
+      timestamp: Date.now(),
+      title: item.title,
+      description: item.content,
+      source: item.source,
+      sourceType: 'news',
+      platform: 'WebScraper',
+      url: item.url,
+      publishedAt: item.timestamp,
+      language: 'en',
+      region: 'global',
+      topic: 'politics',
+      intensity: 0.6,
+      trustScore: 85
+    }));
+  } catch (error) {
+    console.error('Scraping failed, falling back to empty sources:', error);
+    return [];
+  }
 }
 
 export async function collectCountryData(countryCode: string, countryName: string): Promise<CollectedData> {
@@ -146,10 +170,11 @@ export async function collectCountryData(countryCode: string, countryName: strin
   const cached = dataCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return cached.data;
 
-  // جلب البيانات بشكل متوازي
+  // Combine RSS and Scraper
   const rssData = await fetchGoogleNewsByCountry(countryCode);
+  const scrapedData = await collectAllSources(countryName);
 
-  const allItems: RawDataItem[] = (rssData as any[] || []).map(item => ({
+  const rssItems: RawDataItem[] = (rssData as any[] || []).map(item => ({
     id: Math.random().toString(36),
     timestamp: Date.now(),
     title: item.title,
@@ -167,6 +192,7 @@ export async function collectCountryData(countryCode: string, countryName: strin
     trustScore: 80
   }));
 
+  const allItems = [...rssItems, ...scrapedData];
   const deduped = deduplicateItems(allItems);
   deduped.forEach(item => learnFromRawData(item));
 
@@ -185,9 +211,6 @@ export async function collectCountryData(countryCode: string, countryName: strin
   return result;
 }
 
-/**
- * Get statistics for the data cache
- */
 export function getCacheStats() {
   const now = Date.now();
   let validItems = 0;
@@ -196,13 +219,10 @@ export function getCacheStats() {
     totalItems: dataCache.size,
     validItems,
     expiredItems: dataCache.size - validItems,
-    memoryUsage: dataCache.size * 1024 // Rough estimate
+    memoryUsage: dataCache.size * 1024 
   };
 }
 
-/**
- * Clear the data cache
- */
 export function clearCache() {
   dataCache.clear();
   return { success: true, timestamp: Date.now() };
