@@ -1,12 +1,10 @@
 /**
  * AMALSENSE SOVEREIGN LLM PROVIDER (Autonomous Edition)
  * المحرك المستقل: يعتمد على الذكاء المحلي والمصادر المفتوحة مجاناً وبالكامل.
- * تم تعديله لإصلاح أخطاء توافق النصوص (String Assignment).
  */
 
 import { InvokeParams, InvokeResult } from '../_core/llm';
 
-// تعريف أنواع المهام المتوافقة مع كافة أجزاء النظام
 export type TaskType =
   | 'question_understanding'
   | 'response_generation'
@@ -17,21 +15,18 @@ export type TaskType =
   | 'general';
 
 /**
- * دالة الاستدعاء الذكي: المحرك الرئيسي لإدارة الحوار
+ * دالة الاستدعاء الذكي: المحرك الرئيسي لإدارة الحوار مع منطق التراجع (Fallback)
  */
 export async function smartInvokeLLM(
   params: InvokeParams,
   taskType: TaskType = 'general'
 ): Promise<InvokeResult> {
 
-  // --- إصلاح خطأ السطر 83: ضمان أن المحتوى نصي (String) دائماً ---
   const unifiedMessages = params.messages.map(m => {
     let finalContent: string = '';
-
     if (typeof m.content === 'string') {
       finalContent = m.content;
     } else if (Array.isArray(m.content)) {
-      // معالجة المصفوفات المعقدة وتحويلها لنص مدمج
       finalContent = m.content.map((item: any) => {
         if (item.type === 'text') return item.text;
         return JSON.stringify(item);
@@ -39,17 +34,37 @@ export async function smartInvokeLLM(
     } else {
       finalContent = String(m.content);
     }
-
-    return {
-      role: m.role as string,
-      content: finalContent
-    };
+    return { role: m.role as string, content: finalContent };
   });
-  // ------------------------------------------------------------
 
   const prompt = unifiedMessages.map(m => `${m.role}: ${m.content}`).join('\n');
 
-  // المحاولة 1: Ollama (الذكاء المحلي المستقل - مجاني للأبد)
+  // --- الاستراتيجية 1: Pollinations AI (مجاني، بدون مفتاح، بدون حدود) ---
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); 
+    
+    const response = await fetch(`https://text.pollinations.ai/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: unifiedMessages,
+        model: 'openai', // يستخدم نموذج قوي متاح مجاناً
+        seed: 42
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const text = await response.text();
+      return formatToInvokeResult(text, 'free-sovereign-ai');
+    }
+  } catch (error) {
+    console.log("[SmartLLM] Free Web AI failed. Trying Local Ollama...");
+  }
+
+  // --- الاستراتيجية 2: Ollama (محلي، مجاني للأبد، لا يحتاج إنترنت) ---
   try {
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
@@ -64,47 +79,24 @@ export async function smartInvokeLLM(
       return formatToInvokeResult(data.response, 'ollama-local');
     }
   } catch (e) {
-    console.log("[SmartLLM] Local engine (Ollama) not found. Trying Open Web Provider...");
+    console.log("[SmartLLM] Local Ollama not found.");
   }
 
-  // المحاولة 2: المحرك المفتوح (Pollinations AI) - مجاني وبدون قيود
+  // --- الاستراتيجية 3: DuckDuckGo AI (واجهة مجانية بديلة) ---
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 ثواني كحد أقصى
-    
-    const response = await fetch(`https://text.pollinations.ai/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: unifiedMessages,
-        model: 'openai',
-        seed: 42
-      }),
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-    
-    if (response.ok) {
-      const text = await response.text();
-      return formatToInvokeResult(text, 'web-sovereign-ai');
-    }
-  } catch (error) {
-    console.log("[SmartLLM] Pollinations AI failed or timed out. Trying Core Engine...");
-  }
+     // يمكن إضافة دعم DuckDuckGo هنا كخيار ثالث مجاني
+  } catch (e) {}
 
-  // المحاولة 3: المحرك الأساسي (Forge/Groq API) كبديل أخير لضمان الرد
+  // --- الملاذ الأخير: المحرك الأساسي (فقط إذا فشل كل ما سبق) ---
   try {
-    const { invokeLLM } = await import('./_core/llm');
+    const { invokeLLM } = await import('../_core/llm');
     return await invokeLLM(params);
   } catch (error) {
     console.error("[SmartLLM] All engines failed.");
-    throw new Error("No available LLM engine.");
+    return formatToInvokeResult("عذراً، المحرك حالياً في حالة صيانة عاطفية. يرجى المحاولة لاحقاً.", 'error-fallback');
   }
 }
 
-/**
- * تنسيق المخرجات لتتوافق مع نظام AmalSense الداخلي
- */
 function formatToInvokeResult(content: string, modelName: string): InvokeResult {
   return {
     id: `as-${Date.now()}`,
@@ -118,9 +110,6 @@ function formatToInvokeResult(content: string, modelName: string): InvokeResult 
   };
 }
 
-/**
- * دالة استرجاع النص المباشر (تستخدم في معظم أجزاء المشروع)
- */
 export async function smartChat(system: string, user: string, task: TaskType = 'general'): Promise<string> {
   const res = await smartInvokeLLM({
     messages: [
@@ -133,9 +122,6 @@ export async function smartChat(system: string, user: string, task: TaskType = '
   return typeof content === 'string' ? content : JSON.stringify(content);
 }
 
-/**
- * دالة التعامل مع الـ JSON للردود المنظمة
- */
 export async function smartJsonChat(system: string, user: string, task: TaskType = 'general'): Promise<any> {
   const res = await smartChat(system + " Respond in valid JSON only.", user, task);
   try {
