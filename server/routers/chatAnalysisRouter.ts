@@ -9,11 +9,11 @@ export const chatAnalysisRouter = router({
       countryCode: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const { analyzeTextWithAI } = await import('./aiSentimentAnalyzer');
-      const { dcftEngine } = await import('./dcft');
+      const { analyzeTextWithAI } = await import('../engines/aiSentimentAnalyzer');
+      const { dcftEngine } = await import('../dcft/index');
       
       const aiResult = await analyzeTextWithAI(input.message);
-      const dcftResult = await dcftEngine.analyzeTexts([input.message], 'chat');
+      const dcftResult = await dcftEngine.analyzeText(input.message, 'chat');
       
       return {
         topic: 'General Analysis',

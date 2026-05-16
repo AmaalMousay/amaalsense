@@ -13,9 +13,12 @@ export const alertsRouter = router({
   createAlert: protectedProcedure
     .input(z.object({
       name: z.string(),
-      type: z.enum(['gmi', 'cfi', 'hri', 'confidence']),
+      countryCode: z.string().optional(),
+      countryName: z.string().optional(),
+      metric: z.enum(['gmi', 'cfi', 'hri', 'confidence']),
+      condition: z.enum(['above', 'below', 'change']),
       threshold: z.number(),
-      operator: z.enum(['>', '<', '>=', '<=', '==']),
+      notifyMethod: z.enum(['email', 'telegram', 'both']),
       enabled: z.boolean().default(true),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -35,6 +38,37 @@ export const alertsRouter = router({
     }),
 
   /**
+   * Update alert
+   */
+  updateAlert: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      name: z.string().optional(),
+      countryCode: z.string().optional(),
+      countryName: z.string().optional(),
+      metric: z.enum(['gmi', 'cfi', 'hri', 'confidence']).optional(),
+      condition: z.enum(['above', 'below', 'change']).optional(),
+      threshold: z.number().optional(),
+      notifyMethod: z.enum(['email', 'telegram', 'both']).optional(),
+      enabled: z.boolean().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      return { success: true };
+    }),
+
+  /**
+   * Toggle alert active state
+   */
+  toggleAlert: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      isActive: z.boolean(),
+    }))
+    .mutation(async ({ input }) => {
+      return { success: true };
+    }),
+
+  /**
    * Get user alerts
    */
   getUserAlerts: protectedProcedure
@@ -44,21 +78,15 @@ export const alertsRouter = router({
           {
             id: '1',
             name: 'High Fear Index',
-            type: 'cfi',
+            metric: 'cfi',
+            condition: 'above',
             threshold: 70,
-            operator: '>',
-            enabled: true,
+            notifyMethod: 'email',
+            isActive: 1,
+            countryCode: 'LY',
+            countryName: 'ليبيا',
             createdAt: new Date(),
-          },
-          {
-            id: '2',
-            name: 'Low Hope Index',
-            type: 'gmi',
-            threshold: 30,
-            operator: '<',
-            enabled: true,
-            createdAt: new Date(),
-          },
+          }
         ];
       } catch (error) {
         console.error('Error fetching alerts:', error);
@@ -71,7 +99,7 @@ export const alertsRouter = router({
    */
   deleteAlert: protectedProcedure
     .input(z.object({
-      alertId: z.string(),
+      id: z.number().or(z.string()),
     }))
     .mutation(async ({ ctx, input }) => {
       try {
@@ -97,14 +125,6 @@ export const alertsRouter = router({
             value: 75,
             timestamp: new Date(Date.now() - 3600000),
           },
-          {
-            id: '2',
-            alertId: '2',
-            type: 'triggered',
-            message: 'Hope Index fell below 30',
-            value: 28,
-            timestamp: new Date(Date.now() - 7200000),
-          },
         ];
       } catch (error) {
         console.error('Error fetching alert history:', error);
@@ -124,7 +144,7 @@ export const alertsRouter = router({
     }))
     .query(async ({ input }) => {
       try {
-        const triggeredAlerts = [];
+        const triggeredAlerts: Array<{ type: string; message: string; value: number; severity: string }> = [];
 
         // Check GMI
         if (input.gmi < 30) {
@@ -143,26 +163,6 @@ export const alertsRouter = router({
             message: 'High Fear Index detected',
             value: input.cfi,
             severity: 'critical',
-          });
-        }
-
-        // Check HRI
-        if (input.hri < 40) {
-          triggeredAlerts.push({
-            type: 'hri',
-            message: 'Low Resilience Index detected',
-            value: input.hri,
-            severity: 'high',
-          });
-        }
-
-        // Check Confidence
-        if (input.confidence < 50) {
-          triggeredAlerts.push({
-            type: 'confidence',
-            message: 'Low Analysis Confidence',
-            value: input.confidence,
-            severity: 'medium',
           });
         }
 

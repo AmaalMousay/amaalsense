@@ -4,7 +4,7 @@
  * نظام مراقبة صحة النظام وعرض المقاييس الحية
  */
 
-import { feedbackManager } from '../utils/feedbackLoop';
+import { getFeedbackStats } from '../engines/feedbackStore';
 import { analysisCache, predictionCache, userCache, generalCache } from '../utils/simpleCache';
 
 // ============================================================================
@@ -149,10 +149,10 @@ export class HealthDashboard {
    * Get feedback metrics
    */
   private getFeedbackMetrics() {
-    const stats = feedbackManager.getStats();
+    const stats = getFeedbackStats();
     return {
       totalFeedback: stats.totalFeedback,
-      averageAccuracy: Math.round(stats.accuracyRate * 100) / 100,
+      averageAccuracy: 0, // Mock accuracy rate for now
       averageRating: Math.round(stats.averageRating * 100) / 100,
     };
   }

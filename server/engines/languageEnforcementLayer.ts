@@ -5,7 +5,7 @@
  * يضمن أن الإجابة بنفس لغة السؤال حتى في نفس الدردشة
  */
 
-import { invokeGroqLLM } from '../utils/groqIntegration';
+import { smartChat } from './smartLLM';
 
 export type SupportedLanguage = 'ar' | 'en' | 'fr' | 'es' | 'de' | 'zh' | 'ja';
 
@@ -54,23 +54,13 @@ export async function translateResponse(
       ja: 'Japanese',
     };
 
-    const translationResponse = await invokeGroqLLM({
-      messages: [
-        {
-          role: 'system',
-          content: `You are a professional translator. Translate the following text to ${languageNames[targetLanguage]}. 
-          Maintain the exact meaning and tone. Respond with ONLY the translated text.`,
-        },
-        {
-          role: 'user',
-          content: response,
-        },
-      ],
-      model: 'llama-3.3-70b-versatile',
-      maxTokens: 2048,
-    });
+    const translatedText = await smartChat(
+      `You are a professional translator. Translate the following text to ${languageNames[targetLanguage]}. Maintain the exact meaning and tone. Respond with ONLY the translated text.`,
+      response,
+      'translation'
+    );
 
-    const translatedText = (translationResponse.content || translationResponse.text || '').trim();
+    
     return translatedText || response;
   } catch (error) {
     console.error('[LanguageEnforcement] Translation error:', error);

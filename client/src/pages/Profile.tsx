@@ -45,7 +45,7 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
 
   // Fetch real user statistics
-  const { data: stats, isLoading: statsLoading } = trpc.userStats.getStats.useQuery(undefined, {
+  const { data: stats, isLoading: statsLoading } = trpc.userStatistics.getStats.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
@@ -280,7 +280,7 @@ export default function Profile() {
                       <div className="relative">
                         <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input 
-                          value={formatDate(stats?.memberSince || null)}
+                          value={formatDate(stats?.createdAt || null)}
                           className="pl-10"
                           disabled
                         />

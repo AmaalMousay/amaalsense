@@ -7,7 +7,7 @@
 import { collectCountryData, collectTopicData, getCacheStats as getCacheStatsFromCollector, clearCache as clearCollectorCache, type CollectedData } from '../services/unifiedDataCollector';
 import { createEventVector, eventVectorToPrompt, vectorToMapIndices, type EventVector } from './eventVectorEngine';
 import { smartChat, smartJsonChat, type TaskType } from './smartLLM';
-import { DCFTEngine } from './dcftEngine';
+import { DCFTEngine } from '../dcft/dcftEngine';
 
 // ============================================================
 // RESULT TYPES
@@ -120,7 +120,7 @@ async function collectAndVectorize(
   const cached = analysisCache.get(cacheKey);
   
   if (cached && cached.expiresAt > Date.now()) {
-    const metrics = dcft.calculateMetrics(cached.vector.polarity * 50 + 50, cached.vector.intensity * 100, 50);
+    const metrics = dcft?.calculateConsciousnessField(cached.vector.polarity * 50 + 50, cached.vector.intensity * 100, 50);
     return { data: cached.data, vector: cached.vector, metrics };
   }
   
@@ -134,7 +134,7 @@ async function collectAndVectorize(
   const vector = createEventVector(data);
   
   // Calculate dynamic metrics using upgraded DCFT Engine
-  const metrics = dcft.calculateMetrics(
+  const metrics = dcft?.calculateConsciousnessField(
     vector.polarity * 50 + 50, // Normalize -1..1 to 0..100
     vector.intensity * 100,
     50 // Baseline historical context
@@ -270,7 +270,7 @@ export async function analyzeForSmartAnalysis(
   try {
     const vectorPrompt = eventVectorToPrompt(vector, language);
     const systemPrompt = `You are "Amal" - an intelligent collective emotion analyzer. Answer the user's question based on the data: ${vectorPrompt}`;
-    response = await smartChat(systemPrompt, query, 'smart_analysis');
+    response = await smartChat(systemPrompt, query, 'general');
   } catch (error) {
     response = "I'm sorry, I couldn't process that request right now.";
   }

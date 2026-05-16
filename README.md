@@ -69,7 +69,7 @@ To get a local copy up and running, follow these simple steps.
 3.  **Install client dependencies:**
     ```bash
     cd client
-    npm install
+    npm install --legacy-peer-deps
     cd ..
     ```
 4.  **Set up environment variables:**

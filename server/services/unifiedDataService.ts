@@ -9,15 +9,11 @@
  *   → Unified Service → Hybrid Engine → Results
  */
 
-const analyzeHybrid = async (text: string, type: string) => ({
-  indices: { gmi: 50, cfi: 50, hri: 50 },
-  dcft: { emotionalPhase: 'neutral' },
-  fusion: { confidence: 0.5 }
-});
 import { fetchAllSocialMedia, fetchCountrySocialMedia, SocialPost, getAPIStatus } from './socialMediaService';
 import { fetchGoogleNews, fetchGoogleNewsByTopic, fetchGoogleNewsByCountry, convertToUnifiedFormat } from './googleRssService';
 import { fetchGNewsMultilingual, convertToUnifiedFormat as convertGNewsToUnified } from './gnewsService';
 import { fetchAllMajorNews, convertToUnifiedFormat as convertMajorNewsToUnified } from './majorNewsRssService';
+import { analyze as analyzeHybrid } from '../engines/unifiedAnalyzer';
 
 // Types
 export interface DataSource {
@@ -338,13 +334,13 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
   
   // Fetch social media data
   const socialLimit = Math.ceil(limit * 0.5); // 50% from social media
-  const query = topic || (country ? `${country} news` : 'world news');
+  const queryText = topic || (country ? `${country} news` : 'world news');
   
   let socialResult;
   if (country) {
     socialResult = await fetchCountrySocialMedia(country, socialLimit);
   } else {
-    socialResult = await fetchAllSocialMedia({ query, limit: socialLimit, country });
+    socialResult = await fetchAllSocialMedia({ query: queryText, limit: socialLimit, country });
   }
   
   // Convert and add social posts
@@ -391,7 +387,7 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
   
   // Analyze through Hybrid Engine
   const sourceType = scope === 'global' ? 'news' : 'social';
-  const hybridResult = await analyzeHybrid(combinedText, sourceType as 'news' | 'social');
+  const hybridResult = await analyzeHybrid({ text: combinedText, userType: 'general' });
   
   // Calculate source breakdown
   const bySource: Record<string, { count: number; sentiment: number }> = {};
@@ -417,8 +413,8 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
     gmi: hybridResult.indices.gmi,
     cfi: hybridResult.indices.cfi,
     hri: hybridResult.indices.hri,
-    dominantEmotion: hybridResult.dcft.emotionalPhase,
-    confidence: hybridResult.fusion.confidence,
+    dominantEmotion: hybridResult.emotionalState.dominantEmotion,
+    confidence: hybridResult.confidence.overall,
     dataPoints: allData.length,
     realDataPoints: realDataCount,
     lastUpdated: new Date(),

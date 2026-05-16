@@ -9,10 +9,10 @@
  */
 
 import { invokeLLM } from '../_core/llm';
-import { invokeGroq, isGroqConfigured, GROQ_MODELS, type GroqMessage } from '../services/groqService';
+import { smartInvokeLLM, smartChat } from './smartLLM';
 
 // Provider types
-export type LLMProvider = 'manus' | 'groq';
+export type LLMProvider = 'manus' | 'smart';
 
 // Unified message type
 export interface LLMMessage {
@@ -48,8 +48,8 @@ export function getActiveProvider(): LLMProvider {
   // Check if we should force Groq (for external hosting)
   const forceGroq = process.env.USE_GROQ === 'true';
   
-  if (forceGroq && isGroqConfigured()) {
-    return 'groq';
+  if (true) {
+    return 'smart';
   }
   
   // Default to Manus for development
@@ -62,9 +62,9 @@ export function getActiveProvider(): LLMProvider {
 export function getAvailableProviders(): { provider: LLMProvider; available: boolean; reason?: string }[] {
   return [
     {
-      provider: 'groq',
-      available: isGroqConfigured(),
-      reason: isGroqConfigured() ? undefined : 'GROQ_API_KEY not configured',
+      provider: 'smart',
+      available: true,
+      
     },
     {
       provider: 'manus',
@@ -79,38 +79,24 @@ export function getAvailableProviders(): { provider: LLMProvider; available: boo
 export async function invokeLLMProvider(options: LLMCompletionOptions): Promise<LLMResponse> {
   const provider = options.provider || getActiveProvider();
   
-  if (provider === 'groq' && isGroqConfigured()) {
-    return invokeGroqProvider(options);
+  if (provider === 'smart') {
+    return invokeSmartProvider(options);
   }
   
   return invokeManusProvider(options);
 }
 
 /**
- * Invoke Groq provider
+ * Invoke Smart provider
  */
-async function invokeGroqProvider(options: LLMCompletionOptions): Promise<LLMResponse> {
-  const groqMessages: GroqMessage[] = options.messages.map(m => ({
-    role: m.role,
-    content: m.content,
-  }));
-  
-  const response = await invokeGroq({
-    messages: groqMessages,
-    model: GROQ_MODELS.DEFAULT, // Qwen 2.5 32B
-    temperature: options.temperature ?? 0.7,
-    max_tokens: options.max_tokens ?? 1024,
-  });
-  
+async function invokeSmartProvider(options: LLMCompletionOptions): Promise<LLMResponse> {
+  const response = await smartInvokeLLM({
+    messages: options.messages.map(m => ({ role: m.role, content: m.content }))
+  }, 'general');
   return {
-    content: response.choices[0]?.message?.content || '',
-    provider: 'groq',
-    model: GROQ_MODELS.DEFAULT,
-    tokens: {
-      prompt: response.usage?.prompt_tokens || 0,
-      completion: response.usage?.completion_tokens || 0,
-      total: response.usage?.total_tokens || 0,
-    },
+    content: typeof response.choices[0]?.message?.content === 'string' ? response.choices[0].message.content : '',
+    provider: 'smart',
+    model: 'pollinations/ollama',
   };
 }
 
@@ -193,7 +179,7 @@ export function getProviderInfo(provider: LLMProvider): {
   isFree: boolean;
 } {
   switch (provider) {
-    case 'groq':
+    case 'smart':
       return {
         name: 'Groq Cloud',
         description: 'Ultra-fast inference with Qwen 2.5 (open-source)',

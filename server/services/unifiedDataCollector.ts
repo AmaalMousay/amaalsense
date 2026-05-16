@@ -15,6 +15,8 @@ import { WebScraperService } from './webScraperService';
 // TYPES & INTERFACES
 // ============================================================
 
+export type TopicType = "health" | "economy" | "politics" | "conflict" | "society" | "environment" | "technology" | "culture" | "other";
+
 export interface RawDataItem {
   id: string;
   timestamp: number; 
@@ -28,7 +30,7 @@ export interface RawDataItem {
   language: string;
   country?: string;
   region: "global" | "europe" | "asia" | "africa" | "americas" | "oceania"; 
-  topic: "health" | "economy" | "politics" | "conflict" | "society" | "environment" | "technology" | "culture" | "other";
+  topic: TopicType;
   intensity: number; 
   trustScore: number;
 }
@@ -53,6 +55,42 @@ const scraper = new WebScraperService();
 // ============================================================
 const dataCache = new Map<string, { data: CollectedData; expiresAt: number }>();
 const CACHE_TTL = 15 * 60 * 1000;
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+/**
+ * Detect topic from text
+ */
+function detectTopic(text: string): TopicType {
+  const lowerText = text.toLowerCase();
+  if (/health|virus|doctor|medical|hospital|صحة|طبيب|فيروس/i.test(lowerText)) return "health";
+  if (/economy|market|finance|trading|stock|اقتصاد|سوق|مالية|تداول/i.test(lowerText)) return "economy";
+  if (/politics|election|government|parliament|سياسة|انتخابات|حكومة/i.test(lowerText)) return "politics";
+  if (/conflict|war|army|attack|clash|صراع|حرب|جيش|هجوم/i.test(lowerText)) return "conflict";
+  if (/environment|climate|green|nature|بيئة|مناخ|طبيعة/i.test(lowerText)) return "environment";
+  if (/technology|software|ai|digital|تقنية|برمجيات|رقمي/i.test(lowerText)) return "technology";
+  if (/culture|art|music|movie|heritage|ثقافة|فن|موسيقى|تراث/i.test(lowerText)) return "culture";
+  if (/society|people|community|social|مجتمع|ناس|اجتماعي/i.test(lowerText)) return "society";
+  return "other";
+}
+
+/**
+ * Detect region from text or country code
+ */
+function detectRegion(countryCode?: string): RawDataItem['region'] {
+  if (!countryCode) return "global";
+  // Simple mapping for demo
+  const regions: Record<string, RawDataItem['region']> = {
+    'US': 'americas', 'CA': 'americas', 'BR': 'americas',
+    'GB': 'europe', 'FR': 'europe', 'DE': 'europe',
+    'EG': 'africa', 'ZA': 'africa', 'NG': 'africa',
+    'CN': 'asia', 'JP': 'asia', 'IN': 'asia',
+    'AU': 'oceania'
+  };
+  return regions[countryCode] || "global";
+}
 
 // ============================================================
 // AUTONOMOUS LEARNING LOGIC
@@ -104,10 +142,6 @@ function learnFromRawData(item: RawDataItem) {
   );
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
-
 function deduplicateItems(items: RawDataItem[]): RawDataItem[] {
   const seen = new Set();
   return items.filter(item => {
@@ -124,10 +158,12 @@ function deduplicateItems(items: RawDataItem[]): RawDataItem[] {
 
 export async function collectTopicData(topic: string, region: string = 'global'): Promise<CollectedData> {
   const allData = await collectAllSources(topic);
+  
+  // No longer filtering strictly by topic if it's dynamic
   const items = allData.filter(item =>
-    item.topic === topic &&
     (region === 'global' || item.region === region)
   );
+  
   const sources = [...new Set(items.map(item => item.platform))];
   return {
     items,
@@ -139,26 +175,29 @@ export async function collectTopicData(topic: string, region: string = 'global')
   };
 }
 
-async function collectAllSources(query: string): Promise<RawDataItem[]> {
+async function collectAllSources(query: string, countryCode?: string): Promise<RawDataItem[]> {
   // Try to scrape real data first
   try {
     const scraped = await scraper.scrapeNews(`https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=nws`);
-    return scraped.map(item => ({
-      id: Math.random().toString(36),
-      timestamp: Date.now(),
-      title: item.title,
-      description: item.content,
-      source: item.source,
-      sourceType: 'news',
-      platform: 'WebScraper',
-      url: item.url,
-      publishedAt: item.timestamp,
-      language: 'en',
-      region: 'global',
-      topic: 'politics',
-      intensity: 0.6,
-      trustScore: 85
-    }));
+    return scraped.map(item => {
+      const topic = detectTopic(item.title + " " + item.content);
+      return {
+        id: Math.random().toString(36),
+        timestamp: Date.now(),
+        title: item.title,
+        description: item.content,
+        source: item.source,
+        sourceType: 'news',
+        platform: 'WebScraper',
+        url: item.url,
+        publishedAt: item.timestamp,
+        language: 'en',
+        region: detectRegion(countryCode),
+        topic: topic,
+        intensity: 0.6,
+        trustScore: 85
+      };
+    });
   } catch (error) {
     console.error('Scraping failed, falling back to empty sources:', error);
     return [];
@@ -172,25 +211,28 @@ export async function collectCountryData(countryCode: string, countryName: strin
 
   // Combine RSS and Scraper
   const rssData = await fetchGoogleNewsByCountry(countryCode);
-  const scrapedData = await collectAllSources(countryName);
+  const scrapedData = await collectAllSources(countryName, countryCode);
 
-  const rssItems: RawDataItem[] = (rssData as any[] || []).map(item => ({
-    id: Math.random().toString(36),
-    timestamp: Date.now(),
-    title: item.title,
-    description: item.content || item.title,
-    source: item.source || 'Google RSS',
-    sourceType: 'news',
-    platform: 'RSS',
-    url: item.link,
-    publishedAt: new Date().toISOString(),
-    language: 'en',
-    country: countryCode,
-    region: 'global',
-    topic: 'politics',
-    intensity: 0.5,
-    trustScore: 80
-  }));
+  const rssItems: RawDataItem[] = (rssData as any[] || []).map(item => {
+    const topic = detectTopic(item.title + " " + (item.content || ""));
+    return {
+      id: Math.random().toString(36),
+      timestamp: Date.now(),
+      title: item.title,
+      description: item.content || item.title,
+      source: item.source || 'Google RSS',
+      sourceType: 'news',
+      platform: 'RSS',
+      url: item.link,
+      publishedAt: new Date().toISOString(),
+      language: 'en',
+      country: countryCode,
+      region: detectRegion(countryCode),
+      topic: topic,
+      intensity: 0.5,
+      trustScore: 80
+    };
+  });
 
   const allItems = [...rssItems, ...scrapedData];
   const deduped = deduplicateItems(allItems);

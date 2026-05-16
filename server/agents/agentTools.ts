@@ -56,25 +56,25 @@ export async function tool_generateDeepReport(topic: string, vector: EventVector
 
 export async function tool_recordCaseStudy(data: { title: string, description: string, topic: string, snapshot: any }): Promise<void> {
   console.log(`[AGENT ACTION] 🏆 RECORDING CASE STUDY: ${data.title}`);
-    try {
-      const { getDb } = await import('../db');
-      const db = await getDb();
-      const { caseStudies } = await import('../../drizzle/schema');
+  try {
+    const { getDb } = await import('../_core/db');
+    const db = await getDb();
+    const { caseStudies } = await import('../drizzle/schema');
 
-      if (db) {
-        await db.insert(caseStudies).values({
-          title: data.title,
-          description: data.description,
-          topic: data.topic,
-          eventDate: new Date(),
-          predictionAccuracy: 95,
-          impactLevel: 'high',
-          dataSnapshot: JSON.stringify(data.snapshot)
-        });
-      }
-    } catch (e) {
-      console.warn("[AGENT ACTION] ⚠️ Database not ready, logging case study to console.");
+    if (db) {
+      await db.insert(caseStudies).values({
+        title: data.title,
+        description: data.description,
+        topic: data.topic,
+        eventDate: new Date(),
+        predictionAccuracy: 95,
+        impactLevel: 'high',
+        dataSnapshot: JSON.stringify(data.snapshot)
+      });
     }
+  } catch (e) {
+    console.warn("[AGENT ACTION] ⚠️ Database not ready, logging case study to console.");
+  }
 }
 
 // --- أدوات التحكم في الزمن (تعديل التردد) ---

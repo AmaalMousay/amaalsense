@@ -200,7 +200,8 @@ export async function upsertCountryEmotionIndex(data: InsertCountryEmotionIndex)
   const db = await getDb();
   if (!db) return null;
 
-  return await db.insert(countryEmotionIndices).values(data).onConflictDoUpdate({ target: countryEmotionIndices.countryCode,
+  return await db.insert(countryEmotionIndices).values(data).onConflictDoUpdate({
+    target: countryEmotionIndices.countryCode,
     set: {
       gmi: data.gmi,
       cfi: data.cfi,
@@ -436,7 +437,7 @@ export async function getPaymentRecordById(id: number) {
  * Update payment record status
  */
 export async function updatePaymentRecordStatus(
-  id: number, 
+  id: number,
   status: "pending" | "confirmed" | "rejected" | "refunded",
   adminNotes?: string,
   confirmedBy?: number
@@ -444,7 +445,7 @@ export async function updatePaymentRecordStatus(
   const db = await getDb();
   if (!db) return null;
 
-  const updateData: Partial<PaymentRecord> = { 
+  const updateData: Partial<PaymentRecord> = {
     status,
     adminNotes: adminNotes || null,
   };
@@ -524,8 +525,8 @@ export async function createCustomAlert(data: InsertCustomAlert) {
  * Update a custom alert
  */
 export async function updateCustomAlert(
-  id: number, 
-  userId: number, 
+  id: number,
+  userId: number,
   data: Partial<InsertCustomAlert>
 ) {
   const db = await getDb();
@@ -590,7 +591,7 @@ export async function updateAlertTrigger(id: number) {
 
   await db
     .update(customAlerts)
-    .set({ 
+    .set({
       lastTriggered: new Date(),
       triggerCount: sql`${customAlerts.triggerCount} + 1`
     })
@@ -656,8 +657,8 @@ export async function verifyUserEmail(email: string, token: string) {
 
   await db
     .update(userRegistrations)
-    .set({ 
-      isVerified: true, 
+    .set({
+      isVerified: true,
       verifiedAt: new Date(),
       verificationToken: null,
       tokenExpiresAt: null
@@ -1103,7 +1104,7 @@ export async function getUserStats(userId: number) {
       .select({ count: sql<number>`COUNT(*)` })
       .from(classifiedAnalyses)
       .where(eq(classifiedAnalyses.userId, userId));
-    
+
     // Get active alerts count
     const alertsCount = await db
       .select({ count: sql<number>`COUNT(*)` })
@@ -1112,7 +1113,7 @@ export async function getUserStats(userId: number) {
         eq(customAlerts.userId, userId),
         eq(customAlerts.isActive, true)
       ));
-    
+
     // Get followed topics count
     const topicsCount = await db
       .select({ count: sql<number>`COUNT(*)` })
@@ -1121,7 +1122,7 @@ export async function getUserStats(userId: number) {
         eq(followedTopics.userId, userId),
         eq(followedTopics.isActive, true)
       ));
-    
+
     // Get unique countries analyzed (from classified analyses)
     // For now, we'll count unique domains as a proxy
     const domainsAnalyzed = await db
@@ -1129,7 +1130,7 @@ export async function getUserStats(userId: number) {
       .from(classifiedAnalyses)
       .where(eq(classifiedAnalyses.userId, userId))
       .groupBy(classifiedAnalyses.domain);
-    
+
     // Get recent analyses
     const recentAnalyses = await db
       .select({
@@ -1145,7 +1146,7 @@ export async function getUserStats(userId: number) {
       .where(eq(classifiedAnalyses.userId, userId))
       .orderBy(desc(classifiedAnalyses.createdAt))
       .limit(5);
-    
+
     // Get recent alerts
     const recentAlerts = await db
       .select({
@@ -1161,7 +1162,7 @@ export async function getUserStats(userId: number) {
       .where(eq(customAlerts.userId, userId))
       .orderBy(desc(customAlerts.createdAt))
       .limit(5);
-    
+
     // Get user info for member since
     const userInfo = await db
       .select({
@@ -1266,7 +1267,7 @@ export async function submitResponseFeedback(feedback: InsertResponseFeedback): 
   try {
     const db = await getDb();
     if (!db) return null;
-    
+
     const result = await db.insert(responseFeedback).values(feedback);
     return { id: Number(result[0].insertId) };
   } catch (error) {
@@ -1285,16 +1286,16 @@ export async function getResponseFeedbackStats(): Promise<{
   try {
     const db = await getDb();
     if (!db) return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
-    
+
     const allFeedback = await db.select().from(responseFeedback).orderBy(desc(responseFeedback.createdAt)).limit(100);
-    
+
     const total = allFeedback.length;
     if (total === 0) return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
-    
+
     const avgRating = allFeedback.reduce((sum, f) => sum + (f.rating || 0), 0) / total;
     const helpfulCount = allFeedback.filter(f => f.wasHelpful === "yes").length;
     const accurateCount = allFeedback.filter(f => f.wasAccurate === "yes").length;
-    
+
     return {
       totalFeedback: total,
       averageRating: Math.round(avgRating * 10) / 10,
@@ -1321,7 +1322,7 @@ export async function getUserFeedbackHistory(userId: number, limit: number = 20)
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db.select().from(responseFeedback)
       .where(eq(responseFeedback.userId, userId))
       .orderBy(desc(responseFeedback.createdAt))

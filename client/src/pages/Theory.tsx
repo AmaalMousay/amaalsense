@@ -162,12 +162,12 @@ export default function Theory() {
                     <div className="text-sm text-slate-400 mt-1">Dominant Emotion</div>
                     <div className="text-[10px] text-slate-500 mt-1">Intensity: {dcfData.phase?.intensity?.toFixed(2) ?? '0'}</div>
                   </div>
-                  <div className="text-center p-4 rounded-lg border border-white/20" style={{ backgroundColor: (typeof dcfData.color === 'string' ? dcfData.color : dcfData.color?.primary || '#4169E1') + '20' }}>
+                  <div className="text-center p-4 rounded-lg border border-white/20" style={{ backgroundColor: (typeof dcfData.color === 'string' ? dcfData.color : (dcfData.color as any)?.primary || '#4169E1') + '20' }}>
                     <div className="w-12 h-12 rounded-full mx-auto mb-2 shadow-lg" style={{ 
-                      backgroundColor: typeof dcfData.color === 'string' ? dcfData.color : dcfData.color?.primary || '#4169E1',
-                      boxShadow: `0 0 20px ${typeof dcfData.color === 'string' ? dcfData.color : dcfData.color?.primary || '#4169E1'}40`
+                      backgroundColor: typeof dcfData.color === 'string' ? dcfData.color : (dcfData.color as any)?.primary || '#4169E1',
+                      boxShadow: `0 0 20px ${typeof dcfData.color === 'string' ? dcfData.color : (dcfData.color as any)?.primary || '#4169E1'}40`
                     }} />
-                    <div className="text-sm text-slate-400">{typeof dcfData.color === 'string' ? 'Emotional Color' : dcfData.color?.description || 'Field Color'}</div>
+                    <div className="text-sm text-slate-400">{typeof dcfData.color === 'string' ? 'Emotional Color' : (dcfData.color as any)?.description || 'Field Color'}</div>
                   </div>
                 </div>
 

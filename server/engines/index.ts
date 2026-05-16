@@ -87,14 +87,14 @@ export {
 // Source Weighting System
 export {
   getSourceWeight,
-  getSourceInfo,
-  calculateCompositeWeight,
-  calculateAggregateWeight,
-  applySourceWeighting,
-  knownSources,
-  defaultWeightsByType,
-  type Source,
-  type SourceType
+  detectSourceFromUrl,
+  applySourceWeights,
+  calculateWeightedAverage,
+  calculateWeightedEmotions,
+  getSourcesSummary,
+  type SourceType,
+  type SourceWeight,
+  type WeightedContent
 } from './sourceWeighting';
 
 // Confidence Propagation System

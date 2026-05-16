@@ -8,7 +8,7 @@
  */
 
 import { getDb } from '../_core/db';
-import { selfEvaluations } from '../../drizzle/schema';
+import { selfEvaluations } from '../drizzle/schema';
 import { desc, avg, sql } from 'drizzle-orm';
 import crypto from 'crypto';
 
@@ -61,7 +61,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
   const weaknesses: string[] = [];
   const strengths: string[] = [];
   const suggestions: string[] = [];
-  
+
   // 1. تقييم الثقة
   const confidenceScore = input.confidenceLevel;
   if (confidenceScore >= 70) {
@@ -70,7 +70,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
     weaknesses.push('ثقة منخفضة في التحليل');
     suggestions.push('جمع المزيد من البيانات قبل الإجابة');
   }
-  
+
   // 2. تقييم كفاية البيانات
   let dataSufficiencyScore = 0;
   if (input.newsSourcesCount >= 3) {
@@ -87,7 +87,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
     weaknesses.push('لا توجد مصادر بيانات');
     suggestions.push('التأكد من عمل خدمات جلب الأخبار');
   }
-  
+
   // تعديل بناءً على عدد العناوين المتعلقة
   if (input.relevantHeadlinesCount >= 5) {
     dataSufficiencyScore = Math.min(100, dataSufficiencyScore + 20);
@@ -97,7 +97,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
     weaknesses.push('عناوين قليلة متعلقة بالموضوع');
     suggestions.push('تحسين Query Builder لجلب أخبار أكثر صلة');
   }
-  
+
   // 3. تقييم: هل الأسباب جاءت من البيانات؟
   let causesFromDataScore = 0;
   if (input.causesFromData) {
@@ -108,7 +108,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
     weaknesses.push('الأسباب من قوالب ثابتة وليس من البيانات');
     suggestions.push('ربط Why Layer بالبيانات الحقيقية');
   }
-  
+
   // 4. تقييم: تحليل أم سرد؟
   let analysisVsNarrationScore = 0;
   if (input.madeDecision && input.hasSpecificExamples) {
@@ -128,7 +128,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
     weaknesses.push('سرد عام بدون تحليل أو قرار');
     suggestions.push('إعادة هيكلة الرد ليكون تحليلياً');
   }
-  
+
   // حساب النتيجة الإجمالية
   const overallScore = Math.round(
     (confidenceScore * 0.2) +
@@ -136,7 +136,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
     (causesFromDataScore * 0.3) +
     (analysisVsNarrationScore * 0.2)
   );
-  
+
   // إضافة تقييم عام
   if (overallScore >= 80) {
     strengths.push('أداء ممتاز بشكل عام');
@@ -147,7 +147,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
   } else {
     weaknesses.push('أداء ضعيف يحتاج إصلاح جذري');
   }
-  
+
   return {
     questionHash: crypto.createHash('sha256').update(input.question).digest('hex').substring(0, 64),
     confidenceScore,
@@ -171,7 +171,7 @@ export async function saveSelfEvaluation(
   try {
     const db = await getDb();
     if (!db) return { success: false };
-    
+
     const result = await db.insert(selfEvaluations).values({
       questionHash: evaluation.questionHash,
       question: input.question,
@@ -186,7 +186,7 @@ export async function saveSelfEvaluation(
       newsSourcesCount: input.newsSourcesCount,
       relevantHeadlinesCount: input.relevantHeadlinesCount,
     });
-    
+
     return { success: true, id: Number((result as any).insertId) };
   } catch (error) {
     console.error('[SelfEvaluation] Error saving evaluation:', error);
@@ -222,7 +222,7 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
       commonWeaknesses: [],
       commonStrengths: [],
     };
-    
+
     // حساب المتوسطات
     const averages = await db
       .select({
@@ -233,7 +233,7 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
         avgOverall: avg(selfEvaluations.overallScore),
       })
       .from(selfEvaluations);
-    
+
     // جلب آخر 50 تقييم لتحليل نقاط القوة والضعف
     const recentEvaluations = await db
       .select({
@@ -243,16 +243,16 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
       .from(selfEvaluations)
       .orderBy(desc(selfEvaluations.createdAt))
       .limit(50);
-    
+
     // تجميع نقاط الضعف الشائعة
     const weaknessCount: Record<string, number> = {};
     const strengthCount: Record<string, number> = {};
-    
+
     for (const eval_ of recentEvaluations) {
       try {
         const weaknesses = JSON.parse(eval_.weaknesses || '[]');
         const strengths = JSON.parse(eval_.strengths || '[]');
-        
+
         for (const w of weaknesses) {
           weaknessCount[w] = (weaknessCount[w] || 0) + 1;
         }
@@ -263,18 +263,18 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
         // تجاهل الأخطاء في parsing
       }
     }
-    
+
     // ترتيب حسب التكرار
     const commonWeaknesses = Object.entries(weaknessCount)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([weakness]) => weakness);
-    
+
     const commonStrengths = Object.entries(strengthCount)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([strength]) => strength);
-    
+
     return {
       averageConfidence: Math.round(Number(averages[0]?.avgConfidence) || 0),
       averageDataSufficiency: Math.round(Number(averages[0]?.avgDataSufficiency) || 0),
@@ -305,7 +305,7 @@ export async function getLowScoringEvaluations(limit: number = 20): Promise<type
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(selfEvaluations)

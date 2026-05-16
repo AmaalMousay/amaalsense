@@ -22,7 +22,7 @@ import { generateMetaDecision, MetaDecision } from './metaDecisionEngine';
 
 // New imports for enhancements
 import { storeAnalysis, getHistoricalData, calculateHistoricalTrend, HistoricalTrend, HistoricalQuery } from './emotionalMemory';
-import { getSourceWeight, calculateAggregateWeight, applySourceWeighting } from './sourceWeighting';
+import { getSourceWeight, calculateWeightedAverage, applySourceWeights } from './sourceWeighting';
 import { 
   calculateContextConfidence, 
   calculateFusionConfidence, 
@@ -94,6 +94,13 @@ export interface AnalyzeOutput {
   
   // NEW: Meta Decision (Executive Summary)
   metaDecision: MetaDecision;
+  
+  // NEW: Unified Indices
+  indices: {
+    gmi: number;
+    cfi: number;
+    hri: number;
+  };
   
   // Meta
   meta: {
@@ -181,11 +188,11 @@ export async function analyze(input: AnalyzeInput): Promise<AnalyzeOutput> {
   // Apply source weighting if sources provided
   let sourceWeightingInfo: AnalyzeOutput['sourceWeighting'] = undefined;
   if (sources.length > 0) {
-    const sourceNames = sources.map(s => s.name);
-    const aggregateResult = calculateAggregateWeight(sourceNames);
+    const sourceWeights = sources.map(s => getSourceWeight(s.name).weight);
+    const aggregateResult = calculateWeightedAverage(new Array(sources.length).fill(1), sourceWeights);
     
     // Apply weighted adjustment to emotional intensity
-    const adjustedIntensity = Math.round(emotionalState.emotionalIntensity * aggregateResult.averageWeight);
+    const adjustedIntensity = Math.round(emotionalState.emotionalIntensity * aggregateResult);
     
     // Update emotional state with weighted values
     emotionalState = {
@@ -195,7 +202,7 @@ export async function analyze(input: AnalyzeInput): Promise<AnalyzeOutput> {
     
     sourceWeightingInfo = {
       applied: true,
-      aggregateWeight: Math.round(aggregateResult.averageWeight * 100),
+      aggregateWeight: Math.round(aggregateResult * 100),
       sourceCount: sources.length,
       adjustedIntensity
     };
@@ -333,6 +340,7 @@ export async function analyze(input: AnalyzeInput): Promise<AnalyzeOutput> {
     },
     sourceWeighting: sourceWeightingInfo,
     metaDecision,
+    indices: { gmi, cfi, hri },
     meta: {
       analysisId,
       timestamp: new Date().toISOString(),
@@ -351,7 +359,7 @@ export async function analyze(input: AnalyzeInput): Promise<AnalyzeOutput> {
 /**
  * Calculate GMI (Global Mood Index) from emotional state
  */
-function calculateGMI(state: EmotionFusionResult): number {
+export function calculateGMI(state: EmotionFusionResult): number {
   // GMI = weighted average of all emotions normalized to 0-100
   const { vector } = state;
   const positive = vector.joy + vector.hope;
@@ -368,7 +376,7 @@ function calculateGMI(state: EmotionFusionResult): number {
 /**
  * Calculate CFI (Collective Fear Index) from emotional state
  */
-function calculateCFI(state: EmotionFusionResult): number {
+export function calculateCFI(state: EmotionFusionResult): number {
   const { vector } = state;
   // CFI focuses on fear and related negative emotions
   return Math.min(100, Math.round(vector.fear * 0.6 + vector.anger * 0.25 + vector.sadness * 0.15));
@@ -377,7 +385,7 @@ function calculateCFI(state: EmotionFusionResult): number {
 /**
  * Calculate HRI (Hope & Resilience Index) from emotional state
  */
-function calculateHRI(state: EmotionFusionResult): number {
+export function calculateHRI(state: EmotionFusionResult): number {
   const { vector } = state;
   // HRI focuses on hope and positive emotions
   return Math.min(100, Math.round(vector.hope * 0.5 + vector.joy * 0.3 + vector.curiosity * 0.2));

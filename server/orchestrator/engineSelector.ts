@@ -118,7 +118,7 @@ export async function fetchRealNewsData(
 ): Promise<{ items: RealNewsItem[] }> {
   try {
     // هنا نستخدم الخدمات المتوفرة في AmalSense لجلب البيانات
-    const { searchGNews } = await import('../gnewsService');
+    const { searchGNews } = await import('../services/gnewsService');
     const articles = await searchGNews({ query: topic, country, max: 10 });
 
     return {

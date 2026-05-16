@@ -53,7 +53,7 @@ export default function UserDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Fetch real user statistics
-  const { data: stats, isLoading: statsLoading } = trpc.userStats.getStats.useQuery(undefined, {
+  const { data: stats, isLoading: statsLoading } = trpc.userStatistics.getStats.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
@@ -107,8 +107,7 @@ export default function UserDashboard() {
 
   const formatDate = (date: Date | string | null) => {
     if (!date) return '-';
-    const d = new Date(date);
-    return d.toLocaleDateString(isRTL ? 'ar-LY' : 'en-US', {
+    return new Date(date).toLocaleDateString(isRTL ? 'ar-LY' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -467,7 +466,7 @@ export default function UserDashboard() {
         </div>
 
         {/* Member Info */}
-        {stats?.memberSince && (
+        {stats?.createdAt && (
           <Card className="cosmic-card mt-6">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -480,7 +479,7 @@ export default function UserDashboard() {
                       {isRTL ? 'عضو منذ' : 'Member Since'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {formatDate(stats.memberSince)}
+                      {formatDate(stats.createdAt)}
                     </p>
                   </div>
                 </div>

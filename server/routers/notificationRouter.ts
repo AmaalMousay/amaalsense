@@ -18,6 +18,10 @@ export const notificationRouter = router({
   subscribe: protectedProcedure
     .input(
       z.object({
+        email: z.string().email().optional(),
+        name: z.string().optional(),
+        frequency: z.enum(['daily', 'weekly', 'realtime']).optional(),
+        types: z.array(z.enum(['report', 'alert', 'digest'])).optional(),
         country: z.string().optional(),
         topic: z.string().optional(),
         thresholds: z.object({
@@ -52,7 +56,8 @@ export const notificationRouter = router({
    * Unsubscribe from alerts
    */
   unsubscribe: protectedProcedure
-    .mutation(async ({ ctx }) => {
+    .input(z.object({ email: z.string().email().optional() }))
+    .mutation(async ({ ctx, input }) => {
       try {
         notificationSystem.unsubscribe(String(ctx.user.id));
 

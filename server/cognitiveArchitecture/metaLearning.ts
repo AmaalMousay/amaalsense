@@ -8,9 +8,14 @@
  */
 
 import { getDb } from '../_core/db';
-import { cognitiveLearningInsights, reasoningRules, weeklySelfReports } from '../../drizzle/schema';
+import { cognitiveLearningInsights, reasoningRules, weeklySelfReports } from '../drizzle/schema';
 import { desc, eq, sql, and, gte, lte } from 'drizzle-orm';
-import { getFeedbackStats, getLowRatedFeedback, getHighRatedFeedback } from '../utils/feedbackLoop';
+import { 
+  getHighRatedFeedback, 
+  getLowRatedFeedback, 
+  getFeedbackStats,
+  type FeedbackEntry
+} from '../engines/feedbackStore';
 import { getSelfEvaluationSummary, getLowScoringEvaluations } from './selfEvaluation';
 
 // ============================================================================
@@ -61,35 +66,40 @@ export interface WeeklyReport {
  */
 export async function detectPatterns(): Promise<LearningInsight[]> {
   const insights: LearningInsight[] = [];
-  
+
   // جلب بيانات التحليل
-  const feedbackStats = await getFeedbackStats();
+  const stats = getFeedbackStats();
   const selfEvalSummary = await getSelfEvaluationSummary();
-  const lowRatedFeedback = await getLowRatedFeedback(20);
-  const highRatedFeedback = await getHighRatedFeedback(20);
-  const lowScoringEvals = await getLowScoringEvaluations(20);
-  
+  const lowFeedback = getLowRatedFeedback();
+  // const highRatedFeedback = getHighRatedFeedback(); // Not used currently
+  // const lowScoringEvals = await getLowScoringEvaluations(20); // Not used currently
+
   // 1. اكتشاف نقاط الضعف من الـ feedback
-  if (feedbackStats.helpfulPercentage < 50) {
+  // Note: helpfulPercentage is not in stats currently, we might need to calculate it or mock it
+  const helpfulCount = stats.recentFeedback.filter(f => f.sentiment === 'positive').length;
+  const helpfulPercentage = stats.totalFeedback > 0 ? (helpfulCount / stats.totalFeedback) * 100 : 100;
+
+  if (helpfulPercentage < 50) {
     insights.push({
       patternType: 'weakness',
       description: 'الردود ليست مفيدة بما فيه الكفاية للمستخدمين',
-      evidenceCount: feedbackStats.totalFeedback,
+      evidenceCount: stats.totalFeedback,
       confidence: 80,
       suggestedAction: 'تحسين جودة الأسباب والتفسيرات في الردود',
     });
   }
-  
-  if (feedbackStats.accuratePercentage < 50) {
+
+  // Assuming accuracy is related to rating
+  if (stats.averageRating < 3.0) {
     insights.push({
       patternType: 'weakness',
       description: 'مشاكل في دقة التحليل',
-      evidenceCount: feedbackStats.totalFeedback,
+      evidenceCount: stats.totalFeedback,
       confidence: 80,
       suggestedAction: 'تحسين Query Builder لجلب بيانات أكثر صلة',
     });
   }
-  
+
   // 2. اكتشاف نقاط الضعف من التقييم الذاتي
   for (const weakness of selfEvalSummary.commonWeaknesses) {
     insights.push({
@@ -100,7 +110,7 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
       suggestedAction: getActionForWeakness(weakness),
     });
   }
-  
+
   // 3. اكتشاف نقاط القوة
   for (const strength of selfEvalSummary.commonStrengths) {
     insights.push({
@@ -110,15 +120,15 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
       confidence: 70,
     });
   }
-  
+
   // 4. تحليل المواضيع الضعيفة من التقييمات المنخفضة
   const topicWeaknesses: Record<string, number> = {};
-  for (const feedback of lowRatedFeedback) {
+  for (const feedback of lowFeedback) {
     if (feedback.topic) {
       topicWeaknesses[feedback.topic] = (topicWeaknesses[feedback.topic] || 0) + 1;
     }
   }
-  
+
   for (const [topic, count] of Object.entries(topicWeaknesses)) {
     if (count >= 3) {
       insights.push({
@@ -131,7 +141,7 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
       });
     }
   }
-  
+
   return insights;
 }
 
@@ -146,7 +156,7 @@ function getActionForWeakness(weakness: string): string {
     'عناوين قليلة متعلقة بالموضوع': 'تحسين Query Builder',
     'ثقة منخفضة في التحليل': 'جمع المزيد من البيانات قبل الإجابة',
   };
-  
+
   return actionMap[weakness] || 'مراجعة وتحسين هذا الجانب';
 }
 
@@ -161,7 +171,7 @@ export async function saveLearningInsight(insight: LearningInsight): Promise<{ s
   try {
     const db = await getDb();
     if (!db) return { success: false };
-    
+
     await db.insert(cognitiveLearningInsights).values({
       patternType: insight.patternType,
       topic: insight.topic,
@@ -172,7 +182,7 @@ export async function saveLearningInsight(insight: LearningInsight): Promise<{ s
       suggestedAction: insight.suggestedAction,
       isActive: 'no',
     });
-    
+
     return { success: true };
   } catch (error) {
     console.error('[MetaLearning] Error saving insight:', error);
@@ -183,11 +193,11 @@ export async function saveLearningInsight(insight: LearningInsight): Promise<{ s
 /**
  * جلب الـ insights النشطة
  */
-export async function getActiveInsights(): Promise<typeof cognitiveLearningInsights.$inferSelect[]> {
+export async function getActiveInsights(): Promise<any[]> {
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(cognitiveLearningInsights)
@@ -206,12 +216,12 @@ export async function activateInsight(id: number): Promise<{ success: boolean }>
   try {
     const db = await getDb();
     if (!db) return { success: false };
-    
+
     await db
       .update(cognitiveLearningInsights)
       .set({ isActive: 'yes', lastValidated: new Date() })
       .where(eq(cognitiveLearningInsights.id, id));
-    
+
     return { success: true };
   } catch (error) {
     console.error('[MetaLearning] Error activating insight:', error);
@@ -230,7 +240,7 @@ export async function addReasoningRule(rule: ReasoningRule): Promise<{ success: 
   try {
     const db = await getDb();
     if (!db) return { success: false };
-    
+
     await db.insert(reasoningRules).values({
       ruleName: rule.ruleName,
       category: rule.category,
@@ -239,7 +249,7 @@ export async function addReasoningRule(rule: ReasoningRule): Promise<{ success: 
       parameters: rule.parameters ? JSON.stringify(rule.parameters) : null,
       isActive: rule.isActive ? 'yes' : 'no',
     });
-    
+
     return { success: true };
   } catch (error) {
     console.error('[MetaLearning] Error adding reasoning rule:', error);
@@ -250,11 +260,11 @@ export async function addReasoningRule(rule: ReasoningRule): Promise<{ success: 
 /**
  * جلب القواعد النشطة
  */
-export async function getActiveRules(): Promise<typeof reasoningRules.$inferSelect[]> {
+export async function getActiveRules(): Promise<any[]> {
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(reasoningRules)
@@ -273,25 +283,25 @@ export async function updateRuleWeight(ruleName: string, success: boolean): Prom
   try {
     const db = await getDb();
     if (!db) return;
-    
+
     // جلب القاعدة الحالية
     const rules = await db
       .select()
       .from(reasoningRules)
       .where(eq(reasoningRules.ruleName, ruleName))
       .limit(1);
-    
+
     if (rules.length === 0) return;
-    
-    const rule = rules[0];
-    const newTimesApplied = rule.timesApplied + 1;
+
+    const rule = rules[0] as any;
+    const newTimesApplied = (rule.timesApplied || 0) + 1;
     const currentSuccessRate = rule.successRate || 50;
-    
+
     // حساب معدل النجاح الجديد
     const newSuccessRate = Math.round(
-      (currentSuccessRate * rule.timesApplied + (success ? 100 : 0)) / newTimesApplied
+      (currentSuccessRate * (rule.timesApplied || 0) + (success ? 100 : 0)) / newTimesApplied
     );
-    
+
     // تعديل الوزن بناءً على معدل النجاح
     let newWeight = rule.weight;
     if (newSuccessRate > 70) {
@@ -299,7 +309,7 @@ export async function updateRuleWeight(ruleName: string, success: boolean): Prom
     } else if (newSuccessRate < 30) {
       newWeight = Math.max(0, rule.weight - 5);
     }
-    
+
     await db
       .update(reasoningRules)
       .set({
@@ -324,30 +334,30 @@ export async function updateRuleWeight(ruleName: string, success: boolean): Prom
 export async function generateWeeklyReport(): Promise<WeeklyReport> {
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  
+
   // جلب البيانات
-  const feedbackStats = await getFeedbackStats();
+  const stats = getFeedbackStats();
   const selfEvalSummary = await getSelfEvaluationSummary();
   const patterns = await detectPatterns();
-  
+
   // تصنيف الأنماط
   const weaknesses = patterns.filter(p => p.patternType === 'weakness');
   const strengths = patterns.filter(p => p.patternType === 'strength');
-  
+
   // استخراج المواضيع الضعيفة
   const dataGapTopics = weaknesses
     .filter(w => w.topic && w.description.includes('بيانات'))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
-  
+
   const weakInterpretationTopics = weaknesses
     .filter(w => w.topic && w.description.includes('تحليل'))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
-  
+
   // توليد التوصيات
   const recommendedAdjustments: string[] = [];
-  
+
   if (selfEvalSummary.averageDataSufficiency < 50) {
     recommendedAdjustments.push('تحسين Query Builder لجلب بيانات أكثر');
   }
@@ -357,15 +367,18 @@ export async function generateWeeklyReport(): Promise<WeeklyReport> {
   if (selfEvalSummary.averageAnalysisVsNarration < 50) {
     recommendedAdjustments.push('تحسين Decision Engine ليحسم ويرجح');
   }
-  if (feedbackStats.helpfulPercentage < 50) {
+  if (stats.averageRating < 3.5) {
     recommendedAdjustments.push('تحسين جودة الردود لتكون أكثر فائدة');
   }
-  
+
+  const helpfulCount = stats.recentFeedback.filter(f => f.sentiment === 'positive').length;
+  const helpfulPercentage = stats.totalFeedback > 0 ? (helpfulCount / stats.totalFeedback) * 100 : 100;
+
   const report: WeeklyReport = {
     periodStart: weekAgo,
     periodEnd: now,
-    totalResponses: feedbackStats.totalFeedback,
-    averageRating: feedbackStats.averageRating,
+    totalResponses: stats.totalFeedback,
+    averageRating: stats.averageRating,
     averageSelfScore: selfEvalSummary.averageOverall,
     topFailures: weaknesses.slice(0, 10).map(w => w.description),
     topSuccesses: strengths.slice(0, 10).map(s => s.description),
@@ -376,14 +389,14 @@ export async function generateWeeklyReport(): Promise<WeeklyReport> {
       `متوسط الثقة: ${selfEvalSummary.averageConfidence}%`,
       `متوسط كفاية البيانات: ${selfEvalSummary.averageDataSufficiency}%`,
       `متوسط الأسباب من البيانات: ${selfEvalSummary.averageCausesFromData}%`,
-      `نسبة الردود المفيدة: ${feedbackStats.helpfulPercentage}%`,
+      `نسبة الردود المفيدة: ${helpfulPercentage}%`,
     ],
     recommendedAdjustments,
   };
-  
+
   // حفظ التقرير
   await saveWeeklyReport(report);
-  
+
   return report;
 }
 
@@ -394,7 +407,7 @@ async function saveWeeklyReport(report: WeeklyReport): Promise<void> {
   try {
     const db = await getDb();
     if (!db) return;
-    
+
     await db.insert(weeklySelfReports).values({
       periodStart: report.periodStart,
       periodEnd: report.periodEnd,
@@ -417,17 +430,17 @@ async function saveWeeklyReport(report: WeeklyReport): Promise<void> {
 /**
  * جلب آخر تقرير أسبوعي
  */
-export async function getLatestWeeklyReport(): Promise<typeof weeklySelfReports.$inferSelect | null> {
+export async function getLatestWeeklyReport(): Promise<any | null> {
   try {
     const db = await getDb();
     if (!db) return null;
-    
+
     const reports = await db
       .select()
       .from(weeklySelfReports)
       .orderBy(desc(weeklySelfReports.createdAt))
       .limit(1);
-    
+
     return reports[0] || null;
   } catch (error) {
     console.error('[MetaLearning] Error getting latest weekly report:', error);
@@ -451,11 +464,11 @@ export async function runLearningLoop(): Promise<{
   rulesAdjusted: number;
 }> {
   console.log('[MetaLearning] Starting learning loop...');
-  
+
   // 1. اكتشاف الأنماط
   const patterns = await detectPatterns();
   console.log(`[MetaLearning] Detected ${patterns.length} patterns`);
-  
+
   // 2. حفظ الـ insights الجديدة
   let insightsSaved = 0;
   for (const pattern of patterns) {
@@ -463,12 +476,12 @@ export async function runLearningLoop(): Promise<{
     if (result.success) insightsSaved++;
   }
   console.log(`[MetaLearning] Saved ${insightsSaved} insights`);
-  
+
   // 3. اقتراح تعديلات على القواعد (يمكن توسيعها لاحقاً)
   const rulesAdjusted = 0;
-  
+
   console.log('[MetaLearning] Learning loop completed');
-  
+
   return {
     patternsDetected: patterns.length,
     insightsSaved,

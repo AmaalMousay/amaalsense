@@ -1,28 +1,21 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
-  "exclude": ["node_modules", "build", "dist", "**/*.test.ts", "**/*.spec.ts", "**/_archive/**", "server/orchestrator/**", "server/analyticsStorage.ts", "server/feedbackLoop.ts", "server/llmPipelineWithSanitization.ts", "server/alertsRouter.ts", "server/improvedImpactEngine.ts", "server/indicesRouter.ts", "server/apiRoutersReal.ts"],
   "compilerOptions": {
-    "incremental": true,
-    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
-    "noEmit": true,
+    "target": "ESNext",
     "module": "ESNext",
-    "target": "ES2020",
-    "strict": true,
-    "lib": ["esnext", "dom", "dom.iterable"],
+    "moduleResolution": "Node",
     "jsx": "react-jsx",
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
-    "downlevelIteration": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "moduleResolution": "bundler",
-    "allowJs": true,
-    "baseUrl": ".",
-    "types": ["node", "vite/client", "vitest/globals", "@testing-library/jest-dom"],
-    "paths": {
-      "@/*": ["./client/src/*"],
-      "@shared/*": ["./shared/*"]
-    }
-  }
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "client/src/**/*",
+    "server/**/*",
+    "global.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
 }

@@ -50,6 +50,8 @@ export interface FeedbackStats {
   byType: Record<FeedbackType, number>;
   bySentiment: Record<FeedbackSentiment, number>;
   averageRating: number;
+  accuracyRate: number;
+  correctCount: number;
   recentFeedback: FeedbackEntry[];
 }
 
@@ -247,11 +249,15 @@ export function getFeedbackStats(): FeedbackStats {
     }
   }
   
+  const positiveCount = bySentiment.positive;
+  
   return {
     totalFeedback: feedbackStore.length,
     byType,
     bySentiment,
     averageRating: ratingCount > 0 ? Math.round((totalRating / ratingCount) * 10) / 10 : 0,
+    accuracyRate: feedbackStore.length > 0 ? Math.round((positiveCount / feedbackStore.length) * 100) : 0,
+    correctCount: positiveCount,
     recentFeedback: feedbackStore.slice(-10).reverse()
   };
 }
@@ -340,3 +346,25 @@ function generateFeedbackId(): string {
 
 // Export the store for direct access if needed
 export { feedbackStore };
+
+
+/**
+ * Get low rated feedback for meta learning
+ */
+export function getLowRatedFeedback(): FeedbackEntry[] {
+  return feedbackStore.filter(f => f.rating !== undefined && f.rating < 3);
+}
+
+/**
+ * Get high rated feedback for meta learning
+ */
+export function getHighRatedFeedback(): FeedbackEntry[] {
+  return feedbackStore.filter(f => f.rating !== undefined && f.rating >= 4);
+}
+
+/**
+ * Get improvement areas
+ */
+export function getImprovementAreas(): Array<{ topic: string; priority: string }> {
+  return []; // Mock implementation based on new structure
+}

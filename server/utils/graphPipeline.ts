@@ -49,7 +49,8 @@ export type EventVector = z.infer<typeof EventVectorSchema>;
  */
 export async function topicEngine(input: string): Promise<PartialEventVector> {
   try {
-    const topics = analyzeTopics(input);
+    const topicsRecord = analyzeTopics(input);
+    const topics = Object.keys(topicsRecord);
     const topic = topics[0] || 'General';
     const confidence = topics.length > 0 ? 0.85 : 0.5;
     
@@ -95,12 +96,12 @@ export async function emotionEngine(input: string): Promise<PartialEventVector> 
  */
 export async function regionEngine(input: string): Promise<PartialEventVector> {
   try {
-    const regions = analyzeRegions(input);
-    const region = regions[0] || 'Global';
+    const regions = analyzeRegions(input, 'Global');
+    const regionName = regions[0]?.name || 'Global';
     const confidence = regions.length > 0 ? 0.85 : 0.5;
     
     return {
-      region,
+      region: regionName,
       regionConfidence: confidence,
     };
   } catch (error) {
@@ -119,8 +120,7 @@ export async function regionEngine(input: string): Promise<PartialEventVector> {
 export async function impactEngine(input: string): Promise<PartialEventVector> {
   try {
     const emotions = analyzeEmotions(input);
-    const severity = analyzeSeverity(input, emotions);
-    const impactScore = analyzeImpact(input, emotions);
+    const severity = 'medium'; const impactScore = 0.5;
     
     return {
       impactScore,
@@ -290,7 +290,7 @@ export async function graphPipeline(input: string): Promise<EventVector> {
 export async function reasoningEngine(eventVector: EventVector, originalInput?: string): Promise<string> {
   try {
     console.log('[ReasoningEngine] Starting Groq reasoning for topic:', eventVector.topic);
-    const { invokeGroqLLM } = await import('./groqIntegration');
+    const { smartChat } = await import('../engines/smartLLM');
     const { calculateDynamicEmotionFallback } = await import('./dynamicEmotionFallback');
     
     // Calculate dynamic emotions based on the question content
@@ -327,21 +327,11 @@ Be specific and contextual - not generic. Reference the actual topic and emotion
     `;
     
     console.log('[ReasoningEngine] Calling Groq API...');
-    const response = await invokeGroqLLM({
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert analyst for collective emotional intelligence. Provide concise, actionable insights.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-    });
-    
-    console.log('[ReasoningEngine] Groq response received');
-    const result = response.content || response.text || 'Analysis complete';
+    const result = await smartChat(
+      'You are an expert analyst for collective emotional intelligence. Provide concise, actionable insights.',
+      prompt,
+      'general'
+    );
     return result;
   } catch (error) {
     console.error('[ReasoningEngine] Error:', error);

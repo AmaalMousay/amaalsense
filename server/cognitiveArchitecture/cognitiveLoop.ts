@@ -9,9 +9,14 @@
  * "النظام لا يتطور لأنه ذكي، بل لأنه يشك في نفسه"
  */
 
-import { saveFeedback, type FeedbackInput, analyzeFeedback } from '../utils/feedbackLoop';
+import { 
+  addFeedback, 
+  getFeedbackStats, 
+  analyzeFeedbackPatterns,
+  type FeedbackEntry 
+} from '../engines/feedbackStore';
 import { evaluateAndSave, type SelfEvaluationInput, type SelfEvaluationResult } from './selfEvaluation';
-import { runLearningLoop, generateWeeklyReport, getActiveInsights, getActiveRules } from '../dcft/metaLearning';
+import { runLearningLoop, generateWeeklyReport, getActiveInsights, getActiveRules } from './metaLearning';
 
 // ============================================================================
 // TYPES
@@ -102,21 +107,19 @@ export async function processFeedback(
     comment?: string;
   }
 ): Promise<{ success: boolean }> {
-  const feedbackInput: FeedbackInput = {
-    question: context.question,
-    response: context.response,
+  const feedbackInput: any = {
+    analysisId: 'cognitive-loop-' + Date.now(), // Generate a temporary ID
+    userType: 'general',
+    topic: context.topic || 'general',
+    sentiment: rating >= 4 ? 'positive' : rating <= 2 ? 'negative' : 'neutral',
     rating,
-    wasHelpful: options?.wasHelpful,
-    wasAccurate: options?.wasAccurate,
-    wasUnderstandable: options?.wasUnderstandable,
     comment: options?.comment,
-    topic: context.topic,
-    cognitivePattern: context.cognitivePattern,
-    dominantEmotion: context.dominantEmotion,
-    responseConfidence: context.confidenceLevel,
+    originalValue: context.confidenceLevel,
+    type: 'accuracy_rating'
   };
   
-  return await saveFeedback(feedbackInput);
+  addFeedback(feedbackInput);
+  return { success: true };
 }
 
 // ============================================================================
@@ -163,21 +166,21 @@ export async function runWeeklyIntrospection(): Promise<void> {
 export async function getCognitiveSystemStatus(): Promise<{
   activeInsightsCount: number;
   activeRulesCount: number;
-  feedbackAnalysis: Awaited<ReturnType<typeof analyzeFeedback>>;
+  feedbackAnalysis: any;
   systemHealth: 'excellent' | 'good' | 'average' | 'poor' | 'critical';
 }> {
   const activeInsights = await getActiveInsights();
   const activeRules = await getActiveRules();
-  const feedbackAnalysis = await analyzeFeedback();
+  const feedbackAnalysis = getFeedbackStats();
   
   // تحديد صحة النظام
   let systemHealth: 'excellent' | 'good' | 'average' | 'poor' | 'critical';
-  const satisfaction = feedbackAnalysis.overallSatisfaction;
+  const averageRating = feedbackAnalysis.averageRating;
   
-  if (satisfaction === 'excellent') systemHealth = 'excellent';
-  else if (satisfaction === 'good') systemHealth = 'good';
-  else if (satisfaction === 'average') systemHealth = 'average';
-  else if (satisfaction === 'poor') systemHealth = 'poor';
+  if (averageRating >= 4.5) systemHealth = 'excellent';
+  else if (averageRating >= 3.8) systemHealth = 'good';
+  else if (averageRating >= 3.0) systemHealth = 'average';
+  else if (averageRating >= 2.0) systemHealth = 'poor';
   else systemHealth = 'critical';
   
   return {
@@ -193,9 +196,9 @@ export async function getCognitiveSystemStatus(): Promise<{
 // ============================================================================
 
 export {
-  // Feedback Loop
-  saveFeedback,
-  analyzeFeedback,
+  // Feedback Store functions
+  addFeedback as saveFeedback,
+  getFeedbackStats as analyzeFeedback,
   // Self-Evaluation
   evaluateAndSave,
   // Meta-Learning

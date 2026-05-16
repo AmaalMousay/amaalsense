@@ -9,7 +9,7 @@ import { collectCountryData, collectTopicData, type CollectedData } from '../ser
 import { createUniversalEventVector, generateUniversalPrompt, type QuantumEventVector } from './eventVectorEngine';
 import { smartInvokeLLM } from './smartLLM';
 import { analyzeTextWithAI } from './aiSentimentAnalyzer';
-import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from './dcftEngine';
+import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from '../dcft/dcftEngine';
 import { buildRAGContext, formatRAGForPrompt } from '../knowledge/ragSystem';
 import { storeAnalysisRecord, getCumulativeInsight } from './learningStore';
 import { MultiTurnContext } from './multiTurnContext';
@@ -380,7 +380,7 @@ Current Scientific Context: ${science}`;
  */
 export async function getAggregatedNetworkData(topic: string, country?: string) {
   try {
-    const { fetchRealNewsData } = await import('./orchestrator/engineSelector');
+    const { fetchRealNewsData } = await import('../orchestrator/engineSelector');
     const newsResult = await fetchRealNewsData(topic, country);
     
     // Build CollectedData object to satisfy TypeScript

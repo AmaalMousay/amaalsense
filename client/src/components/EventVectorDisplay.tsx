@@ -12,6 +12,7 @@ import React, { useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Card } from '@/components/ui/card';
 import { Loader2, AlertCircle, Network } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface EventVector {
   id: string;
@@ -28,11 +29,53 @@ interface EventVector {
   confidence: number;
 }
 
-interface EventVectorDisplayConnectedProps {
-  topic: string;
-  country?: string;
-  limit?: number;
-  onEventSelect?: (event: EventVector) => void;
+interface EventVectorDisplayProps {
+  vectors: any[];
+  title?: string;
+  onEventSelect?: (event: any) => void;
+}
+
+export function EventVectorDisplay({
+  vectors,
+  title = "الأحداث المكتشفة",
+  onEventSelect
+}: EventVectorDisplayProps) {
+  const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
+
+  return (
+    <Card className="w-full p-6 bg-white border border-gray-200">
+      <h3 className="text-xl font-bold mb-4">{title}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {vectors.map((event) => (
+          <div 
+            key={event.id}
+            onClick={() => {
+              setSelectedEvent(event);
+              onEventSelect?.(event);
+            }}
+            className="p-4 rounded-lg border border-gray-100 hover:border-gray-300 cursor-pointer transition-all bg-gray-50"
+          >
+            <h4 className="font-bold text-gray-900 mb-2">{event.event}</h4>
+            <div className="flex justify-between text-xs text-gray-500 mb-2">
+              <span>{new Date(event.timestamp).toLocaleDateString('ar-SA')}</span>
+              <Badge variant="outline" className={event.sentiment === 'positive' ? 'text-green-600' : event.sentiment === 'negative' ? 'text-red-600' : 'text-gray-600'}>
+                {event.sentiment === 'positive' ? 'إيجابي' : event.sentiment === 'negative' ? 'سلبي' : 'محايد'}
+              </Badge>
+            </div>
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs">
+                <span>القوة</span>
+                <span>{event.magnitude}%</span>
+              </div>
+              <div className="w-full bg-gray-200 h-1 rounded">
+                <div className="bg-blue-600 h-full rounded" style={{ width: `${event.magnitude}%` }} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
 }
 
 export function EventVectorDisplayConnected({

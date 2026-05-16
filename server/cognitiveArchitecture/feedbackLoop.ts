@@ -8,7 +8,7 @@
  */
 
 import { getDb } from '../_core/db';
-import { responseFeedback } from '../../drizzle/schema';
+import { responseFeedback } from '../drizzle/schema';
 import { eq, desc, avg, count, sql } from 'drizzle-orm';
 
 // ============================================================================
@@ -58,7 +58,7 @@ export async function saveFeedback(input: FeedbackInput): Promise<{ success: boo
   try {
     const db = await getDb();
     if (!db) return { success: false };
-    
+
     const result = await db.insert(responseFeedback).values({
       userId: input.userId,
       question: input.question,
@@ -73,7 +73,7 @@ export async function saveFeedback(input: FeedbackInput): Promise<{ success: boo
       dominantEmotion: input.dominantEmotion,
       responseConfidence: input.responseConfidence,
     });
-    
+
     return { success: true, id: Number((result as any).insertId) };
   } catch (error) {
     console.error('[FeedbackLoop] Error saving feedback:', error);
@@ -88,7 +88,7 @@ export async function getRecentFeedback(limit: number = 50): Promise<typeof resp
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(responseFeedback)
@@ -107,7 +107,7 @@ export async function getLowRatedFeedback(limit: number = 20): Promise<typeof re
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(responseFeedback)
@@ -127,7 +127,7 @@ export async function getHighRatedFeedback(limit: number = 20): Promise<typeof r
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(responseFeedback)
@@ -159,7 +159,7 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
       topIssues: [],
       topPraises: [],
     };
-    
+
     // إجمالي الـ feedback ومتوسط التقييم
     const basicStats = await db
       .select({
@@ -167,42 +167,42 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
         avgRating: avg(responseFeedback.rating),
       })
       .from(responseFeedback);
-    
+
     const total = basicStats[0]?.total || 0;
     const avgRating = Number(basicStats[0]?.avgRating) || 0;
-    
+
     // نسبة المفيد
     const helpfulCount = await db
       .select({ count: count() })
       .from(responseFeedback)
       .where(eq(responseFeedback.wasHelpful, 'yes'));
-    
+
     // نسبة الدقيق
     const accurateCount = await db
       .select({ count: count() })
       .from(responseFeedback)
       .where(eq(responseFeedback.wasAccurate, 'yes'));
-    
+
     // نسبة المفهوم
     const understandableCount = await db
       .select({ count: count() })
       .from(responseFeedback)
       .where(eq(responseFeedback.wasUnderstandable, 'yes'));
-    
+
     // جلب التعليقات السلبية للتحليل
     const negativeComments = await db
       .select({ comment: responseFeedback.comment })
       .from(responseFeedback)
       .where(sql`${responseFeedback.rating} <= 2 AND ${responseFeedback.comment} IS NOT NULL`)
       .limit(10);
-    
+
     // جلب التعليقات الإيجابية
     const positiveComments = await db
       .select({ comment: responseFeedback.comment })
       .from(responseFeedback)
       .where(sql`${responseFeedback.rating} >= 4 AND ${responseFeedback.comment} IS NOT NULL`)
       .limit(10);
-    
+
     return {
       totalFeedback: total,
       averageRating: Math.round(avgRating * 10) / 10,
@@ -231,7 +231,7 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
  */
 export async function analyzeFeedback(): Promise<FeedbackAnalysis> {
   const stats = await getFeedbackStats();
-  
+
   // تحديد مستوى الرضا العام
   let overallSatisfaction: FeedbackAnalysis['overallSatisfaction'];
   if (stats.averageRating >= 4.5) overallSatisfaction = 'excellent';
@@ -239,28 +239,28 @@ export async function analyzeFeedback(): Promise<FeedbackAnalysis> {
   else if (stats.averageRating >= 2.5) overallSatisfaction = 'average';
   else if (stats.averageRating >= 1.5) overallSatisfaction = 'poor';
   else overallSatisfaction = 'critical';
-  
+
   // استخراج نقاط القوة
   const strengths: string[] = [];
   if (stats.helpfulPercentage >= 70) strengths.push('الردود مفيدة للمستخدمين');
   if (stats.accuratePercentage >= 70) strengths.push('التحليلات دقيقة');
   if (stats.understandablePercentage >= 70) strengths.push('الردود واضحة ومفهومة');
   if (stats.averageRating >= 4) strengths.push('رضا عام مرتفع');
-  
+
   // استخراج نقاط الضعف
   const weaknesses: string[] = [];
   if (stats.helpfulPercentage < 50) weaknesses.push('الردود ليست مفيدة بما فيه الكفاية');
   if (stats.accuratePercentage < 50) weaknesses.push('مشاكل في دقة التحليل');
   if (stats.understandablePercentage < 50) weaknesses.push('الردود غير واضحة');
   if (stats.averageRating < 3) weaknesses.push('رضا عام منخفض');
-  
+
   // توصيات للتحسين
   const recommendations: string[] = [];
   if (stats.helpfulPercentage < 70) recommendations.push('تحسين جودة الأسباب والتفسيرات');
   if (stats.accuratePercentage < 70) recommendations.push('تحسين دقة جلب البيانات');
   if (stats.understandablePercentage < 70) recommendations.push('تبسيط اللغة والهيكل');
   if (stats.topIssues.length > 0) recommendations.push('معالجة الشكاوى المتكررة');
-  
+
   return {
     overallSatisfaction,
     strengths,
@@ -276,7 +276,7 @@ export async function getFeedbackByTopic(topic: string): Promise<typeof response
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(responseFeedback)
@@ -296,7 +296,7 @@ export async function getFeedbackByCognitivePattern(pattern: string): Promise<ty
   try {
     const db = await getDb();
     if (!db) return [];
-    
+
     return await db
       .select()
       .from(responseFeedback)

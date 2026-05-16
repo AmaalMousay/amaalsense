@@ -17,11 +17,8 @@
 export { 
   DCFTEngine, 
   dcftEngine, 
-  analyzeDCFT, 
-  analyzeTextDCFT, 
-  analyzeTextsDCFT,
   type DCFTAnalysisResult 
-} from '../engines/dcftEngine';
+} from './dcftEngine';
 
 // Layer 1: Perception
 export { 
@@ -89,10 +86,18 @@ export {
   MetaLearningEngine,
   metaLearningEngine,
   type LearnedVocabulary,
-  type FeedbackEntry,
+  type FeedbackEntry as DCFTFeedbackEntry,
   type DiscoveredPattern,
   type LearningStats
 } from './metaLearning';
+
+// Feedback Loop System
+export {
+  FeedbackLoopManager,
+  feedbackLoopManager,
+  type UserFeedback,
+  type ABTest
+} from './feedbackLoop';
 
 // Vocabulary Adapter
 export {
@@ -102,12 +107,3 @@ export {
   type ContextualVocabulary,
   type EmergingExpression
 } from './vocabularyAdapter';
-
-// Feedback Loop
-export {
-  FeedbackLoopManager,
-  feedbackLoopManager,
-  type UserFeedback,
-  type AccuracyRecord,
-  type ABTest
-} from '../utils/feedbackLoop';
