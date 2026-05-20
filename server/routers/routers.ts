@@ -14,35 +14,17 @@ import { unifiedEngineRouter } from "./unifiedEngineRouter";
 import { historicalEventsRouter } from "./historicalEventsRouter";
 import { agentRouter } from "./agentRouter";
 import { predictionRouter } from "./predictionRouter";
-import { metacognitionRouter } from "./metacognitionRouter";
 import { alertsRouter } from "./alertsRouter";
-import { registrationRouter } from "./registrationRouter";
-import { telegramRouter } from "./telegramRouter";
-import { topicAlertsRouter } from "./topicAlertsRouter";
-import { topicsRouter } from "./topicsRouter";
-import { supportRouter } from "./supportRouter";
-import { subscriptionRouter } from "./subscriptionRouter";
-import { conversationsRouter } from "./conversationsRouter";
-import { paymentsRouter } from "./paymentsRouter";
 
 export const appRouter = router({
   system: systemRouter,
   alerts: alertsRouter,
-  registration: registrationRouter,
-  telegram: telegramRouter,
-  topicAlerts: topicAlertsRouter,
-  topics: topicsRouter,
-  support: supportRouter,
-  subscription: subscriptionRouter,
-  conversations: conversationsRouter,
-  payments: paymentsRouter,
   notifications: notificationRouter,
   newFeatures: newFeaturesRouter,
   search: searchRouter,
   engine: unifiedEngineRouter,
   historicalEvents: historicalEventsRouter,
   agent: agentRouter,
-  metacognition: metacognitionRouter,
   realtimeData: realtimeDataRouter,
   pipeline: pipelineRouter,
   chatAnalysis: chatAnalysisRouter,
