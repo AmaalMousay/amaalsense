@@ -17,7 +17,23 @@
  */
 
 import { invokeLLM } from '../_core/llm';
-import { type InterpretedCauses, type DecisionResult } from './llmInterpreter';
+
+
+export interface InterpretedCauses {
+  psychologicalCauses?: string[];
+  socialImplications?: string[];
+  confidence?: number;
+  summary?: string;
+  [key: string]: any;
+}
+
+export interface DecisionResult {
+  dominantEmotion?: string;
+  dominantEmotionReason?: string;
+  emotionType?: string;
+  confidence?: number;
+  [key: string]: any;
+}
 
 /**
  * Human Cognitive Patterns
@@ -240,7 +256,7 @@ export async function detectCognitivePattern(input: CognitiveInput): Promise<Cog
 - التقييم: ${input.decision.assessment}
 
 الأسباب النفسية:
-${input.interpretation.psychologicalCauses.join('\n')}
+${(input.interpretation.psychologicalCauses || []).join('\n')}
 
 حدد:
 1. النمط المعرفي الأساسي

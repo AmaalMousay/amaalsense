@@ -9,8 +9,8 @@
  */
 
 import { ContextResult } from './contextClassification';
-import { EmotionFusionResult, AffectiveVector } from './emotionFusion';
-import { DynamicsResult } from './emotionalDynamics';
+import { EmotionFusionResult, AffectiveVector } from './emotionEngine';
+import { DynamicsResult } from './emotionEngine';
 import { DriverDetectionResult } from './driverDetection';
 
 export type UserType = 'journalist' | 'researcher' | 'trader' | 'general';

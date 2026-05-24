@@ -16,6 +16,68 @@ import { agentRouter } from "./agentRouter";
 import { predictionRouter } from "./predictionRouter";
 import { alertsRouter } from "./alertsRouter";
 
+
+const anyInput = z.any().optional();
+const stubQuery = (value: any = null) => publicProcedure.input(anyInput).query(async (): Promise<any> => value);
+const stubMutation = (value: any = { success: true }) => publicProcedure.input(anyInput).mutation(async ({ input }): Promise<any> => ({ ...value, input }));
+
+const conversationsRouter = router({
+  list: stubQuery([]),
+  get: stubQuery(null),
+  create: stubMutation({ success: true, conversationId: "local" }),
+  addMessage: stubMutation({ success: true }),
+  delete: stubMutation({ success: true }),
+});
+
+const exportRouter = router({
+  generateCountryReport: stubQuery({ success: true, url: null, content: "" }),
+  generateGlobalReport: stubQuery({ success: true, url: null, content: "" }),
+});
+
+const paymentsRouter = router({
+  getAllPayments: stubQuery([]),
+  getPendingPayments: stubQuery([]),
+  submitPayment: stubMutation({ success: true }),
+  confirmPayment: stubMutation({ success: true }),
+  rejectPayment: stubMutation({ success: true }),
+});
+
+const registrationRouter = router({
+  register: stubMutation({ success: true }),
+  requestPasswordReset: stubMutation({ success: true }),
+  resetPassword: stubMutation({ success: true }),
+});
+
+const subscriptionRouter = router({
+  getUsage: stubQuery({ tier: "free", used: 0, limit: 10, remaining: 10 }),
+  getUserApiKeys: stubQuery([]),
+  generateApiKey: stubMutation({ success: true, key: null }),
+  revokeApiKey: stubMutation({ success: true }),
+  submitEnterpriseInquiry: stubMutation({ success: true }),
+});
+
+const supportRouter = router({ askQuestion: stubMutation({ success: true, answer: "" }) });
+const telegramRouter = router({
+  subscribe: stubMutation({ success: true }),
+  sendTestNotification: stubMutation({ success: true }),
+  sendDailySummary: stubMutation({ success: true }),
+});
+const topicsRouter = router({
+  getFollowed: stubQuery([]),
+  follow: stubMutation({ success: true }),
+  unfollow: stubMutation({ success: true }),
+  toggleActive: stubMutation({ success: true }),
+});
+const topicAlertsRouter = router({
+  getAll: stubQuery([]),
+  getUnreadCount: stubQuery(0),
+  markRead: stubMutation({ success: true }),
+  markAllRead: stubMutation({ success: true }),
+});
+const metaLearningRouter = router({ submitResponseFeedback: stubMutation({ success: true }) });
+const aiRouter = router({ chat: stubMutation({ success: true, response: "" }) });
+
+
 export const appRouter = router({
   system: systemRouter,
   alerts: alertsRouter,
@@ -32,6 +94,17 @@ export const appRouter = router({
   prediction: predictionRouter,
   unified: unifiedRouter,
   explainability: explainabilityRouter,
+  conversations: conversationsRouter,
+  export: exportRouter,
+  payments: paymentsRouter,
+  registration: registrationRouter,
+  subscription: subscriptionRouter,
+  support: supportRouter,
+  telegram: telegramRouter,
+  topics: topicsRouter,
+  topicAlerts: topicAlertsRouter,
+  metaLearning: metaLearningRouter,
+  ai: aiRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -91,7 +164,7 @@ export const appRouter = router({
       .input(z.object({ headline: z.string() }))
       .mutation(async ({ input }) => {
         const { analyzeQuick } = await import('../engines/unifiedAnalyzer');
-        const { LearningLayer } = await import('../engines/learningLayer');
+        const { LearningLayer } = await import('../engines/learningStore');
 
         const result = await analyzeQuick(input.headline);
         

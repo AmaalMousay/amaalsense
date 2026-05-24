@@ -164,8 +164,7 @@ describe('i18n - 7 Language Support', () => {
             const fullPath = path ? `${path}.${key}` : key;
             
             if (typeof value === 'string') {
-              expect(value.length).toBeGreaterThan(0, 
-                `Empty translation for ${lang}.${fullPath}`);
+              expect(value.length, `Empty translation for ${lang}.${fullPath}`).toBeGreaterThan(0);
             } else if (typeof value === 'object' && value !== null) {
               checkTranslations(value, fullPath);
             }

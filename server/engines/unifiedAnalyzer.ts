@@ -14,14 +14,14 @@
  */
 
 import { classifyContext, ContextResult } from './contextClassification';
-import { fuseEmotions, EmotionFusionResult, AffectiveVector } from './emotionFusion';
-import { analyzeEmotionalDynamics, DynamicsResult } from './emotionalDynamics';
+import { fuseEmotions, EmotionFusionResult, AffectiveVector } from './emotionEngine';
+import { analyzeEmotionalDynamics, DynamicsResult } from './emotionEngine';
 import { detectDrivers, DriverDetectionResult } from './driverDetection';
 import { generateInsights, ExplainableInsightResult, UserType } from './explainableInsight';
 import { generateMetaDecision, MetaDecision } from './metaDecisionEngine';
 
 // New imports for enhancements
-import { storeAnalysis, getHistoricalData, calculateHistoricalTrend, HistoricalTrend, HistoricalQuery } from './emotionalMemory';
+import { storeAnalysis, getHistoricalData, calculateHistoricalTrend, HistoricalTrend, HistoricalQuery } from './emotionEngine';
 import { getSourceWeight, calculateWeightedAverage, applySourceWeights } from './sourceWeighting';
 import { 
   calculateContextConfidence, 

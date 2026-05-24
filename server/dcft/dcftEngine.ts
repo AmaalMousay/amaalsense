@@ -32,20 +32,18 @@ export class DCFTEngine {
       };
     });
 
-    // 2. حل خطأ PerceptionLayer: الوصول للدالة بأي اسم موجود (analyzeInputs أو process)
-    const pLayer = perceptionLayer as any;
-    const perception = pLayer.process ? pLayer.process(processedInputs) : pLayer.analyzeInputs(processedInputs);
+    // 2. Perception: raw digital inputs -> emotion events
+    const perceptionOutputs = await perceptionLayer.processBatch(processedInputs);
+    const events = perceptionOutputs.map(output => output.event);
 
-    // 3. حساب التذبذب (المنطق الرياضي)
+    // 3. Volatility is still tracked from previous awareness states
     const volatility = this.calculateVolatility();
 
-    // 4. حل خطأ CognitiveLayer: الوصول للدالة (updateField أو process)
-    const cLayer = cognitiveLayer as any;
-    const dcfState = cLayer.process ? cLayer.process(perception.events, volatility) : cLayer.updateField(perception.events);
+    // 4. Cognitive field: emotion events -> DCF state
+    const dcfState = cognitiveLayer.processToDCFState(events);
 
-    // 5. حل خطأ AwarenessLayer: الوصول للدالة (buildAwareness أو generate)
-    const aLayer = awarenessLayer as any;
-    const awareness = aLayer.generate ? aLayer.generate(dcfState) : aLayer.buildAwareness(dcfState);
+    // 5. Awareness: DCF state -> global indices and alert state
+    const awareness = awarenessLayer.generateOutput(dcfState);
 
     const result: DCFTAnalysisResult = {
       indices: awareness.indices,
@@ -67,11 +65,13 @@ export class DCFTEngine {
   }
 
   calculateConsciousnessField(polarity: number, intensity: number, baseline: number = 50) {
-    // Mock mapping for backward compatibility with guessing fix17.cjs
+    // Compatibility helper for older callers that pass polarity/intensity directly.
+    const normalizedPolarity = Math.max(-100, Math.min(100, polarity > 1 ? polarity - baseline : polarity * 100));
+    const normalizedIntensity = Math.max(0, Math.min(100, intensity > 1 ? intensity : intensity * 100));
     return {
-      gmi: Math.round(polarity),
-      cfi: Math.round(intensity * 0.7),
-      hri: Math.round((polarity + intensity) / 2)
+      gmi: Math.round(normalizedPolarity),
+      cfi: Math.round(Math.max(0, normalizedIntensity * (normalizedPolarity < 0 ? 0.85 : 0.35))),
+      hri: Math.round(Math.max(0, Math.min(100, ((normalizedPolarity + 100) / 2) * 0.6 + (100 - normalizedIntensity) * 0.4)))
     };
   }
 
@@ -84,10 +84,11 @@ export class DCFTEngine {
   }
 
   async analyzeText(text: string, source: string = 'live'): Promise<DCFTAnalysisResult> {
-    const input: any = {
-      text,
+    const input: RawDigitalInput = {
+      id: `text_${Date.now()}`,
+      content: text,
       source,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     return this.analyze([input]);
   }

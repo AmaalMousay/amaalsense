@@ -73,15 +73,15 @@ export function buildRAGContext(
     similarity: r.similarity,
   }));
 
-  // 2. البحث في قاعدة المعرفة العلمية
-  const scientificResults = VectorStore.search(query, {
-    type: 'knowledge',
+  // 2. البحث في قاعدة المعرفة العلمية والذاكرة الحية للأحداث
+  const scientificResults = VectorStore.searchKnowledgeCore(query, {
+    country,
     topK: maxResults,
-    minSimilarity: 0.3,
+    minSimilarity: 0.22,
   });
 
   context.scientificKnowledge = scientificResults.map((r: any) => ({
-    domain: (r.entry.metadata.domain as string) || 'General Science',
+    domain: (r.entry.metadata.domain as string) || r.entry.metadata.sourceType || 'Knowledge Core',
     content: r.entry.content,
     similarity: r.similarity,
   }));
@@ -170,4 +170,4 @@ export function storeConversationForRAG(
 ): void {
   VectorStore.storeConversation(userId, question, answer, topic, country);
 }
-
+

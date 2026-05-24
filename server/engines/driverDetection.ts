@@ -10,7 +10,7 @@
  */
 
 import { ContextResult, ContentDomain, EventType } from './contextClassification';
-import { AffectiveVector, EmotionFusionResult } from './emotionFusion';
+import { AffectiveVector, EmotionFusionResult } from './emotionEngine';
 
 export interface KeyDriver {
   term: string;

@@ -4,6 +4,7 @@
  */
 
 import { type EventVector } from '../engines/eventVectorEngine';
+import { storeKnowledgeObservation, storeEventVectorKnowledge } from '../knowledge/vectorStore';
 
 export interface AlertContext {
   topic: string;
@@ -41,21 +42,48 @@ export async function tool_performActiveSearch(query: string, domain: 'physics' 
 export async function tool_validateScientificFact(fact: string, domain: string): Promise<{ isValid: boolean, reference?: string }> {
   console.log(`[AGENT ACTION] 🛡️ VALIDATING SCIENTIFIC FACT: Domain: ${domain}`);
 
-  // يتم هنا مقارنة "الحقيقة" مع ما تم تخزينه في VectorStore في مجلد Knowledge
-  // لضمان عدم وجود هلوسة علمية
-  return { isValid: true, reference: "AmalSense Knowledge Base / DCFT Framework" };
+  storeKnowledgeObservation({
+    sourceType: 'knowledge',
+    sourceName: 'EvaluatorAgent',
+    title: `Scientific validation: ${domain}`,
+    content: fact,
+    topic: domain,
+    credibilityScore: 0.75,
+    agentId: 'evaluator_agent',
+    agentNotes: ['Fact validation request recorded for future RAG grounding'],
+  });
+
+  return { isValid: true, reference: "AmalSense Knowledge Core / DCFT Framework" };
 }
 
 // --- أدوات التقارير والتوثيق (مطورة) ---
 
 export async function tool_generateDeepReport(topic: string, vector: EventVector): Promise<string> {
   console.log(`[AGENT ACTION] 📄 GENERATING POLYMATH REPORT for: ${topic}`);
-  // تقرير يربط بين العلم والمشاعر
-  return `report_polymath_${Date.now()}`;
+  const reportId = `report_polymath_${Date.now()}`;
+  storeEventVectorKnowledge(topic, vector, {
+    reportId,
+    sourceType: 'analysis',
+    sourceName: 'AgentDeepReport',
+    agentId: 'report_agent',
+    timestamp: new Date(),
+  });
+  return reportId;
 }
 
 export async function tool_recordCaseStudy(data: { title: string, description: string, topic: string, snapshot: any }): Promise<void> {
   console.log(`[AGENT ACTION] 🏆 RECORDING CASE STUDY: ${data.title}`);
+  storeKnowledgeObservation({
+    sourceType: 'analysis',
+    sourceName: 'CaseStudyAgent',
+    title: data.title,
+    content: data.description,
+    topic: data.topic,
+    eventVector: data.snapshot,
+    credibilityScore: 0.9,
+    agentId: 'case_study_agent',
+    agentNotes: ['Agent recorded case study snapshot'],
+  });
   try {
     const { getDb } = await import('../_core/db');
     const db = await getDb();

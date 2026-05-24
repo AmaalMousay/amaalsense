@@ -8,7 +8,7 @@
  */
 import { fetchGoogleNewsByTopic, fetchGoogleNewsByCountry, type NewsItem } from '../services/googleRssService';
 import { fetchCountryNews, type NewsArticle } from '../services/newsService';
-import { smartJsonChat } from './smartLLM';
+import { smartJsonChat } from '../_core/llm';
 
 // Country metadata for search queries
 const COUNTRY_META: Record<string, { nameEn: string; nameAr: string; searchTerms: string[] }> = {

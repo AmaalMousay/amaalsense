@@ -10,6 +10,7 @@ import { fetchRedditPosts, fetchMastodonPosts, fetchBlueskyPosts } from './socia
 import { storeAnalysisRecord } from '../engines/learningStore';
 import { createQuantumEvent } from '../utils/eventVectorModel';
 import { WebScraperService } from './webScraperService';
+import { storeKnowledgeObservation, storeEventVectorKnowledge } from '../knowledge/vectorStore';
 
 // ============================================================
 // TYPES & INTERFACES
@@ -111,6 +112,36 @@ function learnFromRawData(item: RawDataItem) {
     }
   });
 
+
+  storeKnowledgeObservation({
+    sourceType: item.sourceType,
+    sourceName: item.platform || item.source,
+    title: item.title,
+    content: item.description,
+    url: item.url,
+    countryCode: item.country,
+    topic: item.topic,
+    eventType: 'automated_ingestion',
+    credibilityScore: item.trustScore / 100,
+    emotionVector: { curiosity: intensity },
+    eventVector: quantumEvent,
+    quantumState: {
+      polarity: (quantumEvent as any).polarity,
+      intensity: (quantumEvent as any).fieldIntensity ?? (quantumEvent as any).intensity,
+      uncertainty: (quantumEvent as any).uncertainty,
+    },
+    agentId: 'unified_data_collector',
+    agentNotes: [`Collected from ${item.platform}`],
+    observedAt: item.publishedAt || item.timestamp,
+    raw: item,
+  });
+  storeEventVectorKnowledge(String(quantumEvent.topic || item.topic), quantumEvent, {
+    country: item.country,
+    sourceName: item.platform,
+    sourceType: item.sourceType,
+    url: item.url,
+  });
+
   storeAnalysisRecord(
     {
       topic: quantumEvent.topic,
@@ -164,9 +195,11 @@ export async function collectTopicData(topic: string, region: string = 'global')
     (region === 'global' || item.region === region)
   );
   
-  const sources = [...new Set(items.map(item => item.platform))];
+  const deduped = deduplicateItems(items);
+  deduped.forEach(item => learnFromRawData(item));
+  const sources = [...new Set(deduped.map(item => item.platform))];
   return {
-    items,
+    items: deduped,
     sources,
     sourceCount: sources.length,
     fetchedAt: Date.now(),

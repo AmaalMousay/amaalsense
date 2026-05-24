@@ -1,17 +1,28 @@
-# Ignore node_modules and build artifacts
+# Dependencies
 node_modules/
+
+# Build outputs
+dist/
 build/
+.next/
+.turbo/
 
-# Exclude all untracked files by default
-*
-!.gitignore
-!.github/
+# Environment / secrets
+.env
+.env.*
+!.env.example
 
-# Specific directories to re-include
-!server/
+# Logs and local runtime files
+*.log
+.manus-logs/
+.DS_Store
+sqlite.db
+*.sqlite
+*.sqlite3
 
-# Core project files
-*.ts
-*.tsx
-*.js
-*.json
+# Test / coverage
+coverage/
+
+# Package-manager caches
+.npm/
+.pnpm-store/

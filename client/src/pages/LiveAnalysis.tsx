@@ -98,7 +98,7 @@ export default function LiveAnalysis() {
               Data Sources Status
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {sourcesStatus && Object.entries(sourcesStatus).map(([key, source]) => (
+              {sourcesStatus && Object.entries(sourcesStatus as Record<string, { available: boolean; name: string }>).map(([key, source]) => (
                 <div
                   key={key}
                   className={`p-3 rounded-lg flex items-center gap-2 ${
@@ -184,10 +184,10 @@ export default function LiveAnalysis() {
 
                 {/* Emotion Vector */}
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-                  {Object.entries(analyzeWithAI.data.analysis.emotions).map(([emotion, value]) => (
+                  {Object.entries(analyzeWithAI.data.analysis.emotions as Record<string, number | string>).map(([emotion, value]) => (
                     <div key={emotion} className="p-3 bg-background/30 rounded-lg text-center">
                       <p className="text-xs text-muted-foreground capitalize">{emotion}</p>
-                      <p className="text-lg font-bold cosmic-text">{value}</p>
+                      <p className="text-lg font-bold cosmic-text">{String(value)}</p>
                     </div>
                   ))}
                 </div>

@@ -15,7 +15,7 @@ import {
   analyzeFeedbackPatterns,
   type FeedbackEntry 
 } from '../engines/feedbackStore';
-import { evaluateAndSave, type SelfEvaluationInput, type SelfEvaluationResult } from './selfEvaluation';
+import { evaluateAndSave, type SelfEvaluationInput, type SelfEvaluationResult } from './metacognition';
 import { runLearningLoop, generateWeeklyReport, getActiveInsights, getActiveRules } from './metaLearning';
 
 // ============================================================================

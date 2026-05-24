@@ -12,7 +12,7 @@ import {
 import {
   generateEmotionalWeatherReport,
 } from '../utils/dailyEmotionalWeather';
-import { smartInvokeLLM } from '../engines/smartLLM';
+import { smartInvokeLLM } from '../_core/llm';
 
 /**
  * Modernized Sample Data using Quantum Wave Structure

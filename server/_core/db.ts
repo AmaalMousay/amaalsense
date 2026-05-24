@@ -518,7 +518,7 @@ export async function createCustomAlert(data: InsertCustomAlert) {
   if (!db) throw new Error("Database not available");
 
   const result = await db.insert(customAlerts).values(data);
-  return { id: result[0].insertId, ...data };
+  return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0), ...data };
 }
 
 /**
@@ -613,7 +613,7 @@ export async function createUserRegistration(data: InsertUserRegistration) {
   if (!db) throw new Error("Database not available");
 
   const result = await db.insert(userRegistrations).values(data);
-  return { id: result[0].insertId, ...data };
+  return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0), ...data };
 }
 
 /**
@@ -701,7 +701,7 @@ export async function createPasswordResetToken(data: InsertPasswordResetToken) {
     .where(eq(passwordResetTokens.email, data.email));
 
   const result = await db.insert(passwordResetTokens).values(data);
-  return { id: result[0].insertId, ...data };
+  return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0), ...data };
 }
 
 /**
@@ -1269,7 +1269,7 @@ export async function submitResponseFeedback(feedback: InsertResponseFeedback): 
     if (!db) return null;
 
     const result = await db.insert(responseFeedback).values(feedback);
-    return { id: Number(result[0].insertId) };
+    return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0) };
   } catch (error) {
     console.error("[Database] Failed to submit response feedback:", error);
     return null;

@@ -1,4 +1,4 @@
-import { addEntry } from './vectorStore';
+import { addEntry, storeKnowledgeObservation } from './vectorStore';
 
 // الحالة الحالية للباحث المستقل
 export const researcherState = {
@@ -212,6 +212,19 @@ export async function triggerAutonomousResearch(): Promise<string> {
         source: article.url,
         isAutonomous: true,
         timestamp: new Date()
+      });
+      storeKnowledgeObservation({
+        sourceType: 'knowledge',
+        sourceName: 'AutonomousResearcher',
+        title: article.title,
+        content: chunk,
+        url: article.url,
+        topic: article.title,
+        eventType: 'autonomous_research',
+        credibilityScore: 0.8,
+        agentId: 'autonomous_researcher',
+        agentNotes: [`Domain: ${article.domain}`],
+        observedAt: new Date(),
       });
       chunksSaved++;
     }

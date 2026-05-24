@@ -4,16 +4,16 @@
  * يربط بين التحليل اللحظي، الذاكرة التراكمية، ومؤشرات التداول العالمية.
  */
 
-import { layer1QuestionUnderstanding, type Layer1Output } from './layer1QuestionUnderstanding';
+import { layer1QuestionUnderstanding, type Layer1Output } from '../cognitiveEngine/questionUnderstanding';
 import { collectCountryData, collectTopicData, type CollectedData } from '../services/unifiedDataCollector';
 import { createUniversalEventVector, generateUniversalPrompt, type QuantumEventVector } from './eventVectorEngine';
-import { smartInvokeLLM } from './smartLLM';
-import { analyzeTextWithAI } from './aiSentimentAnalyzer';
+
+import { analyzeTextWithAI } from './emotionEngine';
 import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from '../dcft/dcftEngine';
 import { buildRAGContext, formatRAGForPrompt } from '../knowledge/ragSystem';
 import { storeAnalysisRecord, getCumulativeInsight } from './learningStore';
 import { MultiTurnContext } from './multiTurnContext';
-import { applyConsultantStyle } from '../cognitiveArchitecture/narrativeStyleEngine';
+import { composeNaturalAnswer } from './responseBuilder';
 
 // ============================================================
 // TYPES & INTERFACES
@@ -70,6 +70,19 @@ export interface NetworkContext {
 }
 
 // ============================================================
+// ANSWER ROUTING - decide what context is needed, not how to template the answer
+// ============================================================
+function requiresLiveAnalysis(question: string, layer1: Layer1Output): boolean {
+  const q = question.toLowerCase();
+  const analysisWords = [
+    'حلل', 'تحليل', 'الوضع', 'اليوم', 'الآن', 'مزاج', 'مشاعر', 'خوف', 'قلق', 'ترند', 'توقع', 'قارن',
+    'analyze', 'today', 'now', 'mood', 'sentiment', 'trend', 'predict', 'compare', 'fear'
+  ];
+  if (analysisWords.some(word => q.includes(word))) return true;
+  return ['sentiment', 'trend', 'comparison', 'prediction', 'recommendation'].includes(layer1.questionType as any);
+}
+
+// ============================================================
 // CORE EXECUTION ENGINE
 // ============================================================
 
@@ -86,6 +99,42 @@ export async function executeNetworkEngine(
   const contextResolution = MultiTurnContext.resolveReferences(conversationId, question);
   const effectiveQuestion = contextResolution.resolvedQuestion || question;
   const layer1 = await layer1QuestionUnderstanding(effectiveQuestion, language);
+
+  if (!requiresLiveAnalysis(effectiveQuestion, layer1)) {
+    const directResponse = await composeNaturalAnswer({
+      question: effectiveQuestion,
+      language,
+      intent: layer1.questionType,
+      route: 'direct',
+      limitations: ['No live data analysis was required for this question.'],
+    });
+
+    return {
+      requestId,
+      userId,
+      timestamp: new Date(),
+      language,
+      gate: {
+        layer1Output: layer1,
+        intent: 'direct_answer',
+        searchQuery: effectiveQuestion,
+        needsAnalysis: false,
+        needsLLM: true,
+      },
+      collection: {
+        rawData: { items: [], sources: [], sourceCount: 0, fetchedAt: Date.now(), query: effectiveQuestion, queryType: 'question' },
+        eventVector: null as any,
+        vectorPrompt: '',
+        totalItems: 0,
+      },
+      analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
+      analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
+      dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
+      generation: { response: directResponse, suggestions: [], languageEnforced: true },
+      executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: [], errors: [] },
+      status: 'completed',
+    };
+  }
 
   // 2. كشف الدولة بشكل ديناميكي (عالمي)
   // يعتمد الآن على تحليل اللغة وليس على قائمة ثابتة
@@ -114,23 +163,20 @@ export async function executeNetworkEngine(
 
   // 7. بناء التوجيه للذكاء الاصطناعي (مع حقن الذاكرة التراكمية)
   const scienceInjection = formatRAGForPrompt(ragContext);
-  const systemPrompt = buildEnhancedSystemPrompt(
+  const finalResponse = await composeNaturalAnswer({
+    question: effectiveQuestion,
     language,
-    vectorPrompt,
-    scienceInjection,
-    resonanceInsight.summary
-  );
-
-  const llmResponse = await smartInvokeLLM({
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: effectiveQuestion }
-    ]
-  }, 'response_generation' as any);
-
-  const rawContent = llmResponse.choices[0]?.message?.content || "";
-  const contentString = typeof rawContent === 'string' ? rawContent : JSON.stringify(rawContent);
-  const finalResponse = applyConsultantStyle(contentString);
+    intent,
+    route: 'analysis',
+    eventVector,
+    indices: dcftResult?.indices,
+    emotions: emotions.vector,
+    confidence: emotions.dominantEmotion ? 80 : layer1.confidence,
+    evidence: rawData.items.slice(0, 6).map(item => ({ title: item.title, source: item.source, url: item.url })),
+    memory: resonanceInsight,
+    knowledgeContext: scienceInjection,
+    limitations: rawData.items.length === 0 ? ['No live source items were available.'] : [],
+  });
 
   // 8. بناء السياق النهائي للشبكة
   const context: NetworkContext = {
@@ -426,4 +472,4 @@ export async function getAggregatedNetworkData(topic: string, country?: string) 
     console.error('[NetworkEngine] Error aggregating data:', error);
     return null;
   }
-}
+}

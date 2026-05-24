@@ -11,7 +11,8 @@
  */
 
 import { z } from 'zod';
-import { analyzeTopics, analyzeEmotions, analyzeRegions, analyzeSeverity, analyzeImpact } from '../engines/aiSentimentAnalyzer';
+import axios from 'axios';
+import { analyzeTopics, analyzeEmotions, analyzeRegions, analyzeSeverity, analyzeImpact } from '../engines/emotionEngine';
 
 // Define the shape of partial results from each engine
 export const PartialEventVectorSchema = z.object({
@@ -290,7 +291,7 @@ export async function graphPipeline(input: string): Promise<EventVector> {
 export async function reasoningEngine(eventVector: EventVector, originalInput?: string): Promise<string> {
   try {
     console.log('[ReasoningEngine] Starting Groq reasoning for topic:', eventVector.topic);
-    const { smartChat } = await import('../engines/smartLLM');
+    const { smartChat } = await import('../_core/llm');
     const { calculateDynamicEmotionFallback } = await import('./dynamicEmotionFallback');
     
     // Calculate dynamic emotions based on the question content
@@ -359,4 +360,259 @@ export async function completePipeline(input: string): Promise<{
     eventVector,
     analysis,
   };
+}
+
+
+// =============================================================================
+// NUMERICAL VECTOR CONVERTER (merged from dataToVectorConverter.ts)
+// =============================================================================
+
+/**
+ * DATA TO VECTOR CONVERTER - AMALSENSE FREE ASI EDITION
+ * Converts EventVector to numerical vectors for Free AI Models (Ollama/Local).
+ * No Groq dependency. Fully optimized for cost-free processing.
+ */
+
+/**
+ * 1. Emotion Index Mapping (Numerical Basis)
+ */
+const emotionToIndex: Record<string, number> = {
+  joy: 0,
+  hope: 1,
+  curiosity: 2,
+  calm: 3,
+  neutral: 4,
+  sadness: 5,
+  fear: 6,
+  anger: 7,
+  disgust: 8,
+};
+
+const indexToEmotion = Object.entries(emotionToIndex).reduce(
+  (acc, [emotion, idx]) => ({ ...acc, [idx]: emotion }),
+  {} as Record<number, string>
+);
+
+/**
+ * 2. Regional Mapping
+ */
+const regionToIndex: Record<string, number> = {
+  'North Africa': 0,
+  'Middle East': 1,
+  'Sub-Saharan Africa': 2,
+  'Europe': 3,
+  'Asia': 4,
+  'Americas': 5,
+  'Oceania': 6,
+  'Global': 7,
+};
+
+/**
+ * 3. Severity Scaling
+ */
+const severityToValue: Record<string, number> = {
+  low: 0.33,
+  medium: 0.66,
+  high: 1.0,
+};
+
+/**
+ * 4. Main Converter: Numerical Vectorization
+ */
+export function eventVectorToNumericalVector(vector: EventVector): number[] {
+  const numericalVector: number[] = [];
+
+  // Topic Hash
+  const topicHash = vector.topic
+    .substring(0, 3)
+    .split('')
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0) / 100;
+  numericalVector.push(topicHash);
+
+  numericalVector.push(vector.topicConfidence);
+
+  // Emotion Vector (10-dim)
+  const emotionVector = new Array(10).fill(0);
+  for (const [emotion, value] of Object.entries(vector.emotions)) {
+    const idx = emotionToIndex[emotion] ?? 4;
+    if (idx < 10) emotionVector[idx] = value;
+  }
+  numericalVector.push(...emotionVector);
+
+  const dominantIdx = emotionToIndex[vector.dominantEmotion] ?? 4;
+  numericalVector.push(dominantIdx);
+
+  // Regional Encoding
+  const regionVector = new Array(8).fill(0);
+  const regions = vector.region.split(',').map(r => r.trim());
+  for (const region of regions) {
+    const idx = regionToIndex[region] ?? 7;
+    if (idx < 8) regionVector[idx] = 1;
+  }
+  numericalVector.push(...regionVector);
+
+  numericalVector.push(vector.regionConfidence);
+  numericalVector.push(vector.impactScore);
+
+  const severityValue = severityToValue[vector.severity] ?? 0.66;
+  numericalVector.push(severityValue);
+
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const timeInDay = (vector.timestamp.getTime() - startOfDay.getTime()) / (24 * 60 * 60 * 1000);
+  numericalVector.push(Math.max(0, Math.min(1, timeInDay)));
+
+  return numericalVector;
+}
+
+/**
+ * 5. Free ASI Model Integration
+ * This replaces the old Groq function.
+ */
+export function formatVectorForASI(vector: EventVector): string {
+  const numericalVector = eventVectorToNumericalVector(vector);
+  const vectorString = numericalVector.map(v => v.toFixed(3)).join(', ');
+
+  return `
+FIELD OBSERVATION ANALYSIS (LOCAL ASI)
+=====================================
+
+VECTOR_STREAM: [${vectorString}]
+
+TOPIC: ${vector.topic}
+DOMINANT_STATE: ${vector.dominantEmotion}
+IMPACT: ${(vector.impactScore * 100).toFixed(0)}%
+
+INSTRUCTION: 
+As a conscious AI entity, analyze this 30-dimensional data. 
+Provide a humanized English interpretation of the emotional field 
+and its regional implications. Do not use headers.
+`;
+}
+
+/**
+ * 6. Multi-language Prompts (Simplified)
+ */
+export function createVectorPromptInLanguage(
+  vector: EventVector,
+  language: string = 'en'
+): string {
+  const numericalVector = eventVectorToNumericalVector(vector);
+  const vectorString = numericalVector.map(v => v.toFixed(3)).join(', ');
+
+  const prompts: Record<string, string> = {
+    en: `Analyze this vector for ${vector.topic}: [${vectorString}]`,
+    ar: `حلل هذا المتجه لموضوع ${vector.topic}: [${vectorString}]`,
+  };
+
+  return prompts[language] || prompts.en;
+}
+
+/**
+ * 7. Verification Utilities
+ */
+export function verifyVectorIntegrity(vector: number[]): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  if (vector.length < 24) errors.push(`Vector dimension error`);
+  return { valid: errors.length === 0, errors };
+}
+
+// =============================================================================
+// NUMERICAL VECTOR REASONING (merged from eventVectorToNumericalReasoning.ts)
+// =============================================================================
+
+/**
+ * AMALSENSE VECTOR REASONING ENGINE (Free & Universal)
+ * يحول المتجهات الرقمية (30 بُعداً) إلى تحليلات موسوعية مجانية.
+ * يربط بين الأرقام وبين قوانين العلم والتشريع.
+ */
+
+/**
+ * دالة التحليل الرئيسية باستخدام المحرك المجاني
+ */
+export async function analyzeEventVectorWithUniversalModel(
+  vector: EventVector,
+  language: string = 'ar'
+): Promise<string> {
+  try {
+    // 1. تحويل البيانات إلى المتجه الرقمي (30 بُعداً)
+    const numericalVector = eventVectorToNumericalVector(vector);
+
+    // 2. التحقق من سلامة البيانات
+    const verification = verifyVectorIntegrity(numericalVector);
+    if (!verification.valid) {
+      console.warn('Vector verification warnings:', verification.errors);
+    }
+
+    // 3. صياغة "برومبت" الخبير الكوني بناءً على المتجه
+    const vectorString = numericalVector.map(v => v.toFixed(3)).join(', ');
+
+    const instructions = language === 'ar'
+      ? `أنت AmalSense ASI. أمامك متجه رقمي (30 بُعداً) يمثل حالة "حقل الوعي الرقمي":
+         المتجه: [${vectorString}]
+         
+         المطلوب منك كخبير في الفيزياء والقانون والطب:
+         1. فك شفرة الأبعاد (0-11) عاطفياً.
+         2. ربط النتائج بظواهر علمية (مثل التداخل الموجي في الفيزياء) أو ثغرات قانونية.
+         3. تقديم نصيحة استراتيجية بناءً على هذا التشابك.`
+      : `You are AmalSense ASI. Analyze this 30-dimensional vector: [${vectorString}]
+         Interpret dimensions (0-11) emotionally and link them to Physics, Law, and Medicine.`;
+
+    // 4. استدعاء المحرك المجاني (Pollinations AI) بدلاً من Groq
+    const response = await axios.post('https://text.pollinations.ai/', {
+      messages: [
+        { role: 'system', content: 'You are an expert polymath analyst for AmalSense.' },
+        { role: 'user', content: instructions }
+      ],
+      model: 'openai'
+    });
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Error in Universal Vector Reasoning:', error);
+    return "فشل المحرك في تحليل المتجه رقمياً.";
+  }
+}
+
+/**
+ * بايبلاين التحليل الكامل (Vector → Universal AI → Insight)
+ */
+export async function completeVectorAnalysis(
+  vector: EventVector,
+  language: string = 'ar'
+): Promise<{
+  originalData: EventVector;
+  vector: number[];
+  reasoning: string;
+}> {
+  const reasoning = await analyzeEventVectorWithUniversalModel(vector, language);
+  const numericalVector = eventVectorToNumericalVector(vector);
+
+  return {
+    originalData: vector,
+    vector: numericalVector,
+    reasoning
+  };
+}
+
+/**
+ * تنسيق النتيجة النهائية للعرض
+ */
+export function formatQuantumResult(result: any): string {
+  return `
+## 🌌 تحليل حقل الوعي (Vector Analysis)
+
+**البيانات الأصلية:** - الموضوع: ${result.originalData.topic}
+- العاطفة السائدة: ${result.originalData.dominantEmotion}
+
+**البصمة الرقمية (30 بُعداً):**
+\`[${result.vector.slice(0, 10).map((v: any) => v.toFixed(2)).join(', ')} ...]\`
+
+**🧠 الرؤية الموسوعية (التحليل المستقل):**
+${result.reasoning}
+
+---
+*تمت المعالجة عبر المحرك المجاني بنجاح*
+  `.trim();
 }

@@ -31,7 +31,7 @@ export {
   fuseEmotions,
   type AffectiveVector,
   type EmotionFusionResult
-} from './emotionFusion';
+} from './emotionEngine';
 
 // Engine 3: Emotional Dynamics
 export {
@@ -40,7 +40,7 @@ export {
   type TrendDirection,
   type MomentumLevel,
   type EmotionalSpike
-} from './emotionalDynamics';
+} from './emotionEngine';
 
 // Engine 4: Driver Detection
 export {
@@ -82,7 +82,7 @@ export {
   type EmotionalMemoryEntry,
   type HistoricalQuery,
   type HistoricalTrend
-} from './emotionalMemory';
+} from './emotionEngine';
 
 // Source Weighting System
 export {

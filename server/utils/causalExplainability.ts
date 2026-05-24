@@ -8,7 +8,7 @@
  * - بعد: "الخوف مرتفع بسبب: ارتفاع الدولار، نقص السيولة" (ذكاء تحليلي)
  */
 
-import { invokeLLMProvider, type LLMMessage } from '../engines/llmProvider';
+import { invokeLLMProvider, type LLMMessage } from '../_core/llm';
 
 export interface NewsItem {
   title: string;

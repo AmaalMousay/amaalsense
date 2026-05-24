@@ -6,7 +6,7 @@
 
 import { collectCountryData, collectTopicData, getCacheStats as getCacheStatsFromCollector, clearCache as clearCollectorCache, type CollectedData } from '../services/unifiedDataCollector';
 import { createEventVector, eventVectorToPrompt, vectorToMapIndices, type EventVector } from './eventVectorEngine';
-import { smartChat, smartJsonChat, type TaskType } from './smartLLM';
+import { smartChat, smartJsonChat, type TaskType } from '../_core/llm';
 import { DCFTEngine } from '../dcft/dcftEngine';
 
 // ============================================================

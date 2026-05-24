@@ -16,7 +16,7 @@ import {
   getFeedbackStats,
   type FeedbackEntry
 } from '../engines/feedbackStore';
-import { getSelfEvaluationSummary, getLowScoringEvaluations } from './selfEvaluation';
+import { getSelfEvaluationSummary, getLowScoringEvaluations } from './metacognition';
 
 // ============================================================================
 // TYPES

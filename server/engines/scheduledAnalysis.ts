@@ -6,7 +6,7 @@
 import { saveAnalysisSession, AnalysisResult, SourceResult } from '../utils/analyticsStorage';
 import { getNewsWithFallback, fetchGlobalNews, generateMockNews } from '../services/newsService';
 import { fetchAllSocialMedia, SocialPost } from '../services/socialMediaService';
-import { analyzeTextsWithAI, SentimentAnalysisResult } from "./aiSentimentAnalyzer";
+import { analyzeTextsWithAI, SentimentAnalysisResult } from "./emotionEngine";
 import { executeNetworkEngine, getGlobalMood } from "./networkEngine";
 
 // Track if scheduler is running

@@ -9,7 +9,7 @@ export const chatAnalysisRouter = router({
       countryCode: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const { analyzeTextWithAI } = await import('../engines/aiSentimentAnalyzer');
+      const { analyzeTextWithAI } = await import('../engines/emotionEngine');
       const { dcftEngine } = await import('../dcft/index');
       
       const aiResult = await analyzeTextWithAI(input.message);

@@ -11,7 +11,7 @@ import {
   fetchAllSocialMedia,
   fetchFromPlatforms,
 } from '../services/socialMediaService';
-import { analyzeTextsWithAI } from '../engines/aiSentimentAnalyzer';
+import { analyzeTextsWithAI } from '../engines/emotionEngine';
 
 export const searchRouter = router({
   /**

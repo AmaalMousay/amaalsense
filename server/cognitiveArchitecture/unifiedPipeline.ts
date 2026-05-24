@@ -5,11 +5,11 @@
 
 import { CognitiveControlLayer } from './cognitiveControlLayer';
 import { ContextLockLayer } from './contextLockLayer';
-import { KnowledgeEngine } from './knowledgeEngine';
+import { KnowledgeEngine } from './layer6_knowledgeBase';
 import { DialogicalConsciousness } from './dialogicalConsciousness';
 import { CognitiveConsistencyCheck } from './cognitiveConsistencyCheck';
 import { CognitiveAnswerGate } from './cognitiveAnswerGate';
-import { runIntelligentPipeline, type PipelineInput } from './intelligentPipeline';
+import { composeNaturalAnswer } from '../engines/responseBuilder';
 import { getAggregatedNetworkData } from '../engines/networkEngine';
 
 export interface UnifiedPipelineInput {
@@ -35,6 +35,10 @@ export interface UnifiedPipelineOutput {
     analysisAction: string;
     gateDecision: string;
   };
+}
+
+function consistencyScoreFromGate(decision: string): number {
+  return decision === 'answer_directly' ? 80 : 45;
 }
 
 class UnifiedPipelineClass {
@@ -69,31 +73,27 @@ class UnifiedPipelineClass {
       return this.handleViolation("Information Gap", "Insufficient real-time vectors.");
     }
 
-    // ✅ إصلاح الخطأ 60: إضافة الحقول الناقصة (newsItems, emotionData) لتطابق PipelineInput
-    const pipelineInput: PipelineInput = {
-      question,
-      topic: input.domain || 'general',
-      country: safeCountry,
-      sessionId: sessionId || "active-session",
-      userRole: input.userRole,
-      // نمرر الأخبار من بيانات الشبكة إذا وجدت، أو مصفوفة فارغة
-      newsItems: input.newsItems || (networkData as any)?.newsItems || [],
-      // نمرر بيانات المشاعر من الشبكة، أو قيم افتراضية
-      emotionData: input.emotionData || (networkData as any)?.emotionData || {
-        fear: 0.1, hope: 0.5, anger: 0.1, gmi: 0.5, cfi: 0.1, hri: 0.5
-      },
-      networkContext: networkData,
-      conversationHistory: conversationHistory?.map(m => ({
-        role: m.role as 'user' | 'assistant',
-        content: m.content
-      }))
+    const emotionData = input.emotionData || (networkData as any)?.emotionData || {
+      fear: 0.1, hope: 0.5, anger: 0.1, gmi: 0.5, cfi: 0.1, hri: 0.5
     };
 
-    const pipelineOutput = await runIntelligentPipeline(pipelineInput);
-
-    // تأمين الحصول على النص النهائي
-    const finalAnswer = pipelineOutput.formattedResponse ||
-      (typeof pipelineOutput.response === 'string' ? pipelineOutput.response : "Synthesizing consciousness...");
+    const finalAnswer = await composeNaturalAnswer({
+      question,
+      language: /[^\x00-\x7F]/.test(question) ? 'ar' : 'en',
+      intent: classification.type,
+      route: 'analysis',
+      eventVector: (networkData as any)?.eventVector,
+      indices: { gmi: emotionData.gmi, cfi: emotionData.cfi, hri: emotionData.hri },
+      emotions: emotionData,
+      evidence: (input.newsItems || (networkData as any)?.newsItems || []).slice(0, 6).map((item: any) => ({
+        title: item.title || item.description || String(item),
+        source: item.source,
+        url: item.url,
+      })),
+      memory: networkData,
+      confidence: consistencyScoreFromGate(gateDecision.decision),
+      limitations: !networkData ? ['No live network context was available.'] : [],
+    });
 
     const consistencyCheck = CognitiveConsistencyCheck.checkConsistency(
       sessionId,
