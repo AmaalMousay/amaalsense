@@ -1,118 +1,81 @@
 /**
- * AMALSENSE EMBEDDINGS SERVICE - Universal Knowledge Version
- * يحول النصوص إلى متجهات دلالية تغطي الفيزياء، الكيمياء، الطب، القانون، والهندسة.
+ * Lightweight semantic embeddings for the AmalSense Knowledge Core.
+ *
+ * This is intentionally deterministic and dependency-free. It is not a neural
+ * embedding model; it is a compact semantic hashing layer used for local RAG,
+ * memory lookup, and agent knowledge recall when no paid vector database exists.
  */
 
-// الفئات الدلالية الموسوعية (تم توسيعها لتشمل كافة العلوم)
-const SEMANTIC_CATEGORIES = {
-  // --- العلوم الدقيقة (Exact Sciences) ---
-  physics: ['physics', 'quantum', 'atom', 'wave', 'energy', 'resonance', 'field', 'فيزياء', 'كم', 'ذرة', 'موجة', 'طاقة', 'رنين', 'حقل'],
-  chemistry: ['chemistry', 'molecule', 'reaction', 'acid', 'element', 'bond', 'كيمياء', 'جزيء', 'تفاعل', 'حمض', 'عنصر', 'رابطة'],
-  math: ['math', 'calculus', 'statistics', 'equation', 'algorithm', 'logic', 'رياضيات', 'حساب', 'إحصاء', 'معادلة', 'خوارزمية', 'منطق'],
-  engineering: ['engineering', 'structural', 'circuit', 'software', 'design', 'هندسة', 'إنشائي', 'دائرة', 'تصميم', 'معمار'],
-
-  // --- العلوم الحيوية والطبية ---
-  medicine: ['medicine', 'health', 'surgery', 'virus', 'therapy', 'clinical', 'طب', 'صحة', 'جراحة', 'فيروس', 'علاج', 'سريري'],
-
-  // --- العلوم الإنسانية والقانونية ---
-  law: ['law', 'legal', 'justice', 'court', 'legislation', 'treaty', 'rights', 'قانون', 'عدالة', 'محكمة', 'تشريع', 'معاهدة', 'حقوق'],
-  politics: ['politics', 'government', 'election', 'sovereignty', 'سياسة', 'حكومة', 'انتخابات', 'سيادة'],
-
-  // --- الاقتصاد والطاقة ---
-  economy: ['economy', 'market', 'trade', 'inflation', 'currency', 'oil', 'اقتصاد', 'سوق', 'تجارة', 'تضخم', 'عملة', 'نفط'],
-
-  // --- المشاعر الكمية (Quantum Emotions) ---
-  joy: ['joy', 'happy', 'success', 'win', 'سعادة', 'فرح', 'نجاح', 'فوز'],
-  fear: ['fear', 'panic', 'terror', 'anxiety', 'خوف', 'ذعر', 'إرهاب', 'قلق'],
-  anger: ['anger', 'rage', 'conflict', 'violence', 'غضب', 'صراع', 'عنف'],
-  hope: ['hope', 'optimism', 'resilience', 'أمل', 'تفاؤل', 'صمود'],
-
-  // --- مستويات المخاطر والزمن ---
-  risk: ['danger', 'critical', 'emergency', 'safe', 'stable', 'خطر', 'حرج', 'طوارئ', 'أمان', 'مستقر'],
-  time: ['history', 'past', 'now', 'future', 'forecast', 'تاريخ', 'ماضي', 'الآن', 'مستقبل', 'توقع'],
+const SEMANTIC_CATEGORIES: Record<string, string[]> = {
+  market: ['market', 'price', 'trading', 'liquidity', 'spread', 'volatility', 'orderflow', 'breakout', 'support', 'resistance'],
+  macro: ['inflation', 'interest', 'rates', 'currency', 'dollar', 'central', 'bank', 'gdp', 'recession', 'employment'],
+  commodities: ['gold', 'silver', 'oil', 'brent', 'wti', 'gas', 'energy', 'commodity', 'xau', 'xag'],
+  crypto: ['bitcoin', 'ethereum', 'crypto', 'stablecoin', 'blockchain', 'exchange', 'liquidation'],
+  politics: ['government', 'election', 'policy', 'minister', 'parliament', 'sanctions', 'diplomacy', 'security'],
+  society: ['society', 'public', 'community', 'protest', 'services', 'migration', 'housing', 'living'],
+  journalism: ['news', 'headline', 'source', 'coverage', 'media', 'narrative', 'verification', 'rumor'],
+  decision: ['decision', 'risk', 'response', 'policy', 'action', 'signal', 'priority', 'scenario'],
+  science: ['physics', 'chemistry', 'biology', 'medicine', 'research', 'study', 'evidence', 'clinical'],
+  law: ['law', 'legal', 'rights', 'court', 'treaty', 'regulation', 'compliance', 'violation'],
+  emotion: ['fear', 'anger', 'sadness', 'hope', 'joy', 'curiosity', 'sentiment', 'mood', 'panic'],
+  dcft: ['dcft', 'eventvector', 'resonance', 'polarity', 'intensity', 'uncertainty', 'gmi', 'cfi', 'hri'],
 };
 
-const EMBEDDING_DIM = Object.keys(SEMANTIC_CATEGORIES).length;
+const CATEGORY_NAMES = Object.keys(SEMANTIC_CATEGORIES);
+const EMBEDDING_DIM = CATEGORY_NAMES.length;
 
-/**
- * توليد المتجه الدلالي للنص (Universal Embedding)
- * يقوم بحساب "بصمة الوعي" للنص بناءً على تداخله مع العلوم المختلفة.
- */
+function tokenize(text: string): string[] {
+  return (text.toLowerCase().match(/[\p{L}\p{N}_]+/gu) || []).filter(token => token.length > 1);
+}
+
 export function generateEmbedding(text: string): number[] {
-  const normalizedText = text.toLowerCase();
-  // تنظيف النص لضمان دقة البحث الكلمي
-  const words = normalizedText.replace(/[^\w\s\u0600-\u06FF]/g, '').split(/\s+/);
+  const tokens = tokenize(text);
+  const embedding = new Array(EMBEDDING_DIM).fill(0);
 
-  const embedding: number[] = new Array(EMBEDDING_DIM).fill(0);
-
-  Object.entries(SEMANTIC_CATEGORIES).forEach(([category, keywords], index) => {
+  CATEGORY_NAMES.forEach((category, index) => {
+    const keywords = SEMANTIC_CATEGORIES[category];
     let score = 0;
-    for (const word of words) {
-      if (word.length < 2) continue; // تجاهل الحروف القصيرة
-      for (const keyword of keywords) {
-        if (word === keyword || word.startsWith(keyword) || keyword.startsWith(word)) {
-          score += 1.5; // وزن أعلى للتطابق الدقيق
-        }
+    for (const token of tokens) {
+      if (keywords.some(keyword => token === keyword || token.includes(keyword) || keyword.includes(token))) {
+        score += 1;
       }
     }
-    // موازنة النتيجة بناءً على طول النص
-    embedding[index] = score / Math.max(words.length, 1);
+    embedding[index] = tokens.length ? score / tokens.length : 0;
   });
 
-  // التطبيع المتجهي (Vector Normalization) لضمان جودة البحث بالتشابه
-  const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
-  if (magnitude > 0) {
-    for (let i = 0; i < embedding.length; i++) {
-      embedding[i] /= magnitude;
-    }
-  }
-
-  return embedding;
+  const magnitude = Math.sqrt(embedding.reduce((sum, value) => sum + value * value, 0));
+  return magnitude > 0 ? embedding.map(value => value / magnitude) : embedding;
 }
 
-/**
- * حساب تشابه جيب التمام (Cosine Similarity)
- */
 export function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) return 0;
-
-  let dotProduct = 0;
+  let dot = 0;
   let normA = 0;
   let normB = 0;
-
-  for (let i = 0; i < a.length; i++) {
-    dotProduct += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
+  for (let index = 0; index < a.length; index++) {
+    dot += a[index] * b[index];
+    normA += a[index] * a[index];
+    normB += b[index] * b[index];
   }
-
   const denominator = Math.sqrt(normA) * Math.sqrt(normB);
-  return denominator === 0 ? 0 : dotProduct / denominator;
+  return denominator === 0 ? 0 : dot / denominator;
 }
 
-/**
- * البحث عن المتجهات الأكثر تشابهاً
- * (تم إضافة export هنا لإصلاح خطأ التيرمينال)
- */
 export function findSimilar(
   queryEmbedding: number[],
   embeddings: Array<{ id: string; embedding: number[]; metadata?: Record<string, unknown> }>,
   topK: number = 5
 ): Array<{ id: string; similarity: number; metadata?: Record<string, unknown> }> {
-  const similarities = embeddings.map(item => ({
-    id: item.id,
-    similarity: cosineSimilarity(queryEmbedding, item.embedding),
-    metadata: item.metadata,
-  }));
-
-  // ترتيب حسب درجة التشابه تنازلياً
-  similarities.sort((a, b) => b.similarity - a.similarity);
-
-  return similarities.slice(0, topK);
+  return embeddings
+    .map(item => ({ id: item.id, similarity: cosineSimilarity(queryEmbedding, item.embedding), metadata: item.metadata }))
+    .sort((a, b) => b.similarity - a.similarity)
+    .slice(0, topK);
 }
 
-export function getEmbeddingDimension(): number { return EMBEDDING_DIM; }
+export function getEmbeddingDimension(): number {
+  return EMBEDDING_DIM;
+}
 
 export function getSemanticCategories(): string[] {
-  return Object.keys(SEMANTIC_CATEGORIES);
+  return [...CATEGORY_NAMES];
 }

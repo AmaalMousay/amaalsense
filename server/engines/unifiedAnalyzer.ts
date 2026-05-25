@@ -1,16 +1,16 @@
 /**
  * Unified Analyzer - Main Entry Point
- * يجمع كل الـ Engines في API واحد
+ *    Engines  API 
  * 
  * POST /analyze
  * Input: { text, country, userType, sources }
  * Output: { context, emotionalState, dynamics, drivers, insights, confidence, meta }
  * 
- * التحسينات الجديدة:
- * - Engine 0: Emotional Memory Layer (تخزين التاريخ)
- * - Source Weighting (أوزان المصادر)
- * - Confidence Propagation (توريث الثقة)
- * - Feedback Loop Ready (جاهز للتغذية الراجعة)
+ *  :
+ * - Engine 0: Emotional Memory Layer ( )
+ * - Source Weighting ( )
+ * - Confidence Propagation ( )
+ * - Feedback Loop Ready (  )
  */
 
 import { classifyContext, ContextResult } from './contextClassification';

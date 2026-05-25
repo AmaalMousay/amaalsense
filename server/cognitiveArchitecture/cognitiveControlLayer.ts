@@ -8,12 +8,12 @@
  */
 
 export type QuestionType =
-  | 'factual'        // من/متى/كم/أين - Direct factual questions
-  | 'analytical'     // لماذا/كيف - Requires analysis
-  | 'scenario'       // ماذا لو - Hypothetical scenarios
-  | 'opinion'        // ما رأيك/ما توصيتك - Requires judgment
-  | 'comparison'     // الفرق بين/مقارنة - Comparison questions
-  | 'clarification'; // توضيح/شرح - Explanation requests
+  | 'factual'        // /// - Direct factual questions
+  | 'analytical'     // / - Requires analysis
+  | 'scenario'       //   - Hypothetical scenarios
+  | 'opinion'        //  /  - Requires judgment
+  | 'comparison'     //  / - Comparison questions
+  | 'clarification'; // / - Explanation requests
 
 export type CognitivePathway =
   | 'knowledge_engine'      // Direct fact retrieval
@@ -131,12 +131,12 @@ class CognitiveControlLayerClass {
    */
   private isFactualQuestion(question: string): boolean {
     const factualPatterns = [
-      /^(who|من|مين)/i,
-      /^(when|متى|وقت)/i,
-      /^(where|أين|وين)/i,
-      /^(how many|كم عدد|كم)/i,
-      /^(how much|كم|بكم)/i,
-      /^(what is|ما هو|ما هي|شنو)/i,
+      /^(who||)/i,
+      /^(when||)/i,
+      /^(where||)/i,
+      /^(how many| |)/i,
+      /^(how much||)/i,
+      /^(what is| | |)/i,
     ];
 
     return factualPatterns.some(pattern => pattern.test(question));
@@ -147,9 +147,9 @@ class CognitiveControlLayerClass {
    */
   private isScenarioQuestion(question: string): boolean {
     const scenarioPatterns = [
-      /^(what if|ماذا لو|لو|إذا)/i,
-      /(suppose|افترض|لنفترض)/i,
-      /(imagine|تخيل|تصور)/i,
+      /^(what if| ||)/i,
+      /(suppose||)/i,
+      /(imagine||)/i,
     ];
 
     return scenarioPatterns.some(pattern => pattern.test(question));
@@ -160,12 +160,12 @@ class CognitiveControlLayerClass {
    */
   private isOpinionQuestion(question: string): boolean {
     const opinionPatterns = [
-      /(what do you think|ما رأيك|رأيك)/i,
-      /(recommend|توصي|توصية|اقتراح)/i,
-      /(should|يجب|ينبغي|لازم)/i,
-      /(advice|نصيحة|مشورة)/i,
-      /(suggest|اقترح|اقتراح)/i,
-      /(الحل|solution|حل)/i,
+      /(what do you think| |)/i,
+      /(recommend|||)/i,
+      /(should|||)/i,
+      /(advice||)/i,
+      /(suggest||)/i,
+      /(|solution|)/i,
     ];
 
     return opinionPatterns.some(pattern => pattern.test(question));
@@ -176,11 +176,11 @@ class CognitiveControlLayerClass {
    */
   private isComparisonQuestion(question: string): boolean {
     const comparisonPatterns = [
-      /(compare|قارن|مقارنة)/i,
-      /(difference|فرق|الفرق)/i,
-      /(versus|vs|مقابل)/i,
-      /(better|أفضل|أحسن)/i,
-      /(worse|أسوأ)/i,
+      /(compare||)/i,
+      /(difference||)/i,
+      /(versus|vs|)/i,
+      /(better||)/i,
+      /(worse|)/i,
     ];
 
     return comparisonPatterns.some(pattern => pattern.test(question));
@@ -195,11 +195,11 @@ class CognitiveControlLayerClass {
     }
 
     const clarificationPatterns = [
-      /^(explain|اشرح|وضح)/i,
-      /^(what do you mean|ماذا تعني|شنو تقصد)/i,
-      /^(clarify|وضح|بين)/i,
-      /(more details|تفاصيل أكثر|زيادة تفاصيل)/i,
-      /(elaborate|فصّل|تفصيل)/i,
+      /^(explain||)/i,
+      /^(what do you mean| | )/i,
+      /^(clarify||)/i,
+      /(more details| | )/i,
+      /(elaborate||)/i,
     ];
 
     return clarificationPatterns.some(pattern => pattern.test(question));
@@ -210,12 +210,12 @@ class CognitiveControlLayerClass {
    */
   private isAnalyticalQuestion(question: string): boolean {
     const analyticalPatterns = [
-      /^(why|لماذا|ليش|لأي)/i,
-      /^(how|كيف|كيفية)/i,
-      /(cause|سبب|أسباب)/i,
-      /(reason|سبب|مبرر)/i,
-      /(impact|تأثير|أثر)/i,
-      /(effect|تأثير|نتيجة)/i,
+      /^(why|||)/i,
+      /^(how||)/i,
+      /(cause||)/i,
+      /(reason||)/i,
+      /(impact||)/i,
+      /(effect||)/i,
     ];
 
     return analyticalPatterns.some(pattern => pattern.test(question));

@@ -1,7 +1,7 @@
 /**
  * Simple Cache System - High Performance Caching
  * 
- * نظام caching بسيط وفعال بدون dependencies خارجية
+ *  caching    dependencies 
  */
 
 // ============================================================================

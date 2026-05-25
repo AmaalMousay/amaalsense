@@ -1,12 +1,12 @@
 /**
- * Cognitive Loop - حلقة الوعي المغلقة
+ * Cognitive Loop -   
  * 
- * يدمج الحلقات الثلاث في نظام واحد متكامل:
- * 1. Feedback Loop - جمع رأي المستخدم
- * 2. Self-Evaluation - تقييم ذاتي
- * 3. Meta-Learning - التعلم من الأنماط
+ *       :
+ * 1. Feedback Loop -   
+ * 2. Self-Evaluation -  
+ * 3. Meta-Learning -   
  * 
- * "النظام لا يتطور لأنه ذكي، بل لأنه يشك في نفسه"
+ * "         "
  */
 
 import { 
@@ -47,13 +47,13 @@ export interface CognitiveLoopResult {
 // ============================================================================
 
 /**
- * تشغيل حلقة الوعي بعد كل رد
- * يقيّم النظام نفسه ويقرر ما إذا كان يحتاج feedback
+ *      
+ *         feedback
  */
 export async function runCognitiveLoop(context: ResponseContext): Promise<CognitiveLoopResult> {
   console.log('[CognitiveLoop] Running cognitive loop for response...');
   
-  // 1. التقييم الذاتي
+  // 1.  
   const selfEvalInput: SelfEvaluationInput = {
     question: context.question,
     response: context.response,
@@ -68,11 +68,11 @@ export async function runCognitiveLoop(context: ResponseContext): Promise<Cognit
   const selfEvaluation = await evaluateAndSave(selfEvalInput);
   console.log(`[CognitiveLoop] Self-evaluation score: ${selfEvaluation.overallScore}`);
   
-  // 2. تحديد ما إذا كان يجب طلب feedback
-  // نطلب feedback عندما:
-  // - النتيجة متوسطة (40-70) - نحتاج تأكيد
-  // - النتيجة منخفضة (<40) - نحتاج معرفة المشكلة
-  // - عشوائياً 20% من الوقت للردود الجيدة
+  // 2.       feedback
+  //  feedback :
+  // -   (40-70) -  
+  // -   (<40) -   
+  // -  20%    
   let shouldAskForFeedback = false;
   if (selfEvaluation.overallScore < 70) {
     shouldAskForFeedback = true;
@@ -80,7 +80,7 @@ export async function runCognitiveLoop(context: ResponseContext): Promise<Cognit
     shouldAskForFeedback = true;
   }
   
-  // 3. جلب تلميحات التحسين من الـ insights النشطة
+  // 3.      insights 
   const activeInsights = await getActiveInsights();
   const improvementHints = activeInsights
     .filter(i => i.patternType === 'weakness')
@@ -95,7 +95,7 @@ export async function runCognitiveLoop(context: ResponseContext): Promise<Cognit
 }
 
 /**
- * معالجة feedback من المستخدم
+ *  feedback  
  */
 export async function processFeedback(
   context: ResponseContext,
@@ -127,7 +127,7 @@ export async function processFeedback(
 // ============================================================================
 
 /**
- * تشغيل حلقة التعلم (يُنصح بتشغيلها يومياً)
+ *    (  )
  */
 export async function runDailyLearning(): Promise<void> {
   console.log('[CognitiveLoop] Running daily learning...');
@@ -141,7 +141,7 @@ export async function runDailyLearning(): Promise<void> {
 }
 
 /**
- * توليد التقرير الأسبوعي (يُنصح بتشغيله أسبوعياً)
+ *    (  )
  */
 export async function runWeeklyIntrospection(): Promise<void> {
   console.log('[CognitiveLoop] Running weekly introspection...');
@@ -161,7 +161,7 @@ export async function runWeeklyIntrospection(): Promise<void> {
 // ============================================================================
 
 /**
- * جلب حالة النظام المعرفي
+ *    
  */
 export async function getCognitiveSystemStatus(): Promise<{
   activeInsightsCount: number;
@@ -173,7 +173,7 @@ export async function getCognitiveSystemStatus(): Promise<{
   const activeRules = await getActiveRules();
   const feedbackAnalysis = getFeedbackStats();
   
-  // تحديد صحة النظام
+  //   
   let systemHealth: 'excellent' | 'good' | 'average' | 'poor' | 'critical';
   const averageRating = feedbackAnalysis.averageRating;
   

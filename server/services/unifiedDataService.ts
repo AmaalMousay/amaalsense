@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 /**
  * Unified Data Service
  * 
@@ -75,15 +76,15 @@ export interface MoodResult {
 
 // Mood labels based on indices
 const MOOD_LABELS = {
-  veryPositive: { en: 'Optimistic', ar: 'متفائل', color: '#2A9D8F' },
-  positive: { en: 'Hopeful', ar: 'مفعم بالأمل', color: '#4CAF50' },
-  neutral: { en: 'Balanced', ar: 'متوازن', color: '#6C757D' },
-  concerned: { en: 'Concerned', ar: 'قلق', color: '#E9C46A' },
-  anxious: { en: 'Anxious', ar: 'متوتر', color: '#F4A261' },
-  fearful: { en: 'Fearful', ar: 'خائف', color: '#FF9800' },
-  angry: { en: 'Angry', ar: 'غاضب', color: '#E63946' },
-  sad: { en: 'Sad', ar: 'حزين', color: '#8D5CF6' },
-  calm: { en: 'Calm', ar: 'هادئ', color: '#457B9D' },
+  veryPositive: { en: 'Optimistic', ar: t('auto.services_unifiedDataService.10.1a5aec5a', 'ar'), color: '#2A9D8F' },
+  positive: { en: 'Hopeful', ar: t('auto.services_unifiedDataService.9.13f3714b', 'ar'), color: '#4CAF50' },
+  neutral: { en: 'Balanced', ar: t('auto.services_unifiedDataService.8.fc882c8d', 'ar'), color: '#6C757D' },
+  concerned: { en: 'Concerned', ar: t('auto.services_unifiedDataService.7.a24a5460', 'ar'), color: '#E9C46A' },
+  anxious: { en: 'Anxious', ar: t('auto.services_unifiedDataService.6.67ad637c', 'ar'), color: '#F4A261' },
+  fearful: { en: 'Fearful', ar: t('auto.services_unifiedDataService.5.df944736', 'ar'), color: '#FF9800' },
+  angry: { en: 'Angry', ar: t('auto.services_unifiedDataService.4.70daa8f3', 'ar'), color: '#E63946' },
+  sad: { en: 'Sad', ar: t('auto.services_unifiedDataService.3.8dbba75f', 'ar'), color: '#8D5CF6' },
+  calm: { en: 'Calm', ar: t('auto.services_unifiedDataService.2.f9f47bbc', 'ar'), color: '#457B9D' },
 };
 
 // Determine mood from indices
@@ -361,7 +362,7 @@ export async function analyzeUnified(request: UnifiedAnalysisRequest): Promise<M
   if (allData.length === 0) {
     return {
       mood: 'Neutral',
-      moodAr: 'محايد',
+      moodAr: t('auto.services_unifiedDataService.1.7e22af2d', 'ar'),
       moodColor: '#6C757D',
       gmi: 0,
       cfi: 50,

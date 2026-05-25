@@ -23,7 +23,7 @@ export class DCFTEngine {
   private readonly DECAY_FACTOR = 0.05;
 
   async analyze(inputs: RawDigitalInput[]): Promise<DCFTAnalysisResult> {
-    // 1. معالجة التحلل الزمني وتصحيح خطأ الـ Date
+    // 1.       Date
     const processedInputs = inputs.map(input => {
       const inputTime = input.timestamp instanceof Date ? input.timestamp.getTime() : new Date(input.timestamp).getTime();
       return {

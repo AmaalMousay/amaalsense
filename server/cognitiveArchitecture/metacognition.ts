@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 import { getDb } from '../_core/db';
 import { selfEvaluations } from '../drizzle/schema';
 import { desc, avg, sql } from 'drizzle-orm';
@@ -291,19 +292,19 @@ export function generateHealthReport(
   const recommendations: string[] = [];
   
   if (overallHealth < 70) {
-    recommendations.push('⚠️ صحة النظام منخفضة - يُنصح بإجراء صيانة');
+    recommendations.push(t('auto.cognitiveArchitecture_metacognition.67.9a3f2561', 'ar'));
   }
   
   if (latestPerformance.predictionAccuracy < 0.7) {
-    recommendations.push('📉 دقة التنبؤ منخفضة - يُنصح بإعادة التدريب');
+    recommendations.push(t('auto.cognitiveArchitecture_metacognition.66.df6f216c', 'ar'));
   }
   
   if (latestConfidence.needsAdjustment) {
-    recommendations.push('🎯 معايرة الثقة مطلوبة - الفرق بين التنبؤ والواقع كبير');
+    recommendations.push(t('auto.cognitiveArchitecture_metacognition.65.e3a8aea7', 'ar'));
   }
   
   if (criticalErrors > 0) {
-    recommendations.push(`🚨 ${criticalErrors} أخطاء حرجة تحتاج معالجة فورية`);
+    recommendations.push(`🚨 ${criticalErrors}     `);
   }
   
   if (learningRate.adjustmentNeeded) {
@@ -311,11 +312,11 @@ export function generateHealthReport(
   }
   
   if (latestPerformance.processingTime > 5000) {
-    recommendations.push('⏱️ وقت المعالجة طويل - يُنصح بتحسين الأداء');
+    recommendations.push(t('auto.cognitiveArchitecture_metacognition.64.9f0b48b7', 'ar'));
   }
   
   if (recommendations.length === 0) {
-    recommendations.push('✅ النظام يعمل بشكل مثالي');
+    recommendations.push(t('auto.cognitiveArchitecture_metacognition.63.05a89348', 'ar'));
   }
   
   return {
@@ -615,7 +616,7 @@ function assessDataQuality(context: {
   if (context.indicators.hri !== undefined) completeness += 0.34;
   
   if (completeness < 0.5) {
-    issues.push('بعض المؤشرات الأساسية غير متوفرة');
+    issues.push(t('auto.cognitiveArchitecture_metacognition.62.a24a62c9', 'ar'));
   }
   
   // Reliability - based on sources
@@ -627,7 +628,7 @@ function assessDataQuality(context: {
   // Relevance - based on knowledge items used
   let relevance = Math.min(1, context.knowledgeItemsUsed / 5);
   if (context.knowledgeItemsUsed === 0) {
-    issues.push('لم يتم استخدام معرفة محددة للموضوع');
+    issues.push(t('auto.cognitiveArchitecture_metacognition.61.85bbba4d', 'ar'));
     relevance = 0.3;
   }
   
@@ -652,13 +653,13 @@ function assessReasoningQuality(context: {
   // Logical coherence - based on engines used
   let logicalCoherence = Math.min(1, context.enginesActivated.length / 4);
   if (context.enginesActivated.length < 2) {
-    issues.push('تحليل سطحي - محركات قليلة مفعّلة');
+    issues.push(t('auto.cognitiveArchitecture_metacognition.60.c9061ae7', 'ar'));
   }
   
   // Evidence support - based on causal chains
   let evidenceSupport = Math.min(1, context.causalChainsUsed / 3);
   if (context.causalChainsUsed === 0) {
-    issues.push('لا توجد سلاسل سببية تدعم الاستنتاج');
+    issues.push(t('auto.cognitiveArchitecture_metacognition.59.a7fdc079', 'ar'));
     evidenceSupport = 0.2;
   }
   
@@ -694,19 +695,19 @@ function detectBiases(context: {
   if (context.sourcesUsed.length < 2) {
     biases.push({
       type: 'data_insufficiency',
-      description: 'الاعتماد على مصادر محدودة قد يؤدي لرؤية غير مكتملة',
+      description: t('auto.cognitiveArchitecture_metacognition.58.96e7e0f2', 'ar'),
       severity: 'medium',
-      mitigation: 'البحث عن مصادر إضافية للتحقق'
+      mitigation: t('auto.cognitiveArchitecture_metacognition.57.f90ae1bc', 'ar')
     });
   }
   
   // Check for recency bias
-  if (context.question.includes('الآن') || context.question.includes('اليوم')) {
+  if (context.question.includes(t('auto.cognitiveArchitecture_metacognition.56.7b94973f', 'ar')) || context.question.includes(t('auto.cognitiveArchitecture_metacognition.55.b76444a3', 'ar'))) {
     biases.push({
       type: 'recency_bias',
-      description: 'التركيز على الأحداث الأخيرة قد يتجاهل الأنماط طويلة المدى',
+      description: t('auto.cognitiveArchitecture_metacognition.54.923e988c', 'ar'),
       severity: 'low',
-      mitigation: 'مراجعة السياق التاريخي'
+      mitigation: t('auto.cognitiveArchitecture_metacognition.53.5da16d05', 'ar')
     });
   }
   
@@ -714,18 +715,18 @@ function detectBiases(context: {
   if (context.indicators.cfi && context.indicators.cfi > 80) {
     biases.push({
       type: 'herd_mentality',
-      description: 'مؤشر الخوف مرتفع جداً - قد يعكس ذعر جماعي مبالغ فيه',
+      description: t('auto.cognitiveArchitecture_metacognition.52.fc5c9549', 'ar'),
       severity: 'medium',
-      mitigation: 'التحقق من الأسباب الحقيقية وراء الخوف'
+      mitigation: t('auto.cognitiveArchitecture_metacognition.51.bdc98542', 'ar')
     });
   }
   
   if (context.indicators.hri && context.indicators.hri > 80) {
     biases.push({
       type: 'optimism_bias',
-      description: 'مؤشر الأمل مرتفع جداً - قد يعكس تفاؤل مفرط',
+      description: t('auto.cognitiveArchitecture_metacognition.50.4c135f04', 'ar'),
       severity: 'medium',
-      mitigation: 'مراجعة المخاطر المحتملة'
+      mitigation: t('auto.cognitiveArchitecture_metacognition.49.41ea051c', 'ar')
     });
   }
   
@@ -740,26 +741,26 @@ function identifyLimitations(context: {
   const limitations: string[] = [];
   
   // General limitations
-  limitations.push('التحليل يعتمد على البيانات المتاحة وقت الاستعلام');
+  limitations.push(t('auto.cognitiveArchitecture_metacognition.48.a59e3b02', 'ar'));
   
   // Missing indicators
   if (context.indicators.gmi === undefined) {
-    limitations.push('مؤشر المزاج العام غير متوفر');
+    limitations.push(t('auto.cognitiveArchitecture_metacognition.47.cf377ae1', 'ar'));
   }
   if (context.indicators.cfi === undefined) {
-    limitations.push('مؤشر الخوف الجماعي غير متوفر');
+    limitations.push(t('auto.cognitiveArchitecture_metacognition.46.2cc3fdd8', 'ar'));
   }
   if (context.indicators.hri === undefined) {
-    limitations.push('مؤشر الأمل غير متوفر');
+    limitations.push(t('auto.cognitiveArchitecture_metacognition.45.1600ae3a', 'ar'));
   }
   
   // Knowledge limitations
   if (context.knowledgeItemsUsed < 3) {
-    limitations.push('المعرفة المتوفرة عن هذا الموضوع محدودة');
+    limitations.push(t('auto.cognitiveArchitecture_metacognition.44.d271544c', 'ar'));
   }
   
   // Prediction limitations
-  limitations.push('التوقعات المستقبلية تحمل درجة من عدم اليقين');
+  limitations.push(t('auto.cognitiveArchitecture_metacognition.43.728e0a92', 'ar'));
   
   return limitations;
 }
@@ -772,15 +773,15 @@ function generateSuggestions(
   const suggestions: string[] = [];
   
   if (dataQuality.score < 0.6) {
-    suggestions.push('يُنصح بالبحث عن مصادر إضافية للتحقق');
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.42.0b75d0ec', 'ar'));
   }
   
   if (reasoningQuality.score < 0.6) {
-    suggestions.push('يُنصح بتحليل أعمق للعوامل المؤثرة');
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.41.82bdcff1', 'ar'));
   }
   
   if (dataQuality.factors.recency < 0.7) {
-    suggestions.push('التحقق من أحدث التطورات قبل اتخاذ قرار');
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.40.f36ecf81', 'ar'));
   }
   
   return suggestions;
@@ -819,16 +820,16 @@ function checkInfoNeeds(
   const infoNeeded: string[] = [];
   
   if (dataQuality.factors.completeness < 0.5) {
-    infoNeeded.push('مؤشرات إضافية عن الموضوع');
+    infoNeeded.push(t('auto.cognitiveArchitecture_metacognition.39.27927218', 'ar'));
   }
   
   if (dataQuality.factors.relevance < 0.5) {
-    infoNeeded.push('معلومات أكثر تحديداً عن السياق');
+    infoNeeded.push(t('auto.cognitiveArchitecture_metacognition.38.c24cba14', 'ar'));
   }
   
   // Check if question is too vague
   if (context.question.length < 20) {
-    infoNeeded.push('تفاصيل أكثر عن السؤال');
+    infoNeeded.push(t('auto.cognitiveArchitecture_metacognition.37.a01ceccb', 'ar'));
   }
   
   return {
@@ -847,24 +848,24 @@ function generateSelfCritique(
   
   // Confidence statement
   if (confidence < 0.5) {
-    parts.push('هذا التحليل يحمل درجة عالية من عدم اليقين');
+    parts.push(t('auto.cognitiveArchitecture_metacognition.36.6aa4e8ab', 'ar'));
   } else if (confidence < 0.7) {
-    parts.push('هذا التحليل معقول لكنه يحتاج تحقق إضافي');
+    parts.push(t('auto.cognitiveArchitecture_metacognition.35.00f6ae25', 'ar'));
   } else {
-    parts.push('هذا التحليل مدعوم بشكل جيد بالبيانات المتاحة');
+    parts.push(t('auto.cognitiveArchitecture_metacognition.34.6b2ce3bb', 'ar'));
   }
   
   // Bias acknowledgment
   if (biases.length > 0) {
     const highSeverity = biases.filter(b => b.severity === 'high');
     if (highSeverity.length > 0) {
-      parts.push(`تحذير: ${highSeverity[0].description}`);
+      parts.push(`: ${highSeverity[0].description}`);
     }
   }
   
   // Key limitation
   if (limitations.length > 2) {
-    parts.push('ملاحظة: هناك عدة قيود على هذا التحليل');
+    parts.push(t('auto.cognitiveArchitecture_metacognition.33.9694d7e4', 'ar'));
   }
   
   return parts.join('. ');
@@ -884,15 +885,15 @@ export function getConfidenceIndicator(assessment: MetacognitiveAssessment): {
 } {
   switch (assessment.confidenceLevel) {
     case 'very_high':
-      return { emoji: '🟢', label: 'ثقة عالية جداً', color: 'green' };
+      return { emoji: '🟢', label: t('auto.cognitiveArchitecture_metacognition.32.ee8f2552', 'ar'), color: 'green' };
     case 'high':
-      return { emoji: '🟢', label: 'ثقة عالية', color: 'green' };
+      return { emoji: '🟢', label: t('auto.cognitiveArchitecture_metacognition.31.a8490fb2', 'ar'), color: 'green' };
     case 'medium':
-      return { emoji: '🟡', label: 'ثقة متوسطة', color: 'yellow' };
+      return { emoji: '🟡', label: t('auto.cognitiveArchitecture_metacognition.30.21bd1446', 'ar'), color: 'yellow' };
     case 'low':
-      return { emoji: '🟠', label: 'ثقة منخفضة', color: 'orange' };
+      return { emoji: '🟠', label: t('auto.cognitiveArchitecture_metacognition.29.69b22fcf', 'ar'), color: 'orange' };
     case 'very_low':
-      return { emoji: '🔴', label: 'ثقة منخفضة جداً', color: 'red' };
+      return { emoji: '🔴', label: t('auto.cognitiveArchitecture_metacognition.28.9595065c', 'ar'), color: 'red' };
   }
 }
 
@@ -906,7 +907,7 @@ export function formatAssessmentForDisplay(assessment: MetacognitiveAssessment):
   parts.push(`${indicator.emoji} ${indicator.label} (${Math.round(assessment.overallConfidence * 100)}%)`);
   
   if (assessment.biases.length > 0) {
-    parts.push(`\n⚠️ تنبيهات: ${assessment.biases.map(b => b.description).join('، ')}`);
+    parts.push(`\n⚠️ : ${assessment.biases.map(b => b.description).join(t('auto.cognitiveArchitecture_metacognition.27.8715d7bc', 'ar'))}`);
   }
   
   if (assessment.selfCritique) {
@@ -943,12 +944,12 @@ export function shouldShowConfidence(assessment: MetacognitiveAssessment): boole
 // =============================================================================
 
 /**
- * Self-Evaluation - الوعي الذاتي
+ * Self-Evaluation -  
  * 
- * الحلقة الثانية في نظام التطور الذاتي
- * النظام يسأل نفسه بعد كل رد: هل كنت جيداً؟
+ *      
+ *      :   
  * 
- * "النظام يتطور لأنه يشك في نفسه"
+ * "     "
  */
 
 // ============================================================================
@@ -993,82 +994,82 @@ export interface SelfEvaluationSummary {
 // ============================================================================
 
 /**
- * تقييم ذاتي للرد
- * النظام يسأل نفسه: هل كنت جيداً في هذا الرد؟
+ *   
+ *   :      
  */
 export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
   const weaknesses: string[] = [];
   const strengths: string[] = [];
   const suggestions: string[] = [];
 
-  // 1. تقييم الثقة
+  // 1.  
   const confidenceScore = input.confidenceLevel;
   if (confidenceScore >= 70) {
-    strengths.push('ثقة عالية في التحليل');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.26.21fa7ee0', 'ar'));
   } else if (confidenceScore < 40) {
-    weaknesses.push('ثقة منخفضة في التحليل');
-    suggestions.push('جمع المزيد من البيانات قبل الإجابة');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.25.b0188d45', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.24.1114cf92', 'ar'));
   }
 
-  // 2. تقييم كفاية البيانات
+  // 2.   
   let dataSufficiencyScore = 0;
   if (input.newsSourcesCount >= 3) {
     dataSufficiencyScore = 100;
-    strengths.push('مصادر متعددة للبيانات');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.23.907e94d5', 'ar'));
   } else if (input.newsSourcesCount >= 2) {
     dataSufficiencyScore = 70;
   } else if (input.newsSourcesCount >= 1) {
     dataSufficiencyScore = 40;
-    weaknesses.push('مصادر قليلة للبيانات');
-    suggestions.push('توسيع نطاق البحث ليشمل مصادر أكثر');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.22.7e7b08e5', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.21.5b7ff065', 'ar'));
   } else {
     dataSufficiencyScore = 10;
-    weaknesses.push('لا توجد مصادر بيانات');
-    suggestions.push('التأكد من عمل خدمات جلب الأخبار');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.20.c01d2c82', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.19.0cd90aee', 'ar'));
   }
 
-  // تعديل بناءً على عدد العناوين المتعلقة
+  //      
   if (input.relevantHeadlinesCount >= 5) {
     dataSufficiencyScore = Math.min(100, dataSufficiencyScore + 20);
-    strengths.push('عناوين متعددة متعلقة بالموضوع');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.18.08b60d60', 'ar'));
   } else if (input.relevantHeadlinesCount < 2) {
     dataSufficiencyScore = Math.max(0, dataSufficiencyScore - 20);
-    weaknesses.push('عناوين قليلة متعلقة بالموضوع');
-    suggestions.push('تحسين Query Builder لجلب أخبار أكثر صلة');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.17.399c5246', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.16.19e1687d', 'ar'));
   }
 
-  // 3. تقييم: هل الأسباب جاءت من البيانات؟
+  // 3. :     
   let causesFromDataScore = 0;
   if (input.causesFromData) {
     causesFromDataScore = 100;
-    strengths.push('الأسباب مستخرجة من البيانات الحقيقية');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.15.b6394da7', 'ar'));
   } else {
     causesFromDataScore = 20;
-    weaknesses.push('الأسباب من قوالب ثابتة وليس من البيانات');
-    suggestions.push('ربط Why Layer بالبيانات الحقيقية');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.14.5c9e47c8', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.13.f19becea', 'ar'));
   }
 
-  // 4. تقييم: تحليل أم سرد؟
+  // 4. :   
   let analysisVsNarrationScore = 0;
   if (input.madeDecision && input.hasSpecificExamples) {
     analysisVsNarrationScore = 100;
-    strengths.push('تحليل عميق مع قرار واضح');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.12.fe18f429', 'ar'));
   } else if (input.madeDecision) {
     analysisVsNarrationScore = 70;
-    strengths.push('قرار واضح');
-    weaknesses.push('نقص في الأمثلة المحددة');
-    suggestions.push('إضافة أمثلة من الأخبار الحقيقية');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.11.90e5f7a3', 'ar'));
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.10.8e02d00c', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.9.318186e3', 'ar'));
   } else if (input.hasSpecificExamples) {
     analysisVsNarrationScore = 50;
-    weaknesses.push('سرد بدون قرار واضح');
-    suggestions.push('تحسين Decision Engine ليحسم ويرجح');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.8.df86dc7f', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.7.d790eac7', 'ar'));
   } else {
     analysisVsNarrationScore = 20;
-    weaknesses.push('سرد عام بدون تحليل أو قرار');
-    suggestions.push('إعادة هيكلة الرد ليكون تحليلياً');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.6.63b7d222', 'ar'));
+    suggestions.push(t('auto.cognitiveArchitecture_metacognition.5.4285ec6c', 'ar'));
   }
 
-  // حساب النتيجة الإجمالية
+  //   
   const overallScore = Math.round(
     (confidenceScore * 0.2) +
     (dataSufficiencyScore * 0.3) +
@@ -1076,15 +1077,15 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
     (analysisVsNarrationScore * 0.2)
   );
 
-  // إضافة تقييم عام
+  //   
   if (overallScore >= 80) {
-    strengths.push('أداء ممتاز بشكل عام');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.4.fbe2a17f', 'ar'));
   } else if (overallScore >= 60) {
-    strengths.push('أداء جيد مع مجال للتحسين');
+    strengths.push(t('auto.cognitiveArchitecture_metacognition.3.d33750ee', 'ar'));
   } else if (overallScore >= 40) {
-    weaknesses.push('أداء متوسط يحتاج تحسين');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.2.9398dd2b', 'ar'));
   } else {
-    weaknesses.push('أداء ضعيف يحتاج إصلاح جذري');
+    weaknesses.push(t('auto.cognitiveArchitecture_metacognition.1.914d96d5', 'ar'));
   }
 
   return {
@@ -1101,7 +1102,7 @@ export function evaluateSelf(input: SelfEvaluationInput): SelfEvaluationResult {
 }
 
 /**
- * حفظ التقييم الذاتي في قاعدة البيانات
+ *      
  */
 export async function saveSelfEvaluation(
   input: SelfEvaluationInput,
@@ -1134,7 +1135,7 @@ export async function saveSelfEvaluation(
 }
 
 /**
- * تقييم وحفظ في خطوة واحدة
+ *     
  */
 export async function evaluateAndSave(input: SelfEvaluationInput): Promise<SelfEvaluationResult> {
   const evaluation = evaluateSelf(input);
@@ -1147,7 +1148,7 @@ export async function evaluateAndSave(input: SelfEvaluationInput): Promise<SelfE
 // ============================================================================
 
 /**
- * جلب ملخص التقييمات الذاتية
+ *    
  */
 export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary> {
   try {
@@ -1162,7 +1163,7 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
       commonStrengths: [],
     };
 
-    // حساب المتوسطات
+    //  
     const averages = await db
       .select({
         avgConfidence: avg(selfEvaluations.confidenceScore),
@@ -1173,7 +1174,7 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
       })
       .from(selfEvaluations);
 
-    // جلب آخر 50 تقييم لتحليل نقاط القوة والضعف
+    //   50     
     const recentEvaluations = await db
       .select({
         weaknesses: selfEvaluations.identifiedWeaknesses,
@@ -1183,7 +1184,7 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
       .orderBy(desc(selfEvaluations.createdAt))
       .limit(50);
 
-    // تجميع نقاط الضعف الشائعة
+    //    
     const weaknessCount: Record<string, number> = {};
     const strengthCount: Record<string, number> = {};
 
@@ -1199,11 +1200,11 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
           strengthCount[s] = (strengthCount[s] || 0) + 1;
         }
       } catch {
-        // تجاهل الأخطاء في parsing
+        //    parsing
       }
     }
 
-    // ترتيب حسب التكرار
+    //   
     const commonWeaknesses = Object.entries(weaknessCount)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
@@ -1238,7 +1239,7 @@ export async function getSelfEvaluationSummary(): Promise<SelfEvaluationSummary>
 }
 
 /**
- * جلب التقييمات الضعيفة للتعلم منها
+ *     
  */
 export async function getLowScoringEvaluations(limit: number = 20): Promise<typeof selfEvaluations.$inferSelect[]> {
   try {

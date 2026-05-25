@@ -1,23 +1,25 @@
+import { t } from "../_core/i18n";
+
 /**
  * Feedback Loop Structure
  * 
- * وظيفته:
- * - تخزين تصحيحات المستخدم
- * - جاهز للـ Learning System لاحقاً
- * - يساعد في تحسين دقة التحليل
+ * :
+ * -   
+ * -   Learning System 
+ * -     
  */
 
-// أنواع التغذية الراجعة
+//   
 export type FeedbackType = 
-  | 'emotion_correction'    // تصحيح المشاعر
-  | 'context_correction'    // تصحيح السياق
-  | 'accuracy_rating'       // تقييم الدقة
-  | 'relevance_rating'      // تقييم الصلة
-  | 'general_comment';      // تعليق عام
+  | 'emotion_correction'    //  
+  | 'context_correction'    //  
+  | 'accuracy_rating'       //  
+  | 'relevance_rating'      //  
+  | 'general_comment';      //  
 
 export type FeedbackSentiment = 'positive' | 'negative' | 'neutral';
 
-// هيكل التغذية الراجعة
+//   
 export interface FeedbackEntry {
   id: string;
   analysisId: string;
@@ -25,26 +27,26 @@ export interface FeedbackEntry {
   userType: string;
   timestamp: Date;
   
-  // نوع التغذية الراجعة
+  //   
   type: FeedbackType;
   sentiment: FeedbackSentiment;
   
-  // التفاصيل
+  // 
   originalValue?: string | number;
   correctedValue?: string | number;
   rating?: number; // 1-5
   comment?: string;
   
-  // السياق
+  // 
   topic: string;
   countryCode?: string;
   
-  // الحالة
+  // 
   processed: boolean;
   processedAt?: Date;
 }
 
-// إحصائيات التغذية الراجعة
+//   
 export interface FeedbackStats {
   totalFeedback: number;
   byType: Record<FeedbackType, number>;
@@ -55,11 +57,11 @@ export interface FeedbackStats {
   recentFeedback: FeedbackEntry[];
 }
 
-// مخزن التغذية الراجعة (في الذاكرة - يمكن استبداله بقاعدة بيانات)
+//    (  -    )
 const feedbackStore: FeedbackEntry[] = [];
 
 /**
- * إضافة تغذية راجعة جديدة
+ *    
  */
 export function addFeedback(
   feedback: Omit<FeedbackEntry, 'id' | 'timestamp' | 'processed'>
@@ -73,7 +75,7 @@ export function addFeedback(
   
   feedbackStore.push(newFeedback);
   
-  // الحفاظ على حجم معقول (آخر 5000 تغذية راجعة)
+  //     ( 5000  )
   if (feedbackStore.length > 5000) {
     feedbackStore.shift();
   }
@@ -82,7 +84,7 @@ export function addFeedback(
 }
 
 /**
- * تصحيح المشاعر
+ *  
  */
 export function submitEmotionCorrection(
   analysisId: string,
@@ -98,7 +100,7 @@ export function submitEmotionCorrection(
     userId,
     userType,
     type: 'emotion_correction',
-    sentiment: 'negative', // تصحيح يعني عدم رضا
+    sentiment: 'negative', //    
     originalValue: originalEmotion,
     correctedValue: correctedEmotion,
     comment,
@@ -107,7 +109,7 @@ export function submitEmotionCorrection(
 }
 
 /**
- * تقييم الدقة
+ *  
  */
 export function submitAccuracyRating(
   analysisId: string,
@@ -134,7 +136,7 @@ export function submitAccuracyRating(
 }
 
 /**
- * تقييم الصلة
+ *  
  */
 export function submitRelevanceRating(
   analysisId: string,
@@ -161,7 +163,7 @@ export function submitRelevanceRating(
 }
 
 /**
- * تعليق عام
+ *  
  */
 export function submitGeneralComment(
   analysisId: string,
@@ -183,14 +185,14 @@ export function submitGeneralComment(
 }
 
 /**
- * الحصول على التغذية الراجعة لتحليل معين
+ *      
  */
 export function getFeedbackForAnalysis(analysisId: string): FeedbackEntry[] {
   return feedbackStore.filter(f => f.analysisId === analysisId);
 }
 
 /**
- * الحصول على التغذية الراجعة لموضوع معين
+ *      
  */
 export function getFeedbackForTopic(topic: string): FeedbackEntry[] {
   return feedbackStore.filter(f => 
@@ -199,14 +201,14 @@ export function getFeedbackForTopic(topic: string): FeedbackEntry[] {
 }
 
 /**
- * الحصول على التغذية الراجعة غير المعالجة
+ *      
  */
 export function getUnprocessedFeedback(): FeedbackEntry[] {
   return feedbackStore.filter(f => !f.processed);
 }
 
 /**
- * تحديد التغذية الراجعة كمعالجة
+ *    
  */
 export function markAsProcessed(feedbackId: string): boolean {
   const feedback = feedbackStore.find(f => f.id === feedbackId);
@@ -219,7 +221,7 @@ export function markAsProcessed(feedbackId: string): boolean {
 }
 
 /**
- * الحصول على إحصائيات التغذية الراجعة
+ *     
  */
 export function getFeedbackStats(): FeedbackStats {
   const byType: Record<FeedbackType, number> = {
@@ -263,25 +265,25 @@ export function getFeedbackStats(): FeedbackStats {
 }
 
 /**
- * تحليل أنماط التغذية الراجعة (للتعلم المستقبلي)
+ *     ( )
  */
 export function analyzeFeedbackPatterns(): {
   commonCorrections: { original: string; corrected: string; count: number }[];
   lowRatedTopics: { topic: string; avgRating: number }[];
   improvementAreas: string[];
 } {
-  // تجميع التصحيحات الشائعة
+  //   
   const corrections: Map<string, number> = new Map();
   const topicRatings: Map<string, { total: number; count: number }> = new Map();
   
   for (const feedback of feedbackStore) {
-    // التصحيحات
+    // 
     if (feedback.type === 'emotion_correction' && feedback.originalValue && feedback.correctedValue) {
       const key = `${feedback.originalValue}->${feedback.correctedValue}`;
       corrections.set(key, (corrections.get(key) || 0) + 1);
     }
     
-    // تقييمات المواضيع
+    //  
     if (feedback.rating) {
       const current = topicRatings.get(feedback.topic) || { total: 0, count: 0 };
       current.total += feedback.rating;
@@ -290,7 +292,7 @@ export function analyzeFeedbackPatterns(): {
     }
   }
   
-  // التصحيحات الأكثر شيوعاً
+  //   
   const commonCorrections = Array.from(corrections.entries())
     .map(([key, count]) => {
       const [original, corrected] = key.split('->');
@@ -299,7 +301,7 @@ export function analyzeFeedbackPatterns(): {
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
   
-  // المواضيع ذات التقييم المنخفض
+  //    
   const lowRatedTopics = Array.from(topicRatings.entries())
     .map(([topic, data]) => ({
       topic,
@@ -309,18 +311,18 @@ export function analyzeFeedbackPatterns(): {
     .sort((a, b) => a.avgRating - b.avgRating)
     .slice(0, 10);
   
-  // مجالات التحسين
+  //  
   const improvementAreas: string[] = [];
   const stats = getFeedbackStats();
   
   if (stats.byType.emotion_correction > stats.totalFeedback * 0.2) {
-    improvementAreas.push('تحسين دقة اكتشاف المشاعر');
+    improvementAreas.push(t('auto.engines_feedbackStore.3.105e1bb9', 'ar'));
   }
   if (stats.bySentiment.negative > stats.bySentiment.positive) {
-    improvementAreas.push('تحسين جودة التحليل العامة');
+    improvementAreas.push(t('auto.engines_feedbackStore.2.25ca2344', 'ar'));
   }
   if (stats.averageRating < 3.5) {
-    improvementAreas.push('رفع مستوى رضا المستخدمين');
+    improvementAreas.push(t('auto.engines_feedbackStore.1.0b436039', 'ar'));
   }
   
   return {
@@ -331,14 +333,14 @@ export function analyzeFeedbackPatterns(): {
 }
 
 /**
- * مسح التغذية الراجعة (للاختبار)
+ *    ()
  */
 export function clearFeedback(): void {
   feedbackStore.length = 0;
 }
 
 /**
- * توليد معرف فريد
+ *   
  */
 function generateFeedbackId(): string {
   return `fb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Layer 2: Signal Filtering Engine (Attention)
  * 
@@ -142,15 +144,15 @@ function extractKeywords(content: string): string[] {
   const keywords: string[] = [];
   
   // Economic keywords
-  const economicWords = ['دولار', 'ذهب', 'فضة', 'نفط', 'سوق', 'بورصة', 'أسهم', 'فائدة', 'تضخم', 'ركود'];
+  const economicWords = [t('auto.cognitiveArchitecture_layer2_attention.84.23163ab2', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.83.d76ed4f3', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.82.25b08751', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.81.02782624', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.80.16c73be6', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.79.27d9d4af', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.78.866ae2e3', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.77.c09eeb5c', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.76.8b8e7c7f', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.75.8009605b', 'ar')];
   // Political keywords
-  const politicalWords = ['حكومة', 'رئيس', 'انتخابات', 'برلمان', 'سياسة', 'حرب', 'صراع', 'اتفاق'];
+  const politicalWords = [t('auto.cognitiveArchitecture_layer2_attention.74.52d79bae', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.73.5ef70e19', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.72.d9b242e6', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.71.b80d3d91', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.70.26a57968', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.69.b2155e1c', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.68.393955e1', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.67.48d894f8', 'ar')];
   // Social keywords
-  const socialWords = ['مجتمع', 'شباب', 'تعليم', 'صحة', 'بطالة', 'فقر', 'هجرة'];
+  const socialWords = [t('auto.cognitiveArchitecture_layer2_attention.66.e915fc2f', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.65.cfc84215', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.64.a0eee03f', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.63.72c707a2', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.62.30df0f23', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.61.83b729ee', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.60.08ea38f8', 'ar')];
   // Media keywords
-  const mediaWords = ['إعلام', 'أخبار', 'صحافة', 'تلفزيون', 'سوشيال', 'فيسبوك', 'تويتر'];
+  const mediaWords = [t('auto.cognitiveArchitecture_layer2_attention.59.c1d6b74e', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.58.71960207', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.57.a3104b1b', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.56.affdbe7a', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.55.f0483788', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.54.ac86ec8e', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.53.a682ae5d', 'ar')];
   // Emotional keywords
-  const emotionalWords = ['خوف', 'أمل', 'قلق', 'تفاؤل', 'غضب', 'حزن', 'فرح', 'صدمة'];
+  const emotionalWords = [t('auto.cognitiveArchitecture_layer2_attention.52.1cf83ec0', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.51.60cd6c3d', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.50.a24a5460', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.49.e01009da', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.48.8e7bd750', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.47.fdbc4b1b', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.46.15a6eacb', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.45.d2221b1c', 'ar')];
   
   const allKeywords = [
     ...economicWords, ...politicalWords, ...socialWords, 
@@ -181,25 +183,25 @@ function detectCategory(content: string, keywords: string[]): SignalCategory {
   };
   
   // Economic indicators
-  if (['دولار', 'ذهب', 'فضة', 'نفط', 'فائدة', 'تضخم'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.44.23163ab2', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.43.d76ed4f3', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.42.25b08751', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.41.02782624', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.40.c09eeb5c', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.39.8b8e7c7f', 'ar')].some(w => content.includes(w))) {
     categoryScores.economic += 2;
   }
-  if (['سوق', 'بورصة', 'أسهم', 'تداول'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.38.16c73be6', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.37.27d9d4af', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.36.866ae2e3', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.35.7b2d8f16', 'ar')].some(w => content.includes(w))) {
     categoryScores.market += 2;
   }
   
   // Political indicators
-  if (['حكومة', 'رئيس', 'انتخابات', 'سياسة', 'حرب'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.34.52d79bae', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.33.5ef70e19', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.32.d9b242e6', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.31.26a57968', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.30.b2155e1c', 'ar')].some(w => content.includes(w))) {
     categoryScores.political += 2;
   }
   
   // Social indicators
-  if (['مجتمع', 'شباب', 'تعليم', 'صحة', 'بطالة'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.29.e915fc2f', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.28.cfc84215', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.27.a0eee03f', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.26.72c707a2', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.25.30df0f23', 'ar')].some(w => content.includes(w))) {
     categoryScores.social += 2;
   }
   
   // Media indicators
-  if (['إعلام', 'أخبار', 'صحافة', 'سوشيال'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.24.c1d6b74e', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.23.71960207', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.22.a3104b1b', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.21.f0483788', 'ar')].some(w => content.includes(w))) {
     categoryScores.media += 2;
   }
   
@@ -254,22 +256,22 @@ function calculateEmotionalWeight(content: string): number {
   let weight = 0;
   
   // Strong negative emotions
-  if (['خوف', 'قلق', 'ذعر', 'انهيار', 'كارثة', 'أزمة'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.20.1cf83ec0', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.19.a24a5460', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.18.3115aac3', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.17.417cc6aa', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.16.676d2f53', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.15.38a8a76e', 'ar')].some(w => content.includes(w))) {
     weight += 0.4;
   }
   
   // Strong positive emotions
-  if (['أمل', 'تفاؤل', 'انتعاش', 'نمو', 'ارتفاع'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.14.60cd6c3d', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.13.e01009da', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.12.089ba7e6', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.11.25e94d3e', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.10.a6f465eb', 'ar')].some(w => content.includes(w))) {
     weight += 0.3;
   }
   
   // Uncertainty emotions
-  if (['حيرة', 'تردد', 'غموض', 'عدم يقين'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.9.c50b9879', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.8.01eb31df', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.7.368e5097', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.6.479f7ad2', 'ar')].some(w => content.includes(w))) {
     weight += 0.2;
   }
   
   // Urgency markers
-  if (['عاجل', 'الآن', 'فوراً', 'خطير', 'تحذير'].some(w => content.includes(w))) {
+  if ([t('auto.cognitiveArchitecture_layer2_attention.5.0fac5b49', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.4.7b94973f', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.3.3658673e', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.2.1b5f0446', 'ar'), t('auto.cognitiveArchitecture_layer2_attention.1.8835d57f', 'ar')].some(w => content.includes(w))) {
     weight += 0.3;
   }
   
@@ -301,10 +303,10 @@ function isNoiseContent(content: string): boolean {
   // Spam patterns
   const spamPatterns = [
     /^https?:\/\//,
-    /اضغط هنا/,
-    /تابعنا/,
-    /اشترك/,
-    /رابط/
+    / /,
+    //,
+    //,
+    //
   ];
   
   return spamPatterns.some(p => p.test(content));

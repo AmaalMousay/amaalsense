@@ -1,18 +1,20 @@
+import { t } from "../_core/i18n";
+
 // @ts-nocheck
 /**
  * EXPLAINABILITY ROUTER
  * 
- * يوفر بيانات شرح الاستجابة والتقييم للواجهة الأمامية
- * - شرح الاستجابة (Response Explainability)
- * - تقييم الاستجابة (Response Feedback)
- * - واجهة الاستجابة المنظمة (Structured Response UI)
+ *       
+ * -   (Response Explainability)
+ * -   (Response Feedback)
+ * -    (Structured Response UI)
  */
 
 import { router, publicProcedure, protectedProcedure } from '../_core/trpc';
 import { z } from "zod";
 
 /**
- * بيانات شرح الاستجابة
+ *   
  */
 interface ResponseExplanation {
   responseId: string;
@@ -40,7 +42,7 @@ interface ResponseExplanation {
 }
 
 /**
- * بيانات تقييم الاستجابة
+ *   
  */
 interface ResponseFeedback {
   feedbackId: string;
@@ -57,7 +59,7 @@ interface ResponseFeedback {
 }
 
 /**
- * بيانات الاستجابة المنظمة
+ *   
  */
 interface StructuredResponse {
   responseId: string;
@@ -89,7 +91,7 @@ interface StructuredResponse {
 
 export const explainabilityRouter = router({
   /**
-   * الحصول على شرح الاستجابة
+   *    
    */
   getResponseExplanation: publicProcedure
     .input(
@@ -102,59 +104,59 @@ export const explainabilityRouter = router({
       try {
         const explanation: ResponseExplanation = {
           responseId: input.responseId,
-          question: "السؤال الأصلي من المستخدم",
-          response: "الاستجابة الكاملة من النظام",
+          question: t('auto.routers_explainabilityRouter.70.023a777d', 'ar'),
+          response: t('auto.routers_explainabilityRouter.69.1e9ed721', 'ar'),
           reasoning: [
             {
               step: 1,
-              description: "فهم السؤال واستخراج الكلمات المفتاحية",
-              dataUsed: ["معالجة اللغة الطبيعية", "تحليل النية"],
+              description: t('auto.routers_explainabilityRouter.68.dcea52e8', 'ar'),
+              dataUsed: [t('auto.routers_explainabilityRouter.67.d2d9dea6', 'ar'), t('auto.routers_explainabilityRouter.66.003e6177', 'ar')],
               confidence: 95
             },
             {
               step: 2,
-              description: "البحث عن معلومات ذات صلة",
-              dataUsed: ["قاعدة البيانات", "مصادر خارجية"],
+              description: t('auto.routers_explainabilityRouter.65.627455d8', 'ar'),
+              dataUsed: [t('auto.routers_explainabilityRouter.64.62ce5ec2', 'ar'), t('auto.routers_explainabilityRouter.63.d0efbf55', 'ar')],
               confidence: 88
             },
             {
               step: 3,
-              description: "تحليل المعلومات وتوليد الاستجابة",
-              dataUsed: ["محرك التحليل", "نموذج اللغة"],
+              description: t('auto.routers_explainabilityRouter.62.b1303a2d', 'ar'),
+              dataUsed: [t('auto.routers_explainabilityRouter.61.e0f87b88', 'ar'), t('auto.routers_explainabilityRouter.60.88afdf10', 'ar')],
               confidence: 82
             },
             {
               step: 4,
-              description: "التحقق من جودة الاستجابة",
-              dataUsed: ["معايير الجودة", "التحقق من الحقائق"],
+              description: t('auto.routers_explainabilityRouter.59.f98d3b68', 'ar'),
+              dataUsed: [t('auto.routers_explainabilityRouter.58.4aedf9a9', 'ar'), t('auto.routers_explainabilityRouter.57.35b9041a', 'ar')],
               confidence: 85
             }
           ],
           dataSourcesUsed: [
-            { source: "قاعدة البيانات الداخلية", reliability: 95, weight: 0.5 },
-            { source: "مصادر الأخبار", reliability: 85, weight: 0.3 },
-            { source: "وسائل التواصل الاجتماعي", reliability: 70, weight: 0.2 }
+            { source: t('auto.routers_explainabilityRouter.56.33a47423', 'ar'), reliability: 95, weight: 0.5 },
+            { source: t('auto.routers_explainabilityRouter.55.d504d0a9', 'ar'), reliability: 85, weight: 0.3 },
+            { source: t('auto.routers_explainabilityRouter.54.cc179209', 'ar'), reliability: 70, weight: 0.2 }
           ],
           assumptionsMade: [
-            "افتراض أن البيانات المتاحة دقيقة وحالية",
-            "افتراض أن السياق الثقافي مفهوم بشكل صحيح",
-            "افتراض أن المستخدم يريد إجابة شاملة"
+            t('auto.routers_explainabilityRouter.53.a3f48773', 'ar'),
+            t('auto.routers_explainabilityRouter.52.c181576f', 'ar'),
+            t('auto.routers_explainabilityRouter.51.b495801b', 'ar')
           ],
           limitationsAcknowledged: [
-            "قد تكون البيانات غير كاملة",
-            "قد تكون هناك تأخير في تحديث المعلومات",
-            "قد تختلف الآراء حول بعض الجوانب"
+            t('auto.routers_explainabilityRouter.50.b6b5f74b', 'ar'),
+            t('auto.routers_explainabilityRouter.49.d516bd52', 'ar'),
+            t('auto.routers_explainabilityRouter.48.e0cab5dd', 'ar')
           ],
           alternativeAnswers: [
             {
-              answer: "إجابة بديلة 1 مع تركيز مختلف",
+              answer: t('auto.routers_explainabilityRouter.47.36822e86', 'ar'),
               confidence: 75,
-              reasoning: "تركيز على جوانب اقتصادية بدلاً من اجتماعية"
+              reasoning: t('auto.routers_explainabilityRouter.46.999cd96a', 'ar')
             },
             {
-              answer: "إجابة بديلة 2 مع منظور مختلف",
+              answer: t('auto.routers_explainabilityRouter.45.62e1bc32', 'ar'),
               confidence: 68,
-              reasoning: "منظور قصير الأجل بدلاً من طويل الأجل"
+              reasoning: t('auto.routers_explainabilityRouter.44.2ee2fee9', 'ar')
             }
           ],
           timestamp: new Date()
@@ -169,14 +171,14 @@ export const explainabilityRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: "فشل في جلب شرح الاستجابة",
+          error: t('auto.routers_explainabilityRouter.43.368183fc', 'ar'),
           data: null
         };
       }
     }),
 
   /**
-   * الحصول على تقييمات الاستجابة
+   *    
    */
   getResponseFeedback: publicProcedure
     .input(
@@ -197,8 +199,8 @@ export const explainabilityRouter = router({
             accuracy: 5,
             clarity: 5,
             completeness: 4,
-            comment: "إجابة ممتازة وشاملة جداً",
-            suggestedImprovement: "يمكن إضافة المزيد من الأمثلة",
+            comment: t('auto.routers_explainabilityRouter.42.918d888f', 'ar'),
+            suggestedImprovement: t('auto.routers_explainabilityRouter.41.348e533d', 'ar'),
             timestamp: new Date()
           },
           {
@@ -210,8 +212,8 @@ export const explainabilityRouter = router({
             accuracy: 4,
             clarity: 4,
             completeness: 4,
-            comment: "إجابة جيدة لكن تحتاج توضيح أكثر",
-            suggestedImprovement: "شرح أفضل للمصطلحات التقنية",
+            comment: t('auto.routers_explainabilityRouter.40.b6efae8e', 'ar'),
+            suggestedImprovement: t('auto.routers_explainabilityRouter.39.6032ec35', 'ar'),
             timestamp: new Date()
           },
           {
@@ -223,8 +225,8 @@ export const explainabilityRouter = router({
             accuracy: 3,
             clarity: 3,
             completeness: 2,
-            comment: "إجابة متوسطة، تفتقد بعض المعلومات",
-            suggestedImprovement: "إضافة بيانات أكثر حداثة",
+            comment: t('auto.routers_explainabilityRouter.38.888f7486', 'ar'),
+            suggestedImprovement: t('auto.routers_explainabilityRouter.37.0986db82', 'ar'),
             timestamp: new Date()
           }
         ];
@@ -247,14 +249,14 @@ export const explainabilityRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: "فشل في جلب تقييمات الاستجابة",
+          error: t('auto.routers_explainabilityRouter.36.dcdbd117', 'ar'),
           data: []
         };
       }
     }),
 
   /**
-   * إرسال تقييم الاستجابة
+   *   
    */
   submitResponseFeedback: protectedProcedure
     .input(
@@ -271,11 +273,11 @@ export const explainabilityRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       try {
-        // في التطبيق الحقيقي، سيتم حفظ التقييم في قاعدة البيانات
+        //         
         const feedback: ResponseFeedback = {
           feedbackId: `fb_${Date.now()}`,
           responseId: input.responseId,
-          userId: ctx.user?.id || "anonymous",
+          userId: ctx.user?.id ? String(ctx.user.id) : "anonymous",
           rating: input.rating,
           isHelpful: input.isHelpful,
           accuracy: input.accuracy,
@@ -289,20 +291,20 @@ export const explainabilityRouter = router({
         return {
           success: true,
           data: feedback,
-          message: "تم حفظ التقييم بنجاح",
+          message: t('auto.routers_explainabilityRouter.35.c593ac22', 'ar'),
           timestamp: new Date()
         };
       } catch (error) {
         return {
           success: false,
-          error: "فشل في حفظ التقييم",
+          error: t('auto.routers_explainabilityRouter.34.ed82b348', 'ar'),
           data: null
         };
       }
     }),
 
   /**
-   * الحصول على الاستجابة المنظمة
+   *    
    */
   getStructuredResponse: publicProcedure
     .input(
@@ -314,61 +316,61 @@ export const explainabilityRouter = router({
       try {
         const structuredResponse: StructuredResponse = {
           responseId: input.responseId,
-          question: "السؤال الأصلي",
-          summary: "ملخص الاستجابة في جملة واحدة",
+          question: t('auto.routers_explainabilityRouter.33.4aec6beb', 'ar'),
+          summary: t('auto.routers_explainabilityRouter.32.6b43f197', 'ar'),
           mainPoints: [
             {
-              point: "النقطة الرئيسية الأولى",
+              point: t('auto.routers_explainabilityRouter.31.67a0266d', 'ar'),
               importance: "high",
-              evidence: ["دليل 1", "دليل 2", "دليل 3"]
+              evidence: [t('auto.routers_explainabilityRouter.30.4114c93f', 'ar'), t('auto.routers_explainabilityRouter.29.dc3f8676', 'ar'), t('auto.routers_explainabilityRouter.28.0513d981', 'ar')]
             },
             {
-              point: "النقطة الرئيسية الثانية",
+              point: t('auto.routers_explainabilityRouter.27.0bb55f2c', 'ar'),
               importance: "high",
-              evidence: ["دليل 1", "دليل 2"]
+              evidence: [t('auto.routers_explainabilityRouter.26.4114c93f', 'ar'), t('auto.routers_explainabilityRouter.25.dc3f8676', 'ar')]
             },
             {
-              point: "النقطة الرئيسية الثالثة",
+              point: t('auto.routers_explainabilityRouter.24.1d22968e', 'ar'),
               importance: "medium",
-              evidence: ["دليل 1"]
+              evidence: [t('auto.routers_explainabilityRouter.23.4114c93f', 'ar')]
             }
           ],
           keyFindings: [
-            "الاكتشاف الرئيسي الأول",
-            "الاكتشاف الرئيسي الثاني",
-            "الاكتشاف الرئيسي الثالث"
+            t('auto.routers_explainabilityRouter.22.8278d84c', 'ar'),
+            t('auto.routers_explainabilityRouter.21.36e6aeff', 'ar'),
+            t('auto.routers_explainabilityRouter.20.54157ead', 'ar')
           ],
           implications: [
             {
-              implication: "الآثار المترتبة الأولى",
+              implication: t('auto.routers_explainabilityRouter.19.d28a8eca', 'ar'),
               severity: "high"
             },
             {
-              implication: "الآثار المترتبة الثانية",
+              implication: t('auto.routers_explainabilityRouter.18.2341e993', 'ar'),
               severity: "medium"
             }
           ],
           recommendations: [
             {
-              recommendation: "التوصية الأولى",
+              recommendation: t('auto.routers_explainabilityRouter.17.c6a66874', 'ar'),
               priority: "high",
-              actionableSteps: ["الخطوة 1", "الخطوة 2", "الخطوة 3"]
+              actionableSteps: [t('auto.routers_explainabilityRouter.16.b1c6d986', 'ar'), t('auto.routers_explainabilityRouter.15.4738eb88', 'ar'), t('auto.routers_explainabilityRouter.14.8a533a49', 'ar')]
             },
             {
-              recommendation: "التوصية الثانية",
+              recommendation: t('auto.routers_explainabilityRouter.13.5d0ab924', 'ar'),
               priority: "medium",
-              actionableSteps: ["الخطوة 1", "الخطوة 2"]
+              actionableSteps: [t('auto.routers_explainabilityRouter.12.b1c6d986', 'ar'), t('auto.routers_explainabilityRouter.11.4738eb88', 'ar')]
             }
           ],
-          relatedTopics: ["الموضوع ذو الصلة 1", "الموضوع ذو الصلة 2", "الموضوع ذو الصلة 3"],
+          relatedTopics: [t('auto.routers_explainabilityRouter.10.646034ec', 'ar'), t('auto.routers_explainabilityRouter.9.59c7efd8', 'ar'), t('auto.routers_explainabilityRouter.8.6e7208a4', 'ar')],
           furtherReading: [
             {
-              title: "مقالة ذات صلة 1",
+              title: t('auto.routers_explainabilityRouter.7.1ef44424', 'ar'),
               url: "https://example.com/article1",
               relevance: 0.95
             },
             {
-              title: "مقالة ذات صلة 2",
+              title: t('auto.routers_explainabilityRouter.6.9d367b1a', 'ar'),
               url: "https://example.com/article2",
               relevance: 0.85
             }
@@ -384,14 +386,14 @@ export const explainabilityRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: "فشل في جلب الاستجابة المنظمة",
+          error: t('auto.routers_explainabilityRouter.5.5bf45082', 'ar'),
           data: null
         };
       }
     }),
 
   /**
-   * الحصول على إحصائيات جودة الاستجابات
+   *     
    */
   getResponseQualityStats: publicProcedure.query(async () => {
     try {
@@ -406,9 +408,9 @@ export const explainabilityRouter = router({
           helpfulPercentage: 87.5,
           improvementTrend: "up",
           topIssues: [
-            "نقص في الأمثلة العملية",
-            "عدم وضوح بعض المصطلحات",
-            "نقص في البيانات الحديثة"
+            t('auto.routers_explainabilityRouter.4.24f56450', 'ar'),
+            t('auto.routers_explainabilityRouter.3.9875f72b', 'ar'),
+            t('auto.routers_explainabilityRouter.2.750fcfa5', 'ar')
           ]
         },
         timestamp: new Date()
@@ -416,7 +418,7 @@ export const explainabilityRouter = router({
     } catch (error) {
       return {
         success: false,
-        error: "فشل في جلب إحصائيات الجودة",
+        error: t('auto.routers_explainabilityRouter.1.e19c5334', 'ar'),
         data: null
       };
     }

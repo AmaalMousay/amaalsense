@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Cognitive Answer Gate Layer
  * 
@@ -46,8 +48,8 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'clarify_question',
         confidence: 0.9,
-        reasoning: 'السؤال غير واضح أو يحتمل تفسيرات متعددة',
-        suggestedAction: 'اطلب من المستخدم توضيح السؤال',
+        reasoning: t('auto.cognitiveArchitecture_cognitiveAnswerGate.28.6614e00c', 'ar'),
+        suggestedAction: t('auto.cognitiveArchitecture_cognitiveAnswerGate.27.e807eda5', 'ar'),
       };
     }
 
@@ -59,7 +61,7 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'answer_directly',
         confidence: dataScore,
-        reasoning: 'السؤال بسيط والبيانات كافية للإجابة',
+        reasoning: t('auto.cognitiveArchitecture_cognitiveAnswerGate.26.63b2e48c', 'ar'),
       };
     }
 
@@ -68,8 +70,8 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'search_more_data',
         confidence: 0.8,
-        reasoning: 'السؤال معقد والبيانات الحالية غير كافية',
-        suggestedAction: 'اجمع المزيد من البيانات قبل الإجابة',
+        reasoning: t('auto.cognitiveArchitecture_cognitiveAnswerGate.25.15ba6789', 'ar'),
+        suggestedAction: t('auto.cognitiveArchitecture_cognitiveAnswerGate.24.da1f851e', 'ar'),
       };
     }
 
@@ -78,8 +80,8 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'defer_to_expert',
         confidence: 0.85,
-        reasoning: 'السؤال يتطلب معرفة متخصصة خارج نطاق النظام',
-        suggestedAction: 'اقترح استشارة خبير في المجال',
+        reasoning: t('auto.cognitiveArchitecture_cognitiveAnswerGate.23.5051d6fa', 'ar'),
+        suggestedAction: t('auto.cognitiveArchitecture_cognitiveAnswerGate.22.ccdd4efb', 'ar'),
       };
     }
 
@@ -88,8 +90,8 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'admit_ignorance',
         confidence: 0.9,
-        reasoning: 'البيانات المتاحة قديمة أو ذات جودة منخفضة',
-        suggestedAction: 'اعترف بعدم وجود معلومات حديثة موثوقة',
+        reasoning: t('auto.cognitiveArchitecture_cognitiveAnswerGate.21.773753d5', 'ar'),
+        suggestedAction: t('auto.cognitiveArchitecture_cognitiveAnswerGate.20.b25da9e5', 'ar'),
       };
     }
 
@@ -97,7 +99,7 @@ class CognitiveAnswerGateClass {
     return {
       decision: 'answer_directly',
       confidence: dataScore,
-      reasoning: 'البيانات المتاحة كافية للإجابة مع بعض التحفظات',
+      reasoning: t('auto.cognitiveArchitecture_cognitiveAnswerGate.19.79b95d1d', 'ar'),
     };
   }
 
@@ -106,7 +108,7 @@ class CognitiveAnswerGateClass {
    */
   private isAmbiguous(question: string): boolean {
     // Check for vague pronouns without clear referents
-    const vaguePronouns = /^(هذا|ذلك|هو|هي|ذاك)/i;
+    const vaguePronouns = /^(||||)/i;
     if (vaguePronouns.test(question.trim())) {
       return true;
     }
@@ -152,19 +154,19 @@ class CognitiveAnswerGateClass {
   generateGateResponse(decision: GateDecision): string {
     switch (decision.decision) {
       case 'admit_ignorance':
-        return 'عذراً، لا أملك معلومات كافية أو حديثة للإجابة على هذا السؤال بثقة. ' +
-               'أفضل الاعتراف بعدم المعرفة بدلاً من تقديم معلومات غير دقيقة.';
+        return t('auto.cognitiveArchitecture_cognitiveAnswerGate.18.7aa97bff', 'ar') +
+               t('auto.cognitiveArchitecture_cognitiveAnswerGate.17.db86ff75', 'ar');
 
       case 'search_more_data':
-        return 'للإجابة على هذا السؤال بشكل دقيق، أحتاج إلى جمع المزيد من البيانات. ' +
-               'هل يمكنك إعطائي بعض الوقت لتحليل مصادر إضافية؟';
+        return t('auto.cognitiveArchitecture_cognitiveAnswerGate.16.24389dcb', 'ar') +
+               t('auto.cognitiveArchitecture_cognitiveAnswerGate.15.9a2cb452', 'ar');
 
       case 'clarify_question':
-        return 'السؤال غير واضح بالنسبة لي. هل يمكنك إعادة صياغته أو إضافة المزيد من التفاصيل؟';
+        return t('auto.cognitiveArchitecture_cognitiveAnswerGate.14.49005b73', 'ar');
 
       case 'defer_to_expert':
-        return 'هذا السؤال يتطلب معرفة متخصصة خارج نطاق قدراتي الحالية. ' +
-               'أنصح باستشارة خبير في المجال للحصول على إجابة دقيقة.';
+        return t('auto.cognitiveArchitecture_cognitiveAnswerGate.13.1ec81d55', 'ar') +
+               t('auto.cognitiveArchitecture_cognitiveAnswerGate.12.788eed8b', 'ar');
 
       case 'answer_directly':
       default:
@@ -181,10 +183,10 @@ class CognitiveAnswerGateClass {
   } {
     // Check for potential hallucination indicators
     const hallucinationIndicators = [
-      /أعتقد أن/i,
-      /ربما/i,
-      /من المحتمل/i,
-      /قد يكون/i,
+      / /i,
+      //i,
+      / /i,
+      / /i,
     ];
 
     const hasUncertainty = hallucinationIndicators.some(pattern => pattern.test(proposedAnswer));
@@ -193,7 +195,7 @@ class CognitiveAnswerGateClass {
     if (hasUncertainty && proposedAnswer.split(/\s+/).length < 20) {
       return {
         shouldBlock: true,
-        reason: 'الإجابة تحتوي على عدم يقين كبير - من الأفضل الاعتراف بعدم المعرفة',
+        reason: t('auto.cognitiveArchitecture_cognitiveAnswerGate.11.4dd95e45', 'ar'),
       };
     }
 
@@ -201,7 +203,7 @@ class CognitiveAnswerGateClass {
     if (this.answersWrongQuestion(question, proposedAnswer)) {
       return {
         shouldBlock: true,
-        reason: 'الإجابة لا تتعلق بالسؤال المطروح',
+        reason: t('auto.cognitiveArchitecture_cognitiveAnswerGate.10.002593e5', 'ar'),
       };
     }
 
@@ -230,7 +232,7 @@ class CognitiveAnswerGateClass {
   private extractKeywords(text: string): string[] {
     const stopWords = new Set([
       'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'في', 'من', 'إلى', 'على', 'عن', 'مع', 'هذا', 'هذه', 'ذلك',
+      t('auto.cognitiveArchitecture_cognitiveAnswerGate.9.aef2099d', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.8.aa7099e2', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.7.8ab80326', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.6.16dc1dd1', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.5.38486333', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.4.f3c3b73b', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.3.6be4d5a7', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.2.f60d1f66', 'ar'), t('auto.cognitiveArchitecture_cognitiveAnswerGate.1.bcd49587', 'ar'),
     ]);
 
     return text

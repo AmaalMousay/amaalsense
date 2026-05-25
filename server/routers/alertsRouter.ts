@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 import { z } from 'zod';
 import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
 
@@ -84,7 +85,7 @@ export const alertsRouter = router({
             notifyMethod: 'email',
             isActive: 1,
             countryCode: 'LY',
-            countryName: 'ليبيا',
+            countryName: t('auto.routers_alertsRouter.1.251aff72', 'ar'),
             createdAt: new Date(),
           }
         ];

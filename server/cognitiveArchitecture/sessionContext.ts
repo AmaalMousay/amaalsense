@@ -1,42 +1,44 @@
+import { t } from "../_core/i18n";
+
 /**
  * Session Cognitive Context
- * ذاكرة سياقية مستمرة تحفظ السياق بين الأسئلة
+ *       
  * 
- * المشكلة التي يحلها:
- * - لما تسأل عن إندونيسيا ثم تسأل "ما المخاطر؟"
- * - النظام كان ينسى إندونيسيا ويتكلم عن الذهب العالمي!
+ *   :
+ * -       " "
+ * -        !
  * 
- * الحل:
- * - حفظ السياق (الدولة، المجال، الموضوع، الدور)
- * - ربط أسئلة المتابعة بالسياق السابق
+ * :
+ * -   (   )
+ * -     
  */
 
 export interface SessionContext {
   sessionId: string;
   
-  // السياق الجغرافي
+  //  
   country?: string;
   region?: string;
   
-  // السياق الموضوعي
+  //  
   domain?: string;  // politics, economy, health, etc.
-  topic?: string;   // الموضوع المحدد
+  topic?: string;   //  
   subTopic?: string;
   
-  // السياق المعرفي
-  cognitiveLens?: string;  // العدسة المعرفية المستخدمة
+  //  
+  cognitiveLens?: string;  //   
   analysisDepth?: 'shallow' | 'medium' | 'deep';
   
-  // سياق المستخدم
+  //  
   userRole?: 'journalist' | 'researcher' | 'politician' | 'economist' | 'general';
   
-  // تاريخ الأسئلة في الجلسة
+  //    
   questionHistory: QuestionRecord[];
   
-  // الكيانات المذكورة
+  //  
   mentionedEntities: string[];
   
-  // الطابع الزمني
+  //  
   createdAt: Date;
   lastUpdatedAt: Date;
 }
@@ -62,11 +64,11 @@ export interface ExtractedContext {
   timeframe?: string;
 }
 
-// مخزن الجلسات في الذاكرة
+//    
 const sessionStore = new Map<string, SessionContext>();
 
 /**
- * إنشاء أو استرجاع جلسة
+ *    
  */
 export function getOrCreateSession(sessionId: string): SessionContext {
   if (sessionStore.has(sessionId)) {
@@ -86,7 +88,7 @@ export function getOrCreateSession(sessionId: string): SessionContext {
 }
 
 /**
- * تحديث سياق الجلسة بناءً على سؤال جديد
+ *       
  */
 export function updateSessionContext(
   sessionId: string,
@@ -95,12 +97,12 @@ export function updateSessionContext(
 ): SessionContext {
   const session = getOrCreateSession(sessionId);
   
-  // تحديد نوع السؤال
+  //   
   const intent = classifyQuestionIntent(question, session);
   
-  // إذا كان سؤال متابعة، نحتفظ بالسياق السابق
+  //       
   if (intent.isFollowUp && intent.requiresContext) {
-    // لا نغير الدولة أو المجال إذا لم يُذكر صراحة
+    //         
     if (extractedContext.country) {
       session.country = extractedContext.country;
     }
@@ -111,19 +113,19 @@ export function updateSessionContext(
       session.topic = extractedContext.topic;
     }
   } else {
-    // سؤال جديد - نحدث السياق بالكامل
+    //   -   
     if (extractedContext.country) session.country = extractedContext.country;
     if (extractedContext.domain) session.domain = extractedContext.domain;
     if (extractedContext.topic) session.topic = extractedContext.topic;
   }
   
-  // إضافة الكيانات المذكورة
+  //   
   if (extractedContext.entities) {
     const uniqueEntities = new Set([...session.mentionedEntities, ...extractedContext.entities]);
     session.mentionedEntities = Array.from(uniqueEntities);
   }
   
-  // تسجيل السؤال في التاريخ
+  //    
   session.questionHistory.push({
     question,
     intent,
@@ -138,19 +140,19 @@ export function updateSessionContext(
 }
 
 /**
- * تصنيف نية السؤال
+ *   
  */
 export function classifyQuestionIntent(question: string, session: SessionContext): QuestionIntent {
   const q = question.toLowerCase();
   
-  // أسئلة المتابعة القصيرة
+  //   
   const followUpPatterns = [
-    /^ما (المخاطر|التوصية|التوقعات)\??$/,
-    /^(لماذا|كيف|متى|أين)\??$/,
-    /^ماذا (لو|يعني)\??$/,
-    /^هل\s/,
-    /^وماذا عن/,
-    /^ماذا عن/,
+    /^ (||)\??$/,
+    /^(|||)\??$/,
+    /^ (|)\??$/,
+    /^\s/,
+    /^ /,
+    /^ /,
   ];
   
   const isFollowUp = session.questionHistory.length > 0 && (
@@ -158,22 +160,22 @@ export function classifyQuestionIntent(question: string, session: SessionContext
     question.length < 30
   );
   
-  // تحديد نوع السؤال
+  //   
   let type: QuestionIntent['type'] = 'what';
   
-  if (/لماذا|ليش|شن السبب/.test(q)) {
+  if (/|| /.test(q)) {
     type = 'why';
-  } else if (/كيف|شلون/.test(q)) {
+  } else if (/|/.test(q)) {
     type = 'how';
-  } else if (/مخاطر|خطر|تهديد/.test(q)) {
+  } else if (/||/.test(q)) {
     type = 'risks';
-  } else if (/توصية|نصيحة|اقتراح|شن نسوي/.test(q)) {
+  } else if (/||| /.test(q)) {
     type = 'recommendation';
-  } else if (/ماذا لو|لو صار|شن لو/.test(q)) {
+  } else if (/ | | /.test(q)) {
     type = 'whatif';
-  } else if (/مقارنة|الفرق|vs|مقابل/.test(q)) {
+  } else if (/||vs|/.test(q)) {
     type = 'comparison';
-  } else if (isFollowUp && /وضح|اشرح|فصل/.test(q)) {
+  } else if (isFollowUp && /||/.test(q)) {
     type = 'clarification';
   } else if (isFollowUp) {
     type = 'followup';
@@ -182,25 +184,25 @@ export function classifyQuestionIntent(question: string, session: SessionContext
   return {
     type,
     isFollowUp,
-    requiresContext: isFollowUp || /المخاطر|التوصية|التوقعات|ماذا لو/.test(q),
+    requiresContext: isFollowUp || /||| /.test(q),
   };
 }
 
 /**
- * استخراج السياق من السؤال
+ *    
  */
 export function extractContextFromQuestion(question: string): ExtractedContext {
   const context: ExtractedContext = {};
   
-  // استخراج الدولة
+  //  
   const countryPatterns: Record<string, string[]> = {
-    'libya': ['ليبيا', 'الليبي', 'الليبية', 'طرابلس', 'بنغازي', 'libya'],
-    'egypt': ['مصر', 'المصري', 'المصرية', 'القاهرة', 'egypt'],
-    'saudi': ['السعودية', 'السعودي', 'الرياض', 'saudi'],
-    'uae': ['الإمارات', 'الإماراتي', 'دبي', 'أبوظبي', 'uae'],
-    'indonesia': ['إندونيسيا', 'الإندونيسي', 'جاكرتا', 'indonesia'],
-    'usa': ['أمريكا', 'الأمريكي', 'واشنطن', 'usa', 'america'],
-    'global': ['العالم', 'عالمي', 'دولي', 'global'],
+    'libya': [t('auto.cognitiveArchitecture_sessionContext.70.251aff72', 'ar'), t('auto.cognitiveArchitecture_sessionContext.69.5b6e38b4', 'ar'), t('auto.cognitiveArchitecture_sessionContext.68.d014afbb', 'ar'), t('auto.cognitiveArchitecture_sessionContext.67.da7424b2', 'ar'), t('auto.cognitiveArchitecture_sessionContext.66.63a58999', 'ar'), 'libya'],
+    'egypt': [t('auto.cognitiveArchitecture_sessionContext.65.9f5f187b', 'ar'), t('auto.cognitiveArchitecture_sessionContext.64.4bfe15eb', 'ar'), t('auto.cognitiveArchitecture_sessionContext.63.b650f14e', 'ar'), t('auto.cognitiveArchitecture_sessionContext.62.93019aa0', 'ar'), 'egypt'],
+    'saudi': [t('auto.cognitiveArchitecture_sessionContext.61.cd8d189f', 'ar'), t('auto.cognitiveArchitecture_sessionContext.60.b6e39817', 'ar'), t('auto.cognitiveArchitecture_sessionContext.59.ec7f247f', 'ar'), 'saudi'],
+    'uae': [t('auto.cognitiveArchitecture_sessionContext.58.9bc10b8c', 'ar'), t('auto.cognitiveArchitecture_sessionContext.57.1c5d0e9e', 'ar'), t('auto.cognitiveArchitecture_sessionContext.56.4a07a7fb', 'ar'), t('auto.cognitiveArchitecture_sessionContext.55.cd666d65', 'ar'), 'uae'],
+    'indonesia': [t('auto.cognitiveArchitecture_sessionContext.54.bc06cf13', 'ar'), t('auto.cognitiveArchitecture_sessionContext.53.99a92077', 'ar'), t('auto.cognitiveArchitecture_sessionContext.52.da2132a6', 'ar'), 'indonesia'],
+    'usa': [t('auto.cognitiveArchitecture_sessionContext.51.d2dcf00d', 'ar'), t('auto.cognitiveArchitecture_sessionContext.50.50969bea', 'ar'), t('auto.cognitiveArchitecture_sessionContext.49.15a75967', 'ar'), 'usa', 'america'],
+    'global': [t('auto.cognitiveArchitecture_sessionContext.48.b4d34f40', 'ar'), t('auto.cognitiveArchitecture_sessionContext.47.5201f91f', 'ar'), t('auto.cognitiveArchitecture_sessionContext.46.b7de7e68', 'ar'), 'global'],
   };
   
   for (const [country, patterns] of Object.entries(countryPatterns)) {
@@ -210,16 +212,16 @@ export function extractContextFromQuestion(question: string): ExtractedContext {
     }
   }
   
-  // استخراج المجال
+  //  
   const domainPatterns: Record<string, string[]> = {
-    'politics': ['سياسة', 'سياسي', 'انتخابات', 'حكومة', 'برلمان', 'رئيس'],
-    'economy': ['اقتصاد', 'اقتصادي', 'أسعار', 'تضخم', 'بنك', 'عملة', 'دينار', 'دولار'],
-    'health': ['صحة', 'صحي', 'مرض', 'وباء', 'مستشفى', 'طبي'],
-    'education': ['تعليم', 'تعليمي', 'مدرسة', 'جامعة', 'طالب'],
-    'security': ['أمن', 'أمني', 'عسكري', 'صراع', 'حرب', 'ميليشيا'],
-    'environment': ['بيئة', 'مناخ', 'تلوث', 'طقس'],
-    'technology': ['تكنولوجيا', 'تقنية', 'ذكاء اصطناعي', 'إنترنت'],
-    'society': ['مجتمع', 'اجتماعي', 'هجرة', 'شباب', 'بطالة'],
+    'politics': [t('auto.cognitiveArchitecture_sessionContext.45.26a57968', 'ar'), t('auto.cognitiveArchitecture_sessionContext.44.4d8b589c', 'ar'), t('auto.cognitiveArchitecture_sessionContext.43.d9b242e6', 'ar'), t('auto.cognitiveArchitecture_sessionContext.42.52d79bae', 'ar'), t('auto.cognitiveArchitecture_sessionContext.41.b80d3d91', 'ar'), t('auto.cognitiveArchitecture_sessionContext.40.5ef70e19', 'ar')],
+    'economy': [t('auto.cognitiveArchitecture_sessionContext.39.6d38c2ea', 'ar'), t('auto.cognitiveArchitecture_sessionContext.38.b1941eb0', 'ar'), t('auto.cognitiveArchitecture_sessionContext.37.a09cec5c', 'ar'), t('auto.cognitiveArchitecture_sessionContext.36.8b8e7c7f', 'ar'), t('auto.cognitiveArchitecture_sessionContext.35.f879f70c', 'ar'), t('auto.cognitiveArchitecture_sessionContext.34.db2f097a', 'ar'), t('auto.cognitiveArchitecture_sessionContext.33.8c4bfb76', 'ar'), t('auto.cognitiveArchitecture_sessionContext.32.23163ab2', 'ar')],
+    'health': [t('auto.cognitiveArchitecture_sessionContext.31.72c707a2', 'ar'), t('auto.cognitiveArchitecture_sessionContext.30.46191a15', 'ar'), t('auto.cognitiveArchitecture_sessionContext.29.51f4011d', 'ar'), t('auto.cognitiveArchitecture_sessionContext.28.aae445ae', 'ar'), t('auto.cognitiveArchitecture_sessionContext.27.dc7cff7f', 'ar'), t('auto.cognitiveArchitecture_sessionContext.26.98b7356c', 'ar')],
+    'education': [t('auto.cognitiveArchitecture_sessionContext.25.a0eee03f', 'ar'), t('auto.cognitiveArchitecture_sessionContext.24.29fbcd7b', 'ar'), t('auto.cognitiveArchitecture_sessionContext.23.44ee4b4e', 'ar'), t('auto.cognitiveArchitecture_sessionContext.22.7601e075', 'ar'), t('auto.cognitiveArchitecture_sessionContext.21.9ac0bbb8', 'ar')],
+    'security': [t('auto.cognitiveArchitecture_sessionContext.20.b5ae7ef3', 'ar'), t('auto.cognitiveArchitecture_sessionContext.19.4a79ffc6', 'ar'), t('auto.cognitiveArchitecture_sessionContext.18.6f820943', 'ar'), t('auto.cognitiveArchitecture_sessionContext.17.393955e1', 'ar'), t('auto.cognitiveArchitecture_sessionContext.16.b2155e1c', 'ar'), t('auto.cognitiveArchitecture_sessionContext.15.3306d777', 'ar')],
+    'environment': [t('auto.cognitiveArchitecture_sessionContext.14.6d54e22b', 'ar'), t('auto.cognitiveArchitecture_sessionContext.13.3aa1ddb3', 'ar'), t('auto.cognitiveArchitecture_sessionContext.12.ac19a8d6', 'ar'), t('auto.cognitiveArchitecture_sessionContext.11.b659f350', 'ar')],
+    'technology': [t('auto.cognitiveArchitecture_sessionContext.10.e204e82f', 'ar'), t('auto.cognitiveArchitecture_sessionContext.9.16cdd488', 'ar'), t('auto.cognitiveArchitecture_sessionContext.8.ec6d9289', 'ar'), t('auto.cognitiveArchitecture_sessionContext.7.0daf322c', 'ar')],
+    'society': [t('auto.cognitiveArchitecture_sessionContext.6.e915fc2f', 'ar'), t('auto.cognitiveArchitecture_sessionContext.5.2d5572e2', 'ar'), t('auto.cognitiveArchitecture_sessionContext.4.08ea38f8', 'ar'), t('auto.cognitiveArchitecture_sessionContext.3.cfc84215', 'ar'), t('auto.cognitiveArchitecture_sessionContext.2.30df0f23', 'ar')],
   };
   
   for (const [domain, patterns] of Object.entries(domainPatterns)) {
@@ -229,11 +231,11 @@ export function extractContextFromQuestion(question: string): ExtractedContext {
     }
   }
   
-  // استخراج الموضوع (الجملة الرئيسية)
-  // نأخذ الموضوع من السؤال بعد إزالة كلمات الاستفهام
+  //   ( )
+  //        
   const topicMatch = question
-    .replace(/^(ما|ماذا|كيف|لماذا|هل|متى|أين|من|شن|شلون|ليش)\s*/i, '')
-    .replace(/\?|؟/g, '')
+    .replace(/^(||||||||||)\s*/i, '')
+    .replace(/\?|/g, '')
     .trim();
   
   if (topicMatch.length > 5) {
@@ -244,8 +246,8 @@ export function extractContextFromQuestion(question: string): ExtractedContext {
 }
 
 /**
- * الحصول على السياق الكامل للسؤال الحالي
- * يدمج السياق المستخرج مع سياق الجلسة
+ *      
+ *      
  */
 export function getFullContext(sessionId: string, question: string): {
   session: SessionContext;
@@ -261,7 +263,7 @@ export function getFullContext(sessionId: string, question: string): {
   const extractedContext = extractContextFromQuestion(question);
   const session = updateSessionContext(sessionId, question, extractedContext);
   
-  // السياق الفعّال = السياق المستخرج + السياق المحفوظ
+  //   =   +  
   const effectiveContext = {
     country: extractedContext.country || session.country || 'global',
     domain: extractedContext.domain || session.domain || 'general',
@@ -278,31 +280,31 @@ export function getFullContext(sessionId: string, question: string): {
 }
 
 /**
- * إعادة تعيين الجلسة
+ *   
  */
 export function resetSession(sessionId: string): void {
   sessionStore.delete(sessionId);
 }
 
 /**
- * الحصول على ملخص الجلسة
+ *    
  */
 export function getSessionSummary(sessionId: string): string {
   const session = sessionStore.get(sessionId);
-  if (!session) return 'لا توجد جلسة نشطة';
+  if (!session) return t('auto.cognitiveArchitecture_sessionContext.1.88d3dafb', 'ar');
   
   const parts: string[] = [];
   
-  if (session.country) parts.push(`الدولة: ${session.country}`);
-  if (session.domain) parts.push(`المجال: ${session.domain}`);
-  if (session.topic) parts.push(`الموضوع: ${session.topic}`);
-  parts.push(`عدد الأسئلة: ${session.questionHistory.length}`);
+  if (session.country) parts.push(`: ${session.country}`);
+  if (session.domain) parts.push(`: ${session.domain}`);
+  if (session.topic) parts.push(`: ${session.topic}`);
+  parts.push(` : ${session.questionHistory.length}`);
   
   return parts.join(' | ');
 }
 
 /**
- * تصدير الدوال
+ *  
  */
 export const SessionContextManager = {
   getOrCreateSession,

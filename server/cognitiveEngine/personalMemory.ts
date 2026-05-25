@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Layer 13: Personal Memory Layer
  * 
@@ -15,7 +17,7 @@ export interface UserPreferences {
 
 export interface UserProfile {
   userId: string;
-  interests: string[];        // Extracted from repeated queries (e.g., 'الذهب', 'مصر')
+  interests: string[];        // Extracted from repeated queries (e.g., '', '')
   historyCount: number;
   preferences: UserPreferences;
   lastActive: number;
@@ -67,7 +69,7 @@ export async function updateUserMemory(
   profile.historyCount += 1;
   
   // Track interests (only if it's a specific topic)
-  if (topic && topic !== 'موضوع عام' && !profile.interests.includes(topic)) {
+  if (topic && topic !== t('auto.cognitiveEngine_personalMemory.3.8c2159b5', 'ar') && !profile.interests.includes(topic)) {
     profile.interests.push(topic);
     // Keep top 10 most recent/relevant interests
     if (profile.interests.length > 10) {
@@ -98,16 +100,16 @@ export function personalizeResponseContext(profile: UserProfile): string {
   }
 
   const lang = profile.preferences.language;
-  let contextStr = lang === 'ar' ? "ملاحظة لتخصيص الإجابة للمستخدم:\n" : "User Personalization Note:\n";
+  let contextStr = lang === 'ar' ? t('auto.cognitiveEngine_personalMemory.2.e0366347', 'ar') : "User Personalization Note:\n";
   
   if (profile.interests.length > 0) {
     contextStr += lang === 'ar' 
-      ? `- هذا المستخدم مهتم بـ: ${profile.interests.join('، ')}\n`
+      ? `-    : ${profile.interests.join(t('auto.cognitiveEngine_personalMemory.1.8715d7bc', 'ar'))}\n`
       : `- This user is interested in: ${profile.interests.join(', ')}\n`;
   }
   
   contextStr += lang === 'ar'
-    ? `- يفضل الردود بمستوى تفصيل: ${profile.preferences.detailLevel}\n`
+    ? `-    : ${profile.preferences.detailLevel}\n`
     : `- Prefers detail level: ${profile.preferences.detailLevel}\n`;
 
   return contextStr;

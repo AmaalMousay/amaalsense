@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Analysis Lifecycle Manager
  * 
@@ -47,7 +49,7 @@ class AnalysisLifecycleManagerClass {
     if (questionType === 'factual') {
       return {
         action: 'reason_only',
-        reasoning: 'سؤال واقعي لا يتطلب تحليل بيانات جديدة',
+        reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.10.d9aa324a', 'ar'),
         estimatedCost: 'low',
       };
     }
@@ -56,7 +58,7 @@ class AnalysisLifecycleManagerClass {
     if (questionType === 'clarification' && previousAnalysis) {
       return {
         action: 'reinterpret_existing',
-        reasoning: 'سؤال توضيحي - إعادة تفسير التحليل السابق',
+        reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.9.d4852a81', 'ar'),
         estimatedCost: 'low',
       };
     }
@@ -68,7 +70,7 @@ class AnalysisLifecycleManagerClass {
     if (cached && this.isCacheValid(cached.timestamp)) {
       return {
         action: 'use_cached',
-        reasoning: 'تحليل مشابه موجود في الذاكرة المؤقتة',
+        reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.8.89ba8a8f', 'ar'),
         estimatedCost: 'low',
         cacheKey,
       };
@@ -80,7 +82,7 @@ class AnalysisLifecycleManagerClass {
       if (questionType === 'scenario' || questionType === 'opinion') {
         return {
           action: 'reinterpret_existing',
-          reasoning: 'سؤال متابعة - إعادة تفسير البيانات الموجودة من زاوية جديدة',
+          reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.7.c9ad3785', 'ar'),
           estimatedCost: 'medium',
         };
       }
@@ -89,7 +91,7 @@ class AnalysisLifecycleManagerClass {
       if (questionType === 'comparison') {
         return {
           action: 'fetch_and_analyze',
-          reasoning: 'سؤال مقارنة - يتطلب بيانات إضافية',
+          reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.6.5e9d090b', 'ar'),
           estimatedCost: 'high',
         };
       }
@@ -97,7 +99,7 @@ class AnalysisLifecycleManagerClass {
       // Default for follow-ups: reason from existing analysis
       return {
         action: 'reason_only',
-        reasoning: 'سؤال متابعة - التفكير من السياق الموجود',
+        reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.5.4a9685f3', 'ar'),
         estimatedCost: 'low',
       };
     }
@@ -108,14 +110,14 @@ class AnalysisLifecycleManagerClass {
       if (dataAge && dataAge > 60) {
         return {
           action: 'fetch_and_analyze',
-          reasoning: 'البيانات قديمة - جلب بيانات جديدة وتحليلها',
+          reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.4.64263185', 'ar'),
           estimatedCost: 'high',
         };
       }
 
       return {
         action: 'fetch_and_analyze',
-        reasoning: 'سؤال تحليلي جديد - يتطلب جلب وتحليل بيانات',
+        reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.3.56e34e22', 'ar'),
         estimatedCost: 'high',
       };
     }
@@ -124,7 +126,7 @@ class AnalysisLifecycleManagerClass {
     if (questionType === 'scenario') {
       return {
         action: 'reason_only',
-        reasoning: 'سؤال سيناريو افتراضي - التفكير بدون بيانات جديدة',
+        reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.2.d73d42c1', 'ar'),
         estimatedCost: 'medium',
       };
     }
@@ -132,7 +134,7 @@ class AnalysisLifecycleManagerClass {
     // Default: fetch and analyze
     return {
       action: 'fetch_and_analyze',
-      reasoning: 'تحليل كامل مطلوب',
+      reasoning: t('auto.cognitiveArchitecture_analysisLifecycleManager.1.a5fae542', 'ar'),
       estimatedCost: 'high',
     };
   }

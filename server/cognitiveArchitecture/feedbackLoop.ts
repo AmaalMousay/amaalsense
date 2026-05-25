@@ -1,10 +1,11 @@
+import { t } from "../_core/i18n";
 /**
- * Feedback Loop - حلقة التغذية الراجعة
+ * Feedback Loop -   
  * 
- * الحلقة الأولى في نظام التطور الذاتي
- * تجمع رأي المستخدم بعد كل رد وتخزنه كذاكرة نقدية للنظام
+ *      
+ *          
  * 
- * "النظام لا يتطور لأنه ذكي، بل لأنه يشك في نفسه"
+ * "         "
  */
 
 import { getDb } from '../_core/db';
@@ -52,7 +53,7 @@ export interface FeedbackAnalysis {
 // ============================================================================
 
 /**
- * حفظ feedback من المستخدم
+ *  feedback  
  */
 export async function saveFeedback(input: FeedbackInput): Promise<{ success: boolean; id?: number }> {
   try {
@@ -82,7 +83,7 @@ export async function saveFeedback(input: FeedbackInput): Promise<{ success: boo
 }
 
 /**
- * جلب آخر feedbacks
+ *   feedbacks
  */
 export async function getRecentFeedback(limit: number = 50): Promise<typeof responseFeedback.$inferSelect[]> {
   try {
@@ -101,7 +102,7 @@ export async function getRecentFeedback(limit: number = 50): Promise<typeof resp
 }
 
 /**
- * جلب feedbacks بتقييم منخفض (للتعلم من الأخطاء)
+ *  feedbacks   (  )
  */
 export async function getLowRatedFeedback(limit: number = 20): Promise<typeof responseFeedback.$inferSelect[]> {
   try {
@@ -121,7 +122,7 @@ export async function getLowRatedFeedback(limit: number = 20): Promise<typeof re
 }
 
 /**
- * جلب feedbacks بتقييم عالي (للتعلم من النجاحات)
+ *  feedbacks   (  )
  */
 export async function getHighRatedFeedback(limit: number = 20): Promise<typeof responseFeedback.$inferSelect[]> {
   try {
@@ -145,7 +146,7 @@ export async function getHighRatedFeedback(limit: number = 20): Promise<typeof r
 // ============================================================================
 
 /**
- * تحليل إحصائيات الـ feedback
+ *    feedback
  */
 export async function getFeedbackStats(): Promise<FeedbackStats> {
   try {
@@ -160,7 +161,7 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
       topPraises: [],
     };
 
-    // إجمالي الـ feedback ومتوسط التقييم
+    //   feedback  
     const basicStats = await db
       .select({
         total: count(),
@@ -171,32 +172,32 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
     const total = basicStats[0]?.total || 0;
     const avgRating = Number(basicStats[0]?.avgRating) || 0;
 
-    // نسبة المفيد
+    //  
     const helpfulCount = await db
       .select({ count: count() })
       .from(responseFeedback)
       .where(eq(responseFeedback.wasHelpful, 'yes'));
 
-    // نسبة الدقيق
+    //  
     const accurateCount = await db
       .select({ count: count() })
       .from(responseFeedback)
       .where(eq(responseFeedback.wasAccurate, 'yes'));
 
-    // نسبة المفهوم
+    //  
     const understandableCount = await db
       .select({ count: count() })
       .from(responseFeedback)
       .where(eq(responseFeedback.wasUnderstandable, 'yes'));
 
-    // جلب التعليقات السلبية للتحليل
+    //    
     const negativeComments = await db
       .select({ comment: responseFeedback.comment })
       .from(responseFeedback)
       .where(sql`${responseFeedback.rating} <= 2 AND ${responseFeedback.comment} IS NOT NULL`)
       .limit(10);
 
-    // جلب التعليقات الإيجابية
+    //   
     const positiveComments = await db
       .select({ comment: responseFeedback.comment })
       .from(responseFeedback)
@@ -227,12 +228,12 @@ export async function getFeedbackStats(): Promise<FeedbackStats> {
 }
 
 /**
- * تحليل الـ feedback لاستخراج نقاط القوة والضعف
+ *   feedback    
  */
 export async function analyzeFeedback(): Promise<FeedbackAnalysis> {
   const stats = await getFeedbackStats();
 
-  // تحديد مستوى الرضا العام
+  //    
   let overallSatisfaction: FeedbackAnalysis['overallSatisfaction'];
   if (stats.averageRating >= 4.5) overallSatisfaction = 'excellent';
   else if (stats.averageRating >= 3.5) overallSatisfaction = 'good';
@@ -240,26 +241,26 @@ export async function analyzeFeedback(): Promise<FeedbackAnalysis> {
   else if (stats.averageRating >= 1.5) overallSatisfaction = 'poor';
   else overallSatisfaction = 'critical';
 
-  // استخراج نقاط القوة
+  //   
   const strengths: string[] = [];
-  if (stats.helpfulPercentage >= 70) strengths.push('الردود مفيدة للمستخدمين');
-  if (stats.accuratePercentage >= 70) strengths.push('التحليلات دقيقة');
-  if (stats.understandablePercentage >= 70) strengths.push('الردود واضحة ومفهومة');
-  if (stats.averageRating >= 4) strengths.push('رضا عام مرتفع');
+  if (stats.helpfulPercentage >= 70) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.12.f8a62bdb', 'ar'));
+  if (stats.accuratePercentage >= 70) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.11.8305cb2f', 'ar'));
+  if (stats.understandablePercentage >= 70) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.10.759469c8', 'ar'));
+  if (stats.averageRating >= 4) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.9.a7e5cb06', 'ar'));
 
-  // استخراج نقاط الضعف
+  //   
   const weaknesses: string[] = [];
-  if (stats.helpfulPercentage < 50) weaknesses.push('الردود ليست مفيدة بما فيه الكفاية');
-  if (stats.accuratePercentage < 50) weaknesses.push('مشاكل في دقة التحليل');
-  if (stats.understandablePercentage < 50) weaknesses.push('الردود غير واضحة');
-  if (stats.averageRating < 3) weaknesses.push('رضا عام منخفض');
+  if (stats.helpfulPercentage < 50) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.8.2a0dd52c', 'ar'));
+  if (stats.accuratePercentage < 50) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.7.86904410', 'ar'));
+  if (stats.understandablePercentage < 50) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.6.7afd5c8b', 'ar'));
+  if (stats.averageRating < 3) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.5.9c70c0b4', 'ar'));
 
-  // توصيات للتحسين
+  //  
   const recommendations: string[] = [];
-  if (stats.helpfulPercentage < 70) recommendations.push('تحسين جودة الأسباب والتفسيرات');
-  if (stats.accuratePercentage < 70) recommendations.push('تحسين دقة جلب البيانات');
-  if (stats.understandablePercentage < 70) recommendations.push('تبسيط اللغة والهيكل');
-  if (stats.topIssues.length > 0) recommendations.push('معالجة الشكاوى المتكررة');
+  if (stats.helpfulPercentage < 70) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.4.0569e9d8', 'ar'));
+  if (stats.accuratePercentage < 70) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.3.95c57c79', 'ar'));
+  if (stats.understandablePercentage < 70) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.2.830fa966', 'ar'));
+  if (stats.topIssues.length > 0) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.1.a2f23a1c', 'ar'));
 
   return {
     overallSatisfaction,
@@ -270,7 +271,7 @@ export async function analyzeFeedback(): Promise<FeedbackAnalysis> {
 }
 
 /**
- * جلب feedback حسب الموضوع
+ *  feedback  
  */
 export async function getFeedbackByTopic(topic: string): Promise<typeof responseFeedback.$inferSelect[]> {
   try {
@@ -290,7 +291,7 @@ export async function getFeedbackByTopic(topic: string): Promise<typeof response
 }
 
 /**
- * جلب feedback حسب النمط المعرفي
+ *  feedback   
  */
 export async function getFeedbackByCognitivePattern(pattern: string): Promise<typeof responseFeedback.$inferSelect[]> {
   try {

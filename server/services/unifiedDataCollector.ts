@@ -1,6 +1,6 @@
 /**
  * UNIFIED DATA COLLECTOR - Accumulative Memory Edition (V4.5)
- * يجمع من المصادر، يحول البيانات لمتجهات فيزيائية، ويخزنها في الذاكرة التراكمية فوراً.
+ *            .
  */
 
 import { fetchGoogleNewsByCountry, fetchGoogleNewsByTopic } from './googleRssService';
@@ -66,14 +66,14 @@ const CACHE_TTL = 15 * 60 * 1000;
  */
 function detectTopic(text: string): TopicType {
   const lowerText = text.toLowerCase();
-  if (/health|virus|doctor|medical|hospital|صحة|طبيب|فيروس/i.test(lowerText)) return "health";
-  if (/economy|market|finance|trading|stock|اقتصاد|سوق|مالية|تداول/i.test(lowerText)) return "economy";
-  if (/politics|election|government|parliament|سياسة|انتخابات|حكومة/i.test(lowerText)) return "politics";
-  if (/conflict|war|army|attack|clash|صراع|حرب|جيش|هجوم/i.test(lowerText)) return "conflict";
-  if (/environment|climate|green|nature|بيئة|مناخ|طبيعة/i.test(lowerText)) return "environment";
-  if (/technology|software|ai|digital|تقنية|برمجيات|رقمي/i.test(lowerText)) return "technology";
-  if (/culture|art|music|movie|heritage|ثقافة|فن|موسيقى|تراث/i.test(lowerText)) return "culture";
-  if (/society|people|community|social|مجتمع|ناس|اجتماعي/i.test(lowerText)) return "society";
+  if (/health|virus|doctor|medical|hospital|||/i.test(lowerText)) return "health";
+  if (/economy|market|finance|trading|stock||||/i.test(lowerText)) return "economy";
+  if (/politics|election|government|parliament|||/i.test(lowerText)) return "politics";
+  if (/conflict|war|army|attack|clash||||/i.test(lowerText)) return "conflict";
+  if (/environment|climate|green|nature|||/i.test(lowerText)) return "environment";
+  if (/technology|software|ai|digital|||/i.test(lowerText)) return "technology";
+  if (/culture|art|music|movie|heritage||||/i.test(lowerText)) return "culture";
+  if (/society|people|community|social|||/i.test(lowerText)) return "society";
   return "other";
 }
 

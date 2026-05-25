@@ -158,7 +158,7 @@ export const appRouter = router({
     }),
   }),
 
-  // التحليل السريع للهيدلاينز
+  //   
   quickAnalysis: router({
     analyze: publicProcedure
       .input(z.object({ headline: z.string() }))

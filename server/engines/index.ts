@@ -2,17 +2,17 @@
  * AmalSense Emotional Intelligence Engine
  * 
  * Core Engines:
- * 0. Emotional Memory - يخزن التحليلات عبر الزمن
- * 1. Context Classification - يفهم السياق قبل التحليل
- * 2. Emotion Fusion - يدمج التحليل العاطفي من مصادر متعددة
- * 3. Emotional Dynamics - يحسب الزخم والتقلب والاتجاه
- * 4. Driver Detection - يكتشف أسباب المشاعر
- * 5. Explainable Insight - يولد تفسيرات بشرية
+ * 0. Emotional Memory -    
+ * 1. Context Classification -    
+ * 2. Emotion Fusion -      
+ * 3. Emotional Dynamics -    
+ * 4. Driver Detection -   
+ * 5. Explainable Insight -   
  * 
  * Support Systems:
- * - Source Weighting - أوزان المصادر
- * - Confidence Propagation - توريث الثقة
- * - Feedback Store - تخزين التغذية الراجعة
+ * - Source Weighting -  
+ * - Confidence Propagation -  
+ * - Feedback Store -   
  * 
  * Unified API: analyze({ text, country, userType })
  */

@@ -1,7 +1,7 @@
 /**
  * Health Dashboard - System Monitoring and Health Checks
  * 
- * نظام مراقبة صحة النظام وعرض المقاييس الحية
+ *       
  */
 
 import { getFeedbackStats } from '../engines/feedbackStore';

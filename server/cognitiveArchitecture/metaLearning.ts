@@ -1,10 +1,11 @@
+import { t } from "../_core/i18n";
 /**
- * Meta-Learning - التعلم من الأنماط
+ * Meta-Learning -   
  * 
- * الحلقة الثالثة في نظام التطور الذاتي
- * النظام يتعلم من أخطائه ونجاحاته ويعدّل قواعده
+ *      
+ *       
  * 
- * "النظام يتطور لأنه يشك في نفسه"
+ * "     "
  */
 
 import { getDb } from '../_core/db';
@@ -61,20 +62,20 @@ export interface WeeklyReport {
 // ============================================================================
 
 /**
- * تحليل الأنماط من الـ feedback والتقييم الذاتي
- * يكتشف نقاط الضعف والقوة المتكررة
+ *     feedback  
+ *     
  */
 export async function detectPatterns(): Promise<LearningInsight[]> {
   const insights: LearningInsight[] = [];
 
-  // جلب بيانات التحليل
+  //   
   const stats = getFeedbackStats();
   const selfEvalSummary = await getSelfEvaluationSummary();
   const lowFeedback = getLowRatedFeedback();
   // const highRatedFeedback = getHighRatedFeedback(); // Not used currently
   // const lowScoringEvals = await getLowScoringEvaluations(20); // Not used currently
 
-  // 1. اكتشاف نقاط الضعف من الـ feedback
+  // 1.      feedback
   // Note: helpfulPercentage is not in stats currently, we might need to calculate it or mock it
   const helpfulCount = stats.recentFeedback.filter(f => f.sentiment === 'positive').length;
   const helpfulPercentage = stats.totalFeedback > 0 ? (helpfulCount / stats.totalFeedback) * 100 : 100;
@@ -82,10 +83,10 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
   if (helpfulPercentage < 50) {
     insights.push({
       patternType: 'weakness',
-      description: 'الردود ليست مفيدة بما فيه الكفاية للمستخدمين',
+      description: t('auto.cognitiveArchitecture_metaLearning.16.6d5ce121', 'ar'),
       evidenceCount: stats.totalFeedback,
       confidence: 80,
-      suggestedAction: 'تحسين جودة الأسباب والتفسيرات في الردود',
+      suggestedAction: t('auto.cognitiveArchitecture_metaLearning.15.a7757583', 'ar'),
     });
   }
 
@@ -93,25 +94,25 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
   if (stats.averageRating < 3.0) {
     insights.push({
       patternType: 'weakness',
-      description: 'مشاكل في دقة التحليل',
+      description: t('auto.cognitiveArchitecture_metaLearning.14.86904410', 'ar'),
       evidenceCount: stats.totalFeedback,
       confidence: 80,
-      suggestedAction: 'تحسين Query Builder لجلب بيانات أكثر صلة',
+      suggestedAction: t('auto.cognitiveArchitecture_metaLearning.13.5cedb2d9', 'ar'),
     });
   }
 
-  // 2. اكتشاف نقاط الضعف من التقييم الذاتي
+  // 2.      
   for (const weakness of selfEvalSummary.commonWeaknesses) {
     insights.push({
       patternType: 'weakness',
       description: weakness,
-      evidenceCount: 10, // تقدير
+      evidenceCount: 10, // 
       confidence: 70,
       suggestedAction: getActionForWeakness(weakness),
     });
   }
 
-  // 3. اكتشاف نقاط القوة
+  // 3.   
   for (const strength of selfEvalSummary.commonStrengths) {
     insights.push({
       patternType: 'strength',
@@ -121,7 +122,7 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
     });
   }
 
-  // 4. تحليل المواضيع الضعيفة من التقييمات المنخفضة
+  // 4.      
   const topicWeaknesses: Record<string, number> = {};
   for (const feedback of lowFeedback) {
     if (feedback.topic) {
@@ -134,10 +135,10 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
       insights.push({
         patternType: 'weakness',
         topic,
-        description: `أداء ضعيف في موضوع: ${topic}`,
+        description: `   : ${topic}`,
         evidenceCount: count,
         confidence: Math.min(90, 50 + count * 10),
-        suggestedAction: `تحسين جلب البيانات والتحليل لموضوع ${topic}`,
+        suggestedAction: `     ${topic}`,
       });
     }
   }
@@ -146,18 +147,17 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
 }
 
 /**
- * الحصول على إجراء مقترح لنقطة ضعف
+ *      
  */
 function getActionForWeakness(weakness: string): string {
   const actionMap: Record<string, string> = {
-    'الأسباب من قوالب ثابتة وليس من البيانات': 'ربط Why Layer بالبيانات الحقيقية',
-    'سرد بدون قرار واضح': 'تحسين Decision Engine ليحسم ويرجح',
-    'مصادر قليلة للبيانات': 'توسيع نطاق البحث ليشمل مصادر أكثر',
-    'عناوين قليلة متعلقة بالموضوع': 'تحسين Query Builder',
-    'ثقة منخفضة في التحليل': 'جمع المزيد من البيانات قبل الإجابة',
+    low_confidence: 'Increase confidence calibration and require stronger evidence.',
+    insufficient_data: 'Collect more source data before answering.',
+    weak_causality: 'Strengthen causal grounding and evidence links.',
+    unclear_language: 'Improve response clarity and remove ambiguous phrasing.',
+    missing_context: 'Add contextual binding before final response generation.',
   };
-
-  return actionMap[weakness] || 'مراجعة وتحسين هذا الجانب';
+  return actionMap[weakness] || t('auto.cognitiveArchitecture_metaLearning.7.b21fd726', 'ar');
 }
 
 // ============================================================================
@@ -165,7 +165,7 @@ function getActionForWeakness(weakness: string): string {
 // ============================================================================
 
 /**
- * حفظ insight جديد
+ *  insight 
  */
 export async function saveLearningInsight(insight: LearningInsight): Promise<{ success: boolean }> {
   try {
@@ -191,7 +191,7 @@ export async function saveLearningInsight(insight: LearningInsight): Promise<{ s
 }
 
 /**
- * جلب الـ insights النشطة
+ *   insights 
  */
 export async function getActiveInsights(): Promise<any[]> {
   try {
@@ -210,7 +210,7 @@ export async function getActiveInsights(): Promise<any[]> {
 }
 
 /**
- * تفعيل insight
+ *  insight
  */
 export async function activateInsight(id: number): Promise<{ success: boolean }> {
   try {
@@ -234,7 +234,7 @@ export async function activateInsight(id: number): Promise<{ success: boolean }>
 // ============================================================================
 
 /**
- * إضافة قاعدة استدلال جديدة
+ *    
  */
 export async function addReasoningRule(rule: ReasoningRule): Promise<{ success: boolean }> {
   try {
@@ -258,7 +258,7 @@ export async function addReasoningRule(rule: ReasoningRule): Promise<{ success: 
 }
 
 /**
- * جلب القواعد النشطة
+ *   
  */
 export async function getActiveRules(): Promise<any[]> {
   try {
@@ -277,14 +277,14 @@ export async function getActiveRules(): Promise<any[]> {
 }
 
 /**
- * تحديث وزن قاعدة بناءً على نجاحها
+ *      
  */
 export async function updateRuleWeight(ruleName: string, success: boolean): Promise<void> {
   try {
     const db = await getDb();
     if (!db) return;
 
-    // جلب القاعدة الحالية
+    //   
     const rules = await db
       .select()
       .from(reasoningRules)
@@ -297,12 +297,12 @@ export async function updateRuleWeight(ruleName: string, success: boolean): Prom
     const newTimesApplied = (rule.timesApplied || 0) + 1;
     const currentSuccessRate = rule.successRate || 50;
 
-    // حساب معدل النجاح الجديد
+    //    
     const newSuccessRate = Math.round(
       (currentSuccessRate * (rule.timesApplied || 0) + (success ? 100 : 0)) / newTimesApplied
     );
 
-    // تعديل الوزن بناءً على معدل النجاح
+    //      
     let newWeight = rule.weight;
     if (newSuccessRate > 70) {
       newWeight = Math.min(100, rule.weight + 5);
@@ -328,47 +328,47 @@ export async function updateRuleWeight(ruleName: string, success: boolean): Prom
 // ============================================================================
 
 /**
- * توليد تقرير أسبوعي للتأمل الذاتي
- * Machine Introspection: الآلة تتأمل نفسها
+ *     
+ * Machine Introspection:   
  */
 export async function generateWeeklyReport(): Promise<WeeklyReport> {
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  // جلب البيانات
+  //  
   const stats = getFeedbackStats();
   const selfEvalSummary = await getSelfEvaluationSummary();
   const patterns = await detectPatterns();
 
-  // تصنيف الأنماط
+  //  
   const weaknesses = patterns.filter(p => p.patternType === 'weakness');
   const strengths = patterns.filter(p => p.patternType === 'strength');
 
-  // استخراج المواضيع الضعيفة
+  //   
   const dataGapTopics = weaknesses
-    .filter(w => w.topic && w.description.includes('بيانات'))
+    .filter(w => w.topic && w.description.includes(t('auto.cognitiveArchitecture_metaLearning.6.e0ac9792', 'ar')))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
 
   const weakInterpretationTopics = weaknesses
-    .filter(w => w.topic && w.description.includes('تحليل'))
+    .filter(w => w.topic && w.description.includes(t('auto.cognitiveArchitecture_metaLearning.5.6c1732f8', 'ar')))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
 
-  // توليد التوصيات
+  //  
   const recommendedAdjustments: string[] = [];
 
   if (selfEvalSummary.averageDataSufficiency < 50) {
-    recommendedAdjustments.push('تحسين Query Builder لجلب بيانات أكثر');
+    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.4.ca33e81f', 'ar'));
   }
   if (selfEvalSummary.averageCausesFromData < 50) {
-    recommendedAdjustments.push('ربط Why Layer بالبيانات الحقيقية');
+    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.3.f19becea', 'ar'));
   }
   if (selfEvalSummary.averageAnalysisVsNarration < 50) {
-    recommendedAdjustments.push('تحسين Decision Engine ليحسم ويرجح');
+    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.2.d790eac7', 'ar'));
   }
   if (stats.averageRating < 3.5) {
-    recommendedAdjustments.push('تحسين جودة الردود لتكون أكثر فائدة');
+    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.1.01972321', 'ar'));
   }
 
   const helpfulCount = stats.recentFeedback.filter(f => f.sentiment === 'positive').length;
@@ -382,26 +382,26 @@ export async function generateWeeklyReport(): Promise<WeeklyReport> {
     averageSelfScore: selfEvalSummary.averageOverall,
     topFailures: weaknesses.slice(0, 10).map(w => w.description),
     topSuccesses: strengths.slice(0, 10).map(s => s.description),
-    confusingQuestionTypes: [], // يمكن إضافة تحليل أعمق لاحقاً
+    confusingQuestionTypes: [], //     
     dataGapTopics,
     weakInterpretationTopics,
     keyInsights: [
-      `متوسط الثقة: ${selfEvalSummary.averageConfidence}%`,
-      `متوسط كفاية البيانات: ${selfEvalSummary.averageDataSufficiency}%`,
-      `متوسط الأسباب من البيانات: ${selfEvalSummary.averageCausesFromData}%`,
-      `نسبة الردود المفيدة: ${helpfulPercentage}%`,
+      ` : ${selfEvalSummary.averageConfidence}%`,
+      `  : ${selfEvalSummary.averageDataSufficiency}%`,
+      `   : ${selfEvalSummary.averageCausesFromData}%`,
+      `  : ${helpfulPercentage}%`,
     ],
     recommendedAdjustments,
   };
 
-  // حفظ التقرير
+  //  
   await saveWeeklyReport(report);
 
   return report;
 }
 
 /**
- * حفظ التقرير الأسبوعي
+ *   
  */
 async function saveWeeklyReport(report: WeeklyReport): Promise<void> {
   try {
@@ -428,7 +428,7 @@ async function saveWeeklyReport(report: WeeklyReport): Promise<void> {
 }
 
 /**
- * جلب آخر تقرير أسبوعي
+ *    
  */
 export async function getLatestWeeklyReport(): Promise<any | null> {
   try {
@@ -453,10 +453,10 @@ export async function getLatestWeeklyReport(): Promise<any | null> {
 // ============================================================================
 
 /**
- * تشغيل حلقة التعلم الكاملة
- * 1. اكتشاف الأنماط
- * 2. حفظ الـ insights
- * 3. اقتراح تعديلات على القواعد
+ *    
+ * 1.  
+ * 2.   insights
+ * 3.    
  */
 export async function runLearningLoop(): Promise<{
   patternsDetected: number;
@@ -465,11 +465,11 @@ export async function runLearningLoop(): Promise<{
 }> {
   console.log('[MetaLearning] Starting learning loop...');
 
-  // 1. اكتشاف الأنماط
+  // 1.  
   const patterns = await detectPatterns();
   console.log(`[MetaLearning] Detected ${patterns.length} patterns`);
 
-  // 2. حفظ الـ insights الجديدة
+  // 2.   insights 
   let insightsSaved = 0;
   for (const pattern of patterns) {
     const result = await saveLearningInsight(pattern);
@@ -477,7 +477,7 @@ export async function runLearningLoop(): Promise<{
   }
   console.log(`[MetaLearning] Saved ${insightsSaved} insights`);
 
-  // 3. اقتراح تعديلات على القواعد (يمكن توسيعها لاحقاً)
+  // 3.     (  )
   const rulesAdjusted = 0;
 
   console.log('[MetaLearning] Learning loop completed');

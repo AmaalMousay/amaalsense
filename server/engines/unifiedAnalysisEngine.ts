@@ -228,7 +228,7 @@ export async function analyzeForCountryDetail(
     try {
       const vectorPrompt = eventVectorToPrompt(vector, language);
       const systemPrompt = language === 'ar'
-        ? `أنت محلل مشاعر جماعية. قدم ملخصاً موجزاً (3-4 جمل) عن الحالة العاطفية في ${countryName} بناءً على البيانات التالية. كن محدداً واذكر أسباب حقيقية من العناوين.`
+        ? `   .    (3-4 )     ${countryName}    .       .`
         : `You are a collective emotion analyst. Provide a brief summary (3-4 sentences) about the emotional state in ${countryName} based on the following data. Be specific and cite real reasons from the headlines.`;
       
       aiSummary = await smartChat(systemPrompt, vectorPrompt, 'emotion_analysis');

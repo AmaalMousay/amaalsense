@@ -1,12 +1,12 @@
 /**
  * Pipeline Router - ASI Accumulative Edition (MIGRATE V3.0)
- * تم دمج وظائف الضغط والناقلات مع نظام الذاكرة التراكمية (Learning Store)
- * هذا الملف يعالج كافة طلبات الواجهة الأمامية دون الحاجة لملفات خارجية محذوفة.
+ *          (Learning Store)
+ *            .
  */
 
 import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
-// استيراد المحرك المركزي الجديد
+//    
 import {
   storeAnalysisRecord,
   getStoreStats,
@@ -17,8 +17,8 @@ import {
 
 export const pipelineRouter = router({
   /**
-   * معالجة خبر واحد (Single News Article)
-   * الوظيفة: تحويل النص إلى متجه عاطفي ودمجه في الذاكرة التراكمية
+   *    (Single News Article)
+   * :         
    */
   processNews: publicProcedure
     .input(z.object({
@@ -30,12 +30,12 @@ export const pipelineRouter = router({
     .mutation(async ({ input }) => {
       const startTime = Date.now();
 
-      // إرسال البيانات للمحرك التراكمي
+      //    
       const result = storeAnalysisRecord(
         { topic: input.sourceName, newsText: input.newsText },
         { source: input.sourceId, country: input.countryCode },
         {
-          emotionalIntensity: 0.5, // يتم تحديثها آلياً داخل الستور
+          emotionalIntensity: 0.5, //     
           valence: 0,
           affectiveVector: { joy: 0, fear: 0, anger: 0, hope: 0 }
         },
@@ -46,12 +46,12 @@ export const pipelineRouter = router({
         success: true,
         eventVector: result,
         duration: Date.now() - startTime,
-        similarEvents: [], // يتم جلبها عبر دالة searchSimilar عند الحاجة
+        similarEvents: [], //     searchSimilar  
       };
     }),
 
   /**
-   * معالجة الدفعات (Batch Processing)
+   *   (Batch Processing)
    */
   processBatch: publicProcedure
     .input(z.object({
@@ -82,12 +82,12 @@ export const pipelineRouter = router({
     }),
 
   /**
-   * البحث عن التشابه (Similarity Search)
-   * تستخدم للبحث في الذاكرة التراكمية عن أحداث مشابهة للحدث الحالي
+   *    (Similarity Search)
+   *          
    */
   searchSimilar: publicProcedure
     .input(z.object({
-      vectorId: z.string(), // أو topic
+      vectorId: z.string(), //  topic
       topK: z.number().optional().default(5),
     }))
     .query(({ input }) => {
@@ -99,15 +99,15 @@ export const pipelineRouter = router({
         results: insight.history ? insight.history.slice(0, input.topK).map(h => ({
           id: h.id,
           topic: h.summary,
-          similarity: 0.85, // قيمة افتراضية للتشابه النوعي
+          similarity: 0.85, //    
           createdAt: h.timestamp,
         })) : [],
       };
     }),
 
   /**
-   * جلب إحصائيات قاعدة البيانات والناقلات
-   * الوظيفة: تغذية الواجهة الأمامية بالبيانات الرقمية للداشبورد
+   *     
+   * :      
    */
   getStats: publicProcedure
     .query(() => {
@@ -118,7 +118,7 @@ export const pipelineRouter = router({
           totalVectors: dbStats.totalRecords,
           storageSize: dbStats.storageSize,
           topicDistribution: dbStats.topicDistribution,
-          regionDistribution: {}, // يتم حسابه من الـ metadata
+          regionDistribution: {}, //     metadata
           averageIntensity: 0.55,
           averagePolarity: 0.1,
         },
@@ -131,7 +131,7 @@ export const pipelineRouter = router({
     }),
 
   /**
-   * فحص صحة النظام (Health Status)
+   *    (Health Status)
    */
   getHealth: publicProcedure
     .query(() => {
@@ -149,7 +149,7 @@ export const pipelineRouter = router({
     }),
 
   /**
-   * جلب إعدادات المحرك (Configuration)
+   *    (Configuration)
    */
   getConfig: publicProcedure
     .query(() => {

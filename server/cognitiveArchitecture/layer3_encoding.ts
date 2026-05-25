@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Layer 3: NLP Preprocessing (Encoding)
  * 
@@ -135,11 +137,11 @@ function cleanText(text: string): string {
   cleaned = cleaned.replace(/@\S+/g, '');
   
   // Fix Arabic punctuation
-  cleaned = cleaned.replace(/،/g, '،');
-  cleaned = cleaned.replace(/؟/g, '؟');
+  cleaned = cleaned.replace(/\u060C/g, ',');
+  cleaned = cleaned.replace(/\u061F/g, '?');
   
   // Remove repeated punctuation
-  cleaned = cleaned.replace(/([.!?،؟])\1+/g, '$1');
+  cleaned = cleaned.replace(/([.!?])\1+/g, '$1');
   
   // Remove emojis (keep text clean)
   cleaned = cleaned.replace(/[\uD83C-\uDBFF\uDC00-\uDFFF]+/g, '');
@@ -156,24 +158,24 @@ function normalizeText(text: string): string {
   let normalized = text;
   
   // Normalize Arabic characters
-  // Alef variations → ا
-  normalized = normalized.replace(/[أإآ]/g, 'ا');
+  // Alef variations → 
+  normalized = normalized.replace(/[\u0623\u0625\u0622\u0627]/g, '\u0627');
   
-  // Taa marbuta → ه in some contexts
-  // normalized = normalized.replace(/ة/g, 'ه');
+  // Taa marbuta →  in some contexts
+  // normalized = normalized.replace(/\u0629/g, '\u0647');
   
   // Yaa variations
-  normalized = normalized.replace(/ى/g, 'ي');
+  normalized = normalized.replace(/\u0649/g, '\u064A');
   
   // Remove tatweel (kashida)
-  normalized = normalized.replace(/ـ/g, '');
+  normalized = normalized.replace(/\u0640/g, '');
   
   // Remove diacritics (tashkeel)
   normalized = normalized.replace(/[\u064B-\u065F]/g, '');
   
   // Normalize numbers
   // Arabic-Indic to Western
-  const arabicNums = '٠١٢٣٤٥٦٧٨٩';
+  const arabicNums = '\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669';
   const westernNums = '0123456789';
   for (let i = 0; i < 10; i++) {
     normalized = normalized.replace(new RegExp(arabicNums[i], 'g'), westernNums[i]);
@@ -187,7 +189,7 @@ function normalizeText(text: string): string {
  */
 function tokenize(text: string): string[] {
   // Split on whitespace and punctuation
-  const tokens = text.split(/[\s،؟.!,?;:]+/);
+  const tokens = text.split(/[\s.!,?;:]+/);
   
   // Filter empty tokens and very short ones
   return tokens.filter(t => t.length > 1);
@@ -227,19 +229,19 @@ function detectLanguage(text: string): DetectedLanguage {
   
   if (code === 'ar') {
     // Egyptian markers
-    if (/ده|دي|كده|ازاي|عايز/.test(text)) {
+    if (/||||/.test(text)) {
       dialect = 'egyptian';
     }
     // Gulf markers
-    else if (/شلون|وايد|زين|خوش/.test(text)) {
+    else if (/|||/.test(text)) {
       dialect = 'gulf';
     }
     // Levantine markers
-    else if (/هيك|كيف|شو|هلق/.test(text)) {
+    else if (/|||/.test(text)) {
       dialect = 'levantine';
     }
     // Maghrebi markers
-    else if (/كيفاش|واش|بزاف/.test(text)) {
+    else if (/||/.test(text)) {
       dialect = 'maghrebi';
     }
     // Default to MSA
@@ -259,18 +261,18 @@ function extractEntities(text: string): Entity[] {
   
   // Currency patterns
   const currencyPatterns = [
-    { pattern: /دولار|USD|\$/gi, type: 'currency' as EntityType },
-    { pattern: /يورو|EUR|€/gi, type: 'currency' as EntityType },
-    { pattern: /جنيه|EGP/gi, type: 'currency' as EntityType },
-    { pattern: /ريال|SAR/gi, type: 'currency' as EntityType },
-    { pattern: /دينار|LYD/gi, type: 'currency' as EntityType },
+    { pattern: /|USD|\$/gi, type: 'currency' as EntityType },
+    { pattern: /|EUR|€/gi, type: 'currency' as EntityType },
+    { pattern: /|EGP/gi, type: 'currency' as EntityType },
+    { pattern: /|SAR/gi, type: 'currency' as EntityType },
+    { pattern: /|LYD/gi, type: 'currency' as EntityType },
   ];
   
   // Commodity patterns
   const commodityPatterns = [
-    { pattern: /ذهب|gold/gi, type: 'commodity' as EntityType },
-    { pattern: /فضة|silver/gi, type: 'commodity' as EntityType },
-    { pattern: /نفط|بترول|oil/gi, type: 'commodity' as EntityType },
+    { pattern: /|gold/gi, type: 'commodity' as EntityType },
+    { pattern: /|silver/gi, type: 'commodity' as EntityType },
+    { pattern: /||oil/gi, type: 'commodity' as EntityType },
   ];
   
   // Number patterns
@@ -311,27 +313,27 @@ function extractEntities(text: string): Entity[] {
 function extractKeywords(tokens: string[]): Keyword[] {
   const keywordCategories: Record<string, { words: string[]; weight: number }> = {
     economic: {
-      words: ['اقتصاد', 'سوق', 'تداول', 'استثمار', 'أسهم', 'سندات', 'فائدة', 'تضخم', 'ركود', 'نمو'],
+      words: [t('auto.cognitiveArchitecture_layer3_encoding.74.6d38c2ea', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.73.16c73be6', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.72.7b2d8f16', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.71.2efcd729', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.70.866ae2e3', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.69.5f94a3f8', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.68.c09eeb5c', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.67.8b8e7c7f', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.66.8009605b', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.65.25e94d3e', 'ar')],
       weight: 0.9
     },
     financial: {
-      words: ['دولار', 'ذهب', 'فضة', 'نفط', 'عملة', 'صرف', 'بنك', 'مركزي', 'فيدرالي'],
+      words: [t('auto.cognitiveArchitecture_layer3_encoding.64.23163ab2', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.63.d76ed4f3', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.62.25b08751', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.61.02782624', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.60.db2f097a', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.59.efb0540f', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.58.f879f70c', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.57.13b18cf0', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.56.a6f9d332', 'ar')],
       weight: 0.9
     },
     emotional: {
-      words: ['خوف', 'أمل', 'قلق', 'تفاؤل', 'تشاؤم', 'غضب', 'حيرة', 'ثقة', 'شك'],
+      words: [t('auto.cognitiveArchitecture_layer3_encoding.55.1cf83ec0', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.54.60cd6c3d', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.53.a24a5460', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.52.e01009da', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.51.bd853fe0', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.50.8e7bd750', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.49.c50b9879', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.48.d4c54e2f', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.47.189c48a2', 'ar')],
       weight: 0.8
     },
     decision: {
-      words: ['شراء', 'بيع', 'انتظار', 'قرار', 'توصية', 'نصيحة', 'رأي'],
+      words: [t('auto.cognitiveArchitecture_layer3_encoding.46.c48e5f78', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.45.bf3a3673', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.44.95bef856', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.43.2c473ed6', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.42.d906ee67', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.41.7f6eeca0', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.40.4de47ee7', 'ar')],
       weight: 0.85
     },
     temporal: {
-      words: ['الآن', 'اليوم', 'غداً', 'أسبوع', 'شهر', 'سنة', 'مستقبل', 'ماضي'],
+      words: [t('auto.cognitiveArchitecture_layer3_encoding.39.7b94973f', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.38.b76444a3', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.37.d5da7943', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.36.b9028253', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.35.492a5598', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.34.f91a7c98', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.33.7bab3f86', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.32.6e7ac8da', 'ar')],
       weight: 0.6
     },
     media: {
-      words: ['إعلام', 'أخبار', 'صحافة', 'تقرير', 'تحليل', 'رأي', 'مقال'],
+      words: [t('auto.cognitiveArchitecture_layer3_encoding.31.c1d6b74e', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.30.71960207', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.29.a3104b1b', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.28.74d6e2cc', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.27.6c1732f8', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.26.4de47ee7', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.25.8102193b', 'ar')],
       weight: 0.7
     }
   };
@@ -358,9 +360,9 @@ function extractKeywords(tokens: string[]): Keyword[] {
  * Detect sentiment hints from text
  */
 function detectSentiment(text: string): SentimentHint {
-  const positiveMarkers = ['أمل', 'تفاؤل', 'ارتفاع', 'نمو', 'تحسن', 'إيجابي', 'جيد', 'ممتاز', 'فرصة'];
-  const negativeMarkers = ['خوف', 'قلق', 'انخفاض', 'تراجع', 'سلبي', 'سيء', 'خطر', 'أزمة', 'انهيار'];
-  const uncertaintyMarkers = ['ربما', 'قد', 'محتمل', 'غير واضح', 'حيرة', 'تردد'];
+  const positiveMarkers = [t('auto.cognitiveArchitecture_layer3_encoding.24.60cd6c3d', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.23.e01009da', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.22.a6f465eb', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.21.25e94d3e', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.20.ab4c7e3d', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.19.3c9380a2', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.18.c4242fc2', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.17.ab5f38a7', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.16.3f289306', 'ar')];
+  const negativeMarkers = [t('auto.cognitiveArchitecture_layer3_encoding.15.1cf83ec0', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.14.a24a5460', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.13.e990bd85', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.12.98df46fb', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.11.a5ed0453', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.10.f4fc67ca', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.9.5349080f', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.8.38a8a76e', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.7.417cc6aa', 'ar')];
+  const uncertaintyMarkers = [t('auto.cognitiveArchitecture_layer3_encoding.6.5aaaa319', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.5.5230cf99', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.4.74553005', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.3.c7e5e248', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.2.c50b9879', 'ar'), t('auto.cognitiveArchitecture_layer3_encoding.1.01eb31df', 'ar')];
   
   let positiveCount = 0;
   let negativeCount = 0;
@@ -416,11 +418,11 @@ function detectSentiment(text: string): SentimentHint {
  */
 function analyzeStructure(text: string): TextStructure {
   // Detect question
-  const isQuestion = /[؟?]/.test(text) || 
-    /^(هل|ما|ماذا|كيف|لماذا|متى|أين|من|كم|أي)/.test(text);
+  const isQuestion = /[?]/.test(text) || 
+    /^(|||||||||)/.test(text);
   
   // Detect command
-  const isCommand = /^(اشتر|بع|انتظر|افعل|لا تفعل)/.test(text);
+  const isCommand = /^(|||| )/.test(text);
   
   // Detect exclamation
   const isExclamation = /!/.test(text);
@@ -433,16 +435,16 @@ function analyzeStructure(text: string): TextStructure {
   else type = 'statement';
   
   // Detect negation
-  const hasNegation = /لا |ليس|لم |لن |ما |غير |بدون/.test(text);
+  const hasNegation = / || | | | |/.test(text);
   
   // Detect comparison
-  const hasComparison = /أفضل|أسوأ|أكثر|أقل|مقارنة|بين|أم |أو /.test(text);
+  const hasComparison = /|||||| | /.test(text);
   
   // Detect condition
-  const hasCondition = /إذا|لو |عندما|في حال|متى ما/.test(text);
+  const hasCondition = /| || | /.test(text);
   
   // Determine complexity
-  const clauseCount = (text.match(/[،,;]/g) || []).length + 1;
+  const clauseCount = (text.match(/[,;]/g) || []).length + 1;
   let complexity: 'simple' | 'compound' | 'complex';
   if (clauseCount === 1 && !hasCondition) complexity = 'simple';
   else if (clauseCount <= 3) complexity = 'compound';

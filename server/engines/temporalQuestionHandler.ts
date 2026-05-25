@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 /**
  * Temporal Question Handler - Detects and processes temporal analysis questions
  * 
@@ -29,11 +30,11 @@ export function detectTemporalQuestion(question: string): TemporalQuestion {
   const arabicQuestion = question;
   
   // Temporal keywords in Arabic and English
-  const trendKeywords = ['trend', 'اتجاه', 'تطور', 'تغير', 'تحول', 'تطورات', 'تغيرات', 'تطورت'];
-  const comparisonKeywords = ['compare', 'between', 'vs', 'versus', 'مقارنة', 'بين', 'مقابل', 'مع'];
-  const forecastKeywords = ['forecast', 'predict', 'expect', 'next', 'future', 'توقع', 'المستقبل', 'القادم'];
-  const patternKeywords = ['pattern', 'cycle', 'recurring', 'نمط', 'دورة', 'متكرر'];
-  const changeKeywords = ['change', 'increase', 'decrease', 'improve', 'worsen', 'تغير', 'زيادة', 'انخفاض', 'تحسن', 'تدهور'];
+  const trendKeywords = ['trend', t('auto.engines_temporalQuestionHandler.53.5f5a06e1', 'ar'), t('auto.engines_temporalQuestionHandler.52.c81718df', 'ar'), t('auto.engines_temporalQuestionHandler.51.742972d5', 'ar'), t('auto.engines_temporalQuestionHandler.50.db5b3276', 'ar'), t('auto.engines_temporalQuestionHandler.49.484aaff3', 'ar'), t('auto.engines_temporalQuestionHandler.48.52428330', 'ar'), t('auto.engines_temporalQuestionHandler.47.b0c2e876', 'ar')];
+  const comparisonKeywords = ['compare', 'between', 'vs', 'versus', t('auto.engines_temporalQuestionHandler.46.cb8ef2dd', 'ar'), t('auto.engines_temporalQuestionHandler.45.9a3aec0e', 'ar'), t('auto.engines_temporalQuestionHandler.44.3ced69c2', 'ar'), t('auto.engines_temporalQuestionHandler.43.f3c3b73b', 'ar')];
+  const forecastKeywords = ['forecast', 'predict', 'expect', 'next', 'future', t('auto.engines_temporalQuestionHandler.42.4251f876', 'ar'), t('auto.engines_temporalQuestionHandler.41.54f6e62f', 'ar'), t('auto.engines_temporalQuestionHandler.40.9258a415', 'ar')];
+  const patternKeywords = ['pattern', 'cycle', 'recurring', t('auto.engines_temporalQuestionHandler.39.47c17787', 'ar'), t('auto.engines_temporalQuestionHandler.38.b89b3dc3', 'ar'), t('auto.engines_temporalQuestionHandler.37.502db78e', 'ar')];
+  const changeKeywords = ['change', 'increase', 'decrease', 'improve', 'worsen', t('auto.engines_temporalQuestionHandler.36.742972d5', 'ar'), t('auto.engines_temporalQuestionHandler.35.ea26c1bf', 'ar'), t('auto.engines_temporalQuestionHandler.34.e990bd85', 'ar'), t('auto.engines_temporalQuestionHandler.33.ab4c7e3d', 'ar'), t('auto.engines_temporalQuestionHandler.32.b3af2cb5', 'ar')];
   
   const allKeywords = [...trendKeywords, ...comparisonKeywords, ...forecastKeywords, ...patternKeywords, ...changeKeywords];
   const foundKeywords = allKeywords.filter(kw => lowerQuestion.includes(kw) || arabicQuestion.includes(kw));
@@ -64,15 +65,15 @@ export function detectTemporalQuestion(question: string): TemporalQuestion {
   
   // Determine metric
   let metric: 'gmi' | 'cfi' | 'hri' | 'aci' | 'sdi' | 'all' = 'all';
-  if (lowerQuestion.includes('fear') || arabicQuestion.includes('خوف') || arabicQuestion.includes('قلق')) {
+  if (lowerQuestion.includes('fear') || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.31.1cf83ec0', 'ar')) || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.30.a24a5460', 'ar'))) {
     metric = 'cfi';
-  } else if (lowerQuestion.includes('hope') || arabicQuestion.includes('أمل') || arabicQuestion.includes('أمل')) {
+  } else if (lowerQuestion.includes('hope') || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.29.60cd6c3d', 'ar')) || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.28.60cd6c3d', 'ar'))) {
     metric = 'hri';
-  } else if (lowerQuestion.includes('mood') || lowerQuestion.includes('sentiment') || arabicQuestion.includes('مزاج') || arabicQuestion.includes('حالة')) {
+  } else if (lowerQuestion.includes('mood') || lowerQuestion.includes('sentiment') || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.27.8f2b95f4', 'ar')) || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.26.fda85632', 'ar'))) {
     metric = 'gmi';
-  } else if (lowerQuestion.includes('anger') || arabicQuestion.includes('غضب') || arabicQuestion.includes('غضب')) {
+  } else if (lowerQuestion.includes('anger') || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.25.8e7bd750', 'ar')) || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.24.8e7bd750', 'ar'))) {
     metric = 'aci';
-  } else if (lowerQuestion.includes('sadness') || arabicQuestion.includes('حزن') || arabicQuestion.includes('حزن')) {
+  } else if (lowerQuestion.includes('sadness') || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.23.fdbc4b1b', 'ar')) || arabicQuestion.includes(t('auto.engines_temporalQuestionHandler.22.fdbc4b1b', 'ar'))) {
     metric = 'sdi';
   }
   
@@ -94,45 +95,44 @@ function extractDateRange(question: string): { startDate?: Date; endDate?: Date 
   
   // Month patterns
   const monthPatterns: Record<string, number> = {
-    'january': 0, 'يناير': 0, 'كانون الثاني': 0,
-    'february': 1, 'فبراير': 1, 'شباط': 1,
-    'march': 2, 'مارس': 2, 'آذار': 2,
-    'april': 3, 'أبريل': 3, 'نيسان': 3,
-    'may': 4, 'مايو': 4, 'أيار': 4,
-    'june': 5, 'يونيو': 5, 'حزيران': 5,
-    'july': 6, 'يوليو': 6, 'تموز': 6,
-    'august': 7, 'أغسطس': 7, 'آب': 7,
-    'september': 8, 'سبتمبر': 8, 'أيلول': 8,
-    'october': 9, 'أكتوبر': 9, 'تشرين الأول': 9,
-    'november': 10, 'نوفمبر': 10, 'تشرين الثاني': 10,
-    'december': 11, 'ديسمبر': 11, 'كانون الأول': 11,
-  };
-  
+    january: 0, jan: 0,
+    february: 1, feb: 1,
+    march: 2, mar: 2,
+    april: 3, apr: 3,
+    may: 4,
+    june: 5, jun: 5,
+    july: 6, jul: 6,
+    august: 7, aug: 7,
+    september: 8, sep: 8,
+    october: 9, oct: 9,
+    november: 10, nov: 10,
+    december: 11, dec: 11,
+  };  
   const lowerQuestion = question.toLowerCase();
   
   // Check for "last X days/weeks/months"
-  if (lowerQuestion.includes('last 7 days') || lowerQuestion.includes('last 7') || lowerQuestion.includes('الأسبوع الماضي') || lowerQuestion.includes('آخر 7 أيام')) {
+  if (lowerQuestion.includes('last 7 days') || lowerQuestion.includes('last 7') || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.21.e7cacc33', 'ar')) || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.20.349de9cf', 'ar'))) {
     const endDate = new Date(now);
     const startDate = new Date(now);
     startDate.setDate(startDate.getDate() - 7);
     return { startDate, endDate };
   }
   
-  if (lowerQuestion.includes('last month') || lowerQuestion.includes('الشهر الماضي') || lowerQuestion.includes('الشهر') || lowerQuestion.includes('آخر شهر')) {
+  if (lowerQuestion.includes('last month') || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.19.8e3a87a8', 'ar')) || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.18.b1472f66', 'ar')) || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.17.d82fde12', 'ar'))) {
     const endDate = new Date(now);
     const startDate = new Date(now);
     startDate.setMonth(startDate.getMonth() - 1);
     return { startDate, endDate };
   }
   
-  if (lowerQuestion.includes('last 3 months') || lowerQuestion.includes('آخر 3 أشهر') || lowerQuestion.includes('الثلاثة أشهر الماضية')) {
+  if (lowerQuestion.includes('last 3 months') || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.16.7c914cfd', 'ar')) || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.15.3d8b7a68', 'ar'))) {
     const endDate = new Date(now);
     const startDate = new Date(now);
     startDate.setMonth(startDate.getMonth() - 3);
     return { startDate, endDate };
   }
   
-  if (lowerQuestion.includes('last year') || lowerQuestion.includes('السنة الماضية') || lowerQuestion.includes('آخر سنة')) {
+  if (lowerQuestion.includes('last year') || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.14.5ff5ab22', 'ar')) || lowerQuestion.includes(t('auto.engines_temporalQuestionHandler.13.5bb9a4da', 'ar'))) {
     const endDate = new Date(now);
     const startDate = new Date(now);
     startDate.setFullYear(startDate.getFullYear() - 1);
@@ -246,22 +246,22 @@ function getTopicTrend(topic: string): {
   const lowerTopic = topic.toLowerCase();
   
   // Economic topics trend upward
-  if (lowerTopic.includes('economy') || lowerTopic.includes('اقتصاد') || lowerTopic.includes('سوق')) {
+  if (lowerTopic.includes('economy') || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.12.6d38c2ea', 'ar')) || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.11.16c73be6', 'ar'))) {
     return { gmiTrend: 2, cfiTrend: -1, hriTrend: 1, aciTrend: -1, sdiTrend: -1 };
   }
   
   // Security topics trend downward
-  if (lowerTopic.includes('security') || lowerTopic.includes('أمن') || lowerTopic.includes('حرب')) {
+  if (lowerTopic.includes('security') || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.10.b5ae7ef3', 'ar')) || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.9.b2155e1c', 'ar'))) {
     return { gmiTrend: -2, cfiTrend: 2, hriTrend: -1, aciTrend: 1, sdiTrend: 1 };
   }
   
   // Health topics show recovery
-  if (lowerTopic.includes('health') || lowerTopic.includes('صحة') || lowerTopic.includes('وباء')) {
+  if (lowerTopic.includes('health') || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.8.72c707a2', 'ar')) || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.7.aae445ae', 'ar'))) {
     return { gmiTrend: 1, cfiTrend: -1, hriTrend: 2, aciTrend: -1, sdiTrend: -2 };
   }
   
   // Political topics show volatility
-  if (lowerTopic.includes('politics') || lowerTopic.includes('سياسة') || lowerTopic.includes('انتخابات')) {
+  if (lowerTopic.includes('politics') || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.6.26a57968', 'ar')) || lowerTopic.includes(t('auto.engines_temporalQuestionHandler.5.d9b242e6', 'ar'))) {
     return { gmiTrend: 0, cfiTrend: 1, hriTrend: 0, aciTrend: 2, sdiTrend: 1 };
   }
   
@@ -275,33 +275,33 @@ function getTopicTrend(topic: string): {
 export function formatTemporalAnalysis(analysis: any): string {
   const lines: string[] = [];
   
-  lines.push(`📊 **تحليل زمني للفترة من ${analysis.period.start.toLocaleDateString('ar-SA')} إلى ${analysis.period.end.toLocaleDateString('ar-SA')}'**`);
-  lines.push(`المدة: ${analysis.period.durationDays} يوم`);
+  lines.push(`📊 **    ${analysis.period.start.toLocaleDateString('ar-SA')}  ${analysis.period.end.toLocaleDateString('ar-SA')}'**`);
+  lines.push(`: ${analysis.period.durationDays} `);
   lines.push('');
   
-  lines.push('**الاتجاهات:**');
+  lines.push(t('auto.engines_temporalQuestionHandler.4.5c4f6985', 'ar'));
   lines.push(`- GMI: ${analysis.trends.gmi.startValue} → ${analysis.trends.gmi.endValue} (${analysis.trends.gmi.trend})`);
   lines.push(`- CFI: ${analysis.trends.cfi.startValue} → ${analysis.trends.cfi.endValue} (${analysis.trends.cfi.trend})`);
   lines.push(`- HRI: ${analysis.trends.hri.startValue} → ${analysis.trends.hri.endValue} (${analysis.trends.hri.trend})`);
   lines.push('');
   
   if (analysis.patterns.length > 0) {
-    lines.push('**الأنماط المكتشفة:**');
+    lines.push(t('auto.engines_temporalQuestionHandler.3.54e70a78', 'ar'));
     analysis.patterns.forEach((pattern: string) => {
       lines.push(`- ${pattern}`);
     });
     lines.push('');
   }
   
-  lines.push('**التنبؤ (الأسبوع القادم):**');
+  lines.push(t('auto.engines_temporalQuestionHandler.2.43fe7764', 'ar'));
   lines.push(`- GMI: ${analysis.forecast.nextWeekGMI}`);
   lines.push(`- CFI: ${analysis.forecast.nextWeekCFI}`);
   lines.push(`- HRI: ${analysis.forecast.nextWeekHRI}`);
-  lines.push(`- مستوى الثقة: ${Math.round(analysis.forecast.confidence * 100)}%`);
+  lines.push(`-  : ${Math.round(analysis.forecast.confidence * 100)}%`);
   lines.push('');
   
   if (analysis.insights.length > 0) {
-    lines.push('**الرؤى:**');
+    lines.push(t('auto.engines_temporalQuestionHandler.1.64458e22', 'ar'));
     analysis.insights.forEach((insight: string) => {
       lines.push(`- ${insight}`);
     });

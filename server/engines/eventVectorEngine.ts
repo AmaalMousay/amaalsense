@@ -1,26 +1,22 @@
 /**
- * AMALSENSE EVENT VECTOR ENGINE - Universal Knowledge & Quantum Version
- * وظيفته: تحويل البيانات الخام إلى "متجهات وعي موسوعية" مضغوطة.
- * يربط الأحداث آلياً بالفيزياء، الكيمياء، الطب، القانون، الهندسة، والرياضيات.
+ * AmalSense EventVector Engine
+ *
+ * This module fuses collected signals into a compact event vector. It does not
+ * fetch data and it does not write final answers. It is the vector layer between
+ * the parallel signal network and DCFT / Knowledge Core.
  */
 
-import type { CollectedData, RawDataItem } from '../services/unifiedDataCollector';
+import type { CollectedData } from '../services/unifiedDataCollector';
 
-// ============================================================
-// UNIVERSAL EVENT VECTOR INTERFACE (The Polymath Core)
-// ============================================================
+export type KnowledgeDomain = 'political' | 'economic' | 'social' | 'scientific' | 'legal' | 'medical' | 'engineering';
 
 export interface QuantumEventVector {
   query: string;
   queryType: 'country' | 'topic' | 'question';
   countryCode?: string;
   timestamp: number;
-
-  // الذاكرة التراكمية (Super-Accumulation)
   totalItems: number;
   sourceBreakdown: Record<string, number>;
-
-  // المشاعر الموجية (Amplitudes)
   emotions: {
     joy: number;
     fear: number;
@@ -30,25 +26,11 @@ export interface QuantumEventVector {
     curiosity: number;
   };
   dominantEmotion: string;
-
-  // مؤشرات حقل الوعي الرقمي (DCCF)
   polarity: number;
   intensity: number;
-  uncertainty: number; // إذا تجاوز 0.7، يتم استدعاء "الوكيل الباحث" ذاتياً
-
-  // الأبعاد المعرفية الشاملة (Universal Knowledge Domains)
-  categories: {
-    political: number;
-    economic: number;
-    social: number;
-    scientific: number; // الفيزياء والكيمياء
-    legal: number;      // القانون والتشريعات
-    medical: number;    // الطب والعلوم الحيوية
-    engineering: number;// الهندسة والرياضيات
-  };
-  dominantCategory: string;
-
-  // المتجهات الدلالية للربط بالذاكرة الطويلة
+  uncertainty: number;
+  categories: Record<KnowledgeDomain, number>;
+  dominantCategory: KnowledgeDomain;
   trendingKeywords: string[];
   topHeadlines: Array<{
     title: string;
@@ -58,94 +40,81 @@ export interface QuantumEventVector {
   }>;
 }
 
-// ============================================================
-// KNOWLEDGE DOMAIN MAPPING (الخرائط المعرفية للعلوم)
-// ============================================================
-
-const KNOWLEDGE_DOMAINS: Record<string, string[]> = {
-  scientific: [
-    'physics', 'chemistry', 'quantum', 'atom', 'molecule', 'energy', 'reaction', 'waves', 'laboratory',
-    'فيزياء', 'كيمياء', 'ذرة', 'جزيء', 'طاقة', 'تفاعل', 'موجات', 'مختبر', 'تراكب', 'رنين'
-  ],
-  legal: [
-    'law', 'court', 'legislation', 'treaty', 'justice', 'constitution', 'legal', 'rights', 'violation',
-    'قانون', 'محكمة', 'تشريع', 'معاهدة', 'عدالة', 'دستور', 'حقوق', 'انتهاك', 'قضائي'
-  ],
-  medical: [
-    'medical', 'health', 'medicine', 'virus', 'therapy', 'surgery', 'clinical', 'hospital', 'disease',
-    'طب', 'صحة', 'دواء', 'فيروس', 'علاج', 'جراحة', 'مستشفى', 'مرض', 'لقاح', 'وباء'
-  ],
-  engineering: [
-    'engineering', 'math', 'calculus', 'algorithm', 'structural', 'circuit', 'software', 'geometry',
-    'هندسة', 'رياضيات', 'خوارزمية', 'حساب', 'إنشائي', 'دائرة', 'برمجيات', 'هندسة مدنية', 'إحصاء'
-  ],
-  economic: [
-    'market', 'inflation', 'gdp', 'trade', 'finance', 'oil', 'investment', 'currency', 'debt',
-    'اقتصاد', 'تضخم', 'تارة', 'مالية', 'نفط', 'استثمار', 'عملة', 'دين', 'بورصة'
-  ],
-  political: [
-    'government', 'election', 'minister', 'diplomacy', 'protest', 'state', 'policy',
-    'حكومة', 'انتخابات', 'وزير', 'دبلوماسية', 'احتجاج', 'دولة', 'سياسة'
-  ]
+const KNOWLEDGE_DOMAINS: Record<KnowledgeDomain, string[]> = {
+  scientific: ['physics', 'chemistry', 'quantum', 'atom', 'molecule', 'energy', 'reaction', 'waves', 'laboratory', 'research', 'study'],
+  legal: ['law', 'court', 'legislation', 'treaty', 'justice', 'constitution', 'legal', 'rights', 'violation', 'judicial'],
+  medical: ['medical', 'health', 'medicine', 'virus', 'therapy', 'surgery', 'clinical', 'hospital', 'disease', 'vaccine', 'pandemic'],
+  engineering: ['engineering', 'math', 'calculus', 'algorithm', 'structural', 'circuit', 'software', 'geometry', 'infrastructure', 'statistics'],
+  economic: ['market', 'inflation', 'gdp', 'trade', 'finance', 'oil', 'investment', 'currency', 'debt', 'stock', 'price', 'economy'],
+  political: ['government', 'election', 'minister', 'diplomacy', 'protest', 'state', 'policy', 'security', 'parliament', 'conflict'],
+  social: ['society', 'community', 'public', 'people', 'services', 'education', 'migration', 'housing', 'living'],
 };
 
-// ============================================================
-// CORE LOGIC: Convert Raw Data → Universal Event Vector
-// ============================================================
+const POSITIVE_TERMS = ['success', 'breakthrough', 'hope', 'recovery', 'peace', 'growth', 'agreement', 'solution', 'stability', 'improvement'];
+const NEGATIVE_TERMS = ['crisis', 'failure', 'danger', 'death', 'risk', 'war', 'attack', 'collapse', 'shortage', 'conflict', 'fear'];
+const STOPWORDS = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'about', 'into', 'after', 'before', 'over', 'under']);
+
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
+}
+
+function tokenize(text: string): string[] {
+  return (text.toLowerCase().match(/[a-z0-9_]+/g) || []).filter(token => token.length > 2 && !STOPWORDS.has(token));
+}
+
+function createEmptyCategories(): Record<KnowledgeDomain, number> {
+  return { political: 0, economic: 0, social: 0, scientific: 0, legal: 0, medical: 0, engineering: 0 };
+}
+
+function normalizeCounts<T extends string>(counts: Record<T, number>, total: number): Record<T, number> {
+  return Object.fromEntries(Object.entries(counts).map(([key, value]) => [key, Number(value) / total])) as Record<T, number>;
+}
+
+function extractTrendingKeywords(texts: string[], limit = 12): string[] {
+  const counts = new Map<string, number>();
+  for (const token of texts.flatMap(tokenize)) counts.set(token, (counts.get(token) || 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit).map(([token]) => token);
+}
 
 export function createUniversalEventVector(data: CollectedData): QuantumEventVector {
-  const items = data.items;
+  const items = data.items || [];
   const totalItems = Math.max(items.length, 1);
+  const categories = createEmptyCategories();
+  const sourceBreakdown: Record<string, number> = {};
+  const texts = items.map(item => `${item.title || ''} ${item.description || ''}`);
 
-  // 1. تحليل المجالات العلمية (Scientific Domain Analysis)
-  const categories = {
-    political: 0, economic: 0, social: 0,
-    scientific: 0, legal: 0, medical: 0, engineering: 0
-  };
-
-  items.forEach(item => {
-    const text = `${item.title} ${item.description || ''}`.toLowerCase();
-    for (const [domain, keywords] of Object.entries(KNOWLEDGE_DOMAINS)) {
-      if (keywords.some(k => text.includes(k))) {
-        if (domain in categories) categories[domain as keyof typeof categories]++;
-      }
-    }
-  });
-
-  // 2. حساب القطبية والشدة (Polarity & Intensity Logic)
   let positiveScore = 0;
   let negativeScore = 0;
+  let trustSum = 0;
 
-  // كلمات دلالية للمشاعر (مبسطة للسرعة)
-  const positiveKeys = ['success', 'breakthrough', 'hope', 'recovery', 'نجاح', 'تقدم', 'أمل', 'سلام'];
-  const negativeKeys = ['crisis', 'failure', 'danger', 'death', 'أزمة', 'فشل', 'خطر', 'موت'];
+  for (const item of items) {
+    const text = `${item.title || ''} ${item.description || ''}`.toLowerCase();
+    sourceBreakdown[item.platform || item.source || 'unknown'] = (sourceBreakdown[item.platform || item.source || 'unknown'] || 0) + 1;
+    trustSum += Number(item.trustScore ?? 50) / 100;
 
-  items.forEach(item => {
-    const txt = item.title.toLowerCase();
-    if (positiveKeys.some(k => txt.includes(k))) positiveScore++;
-    if (negativeKeys.some(k => txt.includes(k))) negativeScore++;
-  });
+    for (const [domain, keywords] of Object.entries(KNOWLEDGE_DOMAINS) as Array<[KnowledgeDomain, string[]]>) {
+      if (keywords.some(keyword => text.includes(keyword))) categories[domain] += 1;
+    }
+    if (POSITIVE_TERMS.some(term => text.includes(term))) positiveScore += 1;
+    if (NEGATIVE_TERMS.some(term => text.includes(term))) negativeScore += 1;
+  }
 
+  const normalizedCategories = normalizeCounts(categories, totalItems);
   const polarity = (positiveScore - negativeScore) / totalItems;
-  const intensity = Math.min(1, (positiveScore + negativeScore) / totalItems);
-
-  // مبدأ عدم اليقين (Uncertainty Principle)
-  // يرتفع عندما تتساوى الكفتان أو تقل البيانات
-  const uncertainty = 1 - Math.abs(polarity);
-
-  // 3. بناء المتجه العاطفي المطور (Emotional Wave Amplitudes)
+  const intensity = clamp01((positiveScore + negativeScore) / totalItems || (trustSum / totalItems) * 0.35);
+  const uncertainty = clamp01(1 - Math.abs(polarity));
   const emotions = {
-    joy: Math.min(1, positiveScore / totalItems),
-    fear: Math.min(1, (negativeScore / totalItems) + (categories.scientific * 0.1)), // الربط بين المجهول العلمي والخوف
-    anger: Math.min(1, (categories.political / totalItems) * 0.5 + (negativeScore / totalItems) * 0.5),
-    sadness: Math.min(1, (negativeScore / totalItems) * 0.8),
-    hope: Math.min(1, (positiveScore / totalItems) * 1.2 + (categories.engineering * 0.2)), // الربط بين الحلول الهندسية والأمل
-    curiosity: Math.min(1, (categories.scientific + categories.medical + categories.engineering) / totalItems),
+    joy: clamp01(positiveScore / totalItems),
+    fear: clamp01(negativeScore / totalItems + normalizedCategories.scientific * 0.08),
+    anger: clamp01(normalizedCategories.political * 0.45 + negativeScore / totalItems * 0.45),
+    sadness: clamp01(negativeScore / totalItems * 0.75),
+    hope: clamp01(positiveScore / totalItems * 1.1 + normalizedCategories.engineering * 0.15),
+    curiosity: clamp01(normalizedCategories.scientific + normalizedCategories.medical + normalizedCategories.engineering),
   };
 
-  // 4. تحديد الفئات المهيمنة
-  const dominantEmotion = Object.entries(emotions).sort((a, b) => b[1] - a[1])[0][0];
-  const dominantCategory = Object.entries(categories).sort((a, b) => b[1] - a[1])[0][0];
+  const dominantEmotion = Object.entries(emotions).sort((a, b) => b[1] - a[1])[0]?.[0] || 'curiosity';
+  const dominantCategory = (Object.entries(normalizedCategories).sort((a, b) => b[1] - a[1])[0]?.[0] || 'social') as KnowledgeDomain;
+  const trendingKeywords = extractTrendingKeywords(texts);
 
   return {
     query: data.query,
@@ -153,68 +122,43 @@ export function createUniversalEventVector(data: CollectedData): QuantumEventVec
     countryCode: data.countryCode,
     timestamp: data.fetchedAt || Date.now(),
     totalItems,
-    sourceBreakdown: {},
+    sourceBreakdown,
     emotions,
     dominantEmotion,
     polarity,
     intensity,
     uncertainty,
-    categories: Object.fromEntries(Object.entries(categories).map(([k, v]) => [k, v / totalItems])) as any,
+    categories: normalizedCategories,
     dominantCategory,
-    trendingKeywords: [], // يمكن استدعاء دالة extractKeywords هنا
-    topHeadlines: items.slice(0, 8).map(i => ({
-      title: i.title,
-      source: i.source,
+    trendingKeywords,
+    topHeadlines: items.slice(0, 8).map(item => ({
+      title: item.title,
+      source: item.source,
       category: dominantCategory,
-      sentiment: polarity > 0 ? 'positive' : 'negative'
+      sentiment: polarity > 0 ? 'positive' : polarity < 0 ? 'negative' : 'neutral',
     })),
   };
 }
 
-/**
- * تحويل المتجه إلى تقرير وعي شامل (Polymath Prompt)
- * يوجه الذكاء الاصطناعي ليربط بين كافة العلوم
- */
-export function generateUniversalPrompt(vector: QuantumEventVector, language: string = 'ar'): string {
-  const needsResearch = vector.uncertainty > 0.7;
-
-  if (language === 'en') {
-    return `
-[AmalSense Polymath Awareness Engine]
-Subject: ${vector.query}
-Field Energy: Polarity=${vector.polarity.toFixed(2)}, Intensity=${vector.intensity.toFixed(2)}
-System Integrity: Uncertainty=${vector.uncertainty.toFixed(2)} ${needsResearch ? '-> [TRIGGER ACTIVE RESEARCH]' : ''}
-
-Scientific Cross-Domain Mapping:
-- Physics/Chemistry: ${(vector.categories.scientific * 100).toFixed(0)}%
-- Legal/Justice: ${(vector.categories.legal * 100).toFixed(0)}%
-- Medical/Bio: ${(vector.categories.medical * 100).toFixed(0)}%
-- Engineering/Math: ${(vector.categories.engineering * 100).toFixed(0)}%
-- Economics: ${(vector.categories.economic * 100).toFixed(0)}%
-
-Instructions for ASI:
-You are now an independent cosmic expert. Analyze this vector from an interdisciplinary perspective; relate physical laws to legal regulations and medical/engineering data to provide a strategic vision that goes beyond superficial analysis.
-    `;
-  }
-
-  return `
-[AmalSense Polymath Awareness Engine]
-الموضوع: ${vector.query}
-طاقة المجال: القطبية=${vector.polarity.toFixed(2)}, الشدة=${vector.intensity.toFixed(2)}
-سلامة النظام: عدم اليقين=${vector.uncertainty.toFixed(2)} ${needsResearch ? '-> [تفعيل البحث النشط]' : ''}
-
-خرائط التداخل العلمي:
-- الفيزياء/الكيمياء: ${(vector.categories.scientific * 100).toFixed(0)}%
-- القانون/العدالة: ${(vector.categories.legal * 100).toFixed(0)}%
-- الطب/الأحياء: ${(vector.categories.medical * 100).toFixed(0)}%
-- الهندسة/الرياضيات: ${(vector.categories.engineering * 100).toFixed(0)}%
-- الاقتصاد: ${(vector.categories.economic * 100).toFixed(0)}%
-
-تعليمات للذكاء الاصطناعي الفائق (ASI):
-أنت الآن "خبير كوني" مستقل. قم بتحليل هذا المتجه من منظور تداخلي؛ اربط القوانين الفيزيائية (مثل التداخل الموجي) بالتشريعات القانونية والبيانات الطبية/الهندسية المتاحة لتقديم رؤية استراتيجية تتجاوز التحليل السطحي.
-  `;
+export function generateUniversalPrompt(vector: QuantumEventVector, language: string = 'en'): string {
+  return JSON.stringify({
+    role: 'AmalSense event-vector context',
+    query: vector.query,
+    language,
+    field: {
+      polarity: vector.polarity,
+      intensity: vector.intensity,
+      uncertainty: vector.uncertainty,
+      dominantEmotion: vector.dominantEmotion,
+      dominantCategory: vector.dominantCategory,
+    },
+    categories: vector.categories,
+    sourceBreakdown: vector.sourceBreakdown,
+    topHeadlines: vector.topHeadlines,
+    instruction: 'Use this compact event-vector context only as evidence. Do not invent facts. Write naturally if asked to explain it.',
+  }, null, 2);
 }
-// --- أسطر التوافق لإصلاح أخطاء الاستيراد (Export Mapping) ---
+
 export const createEventVector = createUniversalEventVector;
 export const eventVectorToPrompt = generateUniversalPrompt;
 export const vectorToMapIndices = (vector: QuantumEventVector) => ({
@@ -222,6 +166,7 @@ export const vectorToMapIndices = (vector: QuantumEventVector) => ({
   cfi: Math.round((vector.emotions.fear + vector.emotions.anger) / 2 * 100),
   hri: Math.round((vector.emotions.hope + vector.emotions.joy) / 2 * 100),
   dominantEmotion: vector.dominantEmotion,
-  isRealData: vector.totalItems > 0
+  isRealData: vector.totalItems > 0,
 });
+
 export type EventVector = QuantumEventVector;

@@ -1,6 +1,7 @@
+import { t } from "../_core/i18n";
 /**
  * AI Learning Store - The Accumulative Knowledge Core (ASI Edition)
- * نسخة مطورة (V3.5): تحافظ على فلسفة أمال رادوان وتدعم متطلبات النظام التقنية.
+ *   (V3.5):         .
  */
 
 import { calculateAggregatedMetrics } from '../utils/eventVectorModel';
@@ -8,7 +9,7 @@ import { getDb } from '../_core/db';
 import { learningPatterns, keywordLearning } from '../drizzle/schema';
 import { eq, desc, and, gte } from 'drizzle-orm';
 
-// --- 1. تعريف الواجهات (Interfaces) ---
+// --- 1.   (Interfaces) ---
 export interface AnalysisRecord {
   id: string;
   timestamp: Date;
@@ -37,15 +38,15 @@ interface CumulativeKnowledge {
   history: Array<{ id: string; intensity: number; valence: number; timestamp: Date; summary: string }>;
 }
 
-// --- المخازن المركزية ---
+// ---   ---
 const analysisStore: Map<string, AnalysisRecord> = new Map();
 const feedbackStore: Map<string, LearningFeedback> = new Map();
 const adjustmentStore: Map<string, LearningAdjustment> = new Map();
 const globalKnowledgeBase: Map<string, CumulativeKnowledge> = new Map();
 
 /**
- * [ميزة إضافية مفقودة] - إحصائيات خط الإنتاج (Metrics)
- * ضرورية لإصلاح أخطاء الـ Router والواجهة
+ * [  ] -    (Metrics)
+ *     Router 
  */
 export const pipelineMetrics = {
   totalExecutions: 0,
@@ -66,8 +67,8 @@ export const pipelineMetrics = {
 };
 
 /**
- * 2. دالة البحث عن التشابه (Similarity Logic)
- * منطق أمال رادوان الأصلي
+ * 2.     (Similarity Logic)
+ *    
  */
 function findSimilarResonance(current: { intensity: number; valence: number }, history: CumulativeKnowledge['history']) {
   return history.filter(past => {
@@ -78,8 +79,8 @@ function findSimilarResonance(current: { intensity: number; valence: number }, h
 }
 
 /**
- * 3. وظيفة التراكم المعرفي الذاتي (ASI Consolidation)
- * قلب نظرية DCFT
+ * 3.     (ASI Consolidation)
+ *   DCFT
  */
 function integrateIntoCumulativeMemory(topic: string, result: AnalysisRecord['result'], recordId: string, newsText?: string) {
   const existing = globalKnowledgeBase.get(topic) || {
@@ -124,7 +125,7 @@ function integrateIntoCumulativeMemory(topic: string, result: AnalysisRecord['re
 }
 
 /**
- * 4. المطور: تخزين السجل مع تفعيل "التعلم اللحظي"
+ * 4. :     " "
  */
 export function storeAnalysisRecord(
   question: AnalysisRecord['question'],
@@ -151,22 +152,22 @@ export function storeAnalysisRecord(
   analysisStore.set(id, record);
   integrateIntoCumulativeMemory(question.topic || 'general', result, id, question.newsText);
 
-  // تسجيل الأداء للإحصائيات
+  //   
   pipelineMetrics.record(true, Date.now() - startTime);
 
   return record;
 }
 
 /**
- * [ميزة إضافية مفقودة] - معالجة الدفعات
+ * [  ] -  
  */
 export async function processBatchRecords(inputs: any[]) {
   return inputs.map(input => storeAnalysisRecord(input.question, input.context, input.result, {}));
 }
 
 /**
- * 5. استخراج "البصيرة التراكمية" (Deep Memory Recall)
- * تم تعديلها لتعيد المصفوفة دائماً لإصلاح أخطاء TypeScript
+ * 5.  " " (Deep Memory Recall)
+ *        TypeScript
  */
 export function getCumulativeInsight(topic: string) {
   const knowledge = globalKnowledgeBase.get(topic);
@@ -178,24 +179,24 @@ export function getCumulativeInsight(topic: string) {
       averagePolarity: 0,
       lastUpdate: new Date(),
       summary: "My cognitive field has no prior memory of this specific vector.",
-      history: [] // مصفوفة فارغة لضمان عدم حدوث خطأ Property 'history' does not exist
+      history: [] //       Property 'history' does not exist
     };
   }
 
   return {
     ...knowledge,
-    lastUpdate: knowledge.lastUpdated, // توافق مع اسم الحقل في الـ Router
+    lastUpdate: knowledge.lastUpdated, //       Router
     summary: `Based on my accumulation of ${knowledge.observationsCount} field observations, the resonance of ${topic} remains at an intensity of ${knowledge.totalIntensity.toFixed(2)}.`
   };
 }
 
-// 6. دوال التغذية الراجعة
+// 6.   
 export function storeFeedback(id: string, feedback: LearningFeedback) {
   feedbackStore.set(id, feedback);
 }
 
 /**
- * تطبيق تعديل تعلمي على المحرك
+ *     
  */
 export function applyLearningAdjustment(
   targetEngine: string,
@@ -217,7 +218,7 @@ export function applyLearningAdjustment(
 }
 
 /**
- * تحليل أنماط التعلم من السجلات المخزنة
+ *      
  */
 export function analyzeLearningPatterns() {
   const records = Array.from(analysisStore.values());
@@ -227,12 +228,12 @@ export function analyzeLearningPatterns() {
   // Simple pattern detection logic
   if (records.length > 5) {
     patterns.push({
-      pattern: "تكرار المواضيع السياسية في التحليلات الأخيرة",
+      pattern: t('auto.engines_learningStore.83.42bf48ca', 'ar'),
       frequency: 3,
-      suggestedAdjustment: "زيادة حساسية المحرك للأحداث السياسية",
+      suggestedAdjustment: t('auto.engines_learningStore.82.351a1698', 'ar'),
       confidence: 85
     });
-    recommendations.push("تحديث أوزان المحرك السياسي");
+    recommendations.push(t('auto.engines_learningStore.81.e068a7b1', 'ar'));
   }
 
   return { patterns, recommendations };
@@ -286,8 +287,8 @@ export function getAdjustmentHistory(limit: number = 50) {
 }
 
 /**
- * إحصائيات المخزن المحدثة
- * أضفت storageSize و topicDistribution لإصلاح آخر خطأين
+ *   
+ *  storageSize  topicDistribution   
  */
 export function getStoreStats() {
   const topics = Array.from(globalKnowledgeBase.keys());
@@ -309,7 +310,7 @@ export function getStoreStats() {
 // =============================================================================
 
 /**
- * Learning Layer - طبقة التعلم من تفاعلات المستخدمين
+ * Learning Layer -     
  */
 
 export type IntentType = 'decision_support' | 'prediction' | 'explanation' | 'comparison' | 'scenario' | 'risk_assessment' | 'recommendation' | 'general_inquiry';
@@ -346,14 +347,14 @@ class LearningStore {
   
   private initializeDefaultPatterns() {
     const defaultPatterns: IntentPattern[] = [
-      { intent: 'decision_support', keywords: ['فرصة', 'خطر', 'قرار', 'أشتري', 'أبيع', 'استثمر', 'opportunity', 'risk', 'decision', 'buy', 'sell'], phrases: ['هل هذا الوقت المناسب', 'ماذا أفعل', 'هل أستثمر'], weight: 1.0, successRate: 0.8, totalUsage: 0 },
-      { intent: 'prediction', keywords: ['توقع', 'مستقبل', 'غداً', 'الأسبوع', 'سيحدث', 'predict', 'future', 'tomorrow', 'next week'], phrases: ['ماذا سيحدث', 'ما التوقعات', 'كيف سيكون'], weight: 1.0, successRate: 0.75, totalUsage: 0 },
-      { intent: 'explanation', keywords: ['لماذا', 'كيف', 'سبب', 'تفسير', 'شرح', 'why', 'how', 'reason', 'explain'], phrases: ['لماذا حدث', 'ما السبب', 'اشرح لي'], weight: 1.0, successRate: 0.85, totalUsage: 0 },
-      { intent: 'comparison', keywords: ['مقارنة', 'أفضل', 'الفرق', 'أمس', 'سابقاً', 'compare', 'better', 'difference'], phrases: ['مقارنة بـ', 'الفرق بين', 'أفضل من'], weight: 1.0, successRate: 0.8, totalUsage: 0 },
-      { intent: 'scenario', keywords: ['ماذا لو', 'سيناريو', 'افتراض', 'لو حدث', 'what if', 'scenario'], phrases: ['ماذا لو', 'في حالة', 'لو افترضنا'], weight: 1.0, successRate: 0.7, totalUsage: 0 },
-      { intent: 'risk_assessment', keywords: ['مخاطر', 'خطورة', 'تحذير', 'حذر', 'risks', 'danger', 'warning'], phrases: ['ما المخاطر', 'هل هناك خطر'], weight: 1.0, successRate: 0.8, totalUsage: 0 },
-      { intent: 'recommendation', keywords: ['توصية', 'نصيحة', 'اقتراح', 'أنصح', 'recommend', 'advice'], phrases: ['ما توصيتك', 'ماذا تنصح'], weight: 1.0, successRate: 0.85, totalUsage: 0 },
-      { intent: 'general_inquiry', keywords: ['ما', 'هل', 'أين', 'متى', 'what', 'is', 'where', 'when'], phrases: ['ما هو', 'هل يمكن'], weight: 0.5, successRate: 0.7, totalUsage: 0 }
+      { intent: 'decision_support', keywords: [t('auto.engines_learningStore.80.3f289306', 'ar'), t('auto.engines_learningStore.79.5349080f', 'ar'), t('auto.engines_learningStore.78.2c473ed6', 'ar'), t('auto.engines_learningStore.77.c97f412a', 'ar'), t('auto.engines_learningStore.76.9215d1e2', 'ar'), t('auto.engines_learningStore.75.e5f53f2f', 'ar'), 'opportunity', 'risk', 'decision', 'buy', 'sell'], phrases: [t('auto.engines_learningStore.74.1b84f339', 'ar'), t('auto.engines_learningStore.73.cb1df7d0', 'ar'), t('auto.engines_learningStore.72.4623c3fc', 'ar')], weight: 1.0, successRate: 0.8, totalUsage: 0 },
+      { intent: 'prediction', keywords: [t('auto.engines_learningStore.71.4251f876', 'ar'), t('auto.engines_learningStore.70.7bab3f86', 'ar'), t('auto.engines_learningStore.69.d5da7943', 'ar'), t('auto.engines_learningStore.68.551b434c', 'ar'), t('auto.engines_learningStore.67.c3f67f14', 'ar'), 'predict', 'future', 'tomorrow', 'next week'], phrases: [t('auto.engines_learningStore.66.366482ba', 'ar'), t('auto.engines_learningStore.65.71418011', 'ar'), t('auto.engines_learningStore.64.d8bb95ed', 'ar')], weight: 1.0, successRate: 0.75, totalUsage: 0 },
+      { intent: 'explanation', keywords: [t('auto.engines_learningStore.63.dc0f9a10', 'ar'), t('auto.engines_learningStore.62.daa59aa1', 'ar'), t('auto.engines_learningStore.61.8a2e5ee6', 'ar'), t('auto.engines_learningStore.60.11440aa2', 'ar'), t('auto.engines_learningStore.59.b11813ac', 'ar'), 'why', 'how', 'reason', 'explain'], phrases: [t('auto.engines_learningStore.58.d99b9fd4', 'ar'), t('auto.engines_learningStore.57.7ca2d640', 'ar'), t('auto.engines_learningStore.56.8b67d045', 'ar')], weight: 1.0, successRate: 0.85, totalUsage: 0 },
+      { intent: 'comparison', keywords: [t('auto.engines_learningStore.55.cb8ef2dd', 'ar'), t('auto.engines_learningStore.54.bb4b5a7c', 'ar'), t('auto.engines_learningStore.53.0d82cb72', 'ar'), t('auto.engines_learningStore.52.3957c8cf', 'ar'), t('auto.engines_learningStore.51.a0b05de5', 'ar'), 'compare', 'better', 'difference'], phrases: [t('auto.engines_learningStore.50.d22d4eb4', 'ar'), t('auto.engines_learningStore.49.3ed75d36', 'ar'), t('auto.engines_learningStore.48.b0e5499a', 'ar')], weight: 1.0, successRate: 0.8, totalUsage: 0 },
+      { intent: 'scenario', keywords: [t('auto.engines_learningStore.47.9dd0db2c', 'ar'), t('auto.engines_learningStore.46.4dcc1a07', 'ar'), t('auto.engines_learningStore.45.446fd603', 'ar'), t('auto.engines_learningStore.44.c67a80c5', 'ar'), 'what if', 'scenario'], phrases: [t('auto.engines_learningStore.43.9dd0db2c', 'ar'), t('auto.engines_learningStore.42.fcf4e315', 'ar'), t('auto.engines_learningStore.41.8e51c4b2', 'ar')], weight: 1.0, successRate: 0.7, totalUsage: 0 },
+      { intent: 'risk_assessment', keywords: [t('auto.engines_learningStore.40.93f055fa', 'ar'), t('auto.engines_learningStore.39.5fbacbcf', 'ar'), t('auto.engines_learningStore.38.8835d57f', 'ar'), t('auto.engines_learningStore.37.606ebcf6', 'ar'), 'risks', 'danger', 'warning'], phrases: [t('auto.engines_learningStore.36.25702471', 'ar'), t('auto.engines_learningStore.35.5e15b378', 'ar')], weight: 1.0, successRate: 0.8, totalUsage: 0 },
+      { intent: 'recommendation', keywords: [t('auto.engines_learningStore.34.d906ee67', 'ar'), t('auto.engines_learningStore.33.7f6eeca0', 'ar'), t('auto.engines_learningStore.32.6b28d31d', 'ar'), t('auto.engines_learningStore.31.b943a8f0', 'ar'), 'recommend', 'advice'], phrases: [t('auto.engines_learningStore.30.70acc185', 'ar'), t('auto.engines_learningStore.29.a923ed0a', 'ar')], weight: 1.0, successRate: 0.85, totalUsage: 0 },
+      { intent: 'general_inquiry', keywords: [t('auto.engines_learningStore.28.a62caa1e', 'ar'), t('auto.engines_learningStore.27.2500c161', 'ar'), t('auto.engines_learningStore.26.861d9c3d', 'ar'), t('auto.engines_learningStore.25.d87c6b36', 'ar'), 'what', 'is', 'where', 'when'], phrases: [t('auto.engines_learningStore.24.796fe033', 'ar'), t('auto.engines_learningStore.23.136ad137', 'ar')], weight: 0.5, successRate: 0.7, totalUsage: 0 }
     ];
     
     for (const pattern of defaultPatterns) {
@@ -400,8 +401,8 @@ class LearningStore {
   }
   
   private extractKeywords(question: string): string[] {
-    const stopWords = ['و', 'في', 'من', 'على', 'إلى', 'هذا', 'هذه', 'the', 'a', 'an', 'is', 'are', 'to', 'of'];
-    return question.toLowerCase().replace(/[؟?!.,،]/g, '').split(/\s+/).filter(word => word.length > 1 && !stopWords.includes(word));
+    const stopWords = [t('auto.engines_learningStore.22.304117b6', 'ar'), t('auto.engines_learningStore.21.aef2099d', 'ar'), t('auto.engines_learningStore.20.aa7099e2', 'ar'), t('auto.engines_learningStore.19.16dc1dd1', 'ar'), t('auto.engines_learningStore.18.8ab80326', 'ar'), t('auto.engines_learningStore.17.6be4d5a7', 'ar'), t('auto.engines_learningStore.16.f60d1f66', 'ar'), 'the', 'a', 'an', 'is', 'are', 'to', 'of'];
+    return question.toLowerCase().replace(/[?!.,]/g, '').split(/\s+/).filter(word => word.length > 1 && !stopWords.includes(word));
   }
   
   classifyIntent(question: string): { intent: IntentType; confidence: number; alternatives: Array<{ intent: IntentType; score: number }> } {
@@ -466,8 +467,8 @@ export default LearningLayer;
 // =============================================================================
 
 /**
- * Learning Loop - العقل الحي الذي يتعلم
- * يقارن التوقعات بالواقع ويعدل الأوزان
+ * Learning Loop -    
+ *     
  */
 
 // Engine weights that can be adjusted through learning
@@ -522,7 +523,7 @@ const learningHistory: LearningCycle[] = [];
 
 /**
  * Run a learning cycle
- * يراجع التحليلات السابقة ويتعلم من الأخطاء
+ *      
  */
 export function runLearningCycle(): LearningCycle {
   const cycleId = `CYCLE-${Date.now()}`;
@@ -542,11 +543,11 @@ export function runLearningCycle(): LearningCycle {
       // Apply adjustment based on pattern
       const adjustment = processPattern(pattern);
       if (adjustment) {
-        improvements.push(`تم تعديل: ${adjustment}`);
+        improvements.push(` : ${adjustment}`);
         adjustmentsMade++;
       }
     } else {
-      errors.push(`نمط غير مؤكد: ${pattern.pattern} (ثقة: ${pattern.confidence}%)`);
+      errors.push(`  : ${pattern.pattern} (: ${pattern.confidence}%)`);
     }
   });
   
@@ -583,7 +584,7 @@ function processPattern(pattern: {
   confidence: number;
 }): string | null {
   // Detect emotion misclassification patterns
-  const emotionMatch = pattern.pattern.match(/كنت أصنف (\w+) كـ (\w+)/);
+  const emotionMatch = pattern.pattern.match(/  (\w+)  (\w+)/);
   if (emotionMatch) {
     const [, original, corrected] = emotionMatch;
     
@@ -602,12 +603,12 @@ function processPattern(pattern: {
         pattern.frequency
       );
       
-      return `تعديل انحياز ${original} → ${corrected}`;
+      return `  ${original} → ${corrected}`;
     }
   }
   
   // Detect confidence issues
-  if (pattern.pattern.includes('توقعات لم تتحقق')) {
+  if (pattern.pattern.includes(t('auto.engines_learningStore.15.a7217a03', 'ar'))) {
     // Reduce overall confidence
     const confidenceReduction = Math.min(pattern.frequency * 0.02, 0.1);
     
@@ -616,11 +617,11 @@ function processPattern(pattern: {
       'confidence_modifier',
       1.0,
       1.0 - confidenceReduction,
-      'تقليل الثقة بسبب توقعات خاطئة',
+      t('auto.engines_learningStore.14.d56d1841', 'ar'),
       pattern.frequency
     );
     
-    return `تقليل الثقة بنسبة ${(confidenceReduction * 100).toFixed(1)}%`;
+    return `   ${(confidenceReduction * 100).toFixed(1)}%`;
   }
   
   return null;
@@ -656,7 +657,7 @@ export function applyEmotionBias(emotions: Record<string, number>): Record<strin
 
 /**
  * Evaluate prediction accuracy
- * يقارن التوقع بالواقع
+ *   
  */
 export function evaluatePrediction(
   analysisId: string,
@@ -690,13 +691,13 @@ export function evaluatePrediction(
   // Generate feedback
   let feedback = '';
   if (score >= 80) {
-    feedback = '✅ تحليل دقيق جداً';
+    feedback = t('auto.engines_learningStore.13.a29fe8be', 'ar');
   } else if (score >= 60) {
-    feedback = '⚠️ تحليل جيد مع بعض الانحرافات';
+    feedback = t('auto.engines_learningStore.12.026c2ae4', 'ar');
   } else if (score >= 40) {
-    feedback = '⚠️ تحليل متوسط، يحتاج تحسين';
+    feedback = t('auto.engines_learningStore.11.5e1a51e2', 'ar');
   } else {
-    feedback = '❌ كنت غلط هنا، أحتاج أتعلم';
+    feedback = t('auto.engines_learningStore.10.b21c00e0', 'ar');
   }
   
   // If wrong, trigger learning
@@ -715,16 +716,16 @@ export function evaluatePrediction(
 
 /**
  * Trigger learning from an error
- * "كنت غلط هنا" ويعدل أوزانه
+ * "  "  
  */
 function triggerLearningFromError(
   analysisId: string,
   predicted: { dominantEmotion: string; gmi: number; trend: string },
   actual: { dominantEmotion: string; gmi: number; trend: string }
 ) {
-  console.log(`[Learning] كنت غلط في التحليل ${analysisId}`);
-  console.log(`[Learning] توقعت: ${predicted.dominantEmotion} (GMI: ${predicted.gmi})`);
-  console.log(`[Learning] الواقع: ${actual.dominantEmotion} (GMI: ${actual.gmi})`);
+  console.log(`[Learning]     ${analysisId}`);
+  console.log(`[Learning] : ${predicted.dominantEmotion} (GMI: ${predicted.gmi})`);
+  console.log(`[Learning] : ${actual.dominantEmotion} (GMI: ${actual.gmi})`);
   
   // Adjust emotion bias
   if (predicted.dominantEmotion !== actual.dominantEmotion) {
@@ -732,13 +733,13 @@ function triggerLearningFromError(
     emotionBiases[predicted.dominantEmotion] -= biasAdjustment;
     emotionBiases[actual.dominantEmotion] += biasAdjustment;
     
-    console.log(`[Learning] تعديل الانحياز: ${predicted.dominantEmotion} -${biasAdjustment}, ${actual.dominantEmotion} +${biasAdjustment}`);
+    console.log(`[Learning]  : ${predicted.dominantEmotion} -${biasAdjustment}, ${actual.dominantEmotion} +${biasAdjustment}`);
   }
   
   // Adjust GMI calculation if error is significant
   if (Math.abs(predicted.gmi - actual.gmi) > 20) {
     // This would adjust internal GMI calculation parameters
-    console.log(`[Learning] خطأ GMI كبير (${Math.abs(predicted.gmi - actual.gmi)}), يحتاج مراجعة`);
+    console.log(`[Learning]  GMI  (${Math.abs(predicted.gmi - actual.gmi)}),  `);
   }
 }
 
@@ -815,7 +816,7 @@ export function predictEmotionTrend(
       predictedEmotion: currentEmotion,
       predictedIntensity: currentIntensity,
       confidence: 30,
-      reasoning: 'بيانات غير كافية للتنبؤ',
+      reasoning: t('auto.engines_learningStore.9.49a3cb65', 'ar'),
     };
   }
   
@@ -844,13 +845,13 @@ export function predictEmotionTrend(
       curiosity: 'indifference',
     };
     predictedEmotion = opposites[currentEmotion] || currentEmotion;
-    reasoning = `الشدة تتناقص، قد يتحول من ${currentEmotion} إلى ${predictedEmotion}`;
+    reasoning = `     ${currentEmotion}  ${predictedEmotion}`;
   } else if (intensityTrend > 5) {
-    reasoning = `الشدة في تصاعد (+${intensityTrend.toFixed(1)}/ساعة)`;
+    reasoning = `   (+${intensityTrend.toFixed(1)}/)`;
   } else if (intensityTrend < -5) {
-    reasoning = `الشدة في تناقص (${intensityTrend.toFixed(1)}/ساعة)`;
+    reasoning = `   (${intensityTrend.toFixed(1)}/)`;
   } else {
-    reasoning = 'الحالة مستقرة نسبياً';
+    reasoning = t('auto.engines_learningStore.8.05d659a4', 'ar');
   }
   
   // Calculate confidence based on data quality and learning state
@@ -1156,7 +1157,7 @@ export async function learnKeywordsFromText(
   emotionalWeight: number
 ): Promise<void> {
   // Simple keyword extraction (words longer than 3 characters)
-  const words = text.split(/[\s\.,،؛:!؟\?]+/).filter(w => w.length > 3);
+  const words = text.split(/[\s\.,:!\?]+/).filter(w => w.length > 3);
   
   // Store unique words as potential keywords
   const uniqueWords = Array.from(new Set(words));
@@ -1205,15 +1206,15 @@ export function applyLearnedAdjustments(
 export async function initializeBaseKeywords(): Promise<void> {
   const baseKeywords: KeywordLearningInput[] = [
     // Arabic death keywords
-    { keyword: "موت", language: "arabic", eventType: "death", emotionalWeight: -90, primaryEmotion: "sadness", confidence: 95, source: "manual" },
-    { keyword: "وفاة", language: "arabic", eventType: "death", emotionalWeight: -85, primaryEmotion: "sadness", confidence: 95, source: "manual" },
-    { keyword: "استشهاد", language: "arabic", eventType: "death", emotionalWeight: -80, primaryEmotion: "sadness", confidence: 95, source: "manual" },
-    { keyword: "رحيل", language: "arabic", eventType: "death", emotionalWeight: -75, primaryEmotion: "sadness", confidence: 90, source: "manual" },
+    { keyword: t('auto.engines_learningStore.7.ba42d7b3', 'ar'), language: "arabic", eventType: "death", emotionalWeight: -90, primaryEmotion: "sadness", confidence: 95, source: "manual" },
+    { keyword: t('auto.engines_learningStore.6.158c325c', 'ar'), language: "arabic", eventType: "death", emotionalWeight: -85, primaryEmotion: "sadness", confidence: 95, source: "manual" },
+    { keyword: t('auto.engines_learningStore.5.358950ef', 'ar'), language: "arabic", eventType: "death", emotionalWeight: -80, primaryEmotion: "sadness", confidence: 95, source: "manual" },
+    { keyword: t('auto.engines_learningStore.4.9269ef95', 'ar'), language: "arabic", eventType: "death", emotionalWeight: -75, primaryEmotion: "sadness", confidence: 90, source: "manual" },
     
     // Arabic celebration keywords
-    { keyword: "فوز", language: "arabic", eventType: "celebration", emotionalWeight: 85, primaryEmotion: "joy", confidence: 90, source: "manual" },
-    { keyword: "احتفال", language: "arabic", eventType: "celebration", emotionalWeight: 80, primaryEmotion: "joy", confidence: 90, source: "manual" },
-    { keyword: "بطولة", language: "arabic", eventType: "celebration", emotionalWeight: 75, primaryEmotion: "joy", confidence: 85, source: "manual" },
+    { keyword: t('auto.engines_learningStore.3.837787a2', 'ar'), language: "arabic", eventType: "celebration", emotionalWeight: 85, primaryEmotion: "joy", confidence: 90, source: "manual" },
+    { keyword: t('auto.engines_learningStore.2.3460cbc6', 'ar'), language: "arabic", eventType: "celebration", emotionalWeight: 80, primaryEmotion: "joy", confidence: 90, source: "manual" },
+    { keyword: t('auto.engines_learningStore.1.5c6d8448', 'ar'), language: "arabic", eventType: "celebration", emotionalWeight: 75, primaryEmotion: "joy", confidence: 85, source: "manual" },
     
     // English death keywords
     { keyword: "death", language: "english", eventType: "death", emotionalWeight: -90, primaryEmotion: "sadness", confidence: 95, source: "manual" },

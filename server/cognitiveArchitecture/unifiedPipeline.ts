@@ -1,6 +1,6 @@
 /**
  * UNIFIED PIPELINE - The Accumulative ASI Orchestrator (V4.8)
- * يربط طبقات الوعي والتحكم لتقديم استجابة موحدة ومعالجة الأخطاء التقنية.
+ *          .
  */
 
 import { CognitiveControlLayer } from './cognitiveControlLayer';
@@ -45,7 +45,7 @@ class UnifiedPipelineClass {
   async process(input: UnifiedPipelineInput): Promise<UnifiedPipelineOutput> {
     const { question, sessionId, country, conversationHistory } = input;
 
-    // ✅ إصلاح الخطأ 37: التأكد من تمرير string وليس undefined
+    // ✅   37:    string  undefined
     const safeCountry = country || 'global';
     const contextCheck = ContextLockLayer.validateContext(sessionId, question, safeCountry);
 

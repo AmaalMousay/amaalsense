@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Cognitive Consistency Check Layer
  * 
@@ -88,10 +90,10 @@ class CognitiveConsistencyCheckClass {
             violations.push({
               type: 'contradiction',
               severity: 'high',
-              description: 'تناقض منطقي بين الرد الحالي والرد السابق',
+              description: t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.27.e98e6421', 'ar'),
               previousStatement: prevStmt,
               currentStatement: currentStmt,
-              suggestion: 'راجع الحكم السابق أو وضح التغيير في الموقف',
+              suggestion: t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.26.fb747397', 'ar'),
             });
           }
         }
@@ -118,10 +120,10 @@ class CognitiveConsistencyCheckClass {
       return {
         type: 'context_drift',
         severity: 'medium',
-        description: 'الرد خرج عن الموضوع الأساسي',
-        previousStatement: `الموضوع: ${currentTopic}`,
-        currentStatement: `الرد يتحدث عن: ${currentKeywords.slice(0, 5).join(', ')}`,
-        suggestion: 'ارجع للموضوع الأساسي أو وضح العلاقة',
+        description: t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.25.c649b334', 'ar'),
+        previousStatement: `: ${currentTopic}`,
+        currentStatement: `  : ${currentKeywords.slice(0, 5).join(', ')}`,
+        suggestion: t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.24.174b331c', 'ar'),
       };
     }
 
@@ -142,10 +144,10 @@ class CognitiveConsistencyCheckClass {
       return {
         type: 'inconsistency',
         severity: 'low',
-        description: 'تغيير مفاجئ في النبرة العاطفية',
-        previousStatement: `النبرة السابقة: ${prevSentiment}`,
-        currentStatement: `النبرة الحالية: ${currentSentiment}`,
-        suggestion: 'وضح سبب التغيير في النبرة',
+        description: t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.23.c04ae227', 'ar'),
+        previousStatement: ` : ${prevSentiment}`,
+        currentStatement: ` : ${currentSentiment}`,
+        suggestion: t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.22.9b66ce5d', 'ar'),
       };
     }
 
@@ -157,18 +159,18 @@ class CognitiveConsistencyCheckClass {
    */
   private extractKeyStatements(response: string): string[] {
     // Split by sentence endings
-    const sentences = response.split(/[.!?؟]/);
+    const sentences = response.split(/[.!?]/);
     
     // Filter for statements with strong assertions
     const assertionPatterns = [
-      /يجب/,
-      /لا يجب/,
-      /ينبغي/,
-      /لا ينبغي/,
-      /من الضروري/,
-      /من المهم/,
-      /بالتأكيد/,
-      /بالتأكيد لا/,
+      //,
+      / /,
+      //,
+      / /,
+      / /,
+      / /,
+      //,
+      / /,
     ];
 
     return sentences
@@ -183,11 +185,10 @@ class CognitiveConsistencyCheckClass {
   private areContradictory(stmt1: string, stmt2: string): boolean {
     // Simple contradiction detection
     const negationPairs = [
-      { positive: /يجب/, negative: /لا يجب/ },
-      { positive: /ينبغي/, negative: /لا ينبغي/ },
-      { positive: /من الضروري/, negative: /ليس من الضروري/ },
-      { positive: /مفيد/, negative: /ضار/ },
-      { positive: /آمن/, negative: /خطير/ },
+      { positive: /improving|positive|stable/i, negative: /worsening|negative|unstable/i },
+      { positive: /increase|rising|higher/i, negative: /decrease|falling|lower/i },
+      { positive: /safe|low risk/i, negative: /danger|high risk/i },
+      { positive: /confidence|certainty/i, negative: /uncertainty|doubt/i },
     ];
 
     for (const { positive, negative } of negationPairs) {
@@ -213,7 +214,7 @@ class CognitiveConsistencyCheckClass {
   private extractKeywords(text: string): string[] {
     const stopWords = new Set([
       'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'في', 'من', 'إلى', 'على', 'عن', 'مع', 'هذا', 'هذه', 'ذلك',
+      t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.21.aef2099d', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.20.aa7099e2', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.19.8ab80326', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.18.16dc1dd1', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.17.38486333', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.16.f3c3b73b', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.15.6be4d5a7', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.14.f60d1f66', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.13.bcd49587', 'ar'),
     ]);
 
     return text
@@ -227,8 +228,8 @@ class CognitiveConsistencyCheckClass {
    * Extract sentiment from response
    */
   private extractSentiment(response: string): 'positive' | 'negative' | 'neutral' {
-    const positiveWords = ['أمل', 'تفاؤل', 'إيجابي', 'جيد', 'تحسن', 'نجاح'];
-    const negativeWords = ['خوف', 'قلق', 'سلبي', 'سيء', 'تدهور', 'فشل'];
+    const positiveWords = [t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.12.60cd6c3d', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.11.e01009da', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.10.3c9380a2', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.9.c4242fc2', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.8.ab4c7e3d', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.7.2eb748dc', 'ar')];
+    const negativeWords = [t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.6.1cf83ec0', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.5.a24a5460', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.4.a5ed0453', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.3.f4fc67ca', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.2.b3af2cb5', 'ar'), t('auto.cognitiveArchitecture_cognitiveConsistencyCheck.1.9fa00bdb', 'ar')];
 
     const lowerResponse = response.toLowerCase();
     const positiveCount = positiveWords.filter(w => lowerResponse.includes(w)).length;

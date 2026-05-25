@@ -1,11 +1,13 @@
+import { t } from "../_core/i18n";
+
 // @ts-nocheck
 /**
  * Economic Data Service
- * يجلب البيانات الاقتصادية الحقيقية (عملات، ذهب، فضة، نفط)
- * لربطها مع تحليل المشاعر للمتداولين
+ *     (   )
+ *     
  */
 
-// أنواع البيانات الاقتصادية
+//   
 export interface CurrencyRate {
   code: string;
   name: string;
@@ -34,20 +36,20 @@ export interface EconomicData {
   source: string;
 }
 
-// Cache للبيانات (تحديث كل 15 دقيقة)
+// Cache  (  15 )
 let cachedData: EconomicData | null = null;
 let lastFetchTime: number = 0;
-const CACHE_DURATION = 15 * 60 * 1000; // 15 دقيقة
+const CACHE_DURATION = 15 * 60 * 1000; // 15 
 
-// آخر أسعار معروفة - تُستخدم كـ Fallback عند فشل الاتصال (بدلاً من Math.random)
+//    -   Fallback    (  Math.random)
 let lastKnownCommodities: CommodityPrice[] | null = null;
 
 /**
- * جلب أسعار العملات من Frankfurter API (مجاني بدون مفتاح)
+ *     Frankfurter API (  )
  */
 async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
   try {
-    // Frankfurter API - مجاني ولا يحتاج مفتاح
+    // Frankfurter API -    
     const response = await fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,LYD,EGP,TND,SAR,AED');
     
     if (!response.ok) {
@@ -58,20 +60,20 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
     const data = await response.json();
     const rates: CurrencyRate[] = [];
     
-    // تحويل البيانات
+    //  
     const currencyNames: Record<string, string> = {
-      'EUR': 'يورو',
-      'GBP': 'جنيه إسترليني',
-      'LYD': 'دينار ليبي',
-      'EGP': 'جنيه مصري',
-      'TND': 'دينار تونسي',
-      'SAR': 'ريال سعودي',
-      'AED': 'درهم إماراتي'
+      'EUR': t('auto.services_economicDataService.27.41503f39', 'ar'),
+      'GBP': t('auto.services_economicDataService.26.14ea6c1d', 'ar'),
+      'LYD': t('auto.services_economicDataService.25.bbfb98bc', 'ar'),
+      'EGP': t('auto.services_economicDataService.24.c5dd2803', 'ar'),
+      'TND': t('auto.services_economicDataService.23.5d841334', 'ar'),
+      'SAR': t('auto.services_economicDataService.22.22847c50', 'ar'),
+      'AED': t('auto.services_economicDataService.21.3e393840', 'ar')
     };
     
     for (const [code, rate] of Object.entries(data.rates)) {
-      // لا نستخدم Math.random() - نعرض فقط الرقم الحقيقي من API
-      // التغيير اليومي يحتاج بيانات تاريخية - نضع صفر بدلاً من رقم عشوائي
+      //   Math.random() -      API
+      //      -      
       const change = 0;
       const changePercent = 0;
       
@@ -86,10 +88,10 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
       });
     }
     
-    // إضافة الدولار كمرجع
+    //   
     rates.unshift({
       code: 'USD',
-      name: 'دولار أمريكي',
+      name: t('auto.services_economicDataService.20.9baef1f7', 'ar'),
       rate: 1,
       change: 0,
       changePercent: 0,
@@ -105,16 +107,16 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
 }
 
 /**
- * جلب أسعار الذهب والفضة والنفط من API مجاني حقيقي
- * نستخدم metals-api.com البديل المجاني أو Open Exchange Rates
+ *       API  
+ *  metals-api.com    Open Exchange Rates
  */
 async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
   try {
-    // 1. محاولة جلب سعر الذهب من metals.live (API مجاني)
+    // 1.      metals.live (API )
     const goldRes = await fetch('https://metals.live/api/spot');
     if (goldRes.ok) {
       const metals = await goldRes.json();
-      // metals.live يعيد [{metal:'gold',price:...}, ...]
+      // metals.live  [{metal:'gold',price:...}, ...]
       const goldEntry = Array.isArray(metals)
         ? metals.find((m: any) => m.metal?.toLowerCase() === 'gold')
         : null;
@@ -125,17 +127,17 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
       if (goldEntry) {
         const commodities: CommodityPrice[] = [
           {
-            name: 'الذهب',
+            name: t('auto.services_economicDataService.19.c851efa8', 'ar'),
             symbol: 'XAU',
             price: goldEntry.price,
             currency: 'USD',
-            change: 0, // بيانات التغيير تحتاج مشتركة
+            change: 0, //    
             changePercent: 0,
             direction: 'stable',
             lastUpdated: new Date()
           },
           {
-            name: 'الفضة',
+            name: t('auto.services_economicDataService.18.cbd63816', 'ar'),
             symbol: 'XAG',
             price: silverEntry?.price ?? 31,
             currency: 'USD',
@@ -144,9 +146,9 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
             direction: 'stable',
             lastUpdated: new Date()
           },
-          // النفط ليس في metals.live - نستخدم القيمة المخزنة أو الافتراضية
+          //    metals.live -     
           lastKnownCommodities?.find(c => c.symbol === 'BRENT') ?? {
-            name: 'نفط برنت',
+            name: t('auto.services_economicDataService.17.cffedf5c', 'ar'),
             symbol: 'BRENT',
             price: 78,
             currency: 'USD',
@@ -156,7 +158,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
             lastUpdated: new Date()
           },
           lastKnownCommodities?.find(c => c.symbol === 'WTI') ?? {
-            name: 'نفط WTI',
+            name: t('auto.services_economicDataService.16.206330ac', 'ar'),
             symbol: 'WTI',
             price: 74,
             currency: 'USD',
@@ -167,7 +169,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
           }
         ];
 
-        // حفظ آخر قيم معروفة
+        //    
         lastKnownCommodities = commodities;
         return commodities;
       }
@@ -176,54 +178,54 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
     console.warn('[EconomicDataService] metals.live API failed:', err);
   }
 
-  // 2. إذا فشل الاتصال، نستخدم آخر أسعار معروفة (مستقرة وليست عشوائية)
+  // 2.        (  )
   if (lastKnownCommodities) {
     console.log('[EconomicDataService] Using last known commodity prices as fallback');
     return lastKnownCommodities;
   }
 
-  // 3. لا بيانات على الإطلاق - نستخدم الأسعار الافتراضية الثابتة
+  // 3.     -    
   console.warn('[EconomicDataService] No commodity data available, using static defaults');
   return getDefaultCommodityPrices();
 }
 
 /**
- * بيانات افتراضية للعملات في حالة فشل الاتصال
+ *       
  */
 function getDefaultCurrencyRates(): CurrencyRate[] {
   return [
-    { code: 'USD', name: 'دولار أمريكي', rate: 1, change: 0, changePercent: 0, direction: 'stable', lastUpdated: new Date() },
-    { code: 'EUR', name: 'يورو', rate: 0.92, change: -0.002, changePercent: -0.22, direction: 'down', lastUpdated: new Date() },
-    { code: 'GBP', name: 'جنيه إسترليني', rate: 0.79, change: 0.001, changePercent: 0.13, direction: 'up', lastUpdated: new Date() },
-    { code: 'LYD', name: 'دينار ليبي', rate: 4.85, change: 0.02, changePercent: 0.41, direction: 'up', lastUpdated: new Date() },
-    { code: 'EGP', name: 'جنيه مصري', rate: 50.5, change: 0.3, changePercent: 0.60, direction: 'up', lastUpdated: new Date() },
+    { code: 'USD', name: t('auto.services_economicDataService.15.9baef1f7', 'ar'), rate: 1, change: 0, changePercent: 0, direction: 'stable', lastUpdated: new Date() },
+    { code: 'EUR', name: t('auto.services_economicDataService.14.41503f39', 'ar'), rate: 0.92, change: -0.002, changePercent: -0.22, direction: 'down', lastUpdated: new Date() },
+    { code: 'GBP', name: t('auto.services_economicDataService.13.14ea6c1d', 'ar'), rate: 0.79, change: 0.001, changePercent: 0.13, direction: 'up', lastUpdated: new Date() },
+    { code: 'LYD', name: t('auto.services_economicDataService.12.bbfb98bc', 'ar'), rate: 4.85, change: 0.02, changePercent: 0.41, direction: 'up', lastUpdated: new Date() },
+    { code: 'EGP', name: t('auto.services_economicDataService.11.c5dd2803', 'ar'), rate: 50.5, change: 0.3, changePercent: 0.60, direction: 'up', lastUpdated: new Date() },
   ];
 }
 
 /**
- * بيانات افتراضية للسلع في حالة فشل الاتصال
+ *       
  */
 function getDefaultCommodityPrices(): CommodityPrice[] {
   return [
-    { name: 'الذهب', symbol: 'XAU', price: 2650, currency: 'USD', change: 15, changePercent: 0.57, direction: 'up', lastUpdated: new Date() },
-    { name: 'الفضة', symbol: 'XAG', price: 31, currency: 'USD', change: -0.2, changePercent: -0.64, direction: 'down', lastUpdated: new Date() },
-    { name: 'نفط برنت', symbol: 'BRENT', price: 78, currency: 'USD', change: 1.2, changePercent: 1.56, direction: 'up', lastUpdated: new Date() },
-    { name: 'نفط WTI', symbol: 'WTI', price: 74, currency: 'USD', change: 0.8, changePercent: 1.09, direction: 'up', lastUpdated: new Date() },
+    { name: t('auto.services_economicDataService.10.c851efa8', 'ar'), symbol: 'XAU', price: 2650, currency: 'USD', change: 15, changePercent: 0.57, direction: 'up', lastUpdated: new Date() },
+    { name: t('auto.services_economicDataService.9.cbd63816', 'ar'), symbol: 'XAG', price: 31, currency: 'USD', change: -0.2, changePercent: -0.64, direction: 'down', lastUpdated: new Date() },
+    { name: t('auto.services_economicDataService.8.cffedf5c', 'ar'), symbol: 'BRENT', price: 78, currency: 'USD', change: 1.2, changePercent: 1.56, direction: 'up', lastUpdated: new Date() },
+    { name: t('auto.services_economicDataService.7.206330ac', 'ar'), symbol: 'WTI', price: 74, currency: 'USD', change: 0.8, changePercent: 1.09, direction: 'up', lastUpdated: new Date() },
   ];
 }
 
 /**
- * جلب جميع البيانات الاقتصادية
+ *    
  */
 export async function fetchEconomicData(): Promise<EconomicData> {
   const now = Date.now();
   
-  // استخدام Cache إذا كانت البيانات حديثة
+  //  Cache    
   if (cachedData && (now - lastFetchTime) < CACHE_DURATION) {
     return cachedData;
   }
   
-  // جلب البيانات الجديدة
+  //   
   const [currencies, commodities] = await Promise.all([
     fetchCurrencyRates(),
     fetchCommodityPrices()
@@ -241,7 +243,7 @@ export async function fetchEconomicData(): Promise<EconomicData> {
 }
 
 /**
- * تحليل البيانات الاقتصادية وربطها بالمشاعر
+ *     
  */
 export function analyzeEconomicSentiment(data: EconomicData): {
   trend: 'bullish' | 'bearish' | 'neutral';
@@ -253,41 +255,41 @@ export function analyzeEconomicSentiment(data: EconomicData): {
   let bullishCount = 0;
   let bearishCount = 0;
   
-  // تحليل العملات
+  //  
   for (const currency of data.currencies) {
     if (currency.code === 'USD') continue;
     
     if (currency.direction === 'up' && currency.changePercent > 0.5) {
-      bearishCount++; // ارتفاع العملات الأخرى = ضعف الدولار
-      signals.push(`${currency.name} ارتفع ${currency.changePercent.toFixed(2)}%`);
+      bearishCount++; //    =  
+      signals.push(`${currency.name}  ${currency.changePercent.toFixed(2)}%`);
     } else if (currency.direction === 'down' && currency.changePercent < -0.5) {
-      bullishCount++; // انخفاض العملات = قوة الدولار
-      signals.push(`${currency.name} انخفض ${Math.abs(currency.changePercent).toFixed(2)}%`);
+      bullishCount++; //   =  
+      signals.push(`${currency.name}  ${Math.abs(currency.changePercent).toFixed(2)}%`);
     }
   }
   
-  // تحليل السلع
+  //  
   for (const commodity of data.commodities) {
     if (commodity.direction === 'up' && commodity.changePercent > 1) {
       if (commodity.symbol === 'XAU' || commodity.symbol === 'XAG') {
-        bearishCount++; // ارتفاع الذهب = خوف في السوق
-        signals.push(`${commodity.name} ارتفع ${commodity.changePercent.toFixed(2)}% (ملاذ آمن)`);
+        bearishCount++; //   =   
+        signals.push(`${commodity.name}  ${commodity.changePercent.toFixed(2)}% ( )`);
       } else {
-        bullishCount++; // ارتفاع النفط = نشاط اقتصادي
-        signals.push(`${commodity.name} ارتفع ${commodity.changePercent.toFixed(2)}%`);
+        bullishCount++; //   =  
+        signals.push(`${commodity.name}  ${commodity.changePercent.toFixed(2)}%`);
       }
     } else if (commodity.direction === 'down' && commodity.changePercent < -1) {
       if (commodity.symbol === 'XAU' || commodity.symbol === 'XAG') {
-        bullishCount++; // انخفاض الذهب = ثقة في السوق
-        signals.push(`${commodity.name} انخفض ${Math.abs(commodity.changePercent).toFixed(2)}%`);
+        bullishCount++; //   =   
+        signals.push(`${commodity.name}  ${Math.abs(commodity.changePercent).toFixed(2)}%`);
       } else {
-        bearishCount++; // انخفاض النفط = تباطؤ اقتصادي
-        signals.push(`${commodity.name} انخفض ${Math.abs(commodity.changePercent).toFixed(2)}%`);
+        bearishCount++; //   =  
+        signals.push(`${commodity.name}  ${Math.abs(commodity.changePercent).toFixed(2)}%`);
       }
     }
   }
   
-  // تحديد الاتجاه
+  //  
   const total = bullishCount + bearishCount;
   let trend: 'bullish' | 'bearish' | 'neutral' = 'neutral';
   let confidence = 50;
@@ -303,68 +305,68 @@ export function analyzeEconomicSentiment(data: EconomicData): {
     }
   }
   
-  // ملخص
+  // 
   let summary = '';
   if (trend === 'bullish') {
-    summary = 'المؤشرات الاقتصادية تميل للإيجابية مع ثقة في الأسواق';
+    summary = t('auto.services_economicDataService.6.362b420b', 'ar');
   } else if (trend === 'bearish') {
-    summary = 'المؤشرات الاقتصادية تشير لحذر مع توجه نحو الملاذات الآمنة';
+    summary = t('auto.services_economicDataService.5.ec1e518c', 'ar');
   } else {
-    summary = 'الأسواق في حالة ترقب مع إشارات متباينة';
+    summary = t('auto.services_economicDataService.4.8b755bd7', 'ar');
   }
   
   return {
     trend,
     confidence: Math.round(confidence),
-    signals: signals.slice(0, 5), // أهم 5 إشارات
+    signals: signals.slice(0, 5), //  5 
     summary
   };
 }
 
 /**
- * توليد نص للعرض في الردود
+ *     
  */
 export function formatEconomicDataForResponse(data: EconomicData): string {
   const analysis = analyzeEconomicSentiment(data);
   
-  let text = '**المؤشرات الاقتصادية:**\n';
+  let text = t('auto.services_economicDataService.3.a47f4f87', 'ar');
   
-  // العملات الرئيسية
+  //  
   const mainCurrencies = data.currencies.filter(c => ['EUR', 'LYD', 'EGP'].includes(c.code));
   if (mainCurrencies.length > 0) {
-    text += '\n• العملات: ';
+    text += t('auto.services_economicDataService.2.d437a1aa', 'ar');
     text += mainCurrencies.map(c => {
       const arrow = c.direction === 'up' ? '↑' : c.direction === 'down' ? '↓' : '→';
       return `${c.name} ${arrow}${Math.abs(c.changePercent).toFixed(1)}%`;
     }).join(' | ');
   }
   
-  // السلع
+  // 
   const gold = data.commodities.find(c => c.symbol === 'XAU');
   const oil = data.commodities.find(c => c.symbol === 'BRENT');
   
   if (gold || oil) {
-    text += '\n• السلع: ';
-    const items = [];
+    text += t('auto.services_economicDataService.1.438cb2e3', 'ar');
+    const items: string[] = [];
     if (gold) {
       const arrow = gold.direction === 'up' ? '↑' : gold.direction === 'down' ? '↓' : '→';
-      items.push(`الذهب $${gold.price.toFixed(0)} ${arrow}${Math.abs(gold.changePercent).toFixed(1)}%`);
+      items.push(` $${gold.price.toFixed(0)} ${arrow}${Math.abs(gold.changePercent).toFixed(1)}%`);
     }
     if (oil) {
       const arrow = oil.direction === 'up' ? '↑' : oil.direction === 'down' ? '↓' : '→';
-      items.push(`النفط $${oil.price.toFixed(0)} ${arrow}${Math.abs(oil.changePercent).toFixed(1)}%`);
+      items.push(` $${oil.price.toFixed(0)} ${arrow}${Math.abs(oil.changePercent).toFixed(1)}%`);
     }
     text += items.join(' | ');
   }
   
-  // الخلاصة
-  text += `\n• **الاتجاه:** ${analysis.summary}`;
+  // 
+  text += `\n• **:** ${analysis.summary}`;
   
   return text;
 }
 
 /**
- * الحصول على سعر عملة محددة
+ *     
  */
 export async function getCurrencyRate(code: string): Promise<CurrencyRate | null> {
   const data = await fetchEconomicData();
@@ -372,7 +374,7 @@ export async function getCurrencyRate(code: string): Promise<CurrencyRate | null
 }
 
 /**
- * الحصول على سعر سلعة محددة
+ *     
  */
 export async function getCommodityPrice(symbol: string): Promise<CommodityPrice | null> {
   const data = await fetchEconomicData();

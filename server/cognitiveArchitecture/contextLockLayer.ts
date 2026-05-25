@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Context Lock Layer
  * 
@@ -131,8 +133,8 @@ class ContextLockLayerClass {
       'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they',
       'what', 'which', 'who', 'when', 'where', 'why', 'how',
       // Arabic stop words
-      'في', 'من', 'إلى', 'على', 'عن', 'مع', 'هذا', 'هذه', 'ذلك', 'تلك',
-      'الذي', 'التي', 'ما', 'من', 'إن', 'أن', 'كان', 'يكون', 'هو', 'هي',
+      t('auto.cognitiveArchitecture_contextLockLayer.20.aef2099d', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.19.aa7099e2', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.18.8ab80326', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.17.16dc1dd1', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.16.38486333', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.15.f3c3b73b', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.14.6be4d5a7', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.13.f60d1f66', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.12.bcd49587', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.11.5a014748', 'ar'),
+      t('auto.cognitiveArchitecture_contextLockLayer.10.d29a8d2f', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.9.07a0f9f0', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.8.a62caa1e', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.7.aa7099e2', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.6.657087a7', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.5.2d0d4abd', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.4.1e55b052', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.3.678c315f', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.2.1b78792e', 'ar'), t('auto.cognitiveArchitecture_contextLockLayer.1.7a898715', 'ar'),
     ]);
 
     return text

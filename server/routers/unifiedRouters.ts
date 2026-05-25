@@ -1,10 +1,11 @@
+import { t } from "../_core/i18n";
 /**
  * UNIFIED ROUTERS
  * 
- * يدمج المحرك الشبكي الموحد (Network Engine) مع tRPC routers
- * يوفر endpoints موحدة للتطبيق
+ *     (Network Engine)  tRPC routers
+ *  endpoints  
  * 
- * تم التحديث: يستخدم الآن networkEngine بدل الـ pipeline القديم
+ *  :   networkEngine   pipeline 
  */
 
 import { router, publicProcedure, protectedProcedure } from '../_core/trpc';
@@ -37,16 +38,16 @@ export function formatNetworkResult(ctx: NetworkContext) {
 }
 
 /**
- * Router الموحد الذي يستخدم المحرك الشبكي
+ * Router     
  */
 export const unifiedRouter = router({
   /**
-   * تحليل سؤال واحد
+   *   
    */
   analyzeQuestion: publicProcedure
     .input(
       z.object({
-        question: z.string().min(1, "السؤال لا يمكن أن يكون فارغاً"),
+        question: z.string().min(1, t('auto.routers_unifiedRouters.14.4a9ad0a4', 'ar')),
         language: z.string().optional().default("ar")
       })
     )
@@ -66,19 +67,19 @@ export const unifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : "فشل في معالجة السؤال",
+          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.13.e2fe6481', 'ar'),
           code: "PIPELINE_ERROR"
         };
       }
     }),
 
   /**
-   * تحليل عدة أسئلة
+   *   
    */
   analyzeBatch: publicProcedure
     .input(
       z.object({
-        questions: z.array(z.string()).min(1, "يجب تقديم سؤال واحد على الأقل"),
+        questions: z.array(z.string()).min(1, t('auto.routers_unifiedRouters.12.8d2c95fc', 'ar')),
         language: z.string().optional().default("ar")
       })
     )
@@ -125,13 +126,13 @@ export const unifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : "فشل في معالجة الأسئلة"
+          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.11.245061e9', 'ar')
         };
       }
     }),
 
   /**
-   * الحصول على معلومات المحرك الشبكي
+   *     
    */
   getPipelineInfo: publicProcedure.query(() => {
     return {
@@ -158,7 +159,7 @@ export const unifiedRouter = router({
   }),
 
   /**
-   * الحصول على إحصائيات الأداء
+   *    
    */
   getPerformanceStats: publicProcedure.query(() => {
     const stats = getEngineStats();
@@ -178,7 +179,7 @@ export const unifiedRouter = router({
   }),
 
   /**
-   * اختبار المحرك الشبكي
+   *   
    */
   testPipeline: publicProcedure
     .input(
@@ -188,13 +189,13 @@ export const unifiedRouter = router({
     )
     .mutation(async ({ input }) => {
       const testQuestions = {
-        quick: ["ما رأي الناس في هذا الموضوع؟"],
+        quick: [t('auto.routers_unifiedRouters.10.d587fbe8', 'ar')],
         full: [
-          "ما رأي الناس في هذا الموضوع؟",
-          "هل هناك اتجاه عام نحو هذا؟",
-          "ما هي الأسباب الرئيسية؟"
+          t('auto.routers_unifiedRouters.9.d587fbe8', 'ar'),
+          t('auto.routers_unifiedRouters.8.efd86769', 'ar'),
+          t('auto.routers_unifiedRouters.7.7e20541a', 'ar')
         ],
-        stress: Array(10).fill("ما رأي الناس في هذا الموضوع؟")
+        stress: Array(10).fill(t('auto.routers_unifiedRouters.6.d587fbe8', 'ar'))
       };
 
       const questions = testQuestions[input.testType];
@@ -243,11 +244,11 @@ export const unifiedRouter = router({
 });
 
 /**
- * Router المحمي للمستخدمين المسجلين
+ * Router   
  */
 export const protectedUnifiedRouter = router({
   /**
-   * تحليل سؤال مع حفظ التاريخ
+   *     
    */
   analyzeWithHistory: protectedProcedure
     .input(
@@ -273,13 +274,13 @@ export const protectedUnifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : "فشل في معالجة السؤال"
+          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.5.e2fe6481', 'ar')
         };
       }
     }),
 
   /**
-   * الحصول على سجل المحادثات
+   *    
    */
   getConversationHistory: protectedProcedure
     .input(
@@ -299,7 +300,7 @@ export const protectedUnifiedRouter = router({
     }),
 
   /**
-   * تقييم إجابة
+   *  
    */
   rateResponse: protectedProcedure
     .input(
@@ -313,18 +314,18 @@ export const protectedUnifiedRouter = router({
       try {
         return {
           success: true,
-          message: "تم حفظ التقييم بنجاح"
+          message: t('auto.routers_unifiedRouters.4.c593ac22', 'ar')
         };
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : "خطأ في حفظ التقييم"
+          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.3.f348ee8d', 'ar')
         };
       }
     }),
 
   /**
-   * الحصول على إحصائيات المستخدم
+   *    
    */
   getUserStats: protectedProcedure.query(async ({ ctx }) => {
     return {
@@ -340,7 +341,7 @@ export const protectedUnifiedRouter = router({
   }),
 
   /**
-   * حذف محادثة
+   *  
    */
   deleteConversation: protectedProcedure
     .input(
@@ -352,12 +353,12 @@ export const protectedUnifiedRouter = router({
       try {
         return {
           success: true,
-          message: "تم حذف المحادثة بنجاح"
+          message: t('auto.routers_unifiedRouters.2.ad2e10e7', 'ar')
         };
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : "خطأ في حذف المحادثة"
+          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.1.f6d013f7', 'ar')
         };
       }
     })

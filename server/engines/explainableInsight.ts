@@ -1,11 +1,12 @@
+import { t } from "../_core/i18n";
 /**
  * Engine 5: Explainable Insight Engine
- * يولد تفسيرات بشرية قابلة للفهم
- * يتكيف حسب نوع المستخدم:
- * - journalist: زاوية القصة، العنوان المقترح
- * - researcher: المتغيرات، الارتباطات، البيانات
- * - trader: إشارات السوق، مستوى المخاطرة
- * - general: ملخص بسيط وواضح
+ *     
+ *    :
+ * - journalist:    
+ * - researcher:   
+ * - trader:    
+ * - general:   
  */
 
 import { ContextResult } from './contextClassification';
@@ -70,12 +71,12 @@ export interface ExplainableInsightResult {
 
 // Emotion translations
 const EMOTION_NAMES: Record<keyof AffectiveVector, { en: string; ar: string }> = {
-  joy: { en: 'Joy', ar: 'الفرح' },
-  fear: { en: 'Fear', ar: 'الخوف' },
-  anger: { en: 'Anger', ar: 'الغضب' },
-  sadness: { en: 'Sadness', ar: 'الحزن' },
-  hope: { en: 'Hope', ar: 'الأمل' },
-  curiosity: { en: 'Curiosity', ar: 'الفضول' }
+  joy: { en: 'Joy', ar: t('auto.engines_explainableInsight.49.81fd7301', 'ar') },
+  fear: { en: 'Fear', ar: t('auto.engines_explainableInsight.48.b4cbc50d', 'ar') },
+  anger: { en: 'Anger', ar: t('auto.engines_explainableInsight.47.0a67288b', 'ar') },
+  sadness: { en: 'Sadness', ar: t('auto.engines_explainableInsight.46.2c024033', 'ar') },
+  hope: { en: 'Hope', ar: t('auto.engines_explainableInsight.45.05554470', 'ar') },
+  curiosity: { en: 'Curiosity', ar: t('auto.engines_explainableInsight.44.f1f8172b', 'ar') }
 };
 
 /**
@@ -96,18 +97,18 @@ function generateJournalistInsight(
   
   if (dynamics.riskLevel === 'critical') {
     headlineEn = `Breaking: ${context.region} faces ${context.eventType} amid rising ${dominantEmotion}`;
-    headlineAr = `عاجل: ${context.region} تواجه ${translateEventType(context.eventType)} وسط تصاعد ${emotionName.ar}`;
+    headlineAr = `: ${context.region}  ${translateEventType(context.eventType)}   ${emotionName.ar}`;
   } else if (emotions.emotionalIntensity > 70) {
     headlineEn = `Strong ${dominantEmotion} sweeps ${context.region} over ${context.domain} developments`;
-    headlineAr = `موجة ${emotionName.ar} قوية تجتاح ${context.region} بسبب تطورات ${translateDomain(context.domain)}`;
+    headlineAr = ` ${emotionName.ar}   ${context.region}   ${translateDomain(context.domain)}`;
   } else {
     headlineEn = `${context.region}: Public sentiment shifts toward ${dominantEmotion} on ${context.domain}`;
-    headlineAr = `${context.region}: المشاعر العامة تتجه نحو ${emotionName.ar} بشأن ${translateDomain(context.domain)}`;
+    headlineAr = `${context.region}:     ${emotionName.ar}  ${translateDomain(context.domain)}`;
   }
   
   // Generate story angle
   const angleEn = `Focus on the human impact: Why are people feeling ${dominantEmotion}? ${drivers.whyStatement.en}`;
-  const angleAr = `ركز على التأثير الإنساني: لماذا يشعر الناس بـ${emotionName.ar}؟ ${drivers.whyStatement.ar}`;
+  const angleAr = `   :    ${emotionName.ar} ${drivers.whyStatement.ar}`;
   
   // Determine story potential
   let storyPotential: JournalistInsight['storyPotential'] = 'analysis';
@@ -218,16 +219,16 @@ function generateTraderInsight(
   
   if (marketSignal === 'volatile') {
     actionableEn = 'High emotional volatility detected. Consider reducing exposure or implementing hedging strategies.';
-    actionableAr = 'تم رصد تقلب عاطفي عالي. فكر في تقليل التعرض أو تنفيذ استراتيجيات التحوط.';
+    actionableAr = t('auto.engines_explainableInsight.43.e0236638', 'ar');
   } else if (marketSignal === 'bullish') {
     actionableEn = 'Positive sentiment momentum building. Market psychology favors risk-on positioning.';
-    actionableAr = 'زخم إيجابي في المشاعر يتصاعد. نفسية السوق تفضل المراكز المخاطرة.';
+    actionableAr = t('auto.engines_explainableInsight.42.93043e3b', 'ar');
   } else if (marketSignal === 'bearish') {
     actionableEn = 'Negative sentiment intensifying. Consider defensive positioning or safe-haven assets.';
-    actionableAr = 'المشاعر السلبية تتصاعد. فكر في المراكز الدفاعية أو أصول الملاذ الآمن.';
+    actionableAr = t('auto.engines_explainableInsight.41.009a2e66', 'ar');
   } else {
     actionableEn = 'Neutral sentiment environment. Monitor for directional shifts before major positioning.';
-    actionableAr = 'بيئة مشاعر محايدة. راقب التحولات الاتجاهية قبل اتخاذ مراكز كبيرة.';
+    actionableAr = t('auto.engines_explainableInsight.40.857a8e33', 'ar');
   }
   
   // Determine time horizon
@@ -262,7 +263,7 @@ function generateGeneralInsight(
   
   // Summary
   const summaryEn = `Analysis of ${context.domain} content from ${context.region} reveals ${emotionName.en.toLowerCase()} as the dominant collective emotion (${emotions.vector[dominantEmotion]}% intensity). The emotional climate is ${dynamics.volatility.level} volatility with ${dynamics.trend.direction} trend.`;
-  const summaryAr = `تحليل محتوى ${translateDomain(context.domain)} من ${context.region} يكشف أن ${emotionName.ar} هو الشعور الجماعي السائد (شدة ${emotions.vector[dominantEmotion]}%). المناخ العاطفي يتميز بتقلب ${translateVolatility(dynamics.volatility.level)} واتجاه ${translateTrend(dynamics.trend.direction)}.`;
+  const summaryAr = `  ${translateDomain(context.domain)}  ${context.region}   ${emotionName.ar}     ( ${emotions.vector[dominantEmotion]}%).     ${translateVolatility(dynamics.volatility.level)}  ${translateTrend(dynamics.trend.direction)}.`;
   
   // Key takeaway
   const keyTakeawayEn = drivers.whyStatement.en;
@@ -270,7 +271,7 @@ function generateGeneralInsight(
   
   // Emotional context
   const emotionalContextEn = `The overall sentiment is ${emotions.valence > 0 ? 'positive' : emotions.valence < 0 ? 'negative' : 'neutral'} (valence: ${emotions.valence}) with ${emotions.arousal > 60 ? 'high' : emotions.arousal > 40 ? 'moderate' : 'low'} emotional activation.`;
-  const emotionalContextAr = `المشاعر العامة ${emotions.valence > 0 ? 'إيجابية' : emotions.valence < 0 ? 'سلبية' : 'محايدة'} (القيمة: ${emotions.valence}) مع ${emotions.arousal > 60 ? 'تنشيط عاطفي عالي' : emotions.arousal > 40 ? 'تنشيط عاطفي متوسط' : 'تنشيط عاطفي منخفض'}.`;
+  const emotionalContextAr = `  ${emotions.valence > 0 ? t('auto.engines_explainableInsight.39.1a18bc03', 'ar') : emotions.valence < 0 ? t('auto.engines_explainableInsight.38.3f7f3992', 'ar') : t('auto.engines_explainableInsight.37.32a697e1', 'ar')} (: ${emotions.valence})  ${emotions.arousal > 60 ? t('auto.engines_explainableInsight.36.6707994b', 'ar') : emotions.arousal > 40 ? t('auto.engines_explainableInsight.35.274489c8', 'ar') : t('auto.engines_explainableInsight.34.dfb673df', 'ar')}.`;
   
   // Recommendation
   let recommendationEn = '';
@@ -278,13 +279,13 @@ function generateGeneralInsight(
   
   if (dynamics.riskLevel === 'critical') {
     recommendationEn = 'This situation requires immediate attention. Monitor closely for rapid developments.';
-    recommendationAr = 'هذا الوضع يتطلب اهتماماً فورياً. راقب عن كثب للتطورات السريعة.';
+    recommendationAr = t('auto.engines_explainableInsight.33.b5c08745', 'ar');
   } else if (dynamics.riskLevel === 'high') {
     recommendationEn = 'Elevated emotional intensity suggests potential for significant developments.';
-    recommendationAr = 'الشدة العاطفية المرتفعة تشير إلى احتمال تطورات مهمة.';
+    recommendationAr = t('auto.engines_explainableInsight.32.2d055afd', 'ar');
   } else {
     recommendationEn = 'Situation is relatively stable. Continue monitoring for changes in emotional patterns.';
-    recommendationAr = 'الوضع مستقر نسبياً. استمر في مراقبة التغيرات في الأنماط العاطفية.';
+    recommendationAr = t('auto.engines_explainableInsight.31.4428bd65', 'ar');
   }
   
   return {
@@ -298,34 +299,34 @@ function generateGeneralInsight(
 // Helper translation functions
 function translateDomain(domain: string): string {
   const translations: Record<string, string> = {
-    politics: 'السياسة', economy: 'الاقتصاد', health: 'الصحة',
-    war: 'الحرب', sports: 'الرياضة', entertainment: 'الترفيه',
-    technology: 'التكنولوجيا', environment: 'البيئة', society: 'المجتمع',
-    education: 'التعليم', general: 'عام'
+    politics: t('auto.engines_explainableInsight.30.d2c95863', 'ar'), economy: t('auto.engines_explainableInsight.29.a43da44f', 'ar'), health: t('auto.engines_explainableInsight.28.005e9108', 'ar'),
+    war: t('auto.engines_explainableInsight.27.63068650', 'ar'), sports: t('auto.engines_explainableInsight.26.0132e618', 'ar'), entertainment: t('auto.engines_explainableInsight.25.bec8bc5b', 'ar'),
+    technology: t('auto.engines_explainableInsight.24.0abcff3b', 'ar'), environment: t('auto.engines_explainableInsight.23.c7fca11d', 'ar'), society: t('auto.engines_explainableInsight.22.a38221d3', 'ar'),
+    education: t('auto.engines_explainableInsight.21.f18ce12b', 'ar'), general: t('auto.engines_explainableInsight.20.17859487', 'ar')
   };
   return translations[domain] || domain;
 }
 
 function translateEventType(eventType: string): string {
   const translations: Record<string, string> = {
-    crisis: 'أزمة', death: 'وفاة', celebration: 'احتفال',
-    conflict: 'صراع', announcement: 'إعلان', discovery: 'اكتشاف',
-    election: 'انتخابات', disaster: 'كارثة', achievement: 'إنجاز',
-    controversy: 'جدل', neutral: 'حدث'
+    crisis: t('auto.engines_explainableInsight.19.38a8a76e', 'ar'), death: t('auto.engines_explainableInsight.18.158c325c', 'ar'), celebration: t('auto.engines_explainableInsight.17.3460cbc6', 'ar'),
+    conflict: t('auto.engines_explainableInsight.16.393955e1', 'ar'), announcement: t('auto.engines_explainableInsight.15.81581363', 'ar'), discovery: t('auto.engines_explainableInsight.14.7811e2fe', 'ar'),
+    election: t('auto.engines_explainableInsight.13.d9b242e6', 'ar'), disaster: t('auto.engines_explainableInsight.12.676d2f53', 'ar'), achievement: t('auto.engines_explainableInsight.11.c24d8d6c', 'ar'),
+    controversy: t('auto.engines_explainableInsight.10.ab2e01fd', 'ar'), neutral: t('auto.engines_explainableInsight.9.22518f4c', 'ar')
   };
   return translations[eventType] || eventType;
 }
 
 function translateVolatility(level: string): string {
   const translations: Record<string, string> = {
-    low: 'منخفض', medium: 'متوسط', high: 'عالي', extreme: 'شديد'
+    low: t('auto.engines_explainableInsight.8.15b8dd47', 'ar'), medium: t('auto.engines_explainableInsight.7.91fa23bd', 'ar'), high: t('auto.engines_explainableInsight.6.034d871b', 'ar'), extreme: t('auto.engines_explainableInsight.5.440f12ab', 'ar')
   };
   return translations[level] || level;
 }
 
 function translateTrend(direction: string): string {
   const translations: Record<string, string> = {
-    rising: 'صاعد', falling: 'هابط', stable: 'مستقر', volatile: 'متقلب'
+    rising: t('auto.engines_explainableInsight.4.c8324380', 'ar'), falling: t('auto.engines_explainableInsight.3.ff284f1b', 'ar'), stable: t('auto.engines_explainableInsight.2.646ecd76', 'ar'), volatile: t('auto.engines_explainableInsight.1.9ab60a86', 'ar')
   };
   return translations[direction] || direction;
 }
@@ -347,11 +348,11 @@ export function generateInsights(
   const mainInsight = {
     title: {
       en: `${emotionName.en} Dominates: ${context.region} ${context.domain.charAt(0).toUpperCase() + context.domain.slice(1)} Analysis`,
-      ar: `${emotionName.ar} يسيطر: تحليل ${translateDomain(context.domain)} في ${context.region}`
+      ar: `${emotionName.ar} :  ${translateDomain(context.domain)}  ${context.region}`
     },
     description: {
       en: `Collective emotional analysis reveals ${emotionName.en.toLowerCase()} as the primary emotion with ${emotions.emotionalIntensity}% intensity. ${drivers.whyStatement.en}`,
-      ar: `التحليل العاطفي الجماعي يكشف أن ${emotionName.ar} هو الشعور الأساسي بشدة ${emotions.emotionalIntensity}%. ${drivers.whyStatement.ar}`
+      ar: `     ${emotionName.ar}     ${emotions.emotionalIntensity}%. ${drivers.whyStatement.ar}`
     }
   };
   

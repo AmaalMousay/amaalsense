@@ -1,6 +1,6 @@
 /**
  * tRPC Router for New Features - Humanized & Wave-Model Ready
- * تم التحديث لإصلاح أخطاء التعريفات (answer) وتوافق استدعاء LLM
+ *      (answer)   LLM
  */
 
 import { router, publicProcedure } from '../_core/trpc';
@@ -86,12 +86,12 @@ export const newFeaturesRouter = router({
         Context: Be direct, sophisticated, and insightful in English. No points.
       `;
 
-      // تحديث الاستدعاء ليطابق InvokeParams المتوقع (استخدام messages)
+      //    InvokeParams  ( messages)
       const result = await smartInvokeLLM({
         messages: [{ role: 'user', content: promptText }]
       });
 
-      // استخراج النص من النتيجة بشكل آمن
+      //      
       const answer = typeof result === 'string'
         ? result
         : (result as any)?.text || "I am currently re-calibrating the consciousness field to provide a precise answer.";

@@ -1,6 +1,6 @@
 /**
  * AMALSENSE UNIVERSAL ENGINE SELECTOR
- * المنسق الرئيسي الذي يربط الأخبار، العلوم، والذكاء الاصطناعي المجاني.
+ *         .
  */
 
 import { buildRAGContext, formatRAGForPrompt } from '../knowledge/ragSystem';
@@ -9,7 +9,7 @@ import { analyzeEventVectorWithUniversalModel } from '../utils/eventVectorReason
 import { tool_validateScientificFact } from '../agents/agentTools';
 
 // ============================================
-// 1. INTERFACES (إصلاح أخطاء التيرمينال)
+// 1. INTERFACES (  )
 // ============================================
 
 export interface RealNewsItem {
@@ -42,7 +42,7 @@ export interface EngineResults {
 // ============================================
 
 /**
- * تنفيذ المعالجة الشاملة: (بيانات -> متجه -> معرفة -> ذكاء اصطناعي)
+ *   : ( ->  ->  ->  )
  */
 export async function executeEngines(
   intent: any,
@@ -54,20 +54,20 @@ export async function executeEngines(
   console.log(`[EngineSelector] 🚀 Starting Universal Processing for: ${topic}`);
 
   try {
-    // 1. جلب البيانات الخام (الأخبار والمصادر)
+    // 1.    ( )
     const rawData = await fetchRealNewsData(topic, country, question);
 
-    // 2. تحويل البيانات إلى "متجه حدث موسوعي" (Event Vector)
+    // 2.    "  " (Event Vector)
     const vector = createUniversalEventVector(rawData as any);
 
-    // 3. استدعاء "الذاكرة الطويلة" RAG لجلب الحقائق العلمية المرتبطة
-    const ragContext = buildRAGContext(topic); // تم تعديل النداء ليتوافق مع النوع المحدث
+    // 3.  " " RAG    
+    const ragContext = buildRAGContext(topic); //       
     const scienceInjection = formatRAGForPrompt(ragContext);
 
-    // 4. التحقق العلمي (Evaluator Logic) - الطبقة 15/24
+    // 4.   (Evaluator Logic) -  15/24
     const scientificCheck = await tool_validateScientificFact(topic, vector.dominantCategory);
 
-    // 5. التفكير النهائي عبر المحرك المجاني
+    // 5.     
     const reasoning = await analyzeEventVectorWithUniversalModel(vector, 'ar');
 
     const executionTime = Date.now() - startTime;
@@ -109,7 +109,7 @@ export async function executeEngines(
 // ============================================
 
 /**
- * دالة جلب الأخبار الحقيقية - يجب تصديرها لإصلاح أخطاء التيرمينال
+ *     -     
  */
 export async function fetchRealNewsData(
   topic: string,
@@ -117,7 +117,7 @@ export async function fetchRealNewsData(
   question?: string
 ): Promise<{ items: RealNewsItem[] }> {
   try {
-    // هنا نستخدم الخدمات المتوفرة في AmalSense لجلب البيانات
+    //      AmalSense  
     const { searchGNews } = await import('../services/gnewsService');
     const articles = await searchGNews({ query: topic, country, max: 10 });
 
@@ -137,7 +137,7 @@ export async function fetchRealNewsData(
 }
 
 /**
- * تنسيق النتائج للذكاء الاصطناعي
+ *    
  */
 export function formatResultsForLLM(results: EngineResults): string {
   return `

@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Layer 7: Contextual Binding
  * 
@@ -188,27 +190,27 @@ export function analyzeSituationalContext(
   // Extract affected groups
   const affectedGroups: string[] = [];
   if (eventsText.includes('youth') || eventsText.includes('young')) {
-    affectedGroups.push('الشباب');
+    affectedGroups.push(t('auto.cognitiveArchitecture_contextualBinding.17.c8ff1922', 'ar'));
   }
   if (eventsText.includes('women') || eventsText.includes('female')) {
-    affectedGroups.push('النساء');
+    affectedGroups.push(t('auto.cognitiveArchitecture_contextualBinding.16.0b0400fa', 'ar'));
   }
   if (eventsText.includes('children')) {
-    affectedGroups.push('الأطفال');
+    affectedGroups.push(t('auto.cognitiveArchitecture_contextualBinding.15.6c456350', 'ar'));
   }
   if (eventsText.includes('elderly') || eventsText.includes('old')) {
-    affectedGroups.push('كبار السن');
+    affectedGroups.push(t('auto.cognitiveArchitecture_contextualBinding.14.dd3e5f41', 'ar'));
   }
   if (eventsText.includes('workers') || eventsText.includes('employees')) {
-    affectedGroups.push('العمال');
+    affectedGroups.push(t('auto.cognitiveArchitecture_contextualBinding.13.e83d8072', 'ar'));
   }
   if (eventsText.includes('families')) {
-    affectedGroups.push('الأسر');
+    affectedGroups.push(t('auto.cognitiveArchitecture_contextualBinding.12.aacd1a24', 'ar'));
   }
   
   // Default to general population if no specific groups identified
   if (affectedGroups.length === 0) {
-    affectedGroups.push('المواطنون');
+    affectedGroups.push(t('auto.cognitiveArchitecture_contextualBinding.11.33638513', 'ar'));
   }
   
   return {
@@ -329,14 +331,14 @@ export function applyContextualModulation(
   };
   
   // Generate explanation
-  let explanation = `تم تعديل المشاعر بناءً على السياق: `;
+  let explanation = t('auto.cognitiveArchitecture_contextualBinding.10.b45ddedb', 'ar');
   if (culturalFactor !== 1.0) {
-    explanation += `الثقافة ${cultural.region} (${cultural.emotionalExpression}), `;
+    explanation += ` ${cultural.region} (${cultural.emotionalExpression}), `;
   }
   if (situationalFactor !== 1.0) {
-    explanation += `الحالة ${situational.urgency}, `;
+    explanation += ` ${situational.urgency}, `;
   }
-  explanation += `المجموعات المتأثرة: ${situational.affectedGroups.join(', ')}.`;
+  explanation += ` : ${situational.affectedGroups.join(', ')}.`;
   
   return {
     modulated,
@@ -355,28 +357,28 @@ export function getContextualRecommendations(
   
   // Cultural recommendations
   if (cultural.sensitivities.includes('political-stability')) {
-    recommendations.push('تعزيز الحوار السياسي والمصالحة الوطنية');
+    recommendations.push(t('auto.cognitiveArchitecture_contextualBinding.9.8de1b156', 'ar'));
   }
   if (cultural.sensitivities.includes('economic-stability')) {
-    recommendations.push('تحسين الخدمات الأساسية والفرص الاقتصادية');
+    recommendations.push(t('auto.cognitiveArchitecture_contextualBinding.8.88da6d09', 'ar'));
   }
   
   // Situational recommendations
   if (situational.urgency === 'critical') {
-    recommendations.push('تدخل عاجل من السلطات المعنية');
-    recommendations.push('تفعيل آليات الاستجابة السريعة');
+    recommendations.push(t('auto.cognitiveArchitecture_contextualBinding.7.7b0547a2', 'ar'));
+    recommendations.push(t('auto.cognitiveArchitecture_contextualBinding.6.78c9e940', 'ar'));
   }
   
   if (situational.scope === 'international') {
-    recommendations.push('تنسيق مع المجتمع الدولي');
+    recommendations.push(t('auto.cognitiveArchitecture_contextualBinding.5.a868697d', 'ar'));
   }
   
   // Group-specific recommendations
-  if (situational.affectedGroups.includes('الشباب')) {
-    recommendations.push('توفير فرص عمل وتعليم للشباب');
+  if (situational.affectedGroups.includes(t('auto.cognitiveArchitecture_contextualBinding.4.c8ff1922', 'ar'))) {
+    recommendations.push(t('auto.cognitiveArchitecture_contextualBinding.3.a0c39a5c', 'ar'));
   }
-  if (situational.affectedGroups.includes('الأسر')) {
-    recommendations.push('دعم الأسر المتضررة بمساعدات مباشرة');
+  if (situational.affectedGroups.includes(t('auto.cognitiveArchitecture_contextualBinding.2.aacd1a24', 'ar'))) {
+    recommendations.push(t('auto.cognitiveArchitecture_contextualBinding.1.70be76e4', 'ar'));
   }
   
   return recommendations;

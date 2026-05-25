@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Deduplication Engine - Prevents duplicate data and ensures unique indices per topic
  * 
@@ -34,16 +36,14 @@ const analysisCache = new Map<string, CachedAnalysis>();
 
 // Track topic-specific keywords to generate unique data
 const topicKeywords: Record<string, string[]> = {
-  'رؤية 2030': ['اقتصاد', 'تنمية', 'إصلاح', 'تحديث', 'استثمار'],
-  'الأوضاع الاقتصادية': ['سوق', 'بطالة', 'تضخم', 'نمو', 'استقرار'],
-  'الأمن والاستقرار': ['أمان', 'تهديد', 'حماية', 'قلق', 'ثقة'],
-  'الصحة والوباء': ['مرض', 'علاج', 'وقاية', 'قلق', 'أمل'],
-  'التعليم': ['تعلم', 'مستقبل', 'فرص', 'تطور', 'استثمار'],
-  'العمل والتوظيف': ['وظيفة', 'فرصة', 'دخل', 'استقرار', 'تطور'],
-  'البيئة والمناخ': ['تلوث', 'حماية', 'تغيير', 'استدامة', 'قلق'],
-  'الثقافة والفنون': ['إبداع', 'تراث', 'فن', 'هوية', 'فخر'],
-  'الرياضة': ['فوز', 'فخر', 'منافسة', 'حماس', 'تطور'],
-  'السياسة والحكم': ['قرار', 'إصلاح', 'شفافية', 'مشاركة', 'ثقة'],
+  'vision 2030': ['vision', 'reform', 'investment', 'development', 'strategy'],
+  economy: ['economy', 'market', 'inflation', 'currency', 'growth'],
+  politics: ['government', 'election', 'policy', 'parliament', 'diplomacy'],
+  conflict: ['conflict', 'security', 'military', 'ceasefire', 'risk'],
+  society: ['society', 'community', 'public', 'services', 'living conditions'],
+  health: ['health', 'hospital', 'medicine', 'disease', 'public health'],
+  technology: ['technology', 'ai', 'software', 'digital', 'innovation'],
+  energy: ['oil', 'gas', 'electricity', 'renewable', 'energy'],
 };
 
 /**
@@ -223,44 +223,44 @@ export function generateTopicSpecificVariations(
   // Analyze keywords to adjust indices
   keywords.forEach(keyword => {
     switch (keyword) {
-      case 'اقتصاد':
-      case 'سوق':
-      case 'استثمار':
+      case t('auto.engines_deduplicationEngine.17.6d38c2ea', 'ar'):
+      case t('auto.engines_deduplicationEngine.16.16c73be6', 'ar'):
+      case t('auto.engines_deduplicationEngine.15.2efcd729', 'ar'):
         gmiAdjust += 15;
         cfiAdjust -= 10;
         break;
-      case 'أمان':
-      case 'حماية':
+      case t('auto.engines_deduplicationEngine.14.450897a5', 'ar'):
+      case t('auto.engines_deduplicationEngine.13.ace42128', 'ar'):
         cfiAdjust -= 20;
         hriAdjust += 15;
         break;
-      case 'تهديد':
-      case 'قلق':
+      case t('auto.engines_deduplicationEngine.12.dcdf69b3', 'ar'):
+      case t('auto.engines_deduplicationEngine.11.a24a5460', 'ar'):
         cfiAdjust += 20;
         hriAdjust -= 10;
         break;
-      case 'تطور':
-      case 'فرص':
+      case t('auto.engines_deduplicationEngine.10.c81718df', 'ar'):
+      case t('auto.engines_deduplicationEngine.9.e87473b0', 'ar'):
         hriAdjust += 20;
         gmiAdjust += 10;
         break;
-      case 'مرض':
-      case 'وباء':
+      case t('auto.engines_deduplicationEngine.8.51f4011d', 'ar'):
+      case t('auto.engines_deduplicationEngine.7.aae445ae', 'ar'):
         cfiAdjust += 25;
         gmiAdjust -= 20;
         break;
-      case 'إبداع':
-      case 'فن':
+      case t('auto.engines_deduplicationEngine.6.5c61c8a0', 'ar'):
+      case t('auto.engines_deduplicationEngine.5.44e1d7f4', 'ar'):
         hriAdjust += 15;
         gmiAdjust += 15;
         break;
-      case 'فوز':
-      case 'فخر':
+      case t('auto.engines_deduplicationEngine.4.837787a2', 'ar'):
+      case t('auto.engines_deduplicationEngine.3.01146ccf', 'ar'):
         gmiAdjust += 25;
         hriAdjust += 20;
         break;
-      case 'تلوث':
-      case 'استدامة':
+      case t('auto.engines_deduplicationEngine.2.ac19a8d6', 'ar'):
+      case t('auto.engines_deduplicationEngine.1.1f88a5b2', 'ar'):
         cfiAdjust += 15;
         aciAdjust += 10;
         break;

@@ -1,5 +1,6 @@
 import { ENV } from "./env";
 import { sanitizeResponse, parseJSONSafely, getSanitizationReport } from "../engines/responseSanitizationLayer";
+import { t } from "./i18n";
 
 export type Role = "system" | "user" | "assistant" | "tool" | "function";
 
@@ -336,7 +337,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
 
 /**
  * AMALSENSE SOVEREIGN LLM PROVIDER (Autonomous Edition)
- * المحرك المستقل: يعتمد على الذكاء المحلي والمصادر المفتوحة مجاناً وبالكامل.
+ *  :        .
  */
 
 export type TaskType =
@@ -349,7 +350,7 @@ export type TaskType =
   | 'general';
 
 /**
- * دالة الاستدعاء الذكي: المحرك الرئيسي لإدارة الحوار مع منطق التراجع (Fallback)
+ *   :        (Fallback)
  */
 export async function smartInvokeLLM(
   params: InvokeParams,
@@ -468,7 +469,7 @@ export async function smartInvokeLLM(
   }
 
   return formatToInvokeResult(
-    'لا أستطيع الوصول إلى نموذج اللغة المجاني حالياً. التحليل الحسابي متاح، لكن صياغة الرد الطبيعي تحتاج مزود LLM مستضاف أو محلي.',
+    t('llmProviderUnavailable', 'ar'),
     'llm-disabled-or-unavailable'
   );
 }

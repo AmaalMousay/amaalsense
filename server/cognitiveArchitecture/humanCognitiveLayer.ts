@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 /**
  * Human Cognitive Layer
  * 
@@ -40,16 +41,16 @@ export interface DecisionResult {
  * These are not just emotions - they are WAYS OF THINKING
  */
 export type CognitivePattern = 
-  | 'existential_anxiety'    // قلق وجودي - "ماذا سيحدث لنا؟"
-  | 'moral_outrage'          // غضب أخلاقي - "هذا ظلم!"
-  | 'realistic_hope'         // أمل واقعي - "يمكننا تجاوز هذا"
-  | 'collective_denial'      // إنكار جماعي - "ليس بهذا السوء"
-  | 'cognitive_confusion'    // حيرة معرفية - "لا نفهم ما يحدث"
-  | 'cautious_anticipation'  // ترقب حذر - "ننتظر ونرى"
-  | 'suppressed_despair'     // يأس مكتوم - "لا فائدة"
-  | 'defensive_rationalization' // تبرير دفاعي - "هناك سبب وجيه"
-  | 'collective_mobilization'   // تعبئة جماعية - "يجب أن نتحرك"
-  | 'resigned_acceptance';      // قبول مستسلم - "هذا قدرنا"
+  | 'existential_anxiety'    //   - "  "
+  | 'moral_outrage'          //   - " !"
+  | 'realistic_hope'         //   - "  "
+  | 'collective_denial'      //   - "  "
+  | 'cognitive_confusion'    //   - "   "
+  | 'cautious_anticipation'  //   - " "
+  | 'suppressed_despair'     //   - " "
+  | 'defensive_rationalization' //   - "  "
+  | 'collective_mobilization'   //   - "  "
+  | 'resigned_acceptance';      //   - " "
 
 /**
  * Detailed description of each cognitive pattern
@@ -58,100 +59,100 @@ export const COGNITIVE_PATTERNS: Record<CognitivePattern, {
   nameAr: string;
   nameEn: string;
   description: string;
-  innerQuestion: string;      // السؤال الداخلي الذي يسأله الإنسان
-  thinkingStyle: string;      // أسلوب التفكير
-  typicalResponses: string[]; // ردود الفعل النموذجية
-  communicationTone: string;  // نبرة التواصل المناسبة
+  innerQuestion: string;      //     
+  thinkingStyle: string;      //  
+  typicalResponses: string[]; //   
+  communicationTone: string;  //   
 }> = {
   existential_anxiety: {
-    nameAr: 'قلق وجودي',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.81.5a26bd5e', 'ar'),
     nameEn: 'Existential Anxiety',
-    description: 'الناس يفكرون في المستقبل بقلق عميق، يتساءلون عن مصيرهم ومصير أطفالهم',
-    innerQuestion: 'ماذا سيحدث لنا؟ هل سنكون بخير؟',
-    thinkingStyle: 'تفكير مستقبلي، عدم يقين، بحث عن ضمانات',
-    typicalResponses: ['تخزين الموارد', 'البحث عن بدائل', 'التخطيط للهجرة'],
-    communicationTone: 'طمأنة مع واقعية، تقديم معلومات عن المستقبل'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.80.04691190', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.79.cc091c3c', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.78.86bec50a', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.77.15adc9e1', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.76.4575b90a', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.75.e0cb6af6', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.74.1dab4433', 'ar')
   },
   moral_outrage: {
-    nameAr: 'غضب أخلاقي',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.73.977194bb', 'ar'),
     nameEn: 'Moral Outrage',
-    description: 'الناس يشعرون بالظلم ويبحثون عن المسؤول، يريدون العدالة والمحاسبة',
-    innerQuestion: 'من المسؤول عن هذا؟ لماذا لا يُحاسب أحد؟',
-    thinkingStyle: 'تفكير في العدالة، تحديد المسؤولية، مطالبة بالتغيير',
-    typicalResponses: ['احتجاجات', 'مطالبات', 'نقد السلطات'],
-    communicationTone: 'تصديق الغضب، توجيهه نحو حلول بناءة'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.72.9123150d', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.71.80387d08', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.70.a0f87f21', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.69.61c1f92c', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.68.9667905a', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.67.7030f66e', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.66.ad7a31ea', 'ar')
   },
   realistic_hope: {
-    nameAr: 'أمل واقعي',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.65.fb1691ed', 'ar'),
     nameEn: 'Realistic Hope',
-    description: 'الناس يرون إمكانية للتحسن ويبحثون عن طرق للمساهمة',
-    innerQuestion: 'كيف يمكننا تحسين الوضع؟ ما الذي يمكنني فعله؟',
-    thinkingStyle: 'تفكير حلولي، تفاؤل مشروط، بحث عن فرص',
-    typicalResponses: ['مبادرات مجتمعية', 'تعاون', 'استثمار في المستقبل'],
-    communicationTone: 'تشجيع مع خطوات عملية، تعزيز الإيجابية'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.64.e8a23990', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.63.4b205b71', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.62.3e1f631d', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.61.d3a1e160', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.60.6518d363', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.59.a675161d', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.58.a07cdfdd', 'ar')
   },
   collective_denial: {
-    nameAr: 'إنكار جماعي',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.57.467ca250', 'ar'),
     nameEn: 'Collective Denial',
-    description: 'الناس يقللون من خطورة الموقف كآلية دفاع نفسي',
-    innerQuestion: 'هل الأمور فعلاً بهذا السوء؟ ربما نبالغ؟',
-    thinkingStyle: 'تفكير دفاعي، تقليل المخاطر، مقارنة بالأسوأ',
-    typicalResponses: ['تجاهل الأخبار', 'التركيز على الإيجابيات', 'مقارنة بدول أخرى'],
-    communicationTone: 'لطيف لكن صادق، تقديم الحقائق تدريجياً'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.56.0b930098', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.55.031d8253', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.54.b2e98e64', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.53.7ba22066', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.52.e94d7dcb', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.51.a901ff46', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.50.f5d12f02', 'ar')
   },
   cognitive_confusion: {
-    nameAr: 'حيرة معرفية',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.49.df7b1c16', 'ar'),
     nameEn: 'Cognitive Confusion',
-    description: 'الناس لا يفهمون ما يحدث، معلومات متضاربة وغياب الوضوح',
-    innerQuestion: 'ما الذي يحدث فعلاً؟ من نصدق؟',
-    thinkingStyle: 'تفكير مشتت، بحث عن مصادر موثوقة، صعوبة اتخاذ قرار',
-    typicalResponses: ['متابعة أخبار متعددة', 'سؤال الآخرين', 'تأجيل القرارات'],
-    communicationTone: 'توضيح وتبسيط، تقديم معلومات منظمة'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.48.8a426b67', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.47.89d0f6c3', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.46.df372b41', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.45.fd939c48', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.44.91bdd18c', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.43.8241e66a', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.42.e2f8014c', 'ar')
   },
   cautious_anticipation: {
-    nameAr: 'ترقب حذر',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.41.a154c730', 'ar'),
     nameEn: 'Cautious Anticipation',
-    description: 'الناس ينتظرون ليروا كيف ستتطور الأمور قبل اتخاذ موقف',
-    innerQuestion: 'ماذا سيحدث بعد ذلك؟ هل يجب أن أتصرف الآن؟',
-    thinkingStyle: 'تفكير تحليلي، انتظار مؤشرات، تجنب المخاطرة',
-    typicalResponses: ['مراقبة الأحداث', 'تأجيل القرارات الكبيرة', 'الاستعداد للسيناريوهات'],
-    communicationTone: 'تقديم سيناريوهات، مساعدة في التخطيط'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.40.edd95337', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.39.6570d753', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.38.9df869ee', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.37.799f3009', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.36.06241f9b', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.35.bbdc892a', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.34.a49db155', 'ar')
   },
   suppressed_despair: {
-    nameAr: 'يأس مكتوم',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.33.30fd1949', 'ar'),
     nameEn: 'Suppressed Despair',
-    description: 'الناس فقدوا الأمل لكنهم لا يعبرون عن ذلك علناً',
-    innerQuestion: 'هل هناك فائدة من المحاولة؟ لماذا نهتم؟',
-    thinkingStyle: 'تفكير سلبي مخفي، انسحاب، فقدان الدافع',
-    typicalResponses: ['عدم المشاركة', 'سخرية', 'هجرة صامتة'],
-    communicationTone: 'تعاطف عميق، تقديم أمل واقعي، عدم التقليل من المشاعر'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.32.30cd212f', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.31.432a7c78', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.30.039b714c', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.29.eab345b6', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.28.13e1777f', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.27.7bbe55e5', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.26.5012b4d6', 'ar')
   },
   defensive_rationalization: {
-    nameAr: 'تبرير دفاعي',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.25.45feca28', 'ar'),
     nameEn: 'Defensive Rationalization',
-    description: 'الناس يبحثون عن تفسيرات تبرر الوضع الحالي',
-    innerQuestion: 'ربما هناك سبب وجيه لهذا؟ ربما لا نفهم الصورة الكاملة؟',
-    thinkingStyle: 'تفكير تبريري، بحث عن أعذار، تجنب المواجهة',
-    typicalResponses: ['دعم السلطات', 'تبرير القرارات', 'لوم عوامل خارجية'],
-    communicationTone: 'احترام وجهة النظر مع تقديم معلومات إضافية'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.24.351b345a', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.23.8908cb05', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.22.a0b22aa9', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.21.15d870ee', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.20.b99a4811', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.19.38062e9a', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.18.51e79037', 'ar')
   },
   collective_mobilization: {
-    nameAr: 'تعبئة جماعية',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.17.12e7f2c2', 'ar'),
     nameEn: 'Collective Mobilization',
-    description: 'الناس يشعرون بالحاجة للتحرك الجماعي والتغيير',
-    innerQuestion: 'ماذا يمكننا أن نفعل معاً؟ كيف نغير هذا الواقع؟',
-    thinkingStyle: 'تفكير جماعي، بحث عن حلفاء، تخطيط للعمل',
-    typicalResponses: ['تنظيم مجتمعي', 'حملات', 'مبادرات جماعية'],
-    communicationTone: 'تشجيع العمل الجماعي، تقديم خطوات عملية'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.16.9b1a8f82', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.15.1daf7a9e', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.14.d39be039', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.13.565f39e7', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.12.025ff42d', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.11.7ae7c0aa', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.10.af026375', 'ar')
   },
   resigned_acceptance: {
-    nameAr: 'قبول مستسلم',
+    nameAr: t('auto.cognitiveArchitecture_humanCognitiveLayer.9.421139c0', 'ar'),
     nameEn: 'Resigned Acceptance',
-    description: 'الناس قبلوا الوضع كواقع لا يمكن تغييره',
-    innerQuestion: 'هذا قدرنا، ماذا يمكننا أن نفعل؟',
-    thinkingStyle: 'تفكير قدري، تكيف، تركيز على البقاء',
-    typicalResponses: ['التكيف مع الوضع', 'تقليل التوقعات', 'التركيز على الحياة اليومية'],
-    communicationTone: 'تفهم مع تقديم أمثلة على التغيير الممكن'
+    description: t('auto.cognitiveArchitecture_humanCognitiveLayer.8.5de71123', 'ar'),
+    innerQuestion: t('auto.cognitiveArchitecture_humanCognitiveLayer.7.2daf70e6', 'ar'),
+    thinkingStyle: t('auto.cognitiveArchitecture_humanCognitiveLayer.6.32a0dc02', 'ar'),
+    typicalResponses: [t('auto.cognitiveArchitecture_humanCognitiveLayer.5.4ea60444', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.4.ca3c85eb', 'ar'), t('auto.cognitiveArchitecture_humanCognitiveLayer.3.edf47a08', 'ar')],
+    communicationTone: t('auto.cognitiveArchitecture_humanCognitiveLayer.2.f89282bb', 'ar')
   }
 };
 
@@ -209,59 +210,31 @@ export async function detectCognitivePattern(input: CognitiveInput): Promise<Cog
       messages: [
         {
           role: 'system',
-          content: `أنت عالم نفس اجتماعي متخصص في فهم الأنماط المعرفية البشرية.
-
-مهمتك: تحديد كيف يُفكر الناس (وليس فقط ماذا يشعرون).
-
-الأنماط المعرفية المتاحة:
-1. existential_anxiety (قلق وجودي) - "ماذا سيحدث لنا؟"
-2. moral_outrage (غضب أخلاقي) - "هذا ظلم!"
-3. realistic_hope (أمل واقعي) - "يمكننا تجاوز هذا"
-4. collective_denial (إنكار جماعي) - "ليس بهذا السوء"
-5. cognitive_confusion (حيرة معرفية) - "لا نفهم ما يحدث"
-6. cautious_anticipation (ترقب حذر) - "ننتظر ونرى"
-7. suppressed_despair (يأس مكتوم) - "لا فائدة"
-8. defensive_rationalization (تبرير دفاعي) - "هناك سبب وجيه"
-9. collective_mobilization (تعبئة جماعية) - "يجب أن نتحرك"
-10. resigned_acceptance (قبول مستسلم) - "هذا قدرنا"
-
-قواعد التحديد:
-- الخوف العالي + عدم يقين = قلق وجودي
-- الغضب العالي + ظلم = غضب أخلاقي
-- الأمل العالي + حلول = أمل واقعي
-- الخوف المنخفض رغم الأزمة = إنكار جماعي
-- معلومات متضاربة = حيرة معرفية
-- انتظار + حذر = ترقب حذر
-- أمل منخفض جداً = يأس مكتوم
-- دعم السلطات رغم المشاكل = تبرير دفاعي
-- دعوات للعمل = تعبئة جماعية
-- قبول الوضع = قبول مستسلم
-
-أجب بـ JSON فقط.`
+          content: t('auto.cognitiveArchitecture_humanCognitiveLayer.1.c3e33852', 'ar')
         },
         {
           role: 'user',
-          content: `السؤال: ${input.question}
+          content: `: ${input.question}
 
-البيانات العاطفية:
-- الخوف: ${input.emotionData.fear}%
-- الأمل: ${input.emotionData.hope}%
-- الغضب: ${input.emotionData.anger}%
-- المزاج العام: ${input.emotionData.gmi}%
+ :
+- : ${input.emotionData.fear}%
+- : ${input.emotionData.hope}%
+- : ${input.emotionData.anger}%
+-  : ${input.emotionData.gmi}%
 
-التحليل:
-- الشعور السائد: ${input.decision.dominantEmotion}
-- السبب: ${input.decision.dominantEmotionReason}
-- النوع: ${input.decision.emotionType}
-- التقييم: ${input.decision.assessment}
+:
+-  : ${input.decision.dominantEmotion}
+- : ${input.decision.dominantEmotionReason}
+- : ${input.decision.emotionType}
+- : ${input.decision.assessment}
 
-الأسباب النفسية:
+ :
 ${(input.interpretation.psychologicalCauses || []).join('\n')}
 
-حدد:
-1. النمط المعرفي الأساسي
-2. السؤال الداخلي الذي يسأله الناس
-3. كيف يجب أن نصيغ الرد`
+:
+1.   
+2.     
+3.     `
         }
       ],
       response_format: {
@@ -369,7 +342,7 @@ function detectPatternFromEmotions(emotionData: { fear: number; hope: number; an
       approach: patternInfo.thinkingStyle,
       keyMessage: patternInfo.description
     },
-    humanReasoning: `بناءً على البيانات العاطفية، يبدو أن الناس في حالة ${patternInfo.nameAr}`
+    humanReasoning: `         ${patternInfo.nameAr}`
   };
 }
 
@@ -386,13 +359,13 @@ export function getPatternInfo(pattern: CognitivePattern) {
 export function formatCognitiveInsight(output: CognitiveOutput): string {
   const patternInfo = COGNITIVE_PATTERNS[output.primaryPattern];
   
-  let insight = `**النمط المعرفي السائد:** ${patternInfo.nameAr}\n\n`;
-  insight += `**السؤال الذي يسأله الناس:** "${output.innerQuestion}"\n\n`;
-  insight += `**كيف يفكرون:** ${output.humanReasoning}`;
+  let insight = `**  :** ${patternInfo.nameAr}\n\n`;
+  insight += `**   :** "${output.innerQuestion}"\n\n`;
+  insight += `** :** ${output.humanReasoning}`;
   
   if (output.secondaryPattern) {
     const secondaryInfo = COGNITIVE_PATTERNS[output.secondaryPattern];
-    insight += `\n\n**نمط ثانوي:** ${secondaryInfo.nameAr}`;
+    insight += `\n\n** :** ${secondaryInfo.nameAr}`;
   }
   
   return insight;

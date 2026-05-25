@@ -1,20 +1,21 @@
+import { t } from "../_core/i18n";
 /**
  * NOTIFICATION SYSTEM - WEBSOCKET BASED
  * 
- * نظام التنبيهات الفوري عبر WebSocket
- * - يرسل تنبيهات فورية عند تغيير المؤشرات بشكل ملحوظ
- * - يدعم تنبيهات متعددة الأولويات
- * - يتتبع التغييرات الهامة في البيانات
+ *     WebSocket
+ * -        
+ * -    
+ * -     
  */
 
 import { EventEmitter } from 'events';
 
 export interface AlertThreshold {
-  gmiChange: number; // % تغيير GMI
-  cfiChange: number; // % تغيير CFI
-  hriChange: number; // % تغيير HRI
-  emotionShift: number; // % تغيير العاطفة
-  eventImpact: number; // تأثير الحدث
+  gmiChange: number; // %  GMI
+  cfiChange: number; // %  CFI
+  hriChange: number; // %  HRI
+  emotionShift: number; // %  
+  eventImpact: number; //  
 }
 
 export interface Alert {
@@ -112,8 +113,8 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.gmiChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'warning' : 'critical',
-          'تغيير في مؤشر الحالة العام',
-          `تغير مؤشر الحالة العام بنسبة ${changePercentage.toFixed(2)}%`,
+          t('auto.engines_notificationSystem.5.28d7a8b1', 'ar'),
+          `     ${changePercentage.toFixed(2)}%`,
           'GMI',
           previousGMI,
           currentGMI,
@@ -150,8 +151,8 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.cfiChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'warning' : 'info',
-          'تغيير في مؤشر الثقة الجماعية',
-          `تغير مؤشر الثقة الجماعية بنسبة ${changePercentage.toFixed(2)}%`,
+          t('auto.engines_notificationSystem.4.7055742e', 'ar'),
+          `     ${changePercentage.toFixed(2)}%`,
           'CFI',
           previousCFI,
           currentCFI,
@@ -188,8 +189,8 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.hriChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'info' : 'warning',
-          'تغيير في مؤشر الأمل والمرونة',
-          `تغير مؤشر الأمل والمرونة بنسبة ${changePercentage.toFixed(2)}%`,
+          t('auto.engines_notificationSystem.3.bc04f7a3', 'ar'),
+          `     ${changePercentage.toFixed(2)}%`,
           'HRI',
           previousHRI,
           currentHRI,
@@ -225,8 +226,8 @@ export class NotificationSystem extends EventEmitter {
       if (emotionShiftPercentage >= subscriber.thresholds.emotionShift) {
         const alert = this.createAlert(
           'warning',
-          'تحول عاطفي كبير',
-          `تحول من ${previousEmotion} إلى ${currentEmotion} بنسبة ${emotionShiftPercentage.toFixed(2)}%`,
+          t('auto.engines_notificationSystem.2.18fef4ed', 'ar'),
+          `  ${previousEmotion}  ${currentEmotion}  ${emotionShiftPercentage.toFixed(2)}%`,
           'EMOTION',
           0,
           0,
@@ -261,8 +262,8 @@ export class NotificationSystem extends EventEmitter {
       if (impactScore >= subscriber.thresholds.eventImpact) {
         const alert = this.createAlert(
           'critical',
-          'حدث ذو تأثير كبير',
-          `حدث "${eventTitle}" بتأثير ${impactScore}`,
+          t('auto.engines_notificationSystem.1.0bc2a66f', 'ar'),
+          ` "${eventTitle}"  ${impactScore}`,
           'EVENT',
           0,
           impactScore,

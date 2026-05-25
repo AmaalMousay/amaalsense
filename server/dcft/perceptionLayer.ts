@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 /**
  * Perception Layer (Layer 1) - Input Processing
  * Based on DCFT Theory by Amaal Radwan
@@ -219,42 +220,36 @@ export class PerceptionLayer {
         win: 12, victory: 15, triumph: 15, delight: 15, pleasure: 12,
         cheerful: 12, elated: 18, thrilled: 15, ecstatic: 20,
         // Arabic keywords
-        سعيد: 15, فرح: 20, سعادة: 18, مبتهج: 15, رائع: 15,
       },
       fear: {
         fear: 20, afraid: 18, scared: 18, terror: 25, panic: 22,
         worry: 15, anxious: 15, nervous: 12, threat: 18, danger: 20,
         risk: 12, warning: 15, alarm: 18, dread: 20, horror: 22,
         // Arabic keywords
-        خوف: 20, خائف: 18, قلق: 15, رعب: 25, تهديد: 18,
       },
       anger: {
         angry: 18, furious: 22, rage: 25, hate: 20, outrage: 22,
         frustrated: 15, annoyed: 12, mad: 15, hostile: 18, violent: 20,
         attack: 15, fight: 12, protest: 15, revolt: 18, rebellion: 18,
         // Arabic keywords
-        غضب: 20, غاضب: 18, ثورة: 18, احتجاج: 15, عنف: 20,
       },
       sadness: {
         sad: 18, depressed: 22, grief: 25, sorrow: 20, mourning: 22,
         tragic: 20, loss: 18, death: 20, crying: 15, tears: 15,
         heartbroken: 22, devastated: 25, miserable: 20, hopeless: 22,
         // Arabic keywords
-        حزن: 20, حزين: 18, أسى: 22, فقدان: 18, موت: 20,
       },
       hope: {
         hope: 20, optimistic: 18, future: 12, dream: 15, aspire: 15,
         believe: 12, faith: 15, trust: 12, progress: 15, improve: 12,
         recover: 15, rebuild: 15, resilient: 18, overcome: 15,
         // Arabic keywords
-        أمل: 20, تفاؤل: 18, مستقبل: 12, حلم: 15, إيمان: 15,
       },
       curiosity: {
         curious: 18, wonder: 15, question: 12, explore: 15, discover: 15,
         investigate: 15, research: 12, learn: 10, understand: 10,
         mystery: 15, puzzle: 12, interesting: 12, fascinating: 15,
         // Arabic keywords
-        فضول: 18, استكشاف: 15, اكتشاف: 15, بحث: 12, تساؤل: 12,
       },
     };
   }
@@ -271,10 +266,10 @@ export const perceptionLayer = new PerceptionLayer();
 // =============================================================================
 
 /**
- * Perception Layer - طبقة الإدراك
+ * Perception Layer -  
  * 
- * تضيف طبقة إدراك عميقة للفهم الحقيقي للسياق والعاطفة
- * بدلاً من استخدام قوالب ثابتة
+ *        
+ *     
  */
 
 export interface PerceptionContext {
@@ -297,18 +292,18 @@ export interface ResponseDirective {
 }
 
 /**
- * تحليل السياق الحقيقي للسؤال
- * بدلاً من تطبيق قالب ثابت
+ *    
+ *     
  */
 export function analyzePerception(
   question: string,
   previousContext: string,
   analysisData: any
 ): PerceptionContext {
-  // استخراج الموضوع الأساسي
+  //   
   const topic = extractTopic(question, previousContext);
   
-  // تحديد العاطفة الأساسية من البيانات
+  //     
   const emotions = analysisData.emotions || {};
   const primaryEmotion = Object.entries(emotions).sort((a, b) => (b as any)[1] - (a as any)[1])[0]?.[0] || 'neutral';
   const secondaryEmotions = Object.entries(emotions)
@@ -316,19 +311,19 @@ export function analyzePerception(
     .slice(1, 3)
     .map(e => e[0]);
   
-  // تحديد الاستعجالية
+  //  
   const urgency = determineUrgency(primaryEmotion, analysisData);
   
-  // تحديد المجموعات المتأثرة
+  //   
   const affectedGroups = identifyAffectedGroups(analysisData);
   
-  // تحديد السبب الجذري
+  //   
   const rootCause = identifyRootCause(question, analysisData);
   
-  // فهم الوعي الجمعي
+  //   
   const collectiveConsciousness = analyzeCollectiveConsciousness(analysisData);
   
-  // مستوى الوعي
+  //  
   const awarenessLevel = determineAwarenessLevel(analysisData);
   
   return {
@@ -344,18 +339,18 @@ export function analyzePerception(
 }
 
 /**
- * تحديد التوجيه المناسب للرد
- * بدلاً من استخدام قالب ثابت
+ *    
+ *     
  */
 export function determineResponseDirective(
   perception: PerceptionContext,
   question: string,
   isFollowUp: boolean
 ): ResponseDirective {
-  // تحليل نوع السؤال
+  //   
   const questionType = classifyQuestion(question);
   
-  // تحديد التركيز
+  //  
   let focus: 'solution' | 'explanation' | 'warning' | 'hope' | 'action' = 'explanation';
   
   if (questionType === 'how' || questionType === 'solution') {
@@ -368,7 +363,7 @@ export function determineResponseDirective(
     focus = 'warning';
   }
   
-  // تحديد العمق
+  //  
   let depth: 'brief' | 'moderate' | 'deep' = 'moderate';
   if (isFollowUp) {
     depth = 'brief';
@@ -376,7 +371,7 @@ export function determineResponseDirective(
     depth = 'deep';
   }
   
-  // تحديد النبرة
+  //  
   let tone: 'urgent' | 'analytical' | 'empathetic' | 'advisory' = 'analytical';
   if (perception.urgency === 'critical') {
     tone = 'urgent';
@@ -386,35 +381,35 @@ export function determineResponseDirective(
     tone = 'advisory';
   }
   
-  // التحقق من السياق
+  //   
   const contextValidation = validateContext(perception, question);
   
   return {
     focus,
     depth,
     tone,
-    shouldAvoidTemplate: true, // دائماً تجنب القالب الثابت
+    shouldAvoidTemplate: true, //    
     contextValidation,
   };
 }
 
 /**
- * استخراج الموضوع الأساسي
+ *   
  */
 function extractTopic(question: string, previousContext: string): string {
-  // إذا كان هناك سياق سابق، استخدمه
+  //      
   if (previousContext) {
-    const topicMatch = previousContext.match(/موضوع:\s*([^\n]+)/);
+    const topicMatch = previousContext.match(/:\s*([^\n]+)/);
     if (topicMatch) return topicMatch[1];
   }
   
-  // استخراج من السؤال
+  //   
   const words = question.split(' ');
   return words.slice(0, 5).join(' ');
 }
 
 /**
- * تحديد استعجالية الموقف
+ *   
  */
 function determineUrgency(emotion: string, data: any): 'critical' | 'high' | 'medium' | 'low' {
   if (emotion === 'fear' || emotion === 'anger') {
@@ -427,7 +422,7 @@ function determineUrgency(emotion: string, data: any): 'critical' | 'high' | 'me
 }
 
 /**
- * تحديد المجموعات المتأثرة
+ *   
  */
 function identifyAffectedGroups(data: any): string[] {
   const groups: string[] = [];
@@ -435,7 +430,7 @@ function identifyAffectedGroups(data: any): string[] {
   if (data.demographics) {
     data.demographics.forEach((demo: any) => {
       if (demo.opposition > 60) {
-        groups.push(`${demo.label} (${demo.opposition}% معارضة)`);
+        groups.push(`${demo.label} (${demo.opposition}% )`);
       }
     });
   }
@@ -444,23 +439,23 @@ function identifyAffectedGroups(data: any): string[] {
 }
 
 /**
- * تحديد السبب الجذري
+ *   
  */
 function identifyRootCause(question: string, data: any): string {
-  // تحليل السؤال والبيانات لتحديد السبب الحقيقي
-  if (question.toLowerCase().includes('غضب') || question.toLowerCase().includes('غضب')) {
-    return 'تدهور الظروف المعيشية والشعور بالظلم';
+  //      
+  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.17.8e7bd750', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.16.8e7bd750', 'ar'))) {
+    return t('auto.dcft_perceptionLayer.15.64ba5a0e', 'ar');
   }
   
-  if (question.toLowerCase().includes('خوف')) {
-    return 'عدم اليقين والتهديدات الوجودية';
+  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.14.1cf83ec0', 'ar'))) {
+    return t('auto.dcft_perceptionLayer.13.92c4953d', 'ar');
   }
   
-  return 'عوامل متعددة معقدة';
+  return t('auto.dcft_perceptionLayer.12.ec116012', 'ar');
 }
 
 /**
- * تحليل الوعي الجمعي
+ *   
  */
 function analyzeCollectiveConsciousness(data: any): string {
   const gmi = data.gmi || 0;
@@ -468,18 +463,18 @@ function analyzeCollectiveConsciousness(data: any): string {
   const hri = data.hri || 50;
   
   if (gmi < -50) {
-    return 'وعي جمعي متشائم يسيطر عليه الخوف والغضب';
+    return t('auto.dcft_perceptionLayer.11.ec97343d', 'ar');
   }
   
   if (gmi > 50) {
-    return 'وعي جمعي متفائل يسيطر عليه الأمل والرغبة في التغيير';
+    return t('auto.dcft_perceptionLayer.10.7ab636da', 'ar');
   }
   
-  return 'وعي جمعي متوازن بين التفاؤل والتشاؤم';
+  return t('auto.dcft_perceptionLayer.9.aaafd30a', 'ar');
 }
 
 /**
- * تحديد مستوى الوعي
+ *   
  */
 function determineAwarenessLevel(data: any): 'surface' | 'moderate' | 'deep' {
   const confidence = data.confidence || 0;
@@ -496,22 +491,22 @@ function determineAwarenessLevel(data: any): 'surface' | 'moderate' | 'deep' {
 }
 
 /**
- * تصنيف نوع السؤال
+ *   
  */
 function classifyQuestion(question: string): string {
-  if (question.toLowerCase().includes('كيف')) {
+  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.8.daa59aa1', 'ar'))) {
     return 'how';
   }
   
-  if (question.toLowerCase().includes('ماذا لو') || question.toLowerCase().includes('ماذا لو')) {
+  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.7.9dd0db2c', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.6.9dd0db2c', 'ar'))) {
     return 'what-if';
   }
   
-  if (question.toLowerCase().includes('تأثير') || question.toLowerCase().includes('تأثير')) {
+  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.5.99a6db74', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.4.99a6db74', 'ar'))) {
     return 'impact';
   }
   
-  if (question.toLowerCase().includes('حل') || question.toLowerCase().includes('حل')) {
+  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.3.fc4046c9', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.2.fc4046c9', 'ar'))) {
     return 'solution';
   }
   
@@ -519,19 +514,19 @@ function classifyQuestion(question: string): string {
 }
 
 /**
- * التحقق من صحة السياق
+ *    
  */
 function validateContext(perception: PerceptionContext, question: string): string[] {
   const validations: string[] = [];
   
-  // التأكد من أن الموضوع لم يتغير
+  //      
   if (!question.toLowerCase().includes(perception.topic.toLowerCase())) {
-    validations.push(`تحذير: قد يكون الموضوع قد تغير من "${perception.topic}"`);
+    validations.push(`:       "${perception.topic}"`);
   }
   
-  // التأكد من أن العاطفة الأساسية واضحة
+  //      
   if (perception.primaryEmotion === 'neutral') {
-    validations.push('تحذير: العاطفة الأساسية غير واضحة');
+    validations.push(t('auto.dcft_perceptionLayer.1.5c2af2dd', 'ar'));
   }
   
   return validations;

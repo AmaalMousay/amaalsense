@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Layer 9: Causal Inference
  * 
@@ -215,35 +217,35 @@ function inferMechanism(cause: string, effect: string, domain: string): string {
   // Political domain
   if (domain === 'politics') {
     if (causeLower.includes('protest') && effectLower.includes('response')) {
-      return 'الاحتجاجات تدفع السلطات للاستجابة';
+      return t('auto.cognitiveArchitecture_causalInference.9.a8899971', 'ar');
     }
     if (causeLower.includes('crisis') && effectLower.includes('anger')) {
-      return 'الأزمة تزيد من الغضب الشعبي';
+      return t('auto.cognitiveArchitecture_causalInference.8.b88f81a8', 'ar');
     }
   }
   
   // Economic domain
   if (domain === 'economy') {
     if (causeLower.includes('inflation') && effectLower.includes('protest')) {
-      return 'التضخم يؤدي إلى احتجاجات شعبية';
+      return t('auto.cognitiveArchitecture_causalInference.7.4d94ddaa', 'ar');
     }
     if (causeLower.includes('unemployment') && effectLower.includes('frustration')) {
-      return 'البطالة تزيد من الإحباط';
+      return t('auto.cognitiveArchitecture_causalInference.6.a4b6e0b1', 'ar');
     }
   }
   
   // Social domain
   if (domain === 'social') {
     if (causeLower.includes('violence') && effectLower.includes('fear')) {
-      return 'العنف يولد الخوف';
+      return t('auto.cognitiveArchitecture_causalInference.5.17276969', 'ar');
     }
     if (causeLower.includes('reform') && effectLower.includes('hope')) {
-      return 'الإصلاحات تبعث الأمل';
+      return t('auto.cognitiveArchitecture_causalInference.4.3ad6e35d', 'ar');
     }
   }
   
   // Default mechanism
-  return 'علاقة سببية مباشرة';
+  return t('auto.cognitiveArchitecture_causalInference.3.2a156858', 'ar');
 }
 
 /**
@@ -418,10 +420,10 @@ function areSimilarEvents(label1: string, label2: string): boolean {
  */
 export function explainCausalChain(chain: CausalChain): string {
   if (chain.nodes.length < 2) {
-    return 'لا توجد سلسلة سببية واضحة.';
+    return t('auto.cognitiveArchitecture_causalInference.2.7e71f076', 'ar');
   }
   
-  let explanation = 'السلسلة السببية:\n';
+  let explanation = t('auto.cognitiveArchitecture_causalInference.1.a92e3b02', 'ar');
   
   for (let i = 0; i < chain.relationships.length; i++) {
     const rel = chain.relationships[i];
@@ -433,8 +435,8 @@ export function explainCausalChain(chain: CausalChain): string {
     }
   }
   
-  explanation += `\n\nقوة العلاقة: ${(chain.overallStrength * 100).toFixed(0)}%`;
-  explanation += `\nالثقة: ${(chain.confidence * 100).toFixed(0)}%`;
+  explanation += `\n\n : ${(chain.overallStrength * 100).toFixed(0)}%`;
+  explanation += `\n: ${(chain.confidence * 100).toFixed(0)}%`;
   
   return explanation;
 }

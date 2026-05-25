@@ -1,5 +1,7 @@
+import { t } from "../_core/i18n";
+
 /**
- * Multi-turn Context - تذكر المحادثات السابقة
+ * Multi-turn Context -   
  */
 
 export type EntityType = 'topic' | 'asset' | 'currency' | 'country' | 'time_period' | 'indicator' | 'emotion' | 'action';
@@ -36,14 +38,14 @@ export interface ConversationContext {
 }
 
 const ENTITY_PATTERNS: Record<EntityType, RegExp[]> = {
-  topic: [/(?:about|حول|عن|بخصوص)\s+(.+?)(?:\?|؟|$)/i],
-  asset: [/\b(gold|silver|oil|bitcoin|btc|eth|ذهب|فضة|نفط|بيتكوين)\b/i],
-  currency: [/\b(USD|EUR|GBP|دولار|يورو|جنيه)\b/i],
-  country: [/\b(USA|UK|Libya|Egypt|أمريكا|ليبيا|مصر)\b/i],
-  time_period: [/\b(today|tomorrow|yesterday|اليوم|غداً|أمس)\b/i],
-  indicator: [/\b(GMI|CFI|HRI|مؤشر)\b/i],
-  emotion: [/\b(fear|hope|خوف|أمل)\b/i],
-  action: [/\b(buy|sell|شراء|بيع)\b/i]
+  topic: [/(?:about|||)\s+(.+?)(?:\?||$)/i],
+  asset: [/\b(gold|silver|oil|bitcoin|btc|eth||||)\b/i],
+  currency: [/\b(USD|EUR|GBP|||)\b/i],
+  country: [/\b(USA|UK|Libya|Egypt|||)\b/i],
+  time_period: [/\b(today|tomorrow|yesterday|||)\b/i],
+  indicator: [/\b(GMI|CFI|HRI|)\b/i],
+  emotion: [/\b(fear|hope||)\b/i],
+  action: [/\b(buy|sell||)\b/i]
 };
 
 class ConversationContextManager {
@@ -105,7 +107,7 @@ class ConversationContextManager {
     let resolvedQuestion = question;
     const referencedEntities: Entity[] = [];
     let contextUsed = false;
-    const pronouns = ['هو', 'هي', 'هذا', 'هذه', 'it', 'this', 'that'];
+    const pronouns = [t('auto.engines_multiTurnContext.7.1b78792e', 'ar'), t('auto.engines_multiTurnContext.6.7a898715', 'ar'), t('auto.engines_multiTurnContext.5.6be4d5a7', 'ar'), t('auto.engines_multiTurnContext.4.f60d1f66', 'ar'), 'it', 'this', 'that'];
     for (const pronoun of pronouns) {
       if (question.toLowerCase().includes(pronoun)) {
         const relevantEntity = this.findMostRelevantEntity(context);
@@ -113,7 +115,7 @@ class ConversationContextManager {
       }
     }
     if (!contextUsed && context.mainTopic && this.isAmbiguousQuestion(question)) { 
-      resolvedQuestion = question + ' (بخصوص ' + context.mainTopic + ')'; 
+      resolvedQuestion = question + t('auto.engines_multiTurnContext.3.1ec9fac8', 'ar') + context.mainTopic + ')'; 
       contextUsed = true; 
     }
     return { resolvedQuestion, referencedEntities, contextUsed };
@@ -132,7 +134,7 @@ class ConversationContextManager {
   }
   
   private isAmbiguousQuestion(question: string): boolean {
-    return [/^(what|how|why|ما|كيف|لماذا)\s*\?$/i, /^(and|و)\s/i].some(pattern => pattern.test(question.trim()));
+    return [/^(what|how|why|||)\s*\?$/i, /^(and|)\s/i].some(pattern => pattern.test(question.trim()));
   }
   
   buildContextForLLM(conversationId: string, maxTurns: number = 5) {
@@ -142,8 +144,8 @@ class ConversationContextManager {
     const conversationHistory = recentTurns.map(turn => ({ role: turn.role, content: turn.content }));
     const activeEntities = Array.from(context.activeEntities.values()).sort((a, b) => b.frequency - a.frequency).slice(0, 10);
     const parts: string[] = [];
-    if (context.mainTopic) parts.push('الموضوع الرئيسي: ' + context.mainTopic);
-    if (context.subTopics.length > 0) parts.push('مواضيع فرعية: ' + context.subTopics.join(', '));
+    if (context.mainTopic) parts.push(t('auto.engines_multiTurnContext.2.da5e1ae2', 'ar') + context.mainTopic);
+    if (context.subTopics.length > 0) parts.push(t('auto.engines_multiTurnContext.1.a269703f', 'ar') + context.subTopics.join(', '));
     return { conversationHistory, activeEntities, mainTopic: context.mainTopic, emotionalState: context.emotionalState, summary: parts.join(' | ') };
   }
   

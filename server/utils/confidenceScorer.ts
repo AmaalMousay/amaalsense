@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Confidence Scorer (Phase 92)
  * 
@@ -95,11 +97,11 @@ function getConfidenceExplanation(
 ): string {
   if (language === "ar") {
     const explanations: Record<string, string> = {
-      very_high: `الثقة عالية جداً (${score}%) - هذه الإجابة مبنية على بيانات موثوقة وتحليل دقيق`,
-      high: `الثقة عالية (${score}%) - هذه الإجابة موثوقة بشكل عام`,
-      medium: `الثقة متوسطة (${score}%) - قد تحتاج هذه الإجابة إلى توضيح إضافي`,
-      low: `الثقة منخفضة (${score}%) - يُنصح بالحذر من هذه الإجابة`,
-      very_low: `الثقة منخفضة جداً (${score}%) - هذه الإجابة قد لا تكون موثوقة`
+      very_high: `   (${score}%) -        `,
+      high: `  (${score}%) -     `,
+      medium: `  (${score}%) -       `,
+      low: `  (${score}%) -     `,
+      very_low: `   (${score}%) -      `
     };
     return explanations[level] || "";
   } else {
@@ -230,14 +232,14 @@ export function generateConfidenceReport(
 
   if (language === "ar") {
     return `
-📊 تقرير الثقة:
-${score.icon} الثقة العامة: ${score.overall}% (${getArabicLevel(score.level)})
+📊  :
+${score.icon}  : ${score.overall}% (${getArabicLevel(score.level)})
 
-📈 تفاصيل العوامل:
-- جودة البيانات: ${factors.dataQuality}%
-- يقين النموذج: ${factors.modelCertainty}%
-- موثوقية المصادر: ${factors.sourceReliability}%
-- وضوح السياق: ${factors.contextClarity}%
+📈  :
+-  : ${factors.dataQuality}%
+-  : ${factors.modelCertainty}%
+-  : ${factors.sourceReliability}%
+-  : ${factors.contextClarity}%
 
 💡 ${score.explanation}
     `;
@@ -262,13 +264,13 @@ ${score.icon} Overall Confidence: ${score.overall}% (${score.level})
  */
 function getArabicLevel(level: string): string {
   const levels: Record<string, string> = {
-    very_high: "عالية جداً",
-    high: "عالية",
-    medium: "متوسطة",
-    low: "منخفضة",
-    very_low: "منخفضة جداً"
+    very_high: t('auto.utils_confidenceScorer.11.233b787d', 'ar'),
+    high: t('auto.utils_confidenceScorer.10.59de5bef', 'ar'),
+    medium: t('auto.utils_confidenceScorer.9.4167c04a', 'ar'),
+    low: t('auto.utils_confidenceScorer.8.81bceec2', 'ar'),
+    very_low: t('auto.utils_confidenceScorer.7.fd5e5a17', 'ar')
   };
-  return levels[level] || "غير محدد";
+  return levels[level] || t('auto.utils_confidenceScorer.6.b2c702e7', 'ar');
 }
 
 /**
@@ -294,15 +296,15 @@ export function getConfidenceRecommendation(
 ): string {
   if (language === "ar") {
     if (score.overall >= 90) {
-      return "✅ يمكنك الاعتماد على هذه الإجابة بثقة";
+      return t('auto.utils_confidenceScorer.5.38324f4a', 'ar');
     } else if (score.overall >= 75) {
-      return "👍 هذه الإجابة موثوقة بشكل عام";
+      return t('auto.utils_confidenceScorer.4.c429c95b', 'ar');
     } else if (score.overall >= 50) {
-      return "⚠️ يُنصح بالتحقق من مصادر إضافية";
+      return t('auto.utils_confidenceScorer.3.5df5ec61', 'ar');
     } else if (score.overall >= 25) {
-      return "❌ هذه الإجابة قد لا تكون موثوقة - تجنب الاعتماد عليها";
+      return t('auto.utils_confidenceScorer.2.3e59a12a', 'ar');
     } else {
-      return "🚫 هذه الإجابة غير موثوقة - لا تعتمد عليها";
+      return t('auto.utils_confidenceScorer.1.09b2d5a0', 'ar');
     }
   } else {
     if (score.overall >= 90) {

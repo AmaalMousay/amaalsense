@@ -206,7 +206,7 @@ function trackEntity(memory: WorkingMemoryState, entity: string, context: string
  */
 function updateConversationMood(memory: WorkingMemoryState, content: string): void {
   // Detect urgency
-  if (/الآن|فوراً|عاجل|سريع/.test(content)) {
+  if (/|||/.test(content)) {
     memory.conversationMood = 'urgent';
     return;
   }
@@ -223,7 +223,7 @@ function updateConversationMood(memory: WorkingMemoryState, content: string): vo
   }
   
   // Detect casual conversation
-  if (/شكراً|مرحبا|كيف حالك/.test(content)) {
+  if (/|| /.test(content)) {
     memory.conversationMood = 'casual';
     return;
   }
@@ -284,12 +284,12 @@ function isFollowUpQuestion(current: string, previous: string): boolean {
   // Short questions are often follow-ups
   if (current.length < 30) {
     // Check for follow-up markers
-    if (/^(و|لكن|طيب|اوكي|حسناً|ماذا عن|وماذا|ولماذا|وكيف)/.test(current)) {
+    if (/^(||||| |||)/.test(current)) {
       return true;
     }
     
     // Check for pronouns referring to previous context
-    if (/^(هو|هي|هذا|هذه|ذلك|تلك|نفس)/.test(current)) {
+    if (/^(||||||)/.test(current)) {
       return true;
     }
   }

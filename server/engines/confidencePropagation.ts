@@ -1,13 +1,15 @@
+import { t } from "../_core/i18n";
+
 /**
  * Confidence Propagation System
  * 
- * وظيفته:
- * - كل Engine يرجّع engineConfidence: 0-100
- * - حساب overallConfidence كمتوسط مرجح
- * - توريث الثقة عبر الـ Engines
+ * :
+ * -  Engine  engineConfidence: 0-100
+ * -  overallConfidence  
+ * -     Engines
  */
 
-// أنواع الثقة
+//  
 export interface EngineConfidence {
   engineName: string;
   confidence: number; // 0-100
@@ -28,7 +30,7 @@ export interface OverallConfidence {
   explanation: string;
 }
 
-// أوزان الـ Engines في حساب الثقة الإجمالية
+//   Engines    
 export const engineWeights: Record<string, number> = {
   contextClassification: 0.15,
   emotionFusion: 0.30,
@@ -38,7 +40,7 @@ export const engineWeights: Record<string, number> = {
 };
 
 /**
- * حساب ثقة Engine التصنيف السياقي
+ *   Engine  
  */
 export function calculateContextConfidence(
   textLength: number,
@@ -49,27 +51,27 @@ export function calculateContextConfidence(
   const factors: ConfidenceFactor[] = [
     {
       name: 'textLength',
-      value: Math.min(textLength / 500, 1), // أفضل مع نص أطول
+      value: Math.min(textLength / 500, 1), //    
       weight: 0.2,
-      description: 'طول النص يؤثر على دقة التصنيف'
+      description: t('auto.engines_confidencePropagation.22.bed44000', 'ar')
     },
     {
       name: 'keywordsFound',
       value: Math.min(keywordsFound / 10, 1),
       weight: 0.3,
-      description: 'عدد الكلمات المفتاحية المكتشفة'
+      description: t('auto.engines_confidencePropagation.21.bb14f8e3', 'ar')
     },
     {
       name: 'languageDetected',
       value: languageDetected ? 1 : 0.3,
       weight: 0.2,
-      description: 'هل تم اكتشاف اللغة بنجاح'
+      description: t('auto.engines_confidencePropagation.20.60ef4ab5', 'ar')
     },
     {
       name: 'domainClear',
       value: domainClear ? 1 : 0.5,
       weight: 0.3,
-      description: 'وضوح المجال (سياسة، اقتصاد، إلخ)'
+      description: t('auto.engines_confidencePropagation.19.e9339a46', 'ar')
     }
   ];
   
@@ -83,38 +85,38 @@ export function calculateContextConfidence(
 }
 
 /**
- * حساب ثقة Engine دمج المشاعر
+ *   Engine  
  */
 export function calculateFusionConfidence(
   sourceCount: number,
   sourceQuality: number, // 0-1
-  agreementLevel: number, // 0-1 (مدى اتفاق المصادر)
-  emotionClarity: number // 0-1 (وضوح المشاعر)
+  agreementLevel: number, // 0-1 (  )
+  emotionClarity: number // 0-1 ( )
 ): EngineConfidence {
   const factors: ConfidenceFactor[] = [
     {
       name: 'sourceCount',
       value: Math.min(sourceCount / 20, 1),
       weight: 0.25,
-      description: 'عدد المصادر المحللة'
+      description: t('auto.engines_confidencePropagation.18.e511ab94', 'ar')
     },
     {
       name: 'sourceQuality',
       value: sourceQuality,
       weight: 0.30,
-      description: 'جودة وموثوقية المصادر'
+      description: t('auto.engines_confidencePropagation.17.a0db9bbd', 'ar')
     },
     {
       name: 'agreementLevel',
       value: agreementLevel,
       weight: 0.25,
-      description: 'مدى اتفاق المصادر على المشاعر'
+      description: t('auto.engines_confidencePropagation.16.f7bdf057', 'ar')
     },
     {
       name: 'emotionClarity',
       value: emotionClarity,
       weight: 0.20,
-      description: 'وضوح المشاعر المكتشفة'
+      description: t('auto.engines_confidencePropagation.15.80c25269', 'ar')
     }
   ];
   
@@ -128,11 +130,11 @@ export function calculateFusionConfidence(
 }
 
 /**
- * حساب ثقة Engine الديناميكيات
+ *   Engine 
  */
 export function calculateDynamicsConfidence(
   historicalDataPoints: number,
-  timeSpan: number, // بالساعات
+  timeSpan: number, // 
   trendConsistency: number // 0-1
 ): EngineConfidence {
   const factors: ConfidenceFactor[] = [
@@ -140,19 +142,19 @@ export function calculateDynamicsConfidence(
       name: 'historicalDataPoints',
       value: Math.min(historicalDataPoints / 50, 1),
       weight: 0.40,
-      description: 'عدد نقاط البيانات التاريخية'
+      description: t('auto.engines_confidencePropagation.14.ffdfcb23', 'ar')
     },
     {
       name: 'timeSpan',
-      value: Math.min(timeSpan / 168, 1), // أسبوع كامل = 1
+      value: Math.min(timeSpan / 168, 1), //   = 1
       weight: 0.30,
-      description: 'الفترة الزمنية المغطاة'
+      description: t('auto.engines_confidencePropagation.13.0ce074be', 'ar')
     },
     {
       name: 'trendConsistency',
       value: trendConsistency,
       weight: 0.30,
-      description: 'اتساق الترند'
+      description: t('auto.engines_confidencePropagation.12.231561be', 'ar')
     }
   ];
   
@@ -166,7 +168,7 @@ export function calculateDynamicsConfidence(
 }
 
 /**
- * حساب ثقة Engine اكتشاف الأسباب
+ *   Engine  
  */
 export function calculateDriverConfidence(
   keywordsExtracted: number,
@@ -178,19 +180,19 @@ export function calculateDriverConfidence(
       name: 'keywordsExtracted',
       value: Math.min(keywordsExtracted / 15, 1),
       weight: 0.30,
-      description: 'عدد الكلمات المفتاحية المستخرجة'
+      description: t('auto.engines_confidencePropagation.11.a5749bc3', 'ar')
     },
     {
       name: 'causesIdentified',
       value: Math.min(causesIdentified / 5, 1),
       weight: 0.35,
-      description: 'عدد الأسباب المحددة'
+      description: t('auto.engines_confidencePropagation.10.c2d86183', 'ar')
     },
     {
       name: 'narrativeClarity',
       value: narrativeClarity,
       weight: 0.35,
-      description: 'وضوح السردية'
+      description: t('auto.engines_confidencePropagation.9.89b6ee8a', 'ar')
     }
   ];
   
@@ -204,10 +206,10 @@ export function calculateDriverConfidence(
 }
 
 /**
- * حساب ثقة Engine التفسير
+ *   Engine 
  */
 export function calculateInsightConfidence(
-  inputConfidence: number, // ثقة الـ Engines السابقة
+  inputConfidence: number, //   Engines 
   explanationLength: number,
   actionableInsights: number
 ): EngineConfidence {
@@ -216,19 +218,19 @@ export function calculateInsightConfidence(
       name: 'inputConfidence',
       value: inputConfidence / 100,
       weight: 0.40,
-      description: 'ثقة البيانات المدخلة'
+      description: t('auto.engines_confidencePropagation.8.fe4bfc2a', 'ar')
     },
     {
       name: 'explanationLength',
       value: Math.min(explanationLength / 200, 1),
       weight: 0.30,
-      description: 'شمولية التفسير'
+      description: t('auto.engines_confidencePropagation.7.4fb9fac6', 'ar')
     },
     {
       name: 'actionableInsights',
       value: Math.min(actionableInsights / 5, 1),
       weight: 0.30,
-      description: 'عدد الرؤى القابلة للتنفيذ'
+      description: t('auto.engines_confidencePropagation.6.98b92031', 'ar')
     }
   ];
   
@@ -242,7 +244,7 @@ export function calculateInsightConfidence(
 }
 
 /**
- * حساب الثقة المرجحة من العوامل
+ *     
  */
 function calculateWeightedConfidence(factors: ConfidenceFactor[]): number {
   let weightedSum = 0;
@@ -258,7 +260,7 @@ function calculateWeightedConfidence(factors: ConfidenceFactor[]): number {
 }
 
 /**
- * حساب الثقة الإجمالية من جميع الـ Engines
+ *       Engines
  */
 export function calculateOverallConfidence(
   engineConfidences: EngineConfidence[]
@@ -274,7 +276,7 @@ export function calculateOverallConfidence(
   
   const score = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
   
-  // تحديد المستوى
+  //  
   let level: OverallConfidence['level'];
   if (score >= 80) level = 'very_high';
   else if (score >= 65) level = 'high';
@@ -282,7 +284,7 @@ export function calculateOverallConfidence(
   else if (score >= 35) level = 'low';
   else level = 'very_low';
   
-  // توليد التفسير
+  //  
   const explanation = generateConfidenceExplanation(score, level, engineConfidences);
   
   return {
@@ -294,7 +296,7 @@ export function calculateOverallConfidence(
 }
 
 /**
- * توليد تفسير الثقة
+ *   
  */
 function generateConfidenceExplanation(
   score: number,
@@ -302,19 +304,19 @@ function generateConfidenceExplanation(
   engineConfidences: EngineConfidence[]
 ): string {
   const levelDescriptions: Record<OverallConfidence['level'], string> = {
-    very_high: 'ثقة عالية جداً في النتائج',
-    high: 'ثقة عالية في النتائج',
-    medium: 'ثقة متوسطة في النتائج',
-    low: 'ثقة منخفضة في النتائج',
-    very_low: 'ثقة منخفضة جداً في النتائج'
+    very_high: t('auto.engines_confidencePropagation.5.0d97e7c0', 'ar'),
+    high: t('auto.engines_confidencePropagation.4.3e135998', 'ar'),
+    medium: t('auto.engines_confidencePropagation.3.f7b7d15c', 'ar'),
+    low: t('auto.engines_confidencePropagation.2.adca3246', 'ar'),
+    very_low: t('auto.engines_confidencePropagation.1.4966a431', 'ar')
   };
   
-  // إيجاد أضعف Engine
+  //   Engine
   const weakest = engineConfidences.reduce((min, ec) => 
     ec.confidence < min.confidence ? ec : min
   , engineConfidences[0]);
   
-  // إيجاد أقوى Engine
+  //   Engine
   const strongest = engineConfidences.reduce((max, ec) => 
     ec.confidence > max.confidence ? ec : max
   , engineConfidences[0]);
@@ -322,33 +324,33 @@ function generateConfidenceExplanation(
   let explanation = `${levelDescriptions[level]} (${score}%). `;
   
   if (weakest && weakest.confidence < 50) {
-    explanation += `نقطة ضعف: ${weakest.engineName} (${weakest.confidence}%). `;
+    explanation += ` : ${weakest.engineName} (${weakest.confidence}%). `;
   }
   
   if (strongest && strongest.confidence > 70) {
-    explanation += `نقطة قوة: ${strongest.engineName} (${strongest.confidence}%).`;
+    explanation += ` : ${strongest.engineName} (${strongest.confidence}%).`;
   }
   
   return explanation;
 }
 
 /**
- * تقييم سريع للثقة (للاستخدام البسيط)
+ *    ( )
  */
 export function quickConfidenceScore(
   sourceCount: number,
   textLength: number,
   historicalData: boolean
 ): number {
-  let score = 50; // نقطة البداية
+  let score = 50; //  
   
-  // المصادر
+  // 
   score += Math.min(sourceCount * 3, 20);
   
-  // طول النص
+  //  
   score += Math.min(textLength / 50, 15);
   
-  // البيانات التاريخية
+  //  
   if (historicalData) score += 15;
   
   return Math.min(Math.round(score), 100);

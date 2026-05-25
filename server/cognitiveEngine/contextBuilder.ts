@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 /**
  * Context Builder
  * 
@@ -184,21 +185,21 @@ function buildCurrentState(
   let trend: string;
   
   if (cfi > 65) {
-    moodDescription = 'حالة قلق وتوتر واضحة';
-    summary = `المزاج العام تجاه ${topic} يميل للسلبية مع مستويات خوف مرتفعة`;
-    trend = 'الاتجاه سلبي مع ترقب حذر';
+    moodDescription = t('auto.cognitiveEngine_contextBuilder.101.7d970391', 'ar');
+    summary = `   ${topic}      `;
+    trend = t('auto.cognitiveEngine_contextBuilder.100.b2831ce7', 'ar');
   } else if (hri > 65) {
-    moodDescription = 'حالة تفاؤل وأمل';
-    summary = `المزاج العام تجاه ${topic} إيجابي مع مستويات أمل مرتفعة`;
-    trend = 'الاتجاه إيجابي مع تفاؤل حذر';
+    moodDescription = t('auto.cognitiveEngine_contextBuilder.99.7a1104e7', 'ar');
+    summary = `   ${topic}     `;
+    trend = t('auto.cognitiveEngine_contextBuilder.98.8c350ffe', 'ar');
   } else if (cfi > 55 && hri > 55) {
-    moodDescription = 'حالة مقاومة - خوف وأمل معاً';
-    summary = `المزاج العام تجاه ${topic} معقد - خوف وأمل في آن واحد`;
-    trend = 'حالة ترقب مع مقاومة نفسية';
+    moodDescription = t('auto.cognitiveEngine_contextBuilder.97.6eb85439', 'ar');
+    summary = `   ${topic}  -     `;
+    trend = t('auto.cognitiveEngine_contextBuilder.96.b03d84bc', 'ar');
   } else {
-    moodDescription = 'حالة حياد وترقب';
-    summary = `المزاج العام تجاه ${topic} محايد نسبياً`;
-    trend = 'استقرار مع ترقب للتطورات';
+    moodDescription = t('auto.cognitiveEngine_contextBuilder.95.d05785eb', 'ar');
+    summary = `   ${topic}  `;
+    trend = t('auto.cognitiveEngine_contextBuilder.94.bd9f6833', 'ar');
   }
   
   return {
@@ -226,16 +227,16 @@ function buildCausalAnalysis(
       if (headline.relevance > 0.8) {
         primary.push({
           cause: headline.title,
-          effect: headline.sentiment === 'negative' ? 'ضغط سلبي على المشاعر' : 
-                  headline.sentiment === 'positive' ? 'دعم إيجابي للمشاعر' : 'تأثير محدود',
-          explanation: `هذا الخبر يؤثر على ${topic} لأنه يغير توقعات المستثمرين والمتابعين`,
+          effect: headline.sentiment === 'negative' ? t('auto.cognitiveEngine_contextBuilder.93.a4da4181', 'ar') : 
+                  headline.sentiment === 'positive' ? t('auto.cognitiveEngine_contextBuilder.92.d9f2f98a', 'ar') : t('auto.cognitiveEngine_contextBuilder.91.04f46c07', 'ar'),
+          explanation: `    ${topic}     `,
           confidence: headline.relevance
         });
       } else {
         secondary.push({
           cause: headline.title,
-          effect: 'تأثير ثانوي',
-          explanation: 'عامل مساهم لكن ليس رئيسي',
+          effect: t('auto.cognitiveEngine_contextBuilder.90.ad6d005f', 'ar'),
+          explanation: t('auto.cognitiveEngine_contextBuilder.89.1290bb8b', 'ar'),
           confidence: headline.relevance
         });
       }
@@ -248,8 +249,8 @@ function buildCausalAnalysis(
       if (insight.confidence > 0.8) {
         primary.push({
           cause: insight.insight,
-          effect: 'تأثير على القرارات والتوقعات',
-          explanation: `معرفة خبراء: ${insight.source}`,
+          effect: t('auto.cognitiveEngine_contextBuilder.88.6cb6d248', 'ar'),
+          explanation: ` : ${insight.source}`,
           confidence: insight.confidence
         });
       }
@@ -262,9 +263,9 @@ function buildCausalAnalysis(
     for (const commodity of commodities) {
       if (Math.abs(commodity.change) > 1) {
         secondary.push({
-          cause: `${commodity.name} ${commodity.change > 0 ? 'ارتفع' : 'انخفض'} بنسبة ${Math.abs(commodity.change).toFixed(1)}%`,
-          effect: commodity.change > 0 ? 'ضغط صعودي' : 'ضغط هبوطي',
-          explanation: 'تحركات السوق تؤثر على المشاعر الجماعية',
+          cause: `${commodity.name} ${commodity.change > 0 ? t('auto.cognitiveEngine_contextBuilder.87.294c459c', 'ar') : t('auto.cognitiveEngine_contextBuilder.86.9bfee223', 'ar')}  ${Math.abs(commodity.change).toFixed(1)}%`,
+          effect: commodity.change > 0 ? t('auto.cognitiveEngine_contextBuilder.85.029763e6', 'ar') : t('auto.cognitiveEngine_contextBuilder.84.c668d441', 'ar'),
+          explanation: t('auto.cognitiveEngine_contextBuilder.83.da4941a4', 'ar'),
           confidence: 0.85
         });
       }
@@ -273,8 +274,8 @@ function buildCausalAnalysis(
   
   // Build summary
   const summary = primary.length > 0
-    ? `هذا الوضع ناتج بشكل رئيسي عن: ${primary.slice(0, 2).map(c => c.cause).join('، ')}`
-    : 'الوضع الحالي نتيجة تفاعل عوامل متعددة';
+    ? `     : ${primary.slice(0, 2).map(c => c.cause).join(t('auto.cognitiveEngine_contextBuilder.82.8715d7bc', 'ar'))}`
+    : t('auto.cognitiveEngine_contextBuilder.81.695df5bc', 'ar');
   
   return { primary, secondary, summary };
 }
@@ -293,37 +294,37 @@ function buildImplications(
   let forUser: string;
   
   // Short term implications
-  if (currentState.moodDescription.includes('قلق')) {
-    shortTerm.push('توقع استمرار التقلبات على المدى القصير');
-    shortTerm.push('قرارات متسرعة قد تكون مكلفة');
-  } else if (currentState.moodDescription.includes('تفاؤل')) {
-    shortTerm.push('فرص محتملة للمتحركين مبكراً');
-    shortTerm.push('الحذر من الإفراط في التفاؤل');
+  if (currentState.moodDescription.includes(t('auto.cognitiveEngine_contextBuilder.80.a24a5460', 'ar'))) {
+    shortTerm.push(t('auto.cognitiveEngine_contextBuilder.79.9689d958', 'ar'));
+    shortTerm.push(t('auto.cognitiveEngine_contextBuilder.78.72a55af4', 'ar'));
+  } else if (currentState.moodDescription.includes(t('auto.cognitiveEngine_contextBuilder.77.e01009da', 'ar'))) {
+    shortTerm.push(t('auto.cognitiveEngine_contextBuilder.76.2f76d27d', 'ar'));
+    shortTerm.push(t('auto.cognitiveEngine_contextBuilder.75.40762a5e', 'ar'));
   } else {
-    shortTerm.push('فترة مناسبة للمراقبة والتخطيط');
-    shortTerm.push('انتظار إشارات أوضح قبل التحرك');
+    shortTerm.push(t('auto.cognitiveEngine_contextBuilder.74.15ff21b7', 'ar'));
+    shortTerm.push(t('auto.cognitiveEngine_contextBuilder.73.27b06a2d', 'ar'));
   }
   
   // Long term implications
-  longTerm.push('الاتجاهات طويلة المدى تتشكل من تراكم القرارات الحالية');
-  longTerm.push('فهم الأسباب يساعد في التنبؤ بالمستقبل');
+  longTerm.push(t('auto.cognitiveEngine_contextBuilder.72.278ce03e', 'ar'));
+  longTerm.push(t('auto.cognitiveEngine_contextBuilder.71.d931c2ee', 'ar'));
   
   // For user specifically
   switch (realIntent) {
     case 'make_decision':
-      forUser = 'إذا كنت تفكر في اتخاذ قرار، الوقت الحالي يتطلب حذراً وتقييماً دقيقاً';
+      forUser = t('auto.cognitiveEngine_contextBuilder.70.0721b662', 'ar');
       break;
     case 'understand_cause':
-      forUser = 'فهم هذه الأسباب يمنحك رؤية أوضح للوضع ويساعدك في التخطيط';
+      forUser = t('auto.cognitiveEngine_contextBuilder.69.fe9daa71', 'ar');
       break;
     case 'predict_future':
-      forUser = 'التوقعات تعتمد على استمرار العوامل الحالية، وأي تغيير قد يغير المسار';
+      forUser = t('auto.cognitiveEngine_contextBuilder.68.a56a9650', 'ar');
       break;
     case 'assess_risk':
-      forUser = 'المخاطر موجودة لكنها قابلة للإدارة بالتخطيط السليم';
+      forUser = t('auto.cognitiveEngine_contextBuilder.67.b86e3b43', 'ar');
       break;
     default:
-      forUser = 'هذه المعلومات تساعدك على فهم الصورة الكاملة';
+      forUser = t('auto.cognitiveEngine_contextBuilder.66.bbacccf2', 'ar');
   }
   
   return { shortTerm, longTerm, forUser };
@@ -347,29 +348,29 @@ function buildDecisionSupport(
   
   if (cfi > 70) {
     signal = 'caution';
-    recommendation = 'الانتظار والمراقبة - الخوف مرتفع جداً';
-    reasoning = 'عندما يكون الخوف مرتفعاً، القرارات المتسرعة غالباً ما تكون خاطئة';
+    recommendation = t('auto.cognitiveEngine_contextBuilder.65.a2c54ccf', 'ar');
+    reasoning = t('auto.cognitiveEngine_contextBuilder.64.5322fe72', 'ar');
   } else if (cfi > 60 && hri > 60) {
     signal = 'neutral';
-    recommendation = 'المراقبة مع الاستعداد - مشاعر متضاربة';
-    reasoning = 'وجود خوف وأمل معاً يشير لحالة ترقب، انتظر إشارة أوضح';
+    recommendation = t('auto.cognitiveEngine_contextBuilder.63.21b3a222', 'ar');
+    reasoning = t('auto.cognitiveEngine_contextBuilder.62.5c56cb79', 'ar');
   } else if (hri > 65) {
     signal = 'positive';
-    recommendation = 'فرصة للتفاؤل الحذر';
-    reasoning = 'الأمل مرتفع لكن الحذر مطلوب دائماً';
+    recommendation = t('auto.cognitiveEngine_contextBuilder.61.75c7071e', 'ar');
+    reasoning = t('auto.cognitiveEngine_contextBuilder.60.ae8a9927', 'ar');
   } else if (cfi > 55) {
     signal = 'caution';
-    recommendation = 'الحذر مطلوب - قلق ملحوظ';
-    reasoning = 'مستوى القلق يستدعي التريث';
+    recommendation = t('auto.cognitiveEngine_contextBuilder.59.1feed0e6', 'ar');
+    reasoning = t('auto.cognitiveEngine_contextBuilder.58.05bc66bb', 'ar');
   } else {
     signal = 'neutral';
-    recommendation = 'وضع محايد - مناسب للتخطيط';
-    reasoning = 'لا توجد إشارات قوية في أي اتجاه';
+    recommendation = t('auto.cognitiveEngine_contextBuilder.57.0b7fce4a', 'ar');
+    reasoning = t('auto.cognitiveEngine_contextBuilder.56.2fe8ebcd', 'ar');
   }
   
   // Get risks and opportunities from expert knowledge
-  const risks = expertKnowledge?.riskFactors || ['عدم اليقين العام'];
-  const opportunities = expertKnowledge?.opportunities || ['فرصة للتعلم والفهم'];
+  const risks = expertKnowledge?.riskFactors || [t('auto.cognitiveEngine_contextBuilder.55.28ca4696', 'ar')];
+  const opportunities = expertKnowledge?.opportunities || [t('auto.cognitiveEngine_contextBuilder.54.67e67d3a', 'ar')];
   
   return {
     signal,
@@ -387,24 +388,24 @@ function buildScenarioSummary(scenarioModels: any): KnowledgePacket['scenarios']
   const scenarios = scenarioModels.scenarios || [];
   
   const best = scenarios.find((s: any) => s.impact === 'positive') || {
-    name: 'السيناريو الإيجابي',
+    name: t('auto.cognitiveEngine_contextBuilder.53.c8cd1da4', 'ar'),
     probability: 0.25,
-    description: 'تحسن الوضع',
-    triggers: ['أخبار إيجابية']
+    description: t('auto.cognitiveEngine_contextBuilder.52.8ad028c1', 'ar'),
+    triggers: [t('auto.cognitiveEngine_contextBuilder.51.f9a20d52', 'ar')]
   };
   
   const worst = scenarios.find((s: any) => s.impact === 'negative') || {
-    name: 'السيناريو السلبي',
+    name: t('auto.cognitiveEngine_contextBuilder.50.debdc2bd', 'ar'),
     probability: 0.25,
-    description: 'تفاقم الوضع',
-    triggers: ['أخبار سلبية']
+    description: t('auto.cognitiveEngine_contextBuilder.49.613d5538', 'ar'),
+    triggers: [t('auto.cognitiveEngine_contextBuilder.48.3bbb4e94', 'ar')]
   };
   
   const likely = scenarios.find((s: any) => s.impact === 'neutral') || {
-    name: 'السيناريو المحايد',
+    name: t('auto.cognitiveEngine_contextBuilder.47.9bd780ed', 'ar'),
     probability: 0.5,
-    description: 'استمرار الوضع الحالي',
-    triggers: ['غياب محفزات قوية']
+    description: t('auto.cognitiveEngine_contextBuilder.46.a5ebb7ec', 'ar'),
+    triggers: [t('auto.cognitiveEngine_contextBuilder.45.f107fdcd', 'ar')]
   };
   
   return {
@@ -421,7 +422,7 @@ function buildComparisonSummary(comparisonData: any): KnowledgePacket['compariso
   return {
     items: comparisonData.items.map((i: any) => i.name),
     winner: comparisonData.winner,
-    reasoning: `المقارنة بناءً على: ${comparisonData.criteria?.join('، ') || 'معايير متعددة'}`
+    reasoning: `  : ${comparisonData.criteria?.join(t('auto.cognitiveEngine_contextBuilder.44.8715d7bc', 'ar')) || t('auto.cognitiveEngine_contextBuilder.43.392e6fbb', 'ar')}`
   };
 }
 
@@ -436,18 +437,18 @@ function buildFollowUp(
   // Generate answers to implicit questions
   const implicitAnswers: string[] = [];
   for (const q of implicitQuestions.slice(0, 2)) {
-    if (q.includes('مؤقت')) {
-      implicitAnswers.push('الوضع الحالي يعتمد على استمرار العوامل المؤثرة، وقد يتغير مع تغير الظروف');
-    } else if (q.includes('مخاطر')) {
-      implicitAnswers.push('المخاطر موجودة لكنها قابلة للإدارة بالتخطيط والحذر');
+    if (q.includes(t('auto.cognitiveEngine_contextBuilder.42.7d9903ba', 'ar'))) {
+      implicitAnswers.push(t('auto.cognitiveEngine_contextBuilder.41.d3b790fc', 'ar'));
+    } else if (q.includes(t('auto.cognitiveEngine_contextBuilder.40.93f055fa', 'ar'))) {
+      implicitAnswers.push(t('auto.cognitiveEngine_contextBuilder.39.bbb7ffed', 'ar'));
     }
   }
   
   // Generate smart follow-up questions
   const suggestedQuestions = [
-    `هل نحلل ${topic} بشكل أعمق؟`,
-    `ماذا لو تغيرت الظروف الحالية؟`,
-    `ما هي أفضل استراتيجية للتعامل مع هذا الوضع؟`
+    `  ${topic}  `,
+    t('auto.cognitiveEngine_contextBuilder.38.ac9264cb', 'ar'),
+    t('auto.cognitiveEngine_contextBuilder.37.72237892', 'ar')
   ];
   
   return {
@@ -527,8 +528,8 @@ function buildCausesFromEngines(
     for (const insight of explanationOutput.insights) {
       primary.push({
         cause: insight,
-        effect: 'تأثير على المشاعر والقرارات',
-        explanation: 'هذا العامل يؤثر بشكل مباشر على الوضع الحالي',
+        effect: t('auto.cognitiveEngine_contextBuilder.36.e3441505', 'ar'),
+        explanation: t('auto.cognitiveEngine_contextBuilder.35.108790d9', 'ar'),
         confidence: explanationOutput.confidence
       });
     }
@@ -540,8 +541,8 @@ function buildCausesFromEngines(
     for (const insight of economicOutput.insights) {
       secondary.push({
         cause: insight,
-        effect: 'تأثير اقتصادي',
-        explanation: 'عامل اقتصادي مساهم',
+        effect: t('auto.cognitiveEngine_contextBuilder.34.55db9eb5', 'ar'),
+        explanation: t('auto.cognitiveEngine_contextBuilder.33.f1087d81', 'ar'),
         confidence: economicOutput.confidence
       });
     }
@@ -553,8 +554,8 @@ function buildCausesFromEngines(
     for (const insight of mediaOutput.insights) {
       secondary.push({
         cause: insight,
-        effect: 'تأثير إعلامي',
-        explanation: 'تأثير الإعلام على المشاعر',
+        effect: t('auto.cognitiveEngine_contextBuilder.32.c032ca43', 'ar'),
+        explanation: t('auto.cognitiveEngine_contextBuilder.31.44a82f3d', 'ar'),
         confidence: mediaOutput.confidence
       });
     }
@@ -562,8 +563,8 @@ function buildCausesFromEngines(
   
   // Build summary
   const summary = primary.length > 0
-    ? `هذا الوضع ناتج بشكل رئيسي عن: ${primary.slice(0, 2).map(c => c.cause).join('، ')}`
-    : 'الوضع الحالي نتيجة تفاعل عوامل متعددة';
+    ? `     : ${primary.slice(0, 2).map(c => c.cause).join(t('auto.cognitiveEngine_contextBuilder.30.8715d7bc', 'ar'))}`
+    : t('auto.cognitiveEngine_contextBuilder.29.695df5bc', 'ar');
   
   return { primary, secondary, summary };
 }
@@ -579,10 +580,10 @@ function buildDecisionFromEngine(
     const { recommendation, signal } = decisionOutput.data;
     return {
       signal: signal || 'neutral',
-      recommendation: recommendation || 'المراقبة والانتظار',
+      recommendation: recommendation || t('auto.cognitiveEngine_contextBuilder.28.476afc0c', 'ar'),
       reasoning: decisionOutput.reasoning,
-      risks: decisionOutput.insights.filter(i => i.includes('مخاطر') || i.includes('خطر')),
-      opportunities: decisionOutput.insights.filter(i => i.includes('فرص') || i.includes('أمل'))
+      risks: decisionOutput.insights.filter(i => i.includes(t('auto.cognitiveEngine_contextBuilder.27.93f055fa', 'ar')) || i.includes(t('auto.cognitiveEngine_contextBuilder.26.5349080f', 'ar'))),
+      opportunities: decisionOutput.insights.filter(i => i.includes(t('auto.cognitiveEngine_contextBuilder.25.e87473b0', 'ar')) || i.includes(t('auto.cognitiveEngine_contextBuilder.24.60cd6c3d', 'ar')))
     };
   }
   
@@ -600,22 +601,22 @@ function buildScenariosFromEngine(
   
   return {
     best: {
-      name: 'السيناريو الأفضل',
+      name: t('auto.cognitiveEngine_contextBuilder.23.46860915', 'ar'),
       probability: 0.25,
-      description: insights.find(i => i.includes('الأفضل')) || 'تحسن الوضع',
-      triggers: ['أخبار إيجابية']
+      description: insights.find(i => i.includes(t('auto.cognitiveEngine_contextBuilder.22.0d6ac700', 'ar'))) || t('auto.cognitiveEngine_contextBuilder.21.8ad028c1', 'ar'),
+      triggers: [t('auto.cognitiveEngine_contextBuilder.20.f9a20d52', 'ar')]
     },
     worst: {
-      name: 'السيناريو الأسوأ',
+      name: t('auto.cognitiveEngine_contextBuilder.19.e424e979', 'ar'),
       probability: 0.25,
-      description: insights.find(i => i.includes('الأسوأ')) || 'تفاقم الوضع',
-      triggers: ['أخبار سلبية']
+      description: insights.find(i => i.includes(t('auto.cognitiveEngine_contextBuilder.18.96d145bc', 'ar'))) || t('auto.cognitiveEngine_contextBuilder.17.613d5538', 'ar'),
+      triggers: [t('auto.cognitiveEngine_contextBuilder.16.3bbb4e94', 'ar')]
     },
     likely: {
-      name: 'السيناريو الأرجح',
+      name: t('auto.cognitiveEngine_contextBuilder.15.263b1af1', 'ar'),
       probability: 0.5,
-      description: insights.find(i => i.includes('الأرجح')) || 'استمرار الوضع',
-      triggers: ['غياب محفزات قوية']
+      description: insights.find(i => i.includes(t('auto.cognitiveEngine_contextBuilder.14.621262f2', 'ar'))) || t('auto.cognitiveEngine_contextBuilder.13.e8be6a2e', 'ar'),
+      triggers: [t('auto.cognitiveEngine_contextBuilder.12.f107fdcd', 'ar')]
     }
   };
 }
@@ -627,7 +628,7 @@ function buildComparisonFromEngine(
   comparisonOutput: EngineOutput
 ): KnowledgePacket['comparison'] {
   return {
-    items: comparisonOutput.insights.filter(i => i.includes('مقارنة')),
+    items: comparisonOutput.insights.filter(i => i.includes(t('auto.cognitiveEngine_contextBuilder.11.cb8ef2dd', 'ar'))),
     reasoning: comparisonOutput.reasoning
   };
 }
@@ -660,28 +661,28 @@ function buildSmartFollowUp(
   // Based on primary engine
   switch (decision.primaryEngine) {
     case 'decision_engine':
-      suggestedQuestions.push(`ما المخاطر المحتملة إذا اتخذت هذا القرار؟`);
-      suggestedQuestions.push(`ماذا لو انتظرت أسبوعًا قبل القرار؟`);
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.10.7e0cb070', 'ar'));
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.9.b6cd0e16', 'ar'));
       break;
     case 'explanation_engine':
-      suggestedQuestions.push(`هل هذه الأسباب مؤقتة أم دائمة؟`);
-      suggestedQuestions.push(`كيف يمكن التعامل مع هذه العوامل؟`);
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.8.d3fb5683', 'ar'));
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.7.87abfadb', 'ar'));
       break;
     case 'scenario_engine':
-      suggestedQuestions.push(`ما الذي يمكن أن يغير هذا السيناريو؟`);
-      suggestedQuestions.push(`كيف أستعد للسيناريو الأسوأ؟`);
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.6.ab0df830', 'ar'));
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.5.6aadf116', 'ar'));
       break;
     case 'economic_engine':
-      suggestedQuestions.push(`هل نحلل العلاقة بين ${topic} والدولار؟`);
-      suggestedQuestions.push(`ما تأثير قرارات الفيدرالي على هذا؟`);
+      suggestedQuestions.push(`    ${topic} `);
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.4.099514ff', 'ar'));
       break;
     case 'media_bias_engine':
-      suggestedQuestions.push(`كيف أميز بين الخبر الحقيقي والتضخيم الإعلامي؟`);
-      suggestedQuestions.push(`ما المصادر الأكثر موثوقية؟`);
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.3.df84f75a', 'ar'));
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.2.29824838', 'ar'));
       break;
     default:
-      suggestedQuestions.push(`هل نحلل ${topic} بشكل أعمق؟`);
-      suggestedQuestions.push(`ماذا لو تغيرت الظروف الحالية؟`);
+      suggestedQuestions.push(`  ${topic}  `);
+      suggestedQuestions.push(t('auto.cognitiveEngine_contextBuilder.1.ac9264cb', 'ar'));
   }
   
   return {

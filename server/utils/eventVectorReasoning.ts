@@ -1,13 +1,14 @@
+import { t } from "../_core/i18n";
 /**
  * AMALSENSE UNIVERSAL REASONING ENGINE - Autonomous Edition
- * المحرك الذي يحول المتجهات إلى رؤى علمية موسوعية باستخدام نماذج مجانية تماماً.
+ *            .
  */
 
 import axios from 'axios';
 
 /**
- * دالة التفكير الموحد التي يبحث عنها EngineSelector
- * تم تصحيح المسمى وإضافة export لإيقاف الخطأ الأحمر
+ *       EngineSelector
+ *     export   
  */
 export async function analyzeEventVectorWithUniversalModel(
   vector: any,
@@ -18,7 +19,7 @@ export async function analyzeEventVectorWithUniversalModel(
   const prompt = createUniversalPrompt(vector, language);
 
   try {
-    // استخدام المحرك المجاني Pollinations AI (لا يحتاج API Key ولا كوتا)
+    //    Pollinations AI (  API Key  )
     const response = await axios.post('https://text.pollinations.ai/', {
       messages: [
         {
@@ -35,13 +36,13 @@ export async function analyzeEventVectorWithUniversalModel(
   } catch (error) {
     console.error('[Reasoning Engine] ❌ Fallback triggered due to error:', error);
     return language === 'ar'
-      ? "نعتذر، المحرك في حالة تحديث للوعي الرقمي. يرجى المحاولة لاحقاً."
+      ? t('auto.utils_eventVectorReasoning.2.dbf72a42', 'ar')
       : "Apologies, the engine is updating its digital consciousness. Please try again later.";
   }
 }
 
 /**
- * إنشاء "برومبت" الخبير الموسوعي المستقل (Physics, Law, Medicine, Economics)
+ *  ""    (Physics, Law, Medicine, Economics)
  */
 export function createUniversalPrompt(vector: any, language: string = 'ar'): string {
   const emotionsList = vector.emotions
@@ -49,18 +50,18 @@ export function createUniversalPrompt(vector: any, language: string = 'ar'): str
     : 'Neutral State';
 
   const prompts: Record<string, string> = {
-    ar: `بصفتك "عقلاً اصطناعيًا موسوعيًا" (ASI) يعمل بنظرية حقل الوعي الرقمي (DCFT):
+    ar: ` "  " (ASI)      (DCFT):
     
-حلل هذا المتجه العاطفي من منظور (فيزيائي، قانوني، طبي، واقتصادي):
-الموضوع: ${vector.topic || 'غير محدد'}
-العاطفة السائدة: ${vector.dominantEmotion || 'neutral'}
-التصنيف العلمي: ${vector.dominantCategory || 'General'}
-البيانات الرقمية: ${emotionsList}
+      (   ):
+: ${vector.topic || t('auto.utils_eventVectorReasoning.1.b2c702e7', 'ar')}
+ : ${vector.dominantEmotion || 'neutral'}
+ : ${vector.dominantCategory || 'General'}
+ : ${emotionsList}
 
-المطلوب:
-1. تحليل "الرنين العاطفي" للحدث (Resonance RI) وتأثيره.
-2. ربط الحدث بقوانين العلم (مثل قوانين الديناميكا أو الرنين الفيزيائي) أو مواد القانون الدولي.
-3. توقع المسار القادم بناءً على تداخل الموجات العاطفية.`,
+:
+1.  " "  (Resonance RI) .
+2.     (     )    .
+3.        .`,
 
     en: `As a Polymath AI (ASI) functioning on Digital Consciousness Field Theory (DCFT):
     
@@ -80,6 +81,6 @@ Provide:
 }
 
 /**
- * دالة التوافق مع الأنظمة القديمة (Alias)
+ *      (Alias)
  */
 export const analyzeEventVector = analyzeEventVectorWithUniversalModel;

@@ -1,12 +1,13 @@
+import { t } from "../_core/i18n";
 /**
  * Engine 4: Driver Detection Engine
- * يكتشف:
- * - أهم الكلمات المؤثرة (Key Drivers)
- * - أهم الأسباب (Root Causes)
- * - السرديات الأساسية (Narratives)
- * - الأحداث المرتبطة (Related Events)
+ * :
+ * -    (Key Drivers)
+ * -   (Root Causes)
+ * -   (Narratives)
+ * -   (Related Events)
  * 
- * يجاوب على السؤال: لماذا الناس تشعر هكذا؟
+ *   :    
  */
 
 import { ContextResult, ContentDomain, EventType } from './contextClassification';
@@ -110,49 +111,49 @@ const EMOTION_CAUSES: Record<keyof AffectiveVector, { triggers: string[], explan
   fear: {
     triggers: ['threat', 'danger', 'risk', 'crisis', 'warning', 'attack', 'disease', 'collapse', 'uncertainty'],
     explanations: [
-      { en: 'Perceived threat to safety or stability', ar: 'تهديد محسوس للأمان أو الاستقرار' },
-      { en: 'Uncertainty about future outcomes', ar: 'عدم اليقين بشأن النتائج المستقبلية' },
-      { en: 'Potential loss or negative consequences', ar: 'احتمال الخسارة أو العواقب السلبية' }
+      { en: 'Perceived threat to safety or stability', ar: t('auto.engines_driverDetection.96.a70db9dd', 'ar') },
+      { en: 'Uncertainty about future outcomes', ar: t('auto.engines_driverDetection.95.721c165c', 'ar') },
+      { en: 'Potential loss or negative consequences', ar: t('auto.engines_driverDetection.94.8ecae6c8', 'ar') }
     ]
   },
   anger: {
     triggers: ['injustice', 'corruption', 'violation', 'attack', 'betrayal', 'failure', 'abuse', 'discrimination'],
     explanations: [
-      { en: 'Perceived injustice or unfair treatment', ar: 'ظلم محسوس أو معاملة غير عادلة' },
-      { en: 'Violation of rights or expectations', ar: 'انتهاك الحقوق أو التوقعات' },
-      { en: 'Frustration with authorities or systems', ar: 'إحباط من السلطات أو الأنظمة' }
+      { en: 'Perceived injustice or unfair treatment', ar: t('auto.engines_driverDetection.93.67200347', 'ar') },
+      { en: 'Violation of rights or expectations', ar: t('auto.engines_driverDetection.92.7ab5dd9b', 'ar') },
+      { en: 'Frustration with authorities or systems', ar: t('auto.engines_driverDetection.91.7b8570f0', 'ar') }
     ]
   },
   sadness: {
     triggers: ['loss', 'death', 'failure', 'tragedy', 'suffering', 'decline', 'end', 'farewell'],
     explanations: [
-      { en: 'Loss of something or someone valued', ar: 'فقدان شيء أو شخص عزيز' },
-      { en: 'Disappointment in outcomes', ar: 'خيبة أمل في النتائج' },
-      { en: 'Empathy with others\' suffering', ar: 'التعاطف مع معاناة الآخرين' }
+      { en: 'Loss of something or someone valued', ar: t('auto.engines_driverDetection.90.2ffe2926', 'ar') },
+      { en: 'Disappointment in outcomes', ar: t('auto.engines_driverDetection.89.829f47ab', 'ar') },
+      { en: 'Empathy with others\' suffering', ar: t('auto.engines_driverDetection.88.3fa8830e', 'ar') }
     ]
   },
   joy: {
     triggers: ['success', 'victory', 'achievement', 'celebration', 'progress', 'reunion', 'breakthrough'],
     explanations: [
-      { en: 'Achievement of goals or desires', ar: 'تحقيق الأهداف أو الرغبات' },
-      { en: 'Positive surprise or good news', ar: 'مفاجأة إيجابية أو أخبار سارة' },
-      { en: 'Shared celebration or collective success', ar: 'احتفال مشترك أو نجاح جماعي' }
+      { en: 'Achievement of goals or desires', ar: t('auto.engines_driverDetection.87.b363c355', 'ar') },
+      { en: 'Positive surprise or good news', ar: t('auto.engines_driverDetection.86.15c809e0', 'ar') },
+      { en: 'Shared celebration or collective success', ar: t('auto.engines_driverDetection.85.93619669', 'ar') }
     ]
   },
   hope: {
     triggers: ['promise', 'opportunity', 'progress', 'solution', 'improvement', 'peace', 'recovery'],
     explanations: [
-      { en: 'Signs of positive change', ar: 'علامات على تغيير إيجابي' },
-      { en: 'New opportunities emerging', ar: 'ظهور فرص جديدة' },
-      { en: 'Progress toward desired outcomes', ar: 'تقدم نحو النتائج المرجوة' }
+      { en: 'Signs of positive change', ar: t('auto.engines_driverDetection.84.a5dc4e49', 'ar') },
+      { en: 'New opportunities emerging', ar: t('auto.engines_driverDetection.83.6f960e88', 'ar') },
+      { en: 'Progress toward desired outcomes', ar: t('auto.engines_driverDetection.82.70b2704a', 'ar') }
     ]
   },
   curiosity: {
     triggers: ['discovery', 'mystery', 'question', 'innovation', 'reveal', 'investigation', 'research'],
     explanations: [
-      { en: 'New information or discoveries', ar: 'معلومات أو اكتشافات جديدة' },
-      { en: 'Unanswered questions or mysteries', ar: 'أسئلة أو ألغاز بدون إجابة' },
-      { en: 'Desire to understand complex situations', ar: 'الرغبة في فهم المواقف المعقدة' }
+      { en: 'New information or discoveries', ar: t('auto.engines_driverDetection.81.d8729bea', 'ar') },
+      { en: 'Unanswered questions or mysteries', ar: t('auto.engines_driverDetection.80.45eca1dc', 'ar') },
+      { en: 'Desire to understand complex situations', ar: t('auto.engines_driverDetection.79.db66330e', 'ar') }
     ]
   }
 };
@@ -230,7 +231,7 @@ function identifyRootCauses(text: string, context: ContextResult, emotions: Emot
   if (context.sensitivity === 'critical' || context.sensitivity === 'high') {
     causes.push({
       cause: `High-stakes ${context.domain} situation creating emotional response`,
-      causeAr: `موقف ${translateDomain(context.domain)} عالي المخاطر يخلق استجابة عاطفية`,
+      causeAr: ` ${translateDomain(context.domain)}     `,
       confidence: 70,
       emotionTriggered: emotions.vector.fear > emotions.vector.anger ? 'fear' : 'anger',
       evidence: [context.domain, context.eventType]
@@ -263,7 +264,7 @@ function generateNarratives(context: ContextResult, emotions: EmotionFusionResul
     title: primaryNarrative.charAt(0).toUpperCase() + primaryNarrative.slice(1),
     titleAr: translateNarrative(primaryNarrative),
     description: `This story reflects a ${primaryNarrative} pattern in the ${context.domain} domain`,
-    descriptionAr: `تعكس هذه القصة نمط ${translateNarrative(primaryNarrative)} في مجال ${translateDomain(context.domain)}`,
+    descriptionAr: `    ${translateNarrative(primaryNarrative)}   ${translateDomain(context.domain)}`,
     emotionalTone,
     strength: Math.min(100, emotions.emotionalIntensity + 20)
   });
@@ -280,47 +281,47 @@ function identifyRelatedEvents(context: ContextResult): RelatedEvent[] {
   // Generate contextual related events
   const eventTemplates: Record<EventType, { en: string, ar: string }[]> = {
     crisis: [
-      { en: 'Ongoing crisis management efforts', ar: 'جهود إدارة الأزمة المستمرة' },
-      { en: 'Previous similar incidents', ar: 'حوادث مماثلة سابقة' }
+      { en: 'Ongoing crisis management efforts', ar: t('auto.engines_driverDetection.78.18f6187b', 'ar') },
+      { en: 'Previous similar incidents', ar: t('auto.engines_driverDetection.77.5c054800', 'ar') }
     ],
     death: [
-      { en: 'Memorial and mourning period', ar: 'فترة التأبين والحداد' },
-      { en: 'Investigation proceedings', ar: 'إجراءات التحقيق' }
+      { en: 'Memorial and mourning period', ar: t('auto.engines_driverDetection.76.306eb1f0', 'ar') },
+      { en: 'Investigation proceedings', ar: t('auto.engines_driverDetection.75.b8c7f83c', 'ar') }
     ],
     celebration: [
-      { en: 'Achievement recognition events', ar: 'فعاليات تكريم الإنجاز' },
-      { en: 'Public celebrations', ar: 'احتفالات عامة' }
+      { en: 'Achievement recognition events', ar: t('auto.engines_driverDetection.74.1be2351d', 'ar') },
+      { en: 'Public celebrations', ar: t('auto.engines_driverDetection.73.5d7a578e', 'ar') }
     ],
     conflict: [
-      { en: 'Ongoing negotiations', ar: 'مفاوضات جارية' },
-      { en: 'Previous confrontations', ar: 'مواجهات سابقة' }
+      { en: 'Ongoing negotiations', ar: t('auto.engines_driverDetection.72.c0f800b7', 'ar') },
+      { en: 'Previous confrontations', ar: t('auto.engines_driverDetection.71.38231035', 'ar') }
     ],
     announcement: [
-      { en: 'Follow-up announcements expected', ar: 'إعلانات متابعة متوقعة' },
-      { en: 'Implementation timeline', ar: 'الجدول الزمني للتنفيذ' }
+      { en: 'Follow-up announcements expected', ar: t('auto.engines_driverDetection.70.53fb775e', 'ar') },
+      { en: 'Implementation timeline', ar: t('auto.engines_driverDetection.69.e7ab0594', 'ar') }
     ],
     discovery: [
-      { en: 'Research continuation', ar: 'استمرار البحث' },
-      { en: 'Peer review process', ar: 'عملية مراجعة الأقران' }
+      { en: 'Research continuation', ar: t('auto.engines_driverDetection.68.73658454', 'ar') },
+      { en: 'Peer review process', ar: t('auto.engines_driverDetection.67.b58bb1f6', 'ar') }
     ],
     election: [
-      { en: 'Campaign activities', ar: 'أنشطة الحملة' },
-      { en: 'Voting procedures', ar: 'إجراءات التصويت' }
+      { en: 'Campaign activities', ar: t('auto.engines_driverDetection.66.3074ddde', 'ar') },
+      { en: 'Voting procedures', ar: t('auto.engines_driverDetection.65.66196606', 'ar') }
     ],
     disaster: [
-      { en: 'Relief operations', ar: 'عمليات الإغاثة' },
-      { en: 'Recovery efforts', ar: 'جهود التعافي' }
+      { en: 'Relief operations', ar: t('auto.engines_driverDetection.64.fb9f03fd', 'ar') },
+      { en: 'Recovery efforts', ar: t('auto.engines_driverDetection.63.6048d02c', 'ar') }
     ],
     achievement: [
-      { en: 'Recognition ceremonies', ar: 'حفلات التكريم' },
-      { en: 'Future goals', ar: 'الأهداف المستقبلية' }
+      { en: 'Recognition ceremonies', ar: t('auto.engines_driverDetection.62.e6101a51', 'ar') },
+      { en: 'Future goals', ar: t('auto.engines_driverDetection.61.65b21669', 'ar') }
     ],
     controversy: [
-      { en: 'Public debate', ar: 'نقاش عام' },
-      { en: 'Official responses', ar: 'ردود رسمية' }
+      { en: 'Public debate', ar: t('auto.engines_driverDetection.60.50471fcc', 'ar') },
+      { en: 'Official responses', ar: t('auto.engines_driverDetection.59.a30ce51b', 'ar') }
     ],
     neutral: [
-      { en: 'Ongoing developments', ar: 'تطورات جارية' }
+      { en: 'Ongoing developments', ar: t('auto.engines_driverDetection.58.3564a8f0', 'ar') }
     ]
   };
   
@@ -356,67 +357,67 @@ function generateWhyStatement(
   const primaryDriverAr = drivers[0]?.termAr || translateDomain(context.domain);
   
   const cause = causes[0]?.cause || 'the current situation';
-  const causeAr = causes[0]?.causeAr || 'الوضع الحالي';
+  const causeAr = causes[0]?.causeAr || t('auto.engines_driverDetection.57.d977a7bb', 'ar');
   
   return {
     en: `People feel ${dominantEmotion} because ${cause}. The key driver is "${primaryDriver}" in the context of ${context.domain} ${context.eventType}.`,
-    ar: `يشعر الناس بـ${emotionNameAr} بسبب ${causeAr}. المحرك الرئيسي هو "${primaryDriverAr}" في سياق ${translateDomain(context.domain)} ${translateEventType(context.eventType)}.`
+    ar: `  ${emotionNameAr}  ${causeAr}.    "${primaryDriverAr}"   ${translateDomain(context.domain)} ${translateEventType(context.eventType)}.`
   };
 }
 
 // Helper translation functions
 function translateTerm(term: string): string {
   const translations: Record<string, string> = {
-    'government': 'الحكومة', 'policy': 'السياسة', 'election': 'الانتخابات',
-    'price': 'السعر', 'market': 'السوق', 'inflation': 'التضخم',
-    'disease': 'المرض', 'vaccine': 'اللقاح', 'hospital': 'المستشفى',
-    'conflict': 'الصراع', 'military': 'العسكري', 'peace': 'السلام',
-    'team': 'الفريق', 'victory': 'النصر', 'championship': 'البطولة',
-    'climate': 'المناخ', 'pollution': 'التلوث', 'environment': 'البيئة'
+    'government': t('auto.engines_driverDetection.56.efc24526', 'ar'), 'policy': t('auto.engines_driverDetection.55.d2c95863', 'ar'), 'election': t('auto.engines_driverDetection.54.a1f32d42', 'ar'),
+    'price': t('auto.engines_driverDetection.53.b6aa0c7d', 'ar'), 'market': t('auto.engines_driverDetection.52.d8b2c7d3', 'ar'), 'inflation': t('auto.engines_driverDetection.51.bffc644c', 'ar'),
+    'disease': t('auto.engines_driverDetection.50.06f868fe', 'ar'), 'vaccine': t('auto.engines_driverDetection.49.ddcea020', 'ar'), 'hospital': t('auto.engines_driverDetection.48.350dafa8', 'ar'),
+    'conflict': t('auto.engines_driverDetection.47.a5d01066', 'ar'), 'military': t('auto.engines_driverDetection.46.7ba96ead', 'ar'), 'peace': t('auto.engines_driverDetection.45.7cb56720', 'ar'),
+    'team': t('auto.engines_driverDetection.44.c3a143b7', 'ar'), 'victory': t('auto.engines_driverDetection.43.0171c0ec', 'ar'), 'championship': t('auto.engines_driverDetection.42.5d6b4c86', 'ar'),
+    'climate': t('auto.engines_driverDetection.41.cb7053a6', 'ar'), 'pollution': t('auto.engines_driverDetection.40.c20f60ee', 'ar'), 'environment': t('auto.engines_driverDetection.39.c7fca11d', 'ar')
   };
   return translations[term.toLowerCase()] || term;
 }
 
 function translateDomain(domain: ContentDomain): string {
   const translations: Record<ContentDomain, string> = {
-    politics: 'السياسة', economy: 'الاقتصاد', health: 'الصحة',
-    war: 'الحرب', sports: 'الرياضة', entertainment: 'الترفيه',
-    technology: 'التكنولوجيا', environment: 'البيئة', society: 'المجتمع',
-    education: 'التعليم', general: 'عام'
+    politics: t('auto.engines_driverDetection.38.d2c95863', 'ar'), economy: t('auto.engines_driverDetection.37.a43da44f', 'ar'), health: t('auto.engines_driverDetection.36.005e9108', 'ar'),
+    war: t('auto.engines_driverDetection.35.63068650', 'ar'), sports: t('auto.engines_driverDetection.34.0132e618', 'ar'), entertainment: t('auto.engines_driverDetection.33.bec8bc5b', 'ar'),
+    technology: t('auto.engines_driverDetection.32.0abcff3b', 'ar'), environment: t('auto.engines_driverDetection.31.c7fca11d', 'ar'), society: t('auto.engines_driverDetection.30.a38221d3', 'ar'),
+    education: t('auto.engines_driverDetection.29.f18ce12b', 'ar'), general: t('auto.engines_driverDetection.28.17859487', 'ar')
   };
   return translations[domain];
 }
 
 function translateEventType(eventType: EventType): string {
   const translations: Record<EventType, string> = {
-    crisis: 'أزمة', death: 'وفاة', celebration: 'احتفال',
-    conflict: 'صراع', announcement: 'إعلان', discovery: 'اكتشاف',
-    election: 'انتخابات', disaster: 'كارثة', achievement: 'إنجاز',
-    controversy: 'جدل', neutral: 'محايد'
+    crisis: t('auto.engines_driverDetection.27.38a8a76e', 'ar'), death: t('auto.engines_driverDetection.26.158c325c', 'ar'), celebration: t('auto.engines_driverDetection.25.3460cbc6', 'ar'),
+    conflict: t('auto.engines_driverDetection.24.393955e1', 'ar'), announcement: t('auto.engines_driverDetection.23.81581363', 'ar'), discovery: t('auto.engines_driverDetection.22.7811e2fe', 'ar'),
+    election: t('auto.engines_driverDetection.21.d9b242e6', 'ar'), disaster: t('auto.engines_driverDetection.20.676d2f53', 'ar'), achievement: t('auto.engines_driverDetection.19.c24d8d6c', 'ar'),
+    controversy: t('auto.engines_driverDetection.18.ab2e01fd', 'ar'), neutral: t('auto.engines_driverDetection.17.7e22af2d', 'ar')
   };
   return translations[eventType];
 }
 
 function translateEmotion(emotion: keyof AffectiveVector): string {
   const translations: Record<keyof AffectiveVector, string> = {
-    joy: 'الفرح', fear: 'الخوف', anger: 'الغضب',
-    sadness: 'الحزن', hope: 'الأمل', curiosity: 'الفضول'
+    joy: t('auto.engines_driverDetection.16.81fd7301', 'ar'), fear: t('auto.engines_driverDetection.15.b4cbc50d', 'ar'), anger: t('auto.engines_driverDetection.14.0a67288b', 'ar'),
+    sadness: t('auto.engines_driverDetection.13.2c024033', 'ar'), hope: t('auto.engines_driverDetection.12.05554470', 'ar'), curiosity: t('auto.engines_driverDetection.11.f1f8172b', 'ar')
   };
   return translations[emotion];
 }
 
 function translateNarrative(narrative: string): string {
   const translations: Record<string, string> = {
-    'power struggle': 'صراع على السلطة',
-    'economic crisis': 'أزمة اقتصادية',
-    'health crisis': 'أزمة صحية',
-    'escalating conflict': 'صراع متصاعد',
-    'championship race': 'سباق البطولة',
-    'tech disruption': 'اضطراب تقني',
-    'climate crisis': 'أزمة مناخية',
-    'social movement': 'حركة اجتماعية',
-    'education reform': 'إصلاح التعليم',
-    'developing story': 'قصة متطورة'
+    'power struggle': t('auto.engines_driverDetection.10.c2f30b66', 'ar'),
+    'economic crisis': t('auto.engines_driverDetection.9.842a2582', 'ar'),
+    'health crisis': t('auto.engines_driverDetection.8.ef7f3f70', 'ar'),
+    'escalating conflict': t('auto.engines_driverDetection.7.cc18498a', 'ar'),
+    'championship race': t('auto.engines_driverDetection.6.c453f4aa', 'ar'),
+    'tech disruption': t('auto.engines_driverDetection.5.eb0ccba9', 'ar'),
+    'climate crisis': t('auto.engines_driverDetection.4.248275b6', 'ar'),
+    'social movement': t('auto.engines_driverDetection.3.0b9a518a', 'ar'),
+    'education reform': t('auto.engines_driverDetection.2.d2760259', 'ar'),
+    'developing story': t('auto.engines_driverDetection.1.5d548405', 'ar')
   };
   return translations[narrative.toLowerCase()] || narrative;
 }

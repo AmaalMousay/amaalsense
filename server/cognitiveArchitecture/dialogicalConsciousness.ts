@@ -140,12 +140,12 @@ class DialogicalConsciousnessClass {
 
     // Check for explicit reference words
     const referencePatterns = [
-      { pattern: /^(ذلك|هذا|هذه|تلك)/i, ref: 'previous_topic' },
-      { pattern: /(السابق|الماضي|قبل)/i, ref: 'previous_response' },
-      { pattern: /^(و|أيضاً|كذلك|بالإضافة)/i, ref: 'continuation' },
-      { pattern: /^(لكن|ولكن|مع ذلك)/i, ref: 'contrast' },
-      { pattern: /^(إذاً|إذن|لذلك|بالتالي)/i, ref: 'conclusion' },
-      { pattern: /^(كيف|لماذا|ماذا).*\?/i, ref: 'follow_up_question' },
+      { pattern: /^(|||)/i, ref: 'previous_topic' },
+      { pattern: /(||)/i, ref: 'previous_response' },
+      { pattern: /^(|||)/i, ref: 'continuation' },
+      { pattern: /^(|| )/i, ref: 'contrast' },
+      { pattern: /^(|||)/i, ref: 'conclusion' },
+      { pattern: /^(||).*\?/i, ref: 'follow_up_question' },
     ];
 
     for (const { pattern, ref } of referencePatterns) {
@@ -212,12 +212,12 @@ class DialogicalConsciousnessClass {
     }
 
     const recentTurns = Math.min(3, state.previousQuestions.length);
-    let summary = `المحادثة السابقة (${recentTurns} أسئلة):\n`;
+    let summary = `  (${recentTurns} ):\n`;
 
     for (let i = state.previousQuestions.length - recentTurns; i < state.previousQuestions.length; i++) {
-      summary += `\nسؤال ${i + 1}: ${state.previousQuestions[i]}`;
+      summary += `\n ${i + 1}: ${state.previousQuestions[i]}`;
       if (state.previousResponses[i]) {
-        summary += `\nالرد: ${state.previousResponses[i].substring(0, 200)}...`;
+        summary += `\n: ${state.previousResponses[i].substring(0, 200)}...`;
       }
     }
 

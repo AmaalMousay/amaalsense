@@ -1,13 +1,14 @@
 /**
- * AMALSENSE RAG SYSTEM - Universal Knowledge Edition
- * يقوم هذا النظام بتوسيع وعي الذكاء الاصطناعي عبر استرجاع القواعد العلمية
+ * AmalSense RAG System
+ *
+ * Retrieves relevant market, event-vector, scientific and historical memory from
+ * the local Knowledge Core. It is used to ground natural responses for traders,
+ * researchers, journalists and decision makers.
  */
 
-// استيراد الدوال مع التأكد من مطابقة الأسماء في vectorStore
 import * as VectorStore from './vectorStore';
-import { EngineResults } from '../orchestrator/engineSelector';
+import type { EngineResults } from '../orchestrator/engineSelector';
 
-// تطوير هيكل السياق ليشمل المجالات العلمية
 export interface RAGContext {
   relevantAnalyses: Array<{
     topic: string;
@@ -32,9 +33,6 @@ export interface RAGContext {
   contextSummary: string;
 }
 
-/**
- * بناء سياق موسوعي شامل للاستعلام
- */
 export function buildRAGContext(
   query: string,
   options: {
@@ -46,111 +44,86 @@ export function buildRAGContext(
   } = {}
 ): RAGContext {
   const { country, maxResults = 5 } = options;
+  const includeAnalyses = options.includeAnalyses !== false;
+  const includeConversations = options.includeConversations !== false;
+  const includeKnowledge = options.includeKnowledge !== false;
 
-  const context: RAGContext = {
-    relevantAnalyses: [],
-    scientificKnowledge: [],
-    relevantConversations: [],
-    contextSummary: '',
-  };
+  const context: RAGContext = { relevantAnalyses: [], scientificKnowledge: [], relevantConversations: [], contextSummary: '' };
 
-  // 1. البحث في التحليلات التاريخية
-  const analysisResults = VectorStore.search(query, {
-    type: 'analysis',
-    country,
-    topK: maxResults,
-    minSimilarity: 0.25,
-  });
+  if (includeAnalyses) {
+    const analysisResults = VectorStore.search(query, { type: 'analysis', country, topK: maxResults, minSimilarity: 0.25 });
+    context.relevantAnalyses = analysisResults.map(result => ({
+      topic: result.entry.metadata.topic || 'Unknown',
+      country: result.entry.metadata.country,
+      gmi: Number(result.entry.metadata.gmi || 0),
+      cfi: Number(result.entry.metadata.cfi || 0),
+      hri: Number(result.entry.metadata.hri || 0),
+      emotionalState: String(result.entry.metadata.emotionalState || 'Unknown'),
+      timestamp: new Date(result.entry.metadata.timestamp),
+      similarity: result.similarity,
+    }));
+  }
 
-  context.relevantAnalyses = analysisResults.map((r: any) => ({
-    topic: r.entry.metadata.topic || 'Unknown',
-    country: r.entry.metadata.country,
-    gmi: r.entry.metadata.gmi as number || 0,
-    cfi: r.entry.metadata.cfi as number || 0,
-    hri: r.entry.metadata.hri as number || 0,
-    emotionalState: r.entry.metadata.emotionalState as string || 'Unknown',
-    timestamp: new Date(r.entry.metadata.timestamp),
-    similarity: r.similarity,
-  }));
+  if (includeKnowledge) {
+    const knowledgeResults = VectorStore.searchKnowledgeCore(query, { country, topK: maxResults, minSimilarity: 0.22 });
+    context.scientificKnowledge = knowledgeResults.map(result => ({
+      domain: String(result.entry.metadata.domain || result.entry.metadata.sourceType || 'Knowledge Core'),
+      content: result.entry.content,
+      similarity: result.similarity,
+    }));
+  }
 
-  // 2. البحث في قاعدة المعرفة العلمية والذاكرة الحية للأحداث
-  const scientificResults = VectorStore.searchKnowledgeCore(query, {
-    country,
-    topK: maxResults,
-    minSimilarity: 0.22,
-  });
-
-  context.scientificKnowledge = scientificResults.map((r: any) => ({
-    domain: (r.entry.metadata.domain as string) || r.entry.metadata.sourceType || 'Knowledge Core',
-    content: r.entry.content,
-    similarity: r.similarity,
-  }));
-
-  // 3. البحث في المحادثات السابقة
-  const conversationResults = VectorStore.search(query, {
-    type: 'conversation',
-    topK: 3,
-    minSimilarity: 0.4,
-  });
-
-  context.relevantConversations = conversationResults.map((r: any) => {
-    const lines = r.entry.content.split('\n');
-    return {
-      question: lines.find((l: string) => l.startsWith('Q:'))?.replace('Q:', '').trim() || '',
-      answer: lines.find((l: string) => l.startsWith('A:'))?.replace('A:', '').trim() || '',
-      similarity: r.similarity
-    };
-  });
+  if (includeConversations) {
+    const conversationResults = VectorStore.search(query, { type: 'conversation', topK: 3, minSimilarity: 0.4 });
+    context.relevantConversations = conversationResults.map(result => {
+      const content = result.entry.content;
+      const question = content.match(/Question:\s*(.*)/)?.[1] || content.match(/Q:\s*(.*)/)?.[1] || '';
+      const answer = content.match(/Answer:\s*(.*)/)?.[1] || content.match(/A:\s*(.*)/)?.[1] || '';
+      return { question, answer, similarity: result.similarity };
+    });
+  }
 
   context.contextSummary = buildUniversalContextSummary(context);
-
   return context;
 }
 
-/**
- * ملخص العقل الموسوعي
- */
 function buildUniversalContextSummary(context: RAGContext): string {
   const parts: string[] = [];
 
   if (context.scientificKnowledge.length > 0) {
-    parts.push('🧪 UNIVERSAL KNOWLEDGE CORE (Physics, Law, Medicine):');
-    context.scientificKnowledge.forEach(k => {
-      parts.push(`[Domain: ${k.domain}] ${k.content.substring(0, 300)}...`);
-    });
-    parts.push('');
+    parts.push('KNOWLEDGE CORE:');
+    for (const item of context.scientificKnowledge.slice(0, 5)) {
+      parts.push(`[${item.domain}] ${item.content.slice(0, 320)}`);
+    }
   }
 
   if (context.relevantAnalyses.length > 0) {
-    parts.push('📊 HISTORICAL EMOTIONAL DATA:');
-    context.relevantAnalyses.slice(0, 3).forEach(a => {
-      parts.push(`- ${a.topic} (${a.country}): GMI=${a.gmi}, State=${a.emotionalState}`);
-    });
-    parts.push('');
+    parts.push('HISTORICAL EMOTIONAL FIELD:');
+    for (const item of context.relevantAnalyses.slice(0, 3)) {
+      parts.push(`${item.topic}${item.country ? ` (${item.country})` : ''}: GMI=${item.gmi}, CFI=${item.cfi}, HRI=${item.hri}, state=${item.emotionalState}`);
+    }
+  }
+
+  if (context.relevantConversations.length > 0) {
+    parts.push('RELATED PRIOR CONVERSATIONS:');
+    for (const item of context.relevantConversations.slice(0, 2)) {
+      parts.push(`Q: ${item.question} | A: ${item.answer}`.slice(0, 320));
+    }
   }
 
   return parts.join('\n');
 }
 
-/**
- * تخزين النتائج للـ RAG المستقبلي
- * تم تصحيح الحقول لتتوافق مع EngineResults المطورة
- */
-export function storeForRAG(
-  topic: string,
-  country: string | undefined,
-  engineResults: EngineResults
-): void {
-  // استخدام "vector" بدلاً من "dcft" للتوافق مع المحرك الجديد
-  if (engineResults.vector) {
-    VectorStore.storeAnalysis(topic, country, {
-      gmi: engineResults.vector.polarity * 100 || 0,
-      cfi: (engineResults.vector.emotions?.fear || 0) * 100,
-      hri: (engineResults.vector.emotions?.hope || 0) * 100,
-      emotionalState: engineResults.status || 'Analyzed',
-      summary: engineResults.reasoning
-    });
-  }
+export function storeForRAG(topic: string, country: string | undefined, engineResults: EngineResults): void {
+  if (!engineResults.vector) return;
+  VectorStore.storeAnalysis(topic, country, {
+    gmi: Number(engineResults.vector.polarity || 0) * 100,
+    cfi: Number(engineResults.vector.emotions?.fear || 0) * 100,
+    hri: Number(engineResults.vector.emotions?.hope || 0) * 100,
+    emotionalState: engineResults.status || 'Analyzed',
+    summary: engineResults.reasoning,
+    eventVector: engineResults.vector,
+  });
 }
 
 export function formatRAGForPrompt(context: RAGContext): string {
@@ -158,16 +131,6 @@ export function formatRAGForPrompt(context: RAGContext): string {
   return `\n=== AMALSENSE KNOWLEDGE CONTEXT ===\n${context.contextSummary}\n==================================\n`;
 }
 
-/**
- * تخزين محادثة للـ RAG المستقبلي
- */
-export function storeConversationForRAG(
-  userId: string,
-  question: string,
-  answer: string,
-  topic: string,
-  country?: string
-): void {
+export function storeConversationForRAG(userId: string, question: string, answer: string, topic: string, country?: string): void {
   VectorStore.storeConversation(userId, question, answer, topic, country);
 }
-

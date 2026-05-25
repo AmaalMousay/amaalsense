@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 /**
  * Social Media Service - Enhanced Real API Integration
  * Supports: Reddit, Mastodon, Bluesky, YouTube Comments, Telegram
@@ -725,12 +726,12 @@ function stripHtml(html: string): string {
 // ============================================
 
 const COUNTRY_SEARCH_TERMS: Record<string, { en: string[]; ar?: string[] }> = {
-  SA: { en: ['Saudi Arabia', 'Riyadh', 'Saudi news'], ar: ['السعودية', 'الرياض'] },
+  SA: { en: ['Saudi Arabia', 'Riyadh', 'Saudi news'], ar: [t('auto.services_socialMediaService.18.cd8d189f', 'ar'), t('auto.services_socialMediaService.17.ec7f247f', 'ar')] },
   US: { en: ['United States', 'USA news', 'America'] },
   GB: { en: ['United Kingdom', 'UK news', 'Britain'] },
-  AE: { en: ['UAE', 'Dubai news', 'Emirates'], ar: ['الإمارات', 'دبي'] },
-  EG: { en: ['Egypt', 'Cairo news', 'Egyptian'], ar: ['مصر', 'القاهرة'] },
-  LY: { en: ['Libya', 'Tripoli', 'Libyan news'], ar: ['ليبيا', 'طرابلس'] },
+  AE: { en: ['UAE', 'Dubai news', 'Emirates'], ar: [t('auto.services_socialMediaService.16.9bc10b8c', 'ar'), t('auto.services_socialMediaService.15.4a07a7fb', 'ar')] },
+  EG: { en: ['Egypt', 'Cairo news', 'Egyptian'], ar: [t('auto.services_socialMediaService.14.9f5f187b', 'ar'), t('auto.services_socialMediaService.13.93019aa0', 'ar')] },
+  LY: { en: ['Libya', 'Tripoli', 'Libyan news'], ar: [t('auto.services_socialMediaService.12.251aff72', 'ar'), t('auto.services_socialMediaService.11.da7424b2', 'ar')] },
   JP: { en: ['Japan', 'Tokyo news', 'Japanese'] },
   DE: { en: ['Germany', 'Berlin news', 'German'] },
   FR: { en: ['France', 'Paris news', 'French'] },
@@ -739,12 +740,12 @@ const COUNTRY_SEARCH_TERMS: Record<string, { en: string[]; ar?: string[] }> = {
   BR: { en: ['Brazil', 'Brazilian news'] },
   RU: { en: ['Russia', 'Moscow news', 'Russian'] },
   AU: { en: ['Australia', 'Sydney news', 'Australian'] },
-  TR: { en: ['Turkey', 'Istanbul', 'Turkish'], ar: ['تركيا', 'اسطنبول'] },
-  MA: { en: ['Morocco', 'Rabat', 'Moroccan'], ar: ['المغرب', 'الرباط'] },
-  TN: { en: ['Tunisia', 'Tunis', 'Tunisian'], ar: ['تونس'] },
-  DZ: { en: ['Algeria', 'Algiers', 'Algerian'], ar: ['الجزائر'] },
-  IQ: { en: ['Iraq', 'Baghdad', 'Iraqi'], ar: ['العراق', 'بغداد'] },
-  JO: { en: ['Jordan', 'Amman', 'Jordanian'], ar: ['الأردن', 'عمان'] },
+  TR: { en: ['Turkey', 'Istanbul', 'Turkish'], ar: [t('auto.services_socialMediaService.10.dfac1e74', 'ar'), t('auto.services_socialMediaService.9.3da1120d', 'ar')] },
+  MA: { en: ['Morocco', 'Rabat', 'Moroccan'], ar: [t('auto.services_socialMediaService.8.94b11d17', 'ar'), t('auto.services_socialMediaService.7.ae6723ec', 'ar')] },
+  TN: { en: ['Tunisia', 'Tunis', 'Tunisian'], ar: [t('auto.services_socialMediaService.6.ba84e974', 'ar')] },
+  DZ: { en: ['Algeria', 'Algiers', 'Algerian'], ar: [t('auto.services_socialMediaService.5.cd77976e', 'ar')] },
+  IQ: { en: ['Iraq', 'Baghdad', 'Iraqi'], ar: [t('auto.services_socialMediaService.4.4b74973d', 'ar'), t('auto.services_socialMediaService.3.ec508bed', 'ar')] },
+  JO: { en: ['Jordan', 'Amman', 'Jordanian'], ar: [t('auto.services_socialMediaService.2.bdd0aaf6', 'ar'), t('auto.services_socialMediaService.1.b9493df4', 'ar')] },
 };
 
 /**

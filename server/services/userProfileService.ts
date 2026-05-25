@@ -1,8 +1,9 @@
+import { t } from "../_core/i18n";
 /**
  * User Profile Service
  * 
- * يدير بروفايلات المستخدمين لتخصيص الردود
- * يحفظ: مستوى المستخدم، المواضيع المفضلة، أنماط التفاعل
+ *     
+ * :      
  */
 
 import { getDb } from '../_core/db';
@@ -27,18 +28,18 @@ export interface UserProfileData {
   profileConfidence: number;
 }
 
-// الكلمات التقنية التي تدل على مستخدم متقدم
+//       
 const TECHNICAL_TERMS = [
   'gmi', 'cfi', 'hri',
-  'مؤشر', 'تحليل', 'سيناريو',
+  t('auto.services_userProfileService.11.49356ffb', 'ar'), t('auto.services_userProfileService.10.6c1732f8', 'ar'), t('auto.services_userProfileService.9.4dcc1a07', 'ar'),
   'sentiment', 'analysis', 'index',
-  'توقع', 'محاكاة', 'نمط',
+  t('auto.services_userProfileService.8.4251f876', 'ar'), t('auto.services_userProfileService.7.16320168', 'ar'), t('auto.services_userProfileService.6.47c17787', 'ar'),
   'trend', 'pattern', 'correlation',
-  'ارتباط', 'تذبذب', 'volatility'
+  t('auto.services_userProfileService.5.c1cac259', 'ar'), t('auto.services_userProfileService.4.d52795d5', 'ar'), 'volatility'
 ];
 
 /**
- * الحصول على بروفايل المستخدم أو إنشاء واحد جديد
+ *        
  */
 export async function getOrCreateProfile(userId: number): Promise<UserProfileData> {
   try {
@@ -48,7 +49,7 @@ export async function getOrCreateProfile(userId: number): Promise<UserProfileDat
       return getDefaultProfile(userId);
     }
     
-    // البحث عن البروفايل الموجود
+    //    
     const existing = await db
       .select()
       .from(userProfiles)
@@ -59,7 +60,7 @@ export async function getOrCreateProfile(userId: number): Promise<UserProfileDat
       return parseProfile(existing[0]);
     }
     
-    // إنشاء بروفايل جديد
+    //   
     const newProfile: InsertUserProfile = {
       userId,
       userLevel: 'beginner',
@@ -93,13 +94,13 @@ export async function getOrCreateProfile(userId: number): Promise<UserProfileDat
     };
   } catch (error) {
     console.error('[UserProfileService] Error getting/creating profile:', error);
-    // إرجاع بروفايل افتراضي في حالة الخطأ
+    //      
     return getDefaultProfile(userId);
   }
 }
 
 /**
- * تحديث البروفايل بناءً على تفاعل المستخدم
+ *      
  */
 export async function updateProfileFromInteraction(
   userId: number,
@@ -111,31 +112,31 @@ export async function updateProfileFromInteraction(
   try {
     const profile = await getOrCreateProfile(userId);
     
-    // حساب الكلمات التقنية المستخدمة
+    //    
     const technicalTermsInMessage = countTechnicalTerms(message);
     const newTechnicalTermsUsed = profile.technicalTermsUsed + technicalTermsInMessage;
     
-    // تحديث المواضيع المفضلة
+    //   
     const updatedTopics = updatePreferredTopics(profile.preferredTopics, topic);
     
-    // تحديث الدول المهتم بها
+    //    
     const updatedCountries = countryCode 
       ? updateCountriesOfInterest(profile.countriesOfInterest, countryCode)
       : profile.countriesOfInterest;
     
-    // حساب المستوى الجديد
+    //   
     const newMessageCount = profile.messageCount + 1;
-    const newConversationCount = profile.conversationCount; // يتم تحديثه عند بدء محادثة جديدة
+    const newConversationCount = profile.conversationCount; //      
     const newLevel = calculateUserLevel(
       newMessageCount,
       newTechnicalTermsUsed,
       updatedTopics.length
     );
     
-    // حساب ثقة البروفايل
+    //   
     const newConfidence = Math.min(100, profile.profileConfidence + 2);
     
-    // تحديث قاعدة البيانات
+    //   
     const db = await getDb();
     if (db) {
       await db
@@ -179,7 +180,7 @@ export async function updateProfileFromInteraction(
 }
 
 /**
- * زيادة عدد المحادثات
+ *   
  */
 export async function incrementConversationCount(userId: number): Promise<void> {
   try {
@@ -198,7 +199,7 @@ export async function incrementConversationCount(userId: number): Promise<void> 
 }
 
 /**
- * تحديث طول الرد المفضل
+ *    
  */
 export async function updatePreferredResponseLength(
   userId: number,
@@ -217,7 +218,7 @@ export async function updatePreferredResponseLength(
 }
 
 /**
- * تحديث اللغة المفضلة
+ *   
  */
 export async function updatePreferredLanguage(
   userId: number,
@@ -296,66 +297,66 @@ function calculateUserLevel(
   technicalTermsUsed: number,
   topicsCount: number
 ): UserLevel {
-  // حساب نقاط الخبرة
+  //   
   let score = 0;
   
-  // نقاط من عدد الرسائل
+  //    
   if (messageCount >= 50) score += 3;
   else if (messageCount >= 20) score += 2;
   else if (messageCount >= 5) score += 1;
   
-  // نقاط من الكلمات التقنية
+  //    
   if (technicalTermsUsed >= 20) score += 3;
   else if (technicalTermsUsed >= 10) score += 2;
   else if (technicalTermsUsed >= 3) score += 1;
   
-  // نقاط من تنوع المواضيع
+  //    
   if (topicsCount >= 10) score += 2;
   else if (topicsCount >= 5) score += 1;
   
-  // تحديد المستوى
+  //  
   if (score >= 6) return 'advanced';
   if (score >= 3) return 'intermediate';
   return 'beginner';
 }
 
 function updatePreferredTopics(currentTopics: string[], newTopic: string): string[] {
-  // تنظيف الموضوع
+  //  
   const cleanTopic = newTopic.trim().toLowerCase();
   if (!cleanTopic || cleanTopic.length < 2) return currentTopics;
   
-  // إزالة الموضوع إذا موجود (لإعادة ترتيبه)
+  //     ( )
   const filtered = currentTopics.filter(t => t.toLowerCase() !== cleanTopic);
   
-  // إضافة الموضوع في البداية (الأحدث أولاً)
+  //     ( )
   filtered.unshift(newTopic.trim());
   
-  // الاحتفاظ بأحدث 20 موضوع فقط
+  //   20  
   return filtered.slice(0, 20);
 }
 
 function updateCountriesOfInterest(currentCountries: string[], newCountry: string): string[] {
   if (!newCountry || newCountry.length < 2) return currentCountries;
   
-  // إزالة الدولة إذا موجودة
+  //    
   const filtered = currentCountries.filter(c => c !== newCountry);
   
-  // إضافة الدولة في البداية
+  //    
   filtered.unshift(newCountry);
   
-  // الاحتفاظ بأحدث 10 دول
+  //   10 
   return filtered.slice(0, 10);
 }
 
 /**
- * الحصول على ملخص البروفايل للعرض
+ *     
  */
 export function getProfileSummary(profile: UserProfileData): string {
   const levelLabels: Record<UserLevel, string> = {
-    beginner: 'مبتدئ',
-    intermediate: 'متوسط',
-    advanced: 'خبير'
+    beginner: t('auto.services_userProfileService.3.d7ef0837', 'ar'),
+    intermediate: t('auto.services_userProfileService.2.91fa23bd', 'ar'),
+    advanced: t('auto.services_userProfileService.1.4f9ffd09', 'ar')
   };
   
-  return `المستوى: ${levelLabels[profile.userLevel]} | المحادثات: ${profile.conversationCount} | الرسائل: ${profile.messageCount}`;
+  return `: ${levelLabels[profile.userLevel]} | : ${profile.conversationCount} | : ${profile.messageCount}`;
 }

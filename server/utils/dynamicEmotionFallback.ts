@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Dynamic Emotion Fallback System
  * 
@@ -22,7 +24,7 @@ export interface DynamicEmotionFallback {
  * Death-related keywords that trigger high sadness
  */
 const DEATH_KEYWORDS = [
-  'موت', 'وفاة', 'اغتيال', 'قتل', 'مقتول', 'جثة', 'دفن', 'رحيل',
+  t('auto.utils_dynamicEmotionFallback.41.ba42d7b3', 'ar'), t('auto.utils_dynamicEmotionFallback.40.158c325c', 'ar'), t('auto.utils_dynamicEmotionFallback.39.c8e9ec22', 'ar'), t('auto.utils_dynamicEmotionFallback.38.bd80ed20', 'ar'), t('auto.utils_dynamicEmotionFallback.37.d61537f7', 'ar'), t('auto.utils_dynamicEmotionFallback.36.4e553f51', 'ar'), t('auto.utils_dynamicEmotionFallback.35.753afcfd', 'ar'), t('auto.utils_dynamicEmotionFallback.34.9269ef95', 'ar'),
   'death', 'died', 'killed', 'assassination', 'murder'
 ];
 
@@ -30,7 +32,7 @@ const DEATH_KEYWORDS = [
  * Crisis/disaster keywords that trigger high fear
  */
 const CRISIS_KEYWORDS = [
-  'أزمة', 'كارثة', 'فاجعة', 'كوارث', 'حرب', 'صراع', 'انهيار', 'انقطاع',
+  t('auto.utils_dynamicEmotionFallback.33.38a8a76e', 'ar'), t('auto.utils_dynamicEmotionFallback.32.676d2f53', 'ar'), t('auto.utils_dynamicEmotionFallback.31.a2e97c7e', 'ar'), t('auto.utils_dynamicEmotionFallback.30.eb079783', 'ar'), t('auto.utils_dynamicEmotionFallback.29.b2155e1c', 'ar'), t('auto.utils_dynamicEmotionFallback.28.393955e1', 'ar'), t('auto.utils_dynamicEmotionFallback.27.417cc6aa', 'ar'), t('auto.utils_dynamicEmotionFallback.26.0bc287b7', 'ar'),
   'crisis', 'disaster', 'catastrophe', 'war', 'collapse', 'emergency'
 ];
 
@@ -38,7 +40,7 @@ const CRISIS_KEYWORDS = [
  * Positive/hopeful keywords that trigger high hope
  */
 const HOPE_KEYWORDS = [
-  'أمل', 'متفائل', 'إيجابي', 'نجاح', 'تحسن', 'تطور', 'فرصة', 'تقدم',
+  t('auto.utils_dynamicEmotionFallback.25.60cd6c3d', 'ar'), t('auto.utils_dynamicEmotionFallback.24.1a5aec5a', 'ar'), t('auto.utils_dynamicEmotionFallback.23.3c9380a2', 'ar'), t('auto.utils_dynamicEmotionFallback.22.2eb748dc', 'ar'), t('auto.utils_dynamicEmotionFallback.21.ab4c7e3d', 'ar'), t('auto.utils_dynamicEmotionFallback.20.c81718df', 'ar'), t('auto.utils_dynamicEmotionFallback.19.3f289306', 'ar'), t('auto.utils_dynamicEmotionFallback.18.b5d1b567', 'ar'),
   'hope', 'positive', 'success', 'improvement', 'opportunity', 'progress'
 ];
 
@@ -46,7 +48,7 @@ const HOPE_KEYWORDS = [
  * Conflict/anger keywords that trigger high anger
  */
 const ANGER_KEYWORDS = [
-  'غضب', 'استياء', 'احتقار', 'ظلم', 'ظالم', 'انتهاك', 'تمييز', 'عنف',
+  t('auto.utils_dynamicEmotionFallback.17.8e7bd750', 'ar'), t('auto.utils_dynamicEmotionFallback.16.4621602f', 'ar'), t('auto.utils_dynamicEmotionFallback.15.79dd638b', 'ar'), t('auto.utils_dynamicEmotionFallback.14.1c7749a1', 'ar'), t('auto.utils_dynamicEmotionFallback.13.d1b26335', 'ar'), t('auto.utils_dynamicEmotionFallback.12.f2ea6238', 'ar'), t('auto.utils_dynamicEmotionFallback.11.fdd11640', 'ar'), t('auto.utils_dynamicEmotionFallback.10.e5f07bb2', 'ar'),
   'anger', 'outrage', 'injustice', 'violence', 'discrimination'
 ];
 
@@ -54,7 +56,7 @@ const ANGER_KEYWORDS = [
  * Curiosity/question keywords
  */
 const CURIOSITY_KEYWORDS = [
-  'لماذا', 'كيف', 'ما', 'هل', 'أين', 'متى', 'من', 'سؤال', 'استفسار',
+  t('auto.utils_dynamicEmotionFallback.9.dc0f9a10', 'ar'), t('auto.utils_dynamicEmotionFallback.8.daa59aa1', 'ar'), t('auto.utils_dynamicEmotionFallback.7.a62caa1e', 'ar'), t('auto.utils_dynamicEmotionFallback.6.2500c161', 'ar'), t('auto.utils_dynamicEmotionFallback.5.861d9c3d', 'ar'), t('auto.utils_dynamicEmotionFallback.4.d87c6b36', 'ar'), t('auto.utils_dynamicEmotionFallback.3.aa7099e2', 'ar'), t('auto.utils_dynamicEmotionFallback.2.b4b22782', 'ar'), t('auto.utils_dynamicEmotionFallback.1.e1b8900c', 'ar'),
   'why', 'how', 'what', 'where', 'when', 'who', 'question'
 ];
 

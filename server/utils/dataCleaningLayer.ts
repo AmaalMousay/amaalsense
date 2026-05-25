@@ -1,28 +1,30 @@
+import { t } from "../_core/i18n";
+
 /**
- * Data Cleaning Layer - طبقة تنظيف البيانات
+ * Data Cleaning Layer -   
  * 
- * تنظف البيانات قبل التحليل:
- * - حذف النصوص القصيرة
- * - حذف الإعلانات والسبام
- * - حذف التكرار
- * - تجاهل النصوص السطحية
+ *    :
+ * -   
+ * -   
+ * -  
+ * -   
  */
 
-// أنماط الإعلانات والسبام
+//   
 const SPAM_PATTERNS = [
-  // إعلانات عربية
-  /اشتر[يى]\s*الآن/gi,
-  /عرض\s*خاص/gi,
-  /خصم\s*\d+%/gi,
-  /اتصل\s*بنا/gi,
-  /للتواصل/gi,
-  /واتساب|واتس/gi,
-  /رابط\s*في\s*البايو/gi,
-  /تابعونا/gi,
-  /لمزيد\s*من\s*المعلومات/gi,
-  /احجز\s*الآن/gi,
+  //  
+  /[]\s*/gi,
+  /\s*/gi,
+  /\s*\d+%/gi,
+  /\s*/gi,
+  //gi,
+  /|/gi,
+  /\s*\s*/gi,
+  //gi,
+  /\s*\s*/gi,
+  /\s*/gi,
   
-  // إعلانات إنجليزية
+  //  
   /buy\s*now/gi,
   /click\s*here/gi,
   /limited\s*offer/gi,
@@ -34,35 +36,35 @@ const SPAM_PATTERNS = [
   /dm\s*for\s*(more|details)/gi,
   /promo\s*code/gi,
   
-  // روابط مشبوهة
+  //  
   /bit\.ly/gi,
   /tinyurl/gi,
   /goo\.gl/gi,
   
-  // سبام عام
+  //  
   /\$\$\$/gi,
   /💰{2,}/gi,
   /🔥{3,}/gi,
   /!!!{2,}/gi,
 ];
 
-// كلمات سطحية (لا تحمل معنى عاطفي)
+//   (   )
 const SHALLOW_PATTERNS = [
   /^(ok|okay|yes|no|yeah|nope|lol|haha|hmm|wow)$/gi,
-  /^[\u0600-\u06FF]{1,3}$/gi, // كلمات عربية قصيرة جداً
-  /^[a-zA-Z]{1,3}$/gi, // كلمات إنجليزية قصيرة جداً
-  /^[\d\s\.\,\!\?]+$/gi, // أرقام ورموز فقط
+  /^[\u0600-\u06FF]{1,3}$/gi, //    
+  /^[a-zA-Z]{1,3}$/gi, //    
+  /^[\d\s\.\,\!\?]+$/gi, //   
 ];
 
-// كلمات توقف (Stop Words) عربية وإنجليزية
+//   (Stop Words)  
 const STOP_WORDS = new Set([
-  // عربية
-  'في', 'من', 'إلى', 'على', 'عن', 'مع', 'هذا', 'هذه', 'ذلك', 'تلك',
-  'التي', 'الذي', 'التى', 'الذى', 'هو', 'هي', 'هم', 'هن', 'نحن', 'أنا',
-  'أنت', 'أنتم', 'كان', 'كانت', 'يكون', 'تكون', 'قد', 'لقد', 'ما', 'لا',
-  'أن', 'إن', 'لن', 'لم', 'كل', 'بعض', 'أي', 'أو', 'و', 'ف', 'ب', 'ل',
+  // 
+  t('auto.utils_dataCleaningLayer.42.aef2099d', 'ar'), t('auto.utils_dataCleaningLayer.41.aa7099e2', 'ar'), t('auto.utils_dataCleaningLayer.40.8ab80326', 'ar'), t('auto.utils_dataCleaningLayer.39.16dc1dd1', 'ar'), t('auto.utils_dataCleaningLayer.38.38486333', 'ar'), t('auto.utils_dataCleaningLayer.37.f3c3b73b', 'ar'), t('auto.utils_dataCleaningLayer.36.6be4d5a7', 'ar'), t('auto.utils_dataCleaningLayer.35.f60d1f66', 'ar'), t('auto.utils_dataCleaningLayer.34.bcd49587', 'ar'), t('auto.utils_dataCleaningLayer.33.5a014748', 'ar'),
+  t('auto.utils_dataCleaningLayer.32.07a0f9f0', 'ar'), t('auto.utils_dataCleaningLayer.31.d29a8d2f', 'ar'), t('auto.utils_dataCleaningLayer.30.0fdd37e0', 'ar'), t('auto.utils_dataCleaningLayer.29.cf8d2dee', 'ar'), t('auto.utils_dataCleaningLayer.28.1b78792e', 'ar'), t('auto.utils_dataCleaningLayer.27.7a898715', 'ar'), t('auto.utils_dataCleaningLayer.26.b3efb3b5', 'ar'), t('auto.utils_dataCleaningLayer.25.84b05c09', 'ar'), t('auto.utils_dataCleaningLayer.24.79a366ce', 'ar'), t('auto.utils_dataCleaningLayer.23.941ddf4b', 'ar'),
+  t('auto.utils_dataCleaningLayer.22.4ab1332c', 'ar'), t('auto.utils_dataCleaningLayer.21.b28d8868', 'ar'), t('auto.utils_dataCleaningLayer.20.1e55b052', 'ar'), t('auto.utils_dataCleaningLayer.19.2a9096ec', 'ar'), t('auto.utils_dataCleaningLayer.18.678c315f', 'ar'), t('auto.utils_dataCleaningLayer.17.7160aa46', 'ar'), t('auto.utils_dataCleaningLayer.16.5230cf99', 'ar'), t('auto.utils_dataCleaningLayer.15.72682b6c', 'ar'), t('auto.utils_dataCleaningLayer.14.a62caa1e', 'ar'), t('auto.utils_dataCleaningLayer.13.5c528d9f', 'ar'),
+  t('auto.utils_dataCleaningLayer.12.2d0d4abd', 'ar'), t('auto.utils_dataCleaningLayer.11.657087a7', 'ar'), t('auto.utils_dataCleaningLayer.10.f9d2f7c9', 'ar'), t('auto.utils_dataCleaningLayer.9.a8941dde', 'ar'), t('auto.utils_dataCleaningLayer.8.b1a93b00', 'ar'), t('auto.utils_dataCleaningLayer.7.5042ea0a', 'ar'), t('auto.utils_dataCleaningLayer.6.aec02460', 'ar'), t('auto.utils_dataCleaningLayer.5.d2624f52', 'ar'), t('auto.utils_dataCleaningLayer.4.304117b6', 'ar'), t('auto.utils_dataCleaningLayer.3.5bb2f0c8', 'ar'), t('auto.utils_dataCleaningLayer.2.8b5123a2', 'ar'), t('auto.utils_dataCleaningLayer.1.4b4f75b8', 'ar'),
   
-  // إنجليزية
+  // 
   'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
   'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
   'should', 'may', 'might', 'must', 'shall', 'can', 'need', 'dare',
@@ -103,32 +105,32 @@ export interface CleaningStats {
 }
 
 /**
- * تنظيف نص واحد
+ *   
  */
 export function cleanText(text: string): CleaningResult {
   const originalText = text;
   let cleanedText = text.trim();
   
-  // 1. إزالة الروابط
+  // 1.  
   cleanedText = cleanedText.replace(/https?:\/\/[^\s]+/gi, '');
   cleanedText = cleanedText.replace(/www\.[^\s]+/gi, '');
   
-  // 2. إزالة mentions و hashtags الزائدة
+  // 2.  mentions  hashtags 
   cleanedText = cleanedText.replace(/@\w+/g, '');
-  cleanedText = cleanedText.replace(/#\w+/g, (match) => match.slice(1)); // احتفظ بالكلمة بدون #
+  cleanedText = cleanedText.replace(/#\w+/g, (match) => match.slice(1)); //    #
   
-  // 3. تنظيف المسافات والأسطر الزائدة
+  // 3.    
   cleanedText = cleanedText.replace(/\s+/g, ' ').trim();
   
-  // 4. حساب عدد الكلمات
+  // 4.   
   const words = cleanedText.split(/\s+/).filter(w => w.length > 0);
   const wordCount = words.length;
   
-  // 5. حساب الكلمات ذات المعنى (بدون stop words)
+  // 5.     ( stop words)
   const meaningfulWords = words.filter(w => !STOP_WORDS.has(w.toLowerCase()));
   const meaningfulWordCount = meaningfulWords.length;
   
-  // 6. فحص السبام
+  // 6.  
   let spamScore = 0;
   for (const pattern of SPAM_PATTERNS) {
     if (pattern.test(originalText)) {
@@ -137,7 +139,7 @@ export function cleanText(text: string): CleaningResult {
   }
   spamScore = Math.min(100, spamScore);
   
-  // 7. فحص النصوص السطحية
+  // 7.   
   let isShallow = false;
   for (const pattern of SHALLOW_PATTERNS) {
     if (pattern.test(cleanedText)) {
@@ -146,42 +148,42 @@ export function cleanText(text: string): CleaningResult {
     }
   }
   
-  // 8. تحديد صلاحية النص
+  // 8.   
   let isValid = true;
   let rejectionReason: string | undefined;
   
-  // رفض النصوص القصيرة جداً
+  //    
   if (wordCount < 3) {
     isValid = false;
     rejectionReason = 'too_short';
   }
-  // رفض النصوص بدون كلمات ذات معنى
+  //      
   else if (meaningfulWordCount < 2) {
     isValid = false;
     rejectionReason = 'no_meaningful_words';
   }
-  // رفض السبام
+  //  
   else if (spamScore > 50) {
     isValid = false;
     rejectionReason = 'spam_detected';
   }
-  // رفض النصوص السطحية
+  //   
   else if (isShallow) {
     isValid = false;
     rejectionReason = 'shallow_content';
   }
   
-  // 9. حساب جودة النص
+  // 9.   
   let qualityScore = 100;
   
-  // خصم للنصوص القصيرة
+  //   
   if (wordCount < 10) qualityScore -= 20;
   else if (wordCount < 20) qualityScore -= 10;
   
-  // خصم للسبام
+  //  
   qualityScore -= spamScore * 0.5;
   
-  // خصم لقلة الكلمات ذات المعنى
+  //     
   const meaningfulRatio = meaningfulWordCount / wordCount;
   if (meaningfulRatio < 0.3) qualityScore -= 30;
   else if (meaningfulRatio < 0.5) qualityScore -= 15;
@@ -201,7 +203,7 @@ export function cleanText(text: string): CleaningResult {
 }
 
 /**
- * تنظيف مجموعة من النصوص
+ *    
  */
 export function cleanTexts(texts: string[]): {
   validTexts: CleaningResult[];
@@ -213,10 +215,10 @@ export function cleanTexts(texts: string[]): {
   const validTexts = results.filter(r => r.isValid);
   const invalidTexts = results.filter(r => !r.isValid);
   
-  // إزالة التكرار من النصوص الصالحة
+  //     
   const uniqueValidTexts = removeDuplicates(validTexts);
   
-  // حساب الإحصائيات
+  //  
   const rejectionReasons: Record<string, number> = {};
   for (const invalid of invalidTexts) {
     const reason = invalid.rejectionReason || 'unknown';
@@ -245,22 +247,22 @@ export function cleanTexts(texts: string[]): {
 }
 
 /**
- * إزالة التكرار باستخدام تشابه النصوص
+ *     
  */
 function removeDuplicates(results: CleaningResult[]): CleaningResult[] {
   const unique: CleaningResult[] = [];
   const seenTexts: string[] = [];
   
   for (const result of results) {
-    // تطبيع النص للمقارنة
+    //   
     const normalized = normalizeForComparison(result.cleanedText);
     
-    // فحص التكرار الدقيق
+    //   
     if (seenTexts.includes(normalized)) {
       continue;
     }
     
-    // فحص التشابه مع النصوص السابقة
+    //     
     let isDuplicate = false;
     for (const seen of seenTexts) {
       if (calculateSimilarity(normalized, seen) > 0.85) {
@@ -279,18 +281,18 @@ function removeDuplicates(results: CleaningResult[]): CleaningResult[] {
 }
 
 /**
- * تطبيع النص للمقارنة
+ *   
  */
 function normalizeForComparison(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s\u0600-\u06FF]/g, '') // إزالة الرموز
+    .replace(/[^\w\s\u0600-\u06FF]/g, '') //  
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
- * حساب تشابه نصين (Jaccard Similarity)
+ *    (Jaccard Similarity)
  */
 function calculateSimilarity(text1: string, text2: string): number {
   const words1 = text1.split(/\s+/);
@@ -312,7 +314,7 @@ function calculateSimilarity(text1: string, text2: string): number {
 }
 
 /**
- * تصفية النصوص حسب الجودة
+ *    
  */
 export function filterByQuality(
   results: CleaningResult[],
@@ -322,7 +324,7 @@ export function filterByQuality(
 }
 
 /**
- * ترتيب النصوص حسب الجودة
+ *    
  */
 export function sortByQuality(results: CleaningResult[]): CleaningResult[] {
   return [...results].sort((a, b) => b.qualityScore - a.qualityScore);

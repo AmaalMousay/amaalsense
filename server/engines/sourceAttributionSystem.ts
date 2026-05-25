@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Source Attribution System
  * 
@@ -77,7 +79,7 @@ function categorizeSource(sourceName: string): 'major_news' | 'regional_news' | 
  * Detect language of source
  */
 function detectSourceLanguage(sourceName: string): 'ar' | 'en' | 'mixed' {
-  const arabicSources = ['الجزيرة', 'العربية', 'سكاي', 'مصراوي', 'اليوم', 'الوطن', 'الأهرام'];
+  const arabicSources = [t('auto.engines_sourceAttributionSystem.7.1f3a447e', 'ar'), t('auto.engines_sourceAttributionSystem.6.9970632f', 'ar'), t('auto.engines_sourceAttributionSystem.5.39dd1931', 'ar'), t('auto.engines_sourceAttributionSystem.4.06a0b242', 'ar'), t('auto.engines_sourceAttributionSystem.3.b76444a3', 'ar'), t('auto.engines_sourceAttributionSystem.2.ef91d2cd', 'ar'), t('auto.engines_sourceAttributionSystem.1.d270b1b6', 'ar')];
   const lower = sourceName.toLowerCase();
   
   const hasArabic = arabicSources.some(source => lower.includes(source.toLowerCase()));
@@ -246,20 +248,20 @@ export function formatSourceAttribution(attribution: SourceAttribution): {
     .join(', ');
   
   const ar = `
-## مصادر البيانات
+##  
 
-**إجمالي المقالات:** ${attribution.totalArticles}
-**عدد المصادر:** ${attribution.sources.length}
-**متوسط المصداقية:** ${(attribution.averageCredibility * 100).toFixed(0)}%
-**فترة جمع البيانات:** ${attribution.dataCollectionPeriod.start.toLocaleDateString('ar-SA')} - ${attribution.dataCollectionPeriod.end.toLocaleDateString('ar-SA')}
+** :** ${attribution.totalArticles}
+** :** ${attribution.sources.length}
+** :** ${(attribution.averageCredibility * 100).toFixed(0)}%
+**  :** ${attribution.dataCollectionPeriod.start.toLocaleDateString('ar-SA')} - ${attribution.dataCollectionPeriod.end.toLocaleDateString('ar-SA')}
 
-**توزيع المصادر:**
+** :**
 ${categoryText}
 
-**المصادر الرئيسية:**
+** :**
 ${sourceList}
 
-**إخلاء المسؤولية:**
+** :**
 ${attribution.disclaimer}
   `;
   

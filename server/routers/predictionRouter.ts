@@ -1,13 +1,14 @@
+import { t } from "../_core/i18n";
 /**
  * Advanced Prediction Router - tRPC Endpoints
  * 
- * نظام تنبؤ متقدم يوفر:
- * - تقارير تنبؤ شاملة لكل دولة
- * - تحليل اتجاهات متعدد الأبعاد
- * - كشف نقاط التحول
- * - مؤشرات مخاطر
- * - تنبؤات بالذكاء الاصطناعي
- * - حلقة تعلم (Feedback Loop)
+ *    :
+ * -     
+ * -    
+ * -   
+ * -  
+ * -   
+ * -   (Feedback Loop)
  */
 import { z } from 'zod';
 import { publicProcedure, protectedProcedure, router } from '../_core/trpc';
@@ -49,7 +50,7 @@ function toDataPoints(records: Array<{
 export const predictionRouter = router({
   /**
    * Get full prediction report for a specific country
-   * تقرير تنبؤ شامل لدولة محددة
+   *     
    */
   getCountryPrediction: publicProcedure
     .input(z.object({
@@ -69,7 +70,7 @@ export const predictionRouter = router({
         if (data.length < 3) {
           return {
             success: false,
-            message: 'بيانات غير كافية للتنبؤ. يرجى تحليل المزيد من البيانات أولاً.',
+            message: t('auto.routers_predictionRouter.8.929eefd0', 'ar'),
             messageEn: 'Insufficient data for prediction. Please analyze more data first.',
             data: null,
           };
@@ -127,7 +128,7 @@ export const predictionRouter = router({
 
   /**
    * Get global prediction overview (all countries with data)
-   * نظرة عامة على التنبؤات العالمية
+   *     
    */
   getGlobalPrediction: publicProcedure
     .input(z.object({
@@ -176,7 +177,7 @@ export const predictionRouter = router({
 
   /**
    * Get trend analysis for a specific index
-   * تحليل اتجاه لمؤشر محدد
+   *    
    */
   getTrends: publicProcedure
     .input(z.object({
@@ -197,7 +198,7 @@ export const predictionRouter = router({
       if (data.length < 3) {
         return {
           success: false,
-          message: 'بيانات غير كافية لتحليل الاتجاهات',
+          message: t('auto.routers_predictionRouter.7.d989a683', 'ar'),
           data: null,
         };
       }
@@ -223,7 +224,7 @@ export const predictionRouter = router({
 
   /**
    * Get tipping point alerts
-   * تنبيهات نقاط التحول
+   *   
    */
   getTippingPoints: publicProcedure
     .input(z.object({
@@ -245,7 +246,7 @@ export const predictionRouter = router({
         return {
           success: true,
           data: [],
-          message: 'بيانات غير كافية لكشف نقاط التحول',
+          message: t('auto.routers_predictionRouter.6.9482cf8b', 'ar'),
         };
       }
       
@@ -270,7 +271,7 @@ export const predictionRouter = router({
 
   /**
    * Get risk score for a country or globally
-   * مؤشر المخاطر
+   *  
    */
   getRiskScore: publicProcedure
     .input(z.object({
@@ -302,8 +303,8 @@ export const predictionRouter = router({
               trendDivergence: 0,
             },
             level: 'low' as const,
-            factors: ['بيانات غير كافية'],
-            factorsAr: ['بيانات غير كافية'],
+            factors: [t('auto.routers_predictionRouter.5.144e0328', 'ar')],
+            factorsAr: [t('auto.routers_predictionRouter.4.144e0328', 'ar')],
           },
         };
       }
@@ -325,7 +326,7 @@ export const predictionRouter = router({
 
   /**
    * Get prediction history from database
-   * سجل التنبؤات السابقة
+   *   
    */
   getPredictionHistory: publicProcedure
     .input(z.object({
@@ -377,7 +378,7 @@ export const predictionRouter = router({
 
   /**
    * Verify a prediction against actual data (feedback loop)
-   * التحقق من تنبؤ مقابل البيانات الفعلية
+   *      
    */
   verifyPrediction: protectedProcedure
     .input(z.object({
@@ -438,10 +439,10 @@ export const predictionRouter = router({
             actual: { gmi: closest.gmi, cfi: closest.cfi, hri: closest.hri },
             accuracyScore,
             feedback: accuracyScore >= 70 
-              ? 'تنبؤ دقيق! النموذج يتحسن.' 
+              ? t('auto.routers_predictionRouter.3.eac8170c', 'ar') 
               : accuracyScore >= 40 
-                ? 'تنبؤ متوسط الدقة. يحتاج تحسين.'
-                : 'تنبؤ غير دقيق. النظام يتعلم من هذا الخطأ.',
+                ? t('auto.routers_predictionRouter.2.f0ad65bf', 'ar')
+                : t('auto.routers_predictionRouter.1.ac77ec31', 'ar'),
           },
         };
       } catch (e) {
@@ -452,7 +453,7 @@ export const predictionRouter = router({
 
   /**
    * Get prediction accuracy statistics
-   * إحصائيات دقة التنبؤ
+   *   
    */
   getAccuracyStats: publicProcedure.query(async () => {
     const db = await getDb();

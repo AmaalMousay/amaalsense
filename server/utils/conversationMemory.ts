@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 import { EventVector } from './graphPipeline';
 
 /**
@@ -33,20 +34,20 @@ export interface ConversationContext {
 export function buildConversationContext(context: ConversationContext): string {
   const recentMessages = context.messages.slice(-5); // Last 5 messages
   const messageHistory = recentMessages
-    .map((msg) => `${msg.role === 'user' ? 'المستخدم' : 'المساعد'}: ${msg.content}`)
+    .map((msg) => `${msg.role === 'user' ? t('auto.utils_conversationMemory.34.d79fe04a', 'ar') : t('auto.utils_conversationMemory.33.5af1a8ad', 'ar')}: ${msg.content}`)
     .join('\n\n');
 
   const contextString = `
-السياق السابق للمحادثة:
-الموضوع الحالي: ${context.currentTopic}
-المناطق المعنية: ${context.regionContext.join(', ')}
-المشاعر السائدة: ${context.emotionalContext.dominantEmotion}
-الشعور العام: ${context.emotionalContext.overallSentiment > 0 ? 'إيجابي' : 'سلبي'}
+  :
+ : ${context.currentTopic}
+ : ${context.regionContext.join(', ')}
+ : ${context.emotionalContext.dominantEmotion}
+ : ${context.emotionalContext.overallSentiment > 0 ? t('auto.utils_conversationMemory.32.3c9380a2', 'ar') : t('auto.utils_conversationMemory.31.a5ed0453', 'ar')}
 
-السجل الأخير:
+ :
 ${messageHistory}
 
-الرجاء الإجابة مع الأخذ في الاعتبار هذا السياق.
+       .
 `;
 
   return contextString;
@@ -61,25 +62,25 @@ export function createContextAwarePrompt(
   conversationContext?: ConversationContext
 ): string {
   const basePrompt = `
-أنت مساعد ذكي متخصص في تحليل المشاعر الجماعية والأنماط الاجتماعية.
+         .
 
-السؤال: ${userQuery}
+: ${userQuery}
 
-البيانات المحللة:
-- الموضوع الرئيسي: ${eventVector.topic}
-- المشاعر: الخوف=${eventVector.emotions.fear}, الأمل=${eventVector.emotions.hope}, الغضب=${eventVector.emotions.anger}
-- المناطق المتأثرة: ${eventVector.region}
-- درجة التأثير: ${eventVector.impactScore}/100
-- مستوى الثقة: ${eventVector.regionConfidence}%
+ :
+-  : ${eventVector.topic}
+- : =${eventVector.emotions.fear}, =${eventVector.emotions.hope}, =${eventVector.emotions.anger}
+-  : ${eventVector.region}
+-  : ${eventVector.impactScore}/100
+-  : ${eventVector.regionConfidence}%
 
-المطلوب:
-1. تحليل شامل للموقف الحالي
-2. الأسباب الجذرية للمشاعر المكتشفة
-3. التأثيرات المحتملة على المجتمع
-4. التوصيات والحلول الممكنة
-5. التوقعات المستقبلية
+:
+1.    
+2.    
+3.    
+4.   
+5.  
 
-الرجاء تقديم إجابة محددة وواقعية بناءً على البيانات.
+       .
 `;
 
   if (conversationContext && conversationContext.messages.length > 0) {
@@ -97,13 +98,13 @@ export function extractQueryContext(query: string): {
   regions: string[];
 } {
   const regionKeywords: { [key: string]: string[] } = {
-    'مصر': ['مصر', 'القاهرة', 'الإسكندرية', 'الجيزة'],
-    'السعودية': ['السعودية', 'الرياض', 'جدة', 'الدمام'],
-    'الإمارات': ['الإمارات', 'دبي', 'أبوظبي'],
-    'ليبيا': ['ليبيا', 'طرابلس', 'بنغازي'],
-    'المغرب': ['المغرب', 'الرباط', 'الدار البيضاء'],
-    'تونس': ['تونس', 'تونس العاصمة'],
-    'الأردن': ['الأردن', 'عمّان'],
+    '': [t('auto.utils_conversationMemory.30.9f5f187b', 'ar'), t('auto.utils_conversationMemory.29.93019aa0', 'ar'), t('auto.utils_conversationMemory.28.a26da63f', 'ar'), t('auto.utils_conversationMemory.27.593d7ba1', 'ar')],
+    '': [t('auto.utils_conversationMemory.26.cd8d189f', 'ar'), t('auto.utils_conversationMemory.25.ec7f247f', 'ar'), t('auto.utils_conversationMemory.24.de8dd0bd', 'ar'), t('auto.utils_conversationMemory.23.822c2b16', 'ar')],
+    '': [t('auto.utils_conversationMemory.22.9bc10b8c', 'ar'), t('auto.utils_conversationMemory.21.4a07a7fb', 'ar'), t('auto.utils_conversationMemory.20.cd666d65', 'ar')],
+    '': [t('auto.utils_conversationMemory.19.251aff72', 'ar'), t('auto.utils_conversationMemory.18.da7424b2', 'ar'), t('auto.utils_conversationMemory.17.63a58999', 'ar')],
+    '': [t('auto.utils_conversationMemory.16.94b11d17', 'ar'), t('auto.utils_conversationMemory.15.ae6723ec', 'ar'), t('auto.utils_conversationMemory.14.e4002e13', 'ar')],
+    '': [t('auto.utils_conversationMemory.13.ba84e974', 'ar'), t('auto.utils_conversationMemory.12.fb618b1a', 'ar')],
+    '': [t('auto.utils_conversationMemory.11.bdd0aaf6', 'ar'), t('auto.utils_conversationMemory.10.0304eff4', 'ar')],
   };
 
   const detectedRegions: string[] = [];
@@ -115,7 +116,7 @@ export function extractQueryContext(query: string): {
 
   return {
     topic: query.substring(0, 100),
-    regions: detectedRegions.length > 0 ? detectedRegions : ['عام'],
+    regions: detectedRegions.length > 0 ? detectedRegions : [t('auto.utils_conversationMemory.9.17859487', 'ar')],
   };
 }
 
@@ -192,14 +193,14 @@ export function isFollowUpQuestion(
   if (conversationContext.messages.length === 0) return false;
 
   const followUpKeywords = [
-    'ماذا لو',
-    'لماذا',
-    'كيف',
-    'هل',
-    'ما التأثير',
-    'ما الحل',
-    'المزيد عن',
-    'أكثر عن',
+    t('auto.utils_conversationMemory.8.9dd0db2c', 'ar'),
+    t('auto.utils_conversationMemory.7.dc0f9a10', 'ar'),
+    t('auto.utils_conversationMemory.6.daa59aa1', 'ar'),
+    t('auto.utils_conversationMemory.5.2500c161', 'ar'),
+    t('auto.utils_conversationMemory.4.34a86013', 'ar'),
+    t('auto.utils_conversationMemory.3.979407ea', 'ar'),
+    t('auto.utils_conversationMemory.2.c3612400', 'ar'),
+    t('auto.utils_conversationMemory.1.f9620a18', 'ar'),
   ];
 
   return followUpKeywords.some((keyword) => currentQuery.includes(keyword));

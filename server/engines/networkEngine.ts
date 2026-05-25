@@ -1,12 +1,13 @@
 /**
  * AMALSENSE NETWORK ENGINE (Global ASI Edition - V5.5)
- * المحرك الموحد والنهائي: نسخة عالمية غير محدودة بدول معينة.
- * يربط بين التحليل اللحظي، الذاكرة التراكمية، ومؤشرات التداول العالمية.
+ *   :      .
+ *         .
  */
 
 import { layer1QuestionUnderstanding, type Layer1Output } from '../cognitiveEngine/questionUnderstanding';
 import { collectCountryData, collectTopicData, type CollectedData } from '../services/unifiedDataCollector';
 import { createUniversalEventVector, generateUniversalPrompt, type QuantumEventVector } from './eventVectorEngine';
+import { graphPipeline, type EventVector as ParallelSignalVector } from '../utils/graphPipeline';
 
 import { analyzeTextWithAI } from './emotionEngine';
 import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from '../dcft/dcftEngine';
@@ -37,6 +38,7 @@ export interface NetworkContext {
   collection: {
     rawData: CollectedData;
     eventVector: EventVector;
+    parallelSignalVector?: ParallelSignalVector;
     vectorPrompt: string;
     totalItems: number;
   };
@@ -75,10 +77,9 @@ export interface NetworkContext {
 function requiresLiveAnalysis(question: string, layer1: Layer1Output): boolean {
   const q = question.toLowerCase();
   const analysisWords = [
-    'حلل', 'تحليل', 'الوضع', 'اليوم', 'الآن', 'مزاج', 'مشاعر', 'خوف', 'قلق', 'ترند', 'توقع', 'قارن',
-    'analyze', 'today', 'now', 'mood', 'sentiment', 'trend', 'predict', 'compare', 'fear'
-  ];
-  if (analysisWords.some(word => q.includes(word))) return true;
+    'analyze', 'analysis', 'today', 'now', 'current', 'mood', 'sentiment', 'trend', 'predict', 'prediction',
+    'compare', 'comparison', 'fear', 'risk', 'market', 'country', 'news', 'social', 'weather', 'emotion'
+  ];  if (analysisWords.some(word => q.includes(word))) return true;
   return ['sentiment', 'trend', 'comparison', 'prediction', 'recommendation'].includes(layer1.questionType as any);
 }
 
@@ -94,7 +95,7 @@ export async function executeNetworkEngine(
   const startTime = Date.now();
   const requestId = `net_${Date.now()}`;
 
-  // 1. فهم السياق والسؤال عبر الطبقة الأولى
+  // 1. Resolve conversation references and understand the question.
   const conversationId = `user_${userId}`;
   const contextResolution = MultiTurnContext.resolveReferences(conversationId, question);
   const effectiveQuestion = contextResolution.resolvedQuestion || question;
@@ -136,39 +137,40 @@ export async function executeNetworkEngine(
     };
   }
 
-  // 2. كشف الدولة بشكل ديناميكي (عالمي)
-  // يعتمد الآن على تحليل اللغة وليس على قائمة ثابتة
+  // 2. Detect country context when present.
   const detectedCountry = detectCountryInQuery(effectiveQuestion, layer1);
   const intent = detectedCountry.code !== 'GLOBAL' ? 'country' : 'topic';
 
-  // 3. جمع البيانات (دولي/محلي بناءً على التحليل)
+  // 3. Collect the required real-world signals.
   const rawData = (detectedCountry.code !== 'GLOBAL')
     ? await collectCountryData(detectedCountry.code, detectedCountry.name)
     : await collectTopicData(layer1.entities?.topics?.[0] || effectiveQuestion);
 
-  // 4. التحويل لمتجه حدث (DCFT Compression)
+  // 4. Build the central EventVector from collected signals.
   const eventVector = createUniversalEventVector(rawData);
   const vectorPrompt = generateUniversalPrompt(eventVector, language as any);
+  const graphInput = rawData.items.map(item => `${item.title} ${item.description || ''}`).join('\n') || effectiveQuestion;
 
-  // 5. استدعاء الذاكرة التراكمية (البحث عن رنين تاريخي عالمي)
+  // 5. Recall cumulative memory for the active topic.
   const topicKey = (detectedCountry.code !== 'GLOBAL') ? detectedCountry.name : (layer1.entities?.topics?.[0] || 'Global_Trends');
   const resonanceInsight = getCumulativeInsight(topicKey);
 
-  // 6. التحليل المتوازي (المشاعر + DCFT + RAG)
-  const [emotions, dcftResult, ragContext] = await Promise.all([
+  // 6. Run independent analysis branches in parallel.
+  const [emotions, dcftResult, ragContext, parallelSignalVector] = await Promise.all([
     analyzeEmotionsFromData(rawData),
     executeDCFTProcess(rawData),
-    buildRAGContext(effectiveQuestion)
+    buildRAGContext(effectiveQuestion),
+    graphPipeline(graphInput)
   ]);
 
-  // 7. بناء التوجيه للذكاء الاصطناعي (مع حقن الذاكرة التراكمية)
+  // 7. Let the language model speak naturally from the computed context.
   const scienceInjection = formatRAGForPrompt(ragContext);
   const finalResponse = await composeNaturalAnswer({
     question: effectiveQuestion,
     language,
     intent,
     route: 'analysis',
-    eventVector,
+    eventVector: { central: eventVector, parallel: parallelSignalVector },
     indices: dcftResult?.indices,
     emotions: emotions.vector,
     confidence: emotions.dominantEmotion ? 80 : layer1.confidence,
@@ -178,7 +180,7 @@ export async function executeNetworkEngine(
     limitations: rawData.items.length === 0 ? ['No live source items were available.'] : [],
   });
 
-  // 8. بناء السياق النهائي للشبكة
+  // 8. Assemble the central network context.
   const context: NetworkContext = {
     requestId,
     userId,
@@ -195,6 +197,7 @@ export async function executeNetworkEngine(
     collection: {
       rawData,
       eventVector,
+      parallelSignalVector,
       vectorPrompt,
       totalItems: eventVector.totalItems
     },
@@ -212,29 +215,27 @@ export async function executeNetworkEngine(
     },
     generation: {
       response: finalResponse,
-      suggestions: language === 'ar'
-        ? ["حلل التأثير الاقتصادي العالمي", "ما هو الرنين التاريخي لهذا النمط؟"]
-        : ["Analyze global economic impact", "What is the historical resonance of this pattern?"],
+      suggestions: ["Analyze global economic impact", "What is the historical resonance of this pattern?"],
       languageEnforced: true,
       quality: { score: 95, relevance: 98, accuracy: 95, completeness: 90, clarity: 98 }
     },
     executionMetrics: {
       totalDurationMs: Date.now() - startTime,
       layerTraces: [],
-      parallelGroups: ['Collection', 'Compression', 'Analysis', 'Generation'],
+      parallelGroups: ['Collection', 'ParallelSignalGraph', 'EventVectorFusion', 'DCFT+RAG+Emotion', 'NaturalGeneration'],
       errors: []
     },
     status: 'completed'
   };
 
-  // 🌟 9. التزامن مع الذاكرة التراكمية لتعزيز الـ ASI
+  // 9. Store the result in cumulative memory.
   saveToLearningMemory(context);
 
   return context;
 }
 
 // ============================================================
-// LEGACY WRAPPERS (للتوافق مع الـ Routers القديمة)
+// LEGACY WRAPPERS (   Routers )
 // ============================================================
 
 export async function analyzeForMap(query: string, userId: string = 'system') {
@@ -331,14 +332,14 @@ export async function evaluateEnginePrediction(id: string, isCorrect: boolean) {
 }
 
 // ============================================================
-// HELPERS (المساعدات العالمية)
+// HELPERS ( )
 // ============================================================
 
 /**
- * كشف الدولة بشكل ديناميكي كامل ليدعم العالمية
+ *       
  */
 function detectCountryInQuery(query: string, layer1Data: Layer1Output) {
-  // الاعتماد الأول على تحليل الطبقة الأولى الجغرافي
+  //       
   if (layer1Data.geographicContext?.countryCode) {
     return {
       code: layer1Data.geographicContext.countryCode,
@@ -348,13 +349,13 @@ function detectCountryInQuery(query: string, layer1Data: Layer1Output) {
 
   // Manual fallback check for speed
   const patterns = [
-    { pattern: /ليبيا|libya/i, code: 'LY', name: 'Libya' },
-    { pattern: /مصر|egypt/i, code: 'EG', name: 'Egypt' },
-    { pattern: /فلسطين|palestine/i, code: 'PS', name: 'Palestine' },
-    { pattern: /أمريكا|usa|america/i, code: 'US', name: 'United States' },
-    { pattern: /الصين|china/i, code: 'CN', name: 'China' },
-    { pattern: /روسيا|russia/i, code: 'RU', name: 'Russia' },
-    { pattern: /اليابان|japan/i, code: 'JP', name: 'Japan' }
+    { pattern: /|libya/i, code: 'LY', name: 'Libya' },
+    { pattern: /|egypt/i, code: 'EG', name: 'Egypt' },
+    { pattern: /|palestine/i, code: 'PS', name: 'Palestine' },
+    { pattern: /|usa|america/i, code: 'US', name: 'United States' },
+    { pattern: /|china/i, code: 'CN', name: 'China' },
+    { pattern: /|russia/i, code: 'RU', name: 'Russia' },
+    { pattern: /|japan/i, code: 'JP', name: 'Japan' }
   ];
 
   const match = patterns.find(p => p.pattern.test(query));
@@ -364,7 +365,7 @@ function detectCountryInQuery(query: string, layer1Data: Layer1Output) {
 function saveToLearningMemory(ctx: NetworkContext) {
   try {
     const vector = ctx.collection.eventVector;
-    const financialKeywords = ['سوق', 'تداول', 'نفط', 'ذهب', 'عملة', 'اقتصاد', 'trading', 'market', 'finance'];
+    const financialKeywords = ['gold', 'silver', 'oil', 'currency', 'economy', 'inflation', 'trading', 'market', 'finance'];
     const isFinancial = financialKeywords.some(w => ctx.gate.searchQuery.toLowerCase().includes(w));
 
     storeAnalysisRecord(

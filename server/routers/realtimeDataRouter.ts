@@ -1,17 +1,17 @@
 /**
  * Real-Time Data Router
- * يربط واجهة المستخدم بمحرك جلب البيانات المحدث (tRPC)
+ *        (tRPC)
  */
 
 import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
-// استيراد الدوال من الـ Pipeline المطور
+//     Pipeline 
 import { fetchRealTimeData, fetchGDELTEvents, fetchWorldBankIndicators } from '../engines/realtimeDataPipeline';
 
 export const realtimeDataRouter = router({
 
   /**
-   * 1. تحديث البيانات يدوياً (تراكمي)
+   * 1.    ()
    */
   triggerRefresh: publicProcedure
     .input(z.object({ topic: z.string().optional() }))
@@ -26,7 +26,7 @@ export const realtimeDataRouter = router({
     }),
 
   /**
-   * 2. جلب بيانات GDELT فقط
+   * 2.   GDELT 
    */
   fetchGDELTEvents: publicProcedure
     .input(z.object({
@@ -45,7 +45,7 @@ export const realtimeDataRouter = router({
     }),
 
   /**
-   * 3. جلب بيانات البنك الدولي فقط
+   * 3.     
    */
   fetchWorldBankIndicators: publicProcedure
     .input(z.object({
@@ -64,7 +64,7 @@ export const realtimeDataRouter = router({
     }),
 
   /**
-   * 4. حالة المحرك (Pipeline Status)
+   * 4.   (Pipeline Status)
    */
   getPipelineStatus: publicProcedure.query(() => {
     return {
@@ -79,7 +79,7 @@ export const realtimeDataRouter = router({
   }),
 
   /**
-   * 5. الحصول على أكواد GDELT (للواجهة)
+   * 5.    GDELT ()
    */
   getGDELTEventCodes: publicProcedure.query(() => {
     return {

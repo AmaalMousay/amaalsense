@@ -1,6 +1,6 @@
 /**
  * AMALSENSE AGENT TOOLS - Autonomous & Quantum Capabilities
- * الأدوات التي تمنح الوكلاء القدرة على التحرك المستقل والبحث العلمي النشط.
+ *           .
  */
 
 import { type EventVector } from '../engines/eventVectorEngine';
@@ -13,31 +13,31 @@ export interface AlertContext {
   indices: { gmi: number; cfi: number; hri: number };
 }
 
-// --- أدوات التواصل والإنذار (قائمة حالياً ومطورة) ---
+// ---    (  ) ---
 
 export async function tool_sendEmergencyAlert(context: AlertContext): Promise<boolean> {
   console.log(`[AGENT ACTION] 🚨 EMERGENCY ALERT: ${context.topic} (${context.severity.toUpperCase()})`);
-  // هنا يتم الربط مع بوت التليجرام الخاص بكِ أو الإيميل
+  //          
   return true;
 }
 
-// --- الأدوات الجديدة: العيون والأبحاث (الاستقلال الذاتي) ---
+// ---  :   ( ) ---
 
 /**
- * 6. أداة البحث النشط (Active Research Tool)
- * تمنح الوكيل القدرة على البحث في جوجل والمصادر العلمية ذاتياً
+ * 6.    (Active Research Tool)
+ *          
  */
 export async function tool_performActiveSearch(query: string, domain: 'physics' | 'law' | 'medicine' | 'general'): Promise<string> {
   console.log(`[AGENT ACTION] 🔎 ACTIVE SEARCH TRIGGERED: Searching ${domain} for "${query}"...`);
 
-  // في النسخة النهائية، سيتم الربط مع Serper API أو Google Search
-  // حالياً سيعيد "إشارة نجاح" لبدء عملية البحث
-  return `نتائج البحث عن ${query} في مجال ${domain} جاهزة للمعالجة.`;
+  //       Serper API  Google Search
+  //   " "   
+  return `   ${query}   ${domain}  .`;
 }
 
 /**
- * 7. أداة التحقق من المصادر (Fact-Check & Scientific Validation)
- * تستخدم لربط الاستنتاجات بقاعدة المعرفة المعرفية (Knowledge Base)
+ * 7.     (Fact-Check & Scientific Validation)
+ *       (Knowledge Base)
  */
 export async function tool_validateScientificFact(fact: string, domain: string): Promise<{ isValid: boolean, reference?: string }> {
   console.log(`[AGENT ACTION] 🛡️ VALIDATING SCIENTIFIC FACT: Domain: ${domain}`);
@@ -56,7 +56,7 @@ export async function tool_validateScientificFact(fact: string, domain: string):
   return { isValid: true, reference: "AmalSense Knowledge Core / DCFT Framework" };
 }
 
-// --- أدوات التقارير والتوثيق (مطورة) ---
+// ---    () ---
 
 export async function tool_generateDeepReport(topic: string, vector: EventVector): Promise<string> {
   console.log(`[AGENT ACTION] 📄 GENERATING POLYMATH REPORT for: ${topic}`);
@@ -105,7 +105,7 @@ export async function tool_recordCaseStudy(data: { title: string, description: s
   }
 }
 
-// --- أدوات التحكم في الزمن (تعديل التردد) ---
+// ---     ( ) ---
 
 export async function tool_adjustMonitoringFrequency(topic: string, newFrequencyMinutes: number): Promise<boolean> {
   console.log(`[AGENT ACTION] ⏱️ ADJUSTED MONITORING FREQUENCY for ${topic} to ${newFrequencyMinutes} mins`);
@@ -113,7 +113,7 @@ export async function tool_adjustMonitoringFrequency(topic: string, newFrequency
 }
 
 /**
- * 8. أداة التشابك البرمجي (Webhook Trigger)
+ * 8.    (Webhook Trigger)
  */
 export async function tool_triggerWebhook(url: string, payload: any): Promise<boolean> {
   console.log(`[AGENT ACTION] ⚡ TRIGGERING WEBHOOK: ${url}`);

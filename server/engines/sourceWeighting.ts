@@ -1,26 +1,28 @@
+import { t } from "../_core/i18n";
+
 /**
- * Source Weighting System - نظام وزن المصادر
+ * Source Weighting System -   
  * 
- * يعطي وزن لكل مصدر بناءً على مصداقيته وجودته:
- * - مصادر إخبارية موثوقة: وزن عالي
- * - منصات تواصل اجتماعي: وزن متوسط
- * - مدونات ومصادر غير موثقة: وزن منخفض
+ *        :
+ * -   :  
+ * -   :  
+ * -    :  
  */
 
 export type SourceType = 
-  | 'reuters' | 'bbc' | 'cnn' | 'aljazeera' | 'ap' | 'afp'  // وكالات أنباء
-  | 'nytimes' | 'guardian' | 'washpost' | 'economist'       // صحف كبرى
-  | 'twitter' | 'x'                                          // تويتر/X
-  | 'reddit'                                                 // ريديت
-  | 'telegram'                                               // تيليجرام
-  | 'mastodon'                                               // ماستودون
-  | 'bluesky'                                                // بلوسكاي
-  | 'youtube'                                                // يوتيوب
-  | 'facebook' | 'instagram'                                 // ميتا
-  | 'tiktok'                                                 // تيك توك
-  | 'blog' | 'medium' | 'substack'                          // مدونات
+  | 'reuters' | 'bbc' | 'cnn' | 'aljazeera' | 'ap' | 'afp'  //  
+  | 'nytimes' | 'guardian' | 'washpost' | 'economist'       //  
+  | 'twitter' | 'x'                                          // /X
+  | 'reddit'                                                 // 
+  | 'telegram'                                               // 
+  | 'mastodon'                                               // 
+  | 'bluesky'                                                // 
+  | 'youtube'                                                // 
+  | 'facebook' | 'instagram'                                 // 
+  | 'tiktok'                                                 //  
+  | 'blog' | 'medium' | 'substack'                          // 
   | 'news_api' | 'gnews'                                     // APIs
-  | 'unknown';                                               // غير معروف
+  | 'unknown';                                               //  
 
 export interface SourceWeight {
   source: SourceType;
@@ -31,15 +33,15 @@ export interface SourceWeight {
   biasLevel: 'low' | 'medium' | 'high';
 }
 
-// جدول أوزان المصادر
+//   
 export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
-  // وكالات أنباء عالمية - أعلى مصداقية
+  //    -  
   reuters: {
     source: 'reuters',
     weight: 1.0,
     credibilityScore: 98,
     category: 'news_agency',
-    description: 'وكالة رويترز - أكبر وكالة أنباء عالمية',
+    description: t('auto.engines_sourceWeighting.26.7116cfdf', 'ar'),
     biasLevel: 'low',
   },
   bbc: {
@@ -47,7 +49,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.95,
     credibilityScore: 95,
     category: 'news_agency',
-    description: 'هيئة الإذاعة البريطانية',
+    description: t('auto.engines_sourceWeighting.25.d51b7ee1', 'ar'),
     biasLevel: 'low',
   },
   ap: {
@@ -55,7 +57,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 1.0,
     credibilityScore: 98,
     category: 'news_agency',
-    description: 'وكالة أسوشيتد برس',
+    description: t('auto.engines_sourceWeighting.24.da1eb09e', 'ar'),
     biasLevel: 'low',
   },
   afp: {
@@ -63,7 +65,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.95,
     credibilityScore: 95,
     category: 'news_agency',
-    description: 'وكالة فرانس برس',
+    description: t('auto.engines_sourceWeighting.23.db91c1e4', 'ar'),
     biasLevel: 'low',
   },
   aljazeera: {
@@ -71,7 +73,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.85,
     credibilityScore: 85,
     category: 'news_agency',
-    description: 'قناة الجزيرة',
+    description: t('auto.engines_sourceWeighting.22.334ed18d', 'ar'),
     biasLevel: 'medium',
   },
   cnn: {
@@ -79,17 +81,17 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.85,
     credibilityScore: 85,
     category: 'news_agency',
-    description: 'شبكة CNN',
+    description: t('auto.engines_sourceWeighting.21.fb75a576', 'ar'),
     biasLevel: 'medium',
   },
   
-  // صحف كبرى
+  //  
   nytimes: {
     source: 'nytimes',
     weight: 0.90,
     credibilityScore: 90,
     category: 'major_newspaper',
-    description: 'نيويورك تايمز',
+    description: t('auto.engines_sourceWeighting.20.47341cdf', 'ar'),
     biasLevel: 'medium',
   },
   guardian: {
@@ -97,7 +99,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.88,
     credibilityScore: 88,
     category: 'major_newspaper',
-    description: 'الجارديان',
+    description: t('auto.engines_sourceWeighting.19.24857720', 'ar'),
     biasLevel: 'medium',
   },
   washpost: {
@@ -105,7 +107,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.88,
     credibilityScore: 88,
     category: 'major_newspaper',
-    description: 'واشنطن بوست',
+    description: t('auto.engines_sourceWeighting.18.9266be7e', 'ar'),
     biasLevel: 'medium',
   },
   economist: {
@@ -113,17 +115,17 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.92,
     credibilityScore: 92,
     category: 'major_newspaper',
-    description: 'الإيكونوميست',
+    description: t('auto.engines_sourceWeighting.17.ae024e37', 'ar'),
     biasLevel: 'low',
   },
   
-  // منصات تواصل اجتماعي
+  //   
   twitter: {
     source: 'twitter',
     weight: 0.70,
     credibilityScore: 60,
     category: 'social_media',
-    description: 'تويتر - منصة تواصل اجتماعي',
+    description: t('auto.engines_sourceWeighting.16.86782a99', 'ar'),
     biasLevel: 'high',
   },
   x: {
@@ -131,7 +133,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.70,
     credibilityScore: 60,
     category: 'social_media',
-    description: 'X (تويتر سابقاً)',
+    description: t('auto.engines_sourceWeighting.15.b101fc4e', 'ar'),
     biasLevel: 'high',
   },
   reddit: {
@@ -139,7 +141,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.80,
     credibilityScore: 70,
     category: 'social_media',
-    description: 'ريديت - منتديات نقاش',
+    description: t('auto.engines_sourceWeighting.14.70a85547', 'ar'),
     biasLevel: 'medium',
   },
   telegram: {
@@ -147,7 +149,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.60,
     credibilityScore: 50,
     category: 'social_media',
-    description: 'تيليجرام - قنوات ومجموعات',
+    description: t('auto.engines_sourceWeighting.13.af7cc9e6', 'ar'),
     biasLevel: 'high',
   },
   mastodon: {
@@ -155,7 +157,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.65,
     credibilityScore: 55,
     category: 'social_media',
-    description: 'ماستودون - شبكة لامركزية',
+    description: t('auto.engines_sourceWeighting.12.bdb7828d', 'ar'),
     biasLevel: 'medium',
   },
   bluesky: {
@@ -163,7 +165,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.65,
     credibilityScore: 55,
     category: 'social_media',
-    description: 'بلوسكاي - شبكة اجتماعية',
+    description: t('auto.engines_sourceWeighting.11.49bb4d59', 'ar'),
     biasLevel: 'medium',
   },
   youtube: {
@@ -171,7 +173,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.65,
     credibilityScore: 55,
     category: 'social_media',
-    description: 'يوتيوب - تعليقات الفيديوهات',
+    description: t('auto.engines_sourceWeighting.10.8f9b40a0', 'ar'),
     biasLevel: 'high',
   },
   facebook: {
@@ -179,7 +181,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.55,
     credibilityScore: 45,
     category: 'social_media',
-    description: 'فيسبوك',
+    description: t('auto.engines_sourceWeighting.9.ac86ec8e', 'ar'),
     biasLevel: 'high',
   },
   instagram: {
@@ -187,7 +189,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.50,
     credibilityScore: 40,
     category: 'social_media',
-    description: 'إنستجرام',
+    description: t('auto.engines_sourceWeighting.8.b0e4e3f0', 'ar'),
     biasLevel: 'high',
   },
   tiktok: {
@@ -195,17 +197,17 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.45,
     credibilityScore: 35,
     category: 'social_media',
-    description: 'تيك توك',
+    description: t('auto.engines_sourceWeighting.7.5f19dfe1', 'ar'),
     biasLevel: 'high',
   },
   
-  // مدونات
+  // 
   blog: {
     source: 'blog',
     weight: 0.40,
     credibilityScore: 30,
     category: 'blog',
-    description: 'مدونات عامة',
+    description: t('auto.engines_sourceWeighting.6.6c48d1c3', 'ar'),
     biasLevel: 'high',
   },
   medium: {
@@ -213,7 +215,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.50,
     credibilityScore: 45,
     category: 'blog',
-    description: 'منصة Medium',
+    description: t('auto.engines_sourceWeighting.5.d09d963c', 'ar'),
     biasLevel: 'medium',
   },
   substack: {
@@ -221,7 +223,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.55,
     credibilityScore: 50,
     category: 'blog',
-    description: 'منصة Substack',
+    description: t('auto.engines_sourceWeighting.4.4edad830', 'ar'),
     biasLevel: 'medium',
   },
   
@@ -231,7 +233,7 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.75,
     credibilityScore: 70,
     category: 'api',
-    description: 'News API - مجمع أخبار',
+    description: t('auto.engines_sourceWeighting.3.de58b8bc', 'ar'),
     biasLevel: 'low',
   },
   gnews: {
@@ -239,39 +241,38 @@ export const SOURCE_WEIGHTS: Record<SourceType, SourceWeight> = {
     weight: 0.75,
     credibilityScore: 70,
     category: 'api',
-    description: 'GNews API - مجمع أخبار',
+    description: t('auto.engines_sourceWeighting.2.764366f0', 'ar'),
     biasLevel: 'low',
   },
   
-  // غير معروف
+  //  
   unknown: {
     source: 'unknown',
     weight: 0.30,
     credibilityScore: 20,
     category: 'unknown',
-    description: 'مصدر غير معروف',
+    description: t('auto.engines_sourceWeighting.1.67a55b92', 'ar'),
     biasLevel: 'high',
   },
 };
 
 /**
- * الحصول على وزن مصدر معين
+ *     
  */
 export function getSourceWeight(source: string): SourceWeight {
   const normalizedSource = source.toLowerCase().trim() as SourceType;
   
-  // البحث عن المصدر بالاسم
+  //    
   if (SOURCE_WEIGHTS[normalizedSource]) {
     return SOURCE_WEIGHTS[normalizedSource];
   }
   
-  // البحث عن المصدر بالكلمات المفتاحية
+  //     
   const sourceKeywords: Record<string, SourceType> = {
     'reuters': 'reuters',
     'bbc': 'bbc',
     'cnn': 'cnn',
     'aljazeera': 'aljazeera',
-    'الجزيرة': 'aljazeera',
     'ap news': 'ap',
     'associated press': 'ap',
     'afp': 'afp',
@@ -285,17 +286,13 @@ export function getSourceWeight(source: string): SourceWeight {
     'x.com': 'x',
     'reddit': 'reddit',
     'telegram': 'telegram',
-    'تيليجرام': 'telegram',
     'mastodon': 'mastodon',
     'bluesky': 'bluesky',
     'youtube': 'youtube',
-    'يوتيوب': 'youtube',
     'facebook': 'facebook',
-    'فيسبوك': 'facebook',
     'instagram': 'instagram',
-    'انستجرام': 'instagram',
     'tiktok': 'tiktok',
-    'تيك توك': 'tiktok',
+    ' ': 'tiktok',
     'medium': 'medium',
     'substack': 'substack',
     'newsapi': 'news_api',
@@ -312,7 +309,7 @@ export function getSourceWeight(source: string): SourceWeight {
 }
 
 /**
- * تحديد نوع المصدر من URL
+ *     URL
  */
 export function detectSourceFromUrl(url: string): SourceType {
   const urlLower = url.toLowerCase();
@@ -355,17 +352,17 @@ export interface WeightedContent {
   source: SourceType;
   weight: number;
   credibilityScore: number;
-  originalWeight?: number; // الوزن الأصلي قبل التعديل
+  originalWeight?: number; //    
 }
 
 /**
- * تطبيق الأوزان على مجموعة من النصوص
+ *      
  */
 export function applySourceWeights(
   contents: Array<{ text: string; source: string; url?: string }>
 ): WeightedContent[] {
   return contents.map(content => {
-    // تحديد المصدر من URL إذا كان متاحاً
+    //    URL   
     let sourceType: SourceType = 'unknown';
     if (content.url) {
       sourceType = detectSourceFromUrl(content.url);
@@ -386,7 +383,7 @@ export function applySourceWeights(
 }
 
 /**
- * حساب المتوسط الموزون للمشاعر
+ *    
  */
 export function calculateWeightedAverage(
   values: number[],
@@ -408,7 +405,7 @@ export function calculateWeightedAverage(
 }
 
 /**
- * حساب المشاعر الموزونة من مصادر متعددة
+ *      
  */
 export function calculateWeightedEmotions(
   emotionsBySource: Array<{
@@ -433,7 +430,7 @@ export function calculateWeightedEmotions(
 }
 
 /**
- * الحصول على ملخص المصادر
+ *    
  */
 export function getSourcesSummary(sources: SourceType[]): {
   totalSources: number;

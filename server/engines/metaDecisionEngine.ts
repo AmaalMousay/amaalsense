@@ -1,37 +1,39 @@
+import { t } from "../_core/i18n";
+
 /**
- * Meta Decision Engine - العقل الأعلى للمنصة
- * يحول الأرقام والمؤشرات إلى قرار نهائي واضح للمستخدم
+ * Meta Decision Engine -   
+ *        
  */
 
 export interface MetaDecision {
-  // الحالة النهائية
+  //  
   finalState: 'very_positive' | 'positive_cautious' | 'neutral' | 'negative_cautious' | 'very_negative';
   finalStateAr: string;
   finalStateEn: string;
   
-  // الملخص البشري
+  //  
   humanSummaryAr: string;
   humanSummaryEn: string;
   
-  // إشارة العمل
+  //  
   actionSignal: 'opportunity' | 'watch' | 'caution' | 'warning' | 'danger';
   actionSignalAr: string;
   actionSignalEn: string;
   
-  // مستوى الخطورة
+  //  
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
   riskLevelAr: string;
   riskLevelEn: string;
   
-  // نسبة الثقة
+  //  
   confidence: number;
   confidenceGrade: string;
   
-  // التوقع
+  // 
   forecast48h: string;
   forecast48hAr: string;
   
-  // تفسير المؤشرات
+  //  
   gmiExplanationAr: string;
   gmiExplanationEn: string;
   hriExplanationAr: string;
@@ -39,7 +41,7 @@ export interface MetaDecision {
   cfiExplanationAr: string;
   cfiExplanationEn: string;
   
-  // الأسباب الرئيسية (نقاط)
+  //   ()
   mainReasonsAr: string[];
   mainReasonsEn: string[];
 }
@@ -58,14 +60,14 @@ interface AnalysisInput {
 }
 
 /**
- * تحديد الحالة النهائية بناءً على المؤشرات
+ *      
  */
 function determineFinalState(gmi: number, cfi: number, hri: number): MetaDecision['finalState'] {
-  // GMI هو المؤشر الرئيسي
+  // GMI   
   if (gmi >= 50) {
     return 'very_positive';
   } else if (gmi >= 20) {
-    // إيجابي لكن نتحقق من الخوف
+    //     
     if (cfi > 60) {
       return 'positive_cautious';
     }
@@ -80,7 +82,7 @@ function determineFinalState(gmi: number, cfi: number, hri: number): MetaDecisio
 }
 
 /**
- * تحديد إشارة العمل
+ *   
  */
 function determineActionSignal(gmi: number, cfi: number, hri: number): MetaDecision['actionSignal'] {
   if (gmi >= 40 && cfi < 40 && hri > 60) {
@@ -97,7 +99,7 @@ function determineActionSignal(gmi: number, cfi: number, hri: number): MetaDecis
 }
 
 /**
- * تحديد مستوى الخطورة
+ *   
  */
 function determineRiskLevel(cfi: number, gmi: number): MetaDecision['riskLevel'] {
   if (cfi >= 80 || gmi <= -60) {
@@ -112,7 +114,7 @@ function determineRiskLevel(cfi: number, gmi: number): MetaDecision['riskLevel']
 }
 
 /**
- * توليد الملخص البشري
+ *   
  */
 function generateHumanSummary(
   finalState: MetaDecision['finalState'],
@@ -123,14 +125,14 @@ function generateHumanSummary(
   dominantEmotion: string
 ): { ar: string; en: string } {
   const emotionMapAr: Record<string, string> = {
-    joy: 'الفرح',
-    hope: 'الأمل',
-    fear: 'الخوف',
-    anger: 'الغضب',
-    sadness: 'الحزن',
-    curiosity: 'الفضول',
-    calm: 'الهدوء',
-    surprise: 'المفاجأة'
+    joy: t('auto.engines_metaDecisionEngine.44.81fd7301', 'ar'),
+    hope: t('auto.engines_metaDecisionEngine.43.05554470', 'ar'),
+    fear: t('auto.engines_metaDecisionEngine.42.b4cbc50d', 'ar'),
+    anger: t('auto.engines_metaDecisionEngine.41.0a67288b', 'ar'),
+    sadness: t('auto.engines_metaDecisionEngine.40.2c024033', 'ar'),
+    curiosity: t('auto.engines_metaDecisionEngine.39.f1f8172b', 'ar'),
+    calm: t('auto.engines_metaDecisionEngine.38.c020b03b', 'ar'),
+    surprise: t('auto.engines_metaDecisionEngine.37.7582f889', 'ar')
   };
   
   const emotionAr = emotionMapAr[dominantEmotion] || dominantEmotion;
@@ -138,34 +140,34 @@ function generateHumanSummary(
   switch (finalState) {
     case 'very_positive':
       return {
-        ar: `المزاج العام إيجابي جداً تجاه "${topic}". الناس متفائلة بشكل واضح مع مستوى ${emotionAr} مرتفع. التوقع: استمرار التحسن.`,
+        ar: `     "${topic}".       ${emotionAr} . :  .`,
         en: `The general mood is very positive towards "${topic}". People are clearly optimistic with high ${dominantEmotion}. Expectation: continued improvement.`
       };
     case 'positive_cautious':
       return {
-        ar: `المزاج العام إيجابي حذر تجاه "${topic}". الناس متفائلة لكن مع قلق متوسط (${cfi.toFixed(0)}%). التوقع: تحسن تدريجي وليس قفزة حادة.`,
+        ar: `     "${topic}".       (${cfi.toFixed(0)}%). :     .`,
         en: `The general mood is cautiously positive towards "${topic}". People are optimistic but with moderate concern (${cfi.toFixed(0)}%). Expectation: gradual improvement, not a sharp jump.`
       };
     case 'neutral':
       return {
-        ar: `المزاج العام محايد تجاه "${topic}". الناس منقسمة بين التفاؤل والقلق. التوقع: استقرار مع مراقبة التطورات.`,
+        ar: `    "${topic}".     . :    .`,
         en: `The general mood is neutral towards "${topic}". People are divided between optimism and concern. Expectation: stability with monitoring developments.`
       };
     case 'negative_cautious':
       return {
-        ar: `المزاج العام سلبي حذر تجاه "${topic}". يوجد قلق واضح (${cfi.toFixed(0)}%) مع بعض الأمل (${hri.toFixed(0)}%). التوقع: حذر مع إمكانية التحسن.`,
+        ar: `     "${topic}".    (${cfi.toFixed(0)}%)    (${hri.toFixed(0)}%). :    .`,
         en: `The general mood is cautiously negative towards "${topic}". There is clear concern (${cfi.toFixed(0)}%) with some hope (${hri.toFixed(0)}%). Expectation: caution with possibility of improvement.`
       };
     case 'very_negative':
       return {
-        ar: `المزاج العام سلبي جداً تجاه "${topic}". يوجد خوف وقلق مرتفع (${cfi.toFixed(0)}%). التوقع: وضع صعب يحتاج متابعة دقيقة.`,
+        ar: `     "${topic}".     (${cfi.toFixed(0)}%). :     .`,
         en: `The general mood is very negative towards "${topic}". There is high fear and concern (${cfi.toFixed(0)}%). Expectation: difficult situation requiring close monitoring.`
       };
   }
 }
 
 /**
- * توليد تفسير المؤشرات
+ *   
  */
 function generateIndexExplanations(gmi: number, cfi: number, hri: number, keywords: string[] = []): {
   gmiAr: string; gmiEn: string;
@@ -175,45 +177,45 @@ function generateIndexExplanations(gmi: number, cfi: number, hri: number, keywor
   // GMI
   let gmiAr: string, gmiEn: string;
   if (gmi >= 30) {
-    gmiAr = `إيجابي → الكلمات السائدة تشير إلى تفاؤل وفرص`;
+    gmiAr = t('auto.engines_metaDecisionEngine.36.529d24de', 'ar');
     gmiEn = `Positive → Dominant words indicate optimism and opportunities`;
   } else if (gmi >= 0) {
-    gmiAr = `محايد مائل للإيجابية → مزيج من التفاؤل والحذر`;
+    gmiAr = t('auto.engines_metaDecisionEngine.35.2232c80d', 'ar');
     gmiEn = `Neutral-positive → Mix of optimism and caution`;
   } else if (gmi >= -30) {
-    gmiAr = `محايد مائل للسلبية → قلق أكثر من التفاؤل`;
+    gmiAr = t('auto.engines_metaDecisionEngine.34.30015f4d', 'ar');
     gmiEn = `Neutral-negative → More concern than optimism`;
   } else {
-    gmiAr = `سلبي → الكلمات السائدة تشير إلى قلق ومخاوف`;
+    gmiAr = t('auto.engines_metaDecisionEngine.33.5700fc8b', 'ar');
     gmiEn = `Negative → Dominant words indicate concern and fears`;
   }
   
   // HRI
   let hriAr: string, hriEn: string;
   if (hri >= 60) {
-    hriAr = `مرتفع → الناس متفائلة بالمستقبل`;
+    hriAr = t('auto.engines_metaDecisionEngine.32.84052d6d', 'ar');
     hriEn = `High → People are optimistic about the future`;
   } else if (hri >= 40) {
-    hriAr = `متوسط → أمل معتدل مع بعض التحفظ`;
+    hriAr = t('auto.engines_metaDecisionEngine.31.aeba38f4', 'ar');
     hriEn = `Medium → Moderate hope with some reservation`;
   } else {
-    hriAr = `منخفض → تشاؤم واضح تجاه المستقبل`;
+    hriAr = t('auto.engines_metaDecisionEngine.30.56aa94ff', 'ar');
     hriEn = `Low → Clear pessimism about the future`;
   }
   
   // CFI
   let cfiAr: string, cfiEn: string;
   if (cfi >= 70) {
-    cfiAr = `مرتفع جداً → خوف وقلق شديد من الوضع`;
+    cfiAr = t('auto.engines_metaDecisionEngine.29.b4ce8b38', 'ar');
     cfiEn = `Very high → Severe fear and concern about the situation`;
   } else if (cfi >= 50) {
-    cfiAr = `متوسط → قلق موجود لكن ليس طاغي`;
+    cfiAr = t('auto.engines_metaDecisionEngine.28.9d129512', 'ar');
     cfiEn = `Medium → Concern exists but not overwhelming`;
   } else if (cfi >= 30) {
-    cfiAr = `منخفض → قلق محدود والثقة مرتفعة`;
+    cfiAr = t('auto.engines_metaDecisionEngine.27.66e96bb0', 'ar');
     cfiEn = `Low → Limited concern and high confidence`;
   } else {
-    cfiAr = `منخفض جداً → ثقة عالية وقلق شبه معدوم`;
+    cfiAr = t('auto.engines_metaDecisionEngine.26.448943c6', 'ar');
     cfiEn = `Very low → High confidence and almost no concern`;
   }
   
@@ -221,7 +223,7 @@ function generateIndexExplanations(gmi: number, cfi: number, hri: number, keywor
 }
 
 /**
- * توليد الأسباب الرئيسية
+ *   
  */
 function generateMainReasons(
   gmi: number,
@@ -233,121 +235,121 @@ function generateMainReasons(
   const reasonsAr: string[] = [];
   const reasonsEn: string[] = [];
   
-  // سبب GMI
+  //  GMI
   if (gmi >= 20) {
-    reasonsAr.push(`المزاج العام إيجابي (GMI: ${gmi.toFixed(1)}+) مما يشير إلى تفاؤل عام`);
+    reasonsAr.push(`   (GMI: ${gmi.toFixed(1)}+)     `);
     reasonsEn.push(`Overall mood is positive (GMI: ${gmi.toFixed(1)}+) indicating general optimism`);
   } else if (gmi <= -20) {
-    reasonsAr.push(`المزاج العام سلبي (GMI: ${gmi.toFixed(1)}) مما يشير إلى قلق عام`);
+    reasonsAr.push(`   (GMI: ${gmi.toFixed(1)})     `);
     reasonsEn.push(`Overall mood is negative (GMI: ${gmi.toFixed(1)}) indicating general concern`);
   } else {
-    reasonsAr.push(`المزاج العام محايد (GMI: ${gmi.toFixed(1)}) مع انقسام في الآراء`);
+    reasonsAr.push(`   (GMI: ${gmi.toFixed(1)})    `);
     reasonsEn.push(`Overall mood is neutral (GMI: ${gmi.toFixed(1)}) with divided opinions`);
   }
   
-  // سبب CFI
+  //  CFI
   if (cfi >= 60) {
-    reasonsAr.push(`مستوى الخوف مرتفع (CFI: ${cfi.toFixed(1)}%) مما يستدعي الحذر`);
+    reasonsAr.push(`   (CFI: ${cfi.toFixed(1)}%)   `);
     reasonsEn.push(`Fear level is high (CFI: ${cfi.toFixed(1)}%) requiring caution`);
   } else if (cfi <= 40) {
-    reasonsAr.push(`مستوى الخوف منخفض (CFI: ${cfi.toFixed(1)}%) مما يدل على ثقة`);
+    reasonsAr.push(`   (CFI: ${cfi.toFixed(1)}%)    `);
     reasonsEn.push(`Fear level is low (CFI: ${cfi.toFixed(1)}%) indicating confidence`);
   }
   
-  // سبب HRI
+  //  HRI
   if (hri >= 60) {
-    reasonsAr.push(`مؤشر الأمل مرتفع (HRI: ${hri.toFixed(1)}%) مما يدعم التفاؤل`);
+    reasonsAr.push(`   (HRI: ${hri.toFixed(1)}%)   `);
     reasonsEn.push(`Hope index is high (HRI: ${hri.toFixed(1)}%) supporting optimism`);
   } else if (hri <= 40) {
-    reasonsAr.push(`مؤشر الأمل منخفض (HRI: ${hri.toFixed(1)}%) مما يشير إلى تشاؤم`);
+    reasonsAr.push(`   (HRI: ${hri.toFixed(1)}%)    `);
     reasonsEn.push(`Hope index is low (HRI: ${hri.toFixed(1)}%) indicating pessimism`);
   }
   
-  // الشعور السائد
+  //  
   const emotionMapAr: Record<string, string> = {
-    joy: 'الفرح',
-    hope: 'الأمل',
-    fear: 'الخوف',
-    anger: 'الغضب',
-    sadness: 'الحزن',
-    curiosity: 'الفضول',
-    calm: 'الهدوء'
+    joy: t('auto.engines_metaDecisionEngine.25.81fd7301', 'ar'),
+    hope: t('auto.engines_metaDecisionEngine.24.05554470', 'ar'),
+    fear: t('auto.engines_metaDecisionEngine.23.b4cbc50d', 'ar'),
+    anger: t('auto.engines_metaDecisionEngine.22.0a67288b', 'ar'),
+    sadness: t('auto.engines_metaDecisionEngine.21.2c024033', 'ar'),
+    curiosity: t('auto.engines_metaDecisionEngine.20.f1f8172b', 'ar'),
+    calm: t('auto.engines_metaDecisionEngine.19.c020b03b', 'ar')
   };
   const emotionAr = emotionMapAr[dominantEmotion] || dominantEmotion;
-  reasonsAr.push(`الشعور السائد هو ${emotionAr} مما يؤثر على القرارات`);
+  reasonsAr.push(`   ${emotionAr}    `);
   reasonsEn.push(`Dominant emotion is ${dominantEmotion} which affects decisions`);
   
   return { ar: reasonsAr, en: reasonsEn };
 }
 
 /**
- * المحرك الرئيسي - يحول المؤشرات إلى قرار نهائي
+ *   -     
  */
 export function generateMetaDecision(input: AnalysisInput): MetaDecision {
   const { gmi, cfi, hri, dominantEmotion, dominantEmotionScore, topic, country, keywords = [] } = input;
   
-  // تحديد الحالة النهائية
+  //   
   const finalState = determineFinalState(gmi, cfi, hri);
   
-  // تحديد إشارة العمل
+  //   
   const actionSignal = determineActionSignal(gmi, cfi, hri);
   
-  // تحديد مستوى الخطورة
+  //   
   const riskLevel = determineRiskLevel(cfi, gmi);
   
-  // حساب الثقة
+  //  
   const confidence = Math.min(95, Math.max(50, 70 + (100 - Math.abs(gmi - 50)) / 5));
   
-  // توليد الملخص البشري
+  //   
   const humanSummary = generateHumanSummary(finalState, gmi, cfi, hri, topic, dominantEmotion);
   
-  // توليد تفسير المؤشرات
+  //   
   const explanations = generateIndexExplanations(gmi, cfi, hri, keywords);
   
-  // توليد الأسباب
+  //  
   const reasons = generateMainReasons(gmi, cfi, hri, dominantEmotion, keywords);
   
-  // ترجمات الحالات
+  //  
   const finalStateLabels: Record<MetaDecision['finalState'], { ar: string; en: string }> = {
-    very_positive: { ar: 'إيجابي جداً', en: 'Very Positive' },
-    positive_cautious: { ar: 'إيجابي حذر', en: 'Cautiously Positive' },
-    neutral: { ar: 'محايد', en: 'Neutral' },
-    negative_cautious: { ar: 'سلبي حذر', en: 'Cautiously Negative' },
-    very_negative: { ar: 'سلبي جداً', en: 'Very Negative' }
+    very_positive: { ar: t('auto.engines_metaDecisionEngine.18.88e2c083', 'ar'), en: 'Very Positive' },
+    positive_cautious: { ar: t('auto.engines_metaDecisionEngine.17.fc64bf70', 'ar'), en: 'Cautiously Positive' },
+    neutral: { ar: t('auto.engines_metaDecisionEngine.16.7e22af2d', 'ar'), en: 'Neutral' },
+    negative_cautious: { ar: t('auto.engines_metaDecisionEngine.15.389deea0', 'ar'), en: 'Cautiously Negative' },
+    very_negative: { ar: t('auto.engines_metaDecisionEngine.14.553f17f0', 'ar'), en: 'Very Negative' }
   };
   
   const actionSignalLabels: Record<MetaDecision['actionSignal'], { ar: string; en: string }> = {
-    opportunity: { ar: 'فرصة', en: 'Opportunity' },
-    watch: { ar: 'مراقبة', en: 'Watch' },
-    caution: { ar: 'حذر', en: 'Caution' },
-    warning: { ar: 'تحذير', en: 'Warning' },
-    danger: { ar: 'خطر', en: 'Danger' }
+    opportunity: { ar: t('auto.engines_metaDecisionEngine.13.3f289306', 'ar'), en: 'Opportunity' },
+    watch: { ar: t('auto.engines_metaDecisionEngine.12.5915c398', 'ar'), en: 'Watch' },
+    caution: { ar: t('auto.engines_metaDecisionEngine.11.606ebcf6', 'ar'), en: 'Caution' },
+    warning: { ar: t('auto.engines_metaDecisionEngine.10.8835d57f', 'ar'), en: 'Warning' },
+    danger: { ar: t('auto.engines_metaDecisionEngine.9.5349080f', 'ar'), en: 'Danger' }
   };
   
   const riskLevelLabels: Record<MetaDecision['riskLevel'], { ar: string; en: string }> = {
-    low: { ar: 'منخفض', en: 'Low' },
-    medium: { ar: 'متوسط', en: 'Medium' },
-    high: { ar: 'مرتفع', en: 'High' },
-    critical: { ar: 'حرج', en: 'Critical' }
+    low: { ar: t('auto.engines_metaDecisionEngine.8.15b8dd47', 'ar'), en: 'Low' },
+    medium: { ar: t('auto.engines_metaDecisionEngine.7.91fa23bd', 'ar'), en: 'Medium' },
+    high: { ar: t('auto.engines_metaDecisionEngine.6.76d89630', 'ar'), en: 'High' },
+    critical: { ar: t('auto.engines_metaDecisionEngine.5.578fc664', 'ar'), en: 'Critical' }
   };
   
-  // توقع 48 ساعة
+  //  48 
   let forecast48hAr: string, forecast48hEn: string;
   if (gmi >= 30 && hri >= 50) {
-    forecast48hAr = 'استمرار التحسن';
+    forecast48hAr = t('auto.engines_metaDecisionEngine.4.3706b742', 'ar');
     forecast48hEn = 'Continued improvement';
   } else if (gmi >= 0) {
-    forecast48hAr = 'تحسن تدريجي';
+    forecast48hAr = t('auto.engines_metaDecisionEngine.3.8f9938b7', 'ar');
     forecast48hEn = 'Gradual improvement';
   } else if (gmi >= -30) {
-    forecast48hAr = 'استقرار مع مراقبة';
+    forecast48hAr = t('auto.engines_metaDecisionEngine.2.8523fa9f', 'ar');
     forecast48hEn = 'Stability with monitoring';
   } else {
-    forecast48hAr = 'وضع صعب يحتاج متابعة';
+    forecast48hAr = t('auto.engines_metaDecisionEngine.1.a9c12cec', 'ar');
     forecast48hEn = 'Difficult situation needs follow-up';
   }
   
-  // تحديد درجة الثقة
+  //   
   let confidenceGrade: string;
   if (confidence >= 85) confidenceGrade = 'A';
   else if (confidence >= 75) confidenceGrade = 'B+';

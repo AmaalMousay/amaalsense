@@ -102,10 +102,10 @@ export class StreamingResponse {
  *     const stream = new StreamingResponse();
  *     
  *     // Send thinking chunk
- *     stream.addThinking('جاري تحليل الموضوع...');
+ *     stream.addThinking('  ...');
  *     
  *     // Do analysis...
- *     stream.addAnalysis('النتيجة...');
+ *     stream.addAnalysis('...');
  *     
  *     // Complete
  *     stream.complete({ success: true });
@@ -123,7 +123,7 @@ export async function* streamAnalysis(
 ): AsyncGenerator<StreamChunk> {
   try {
     // Thinking phase
-    yield { type: 'thinking', content: `جاري تحليل "${topic}"...` };
+    yield { type: 'thinking', content: `  "${topic}"...` };
 
     // Run analysis
     const result = await analyzerFn(topic);

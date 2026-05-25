@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 /**
  * UNIFIED ENGINE ROUTER
  * 
@@ -876,7 +877,7 @@ export const unifiedEngineRouter = router({
       const { initMetacognition, generateHealthReport } = await import('../cognitiveArchitecture/metacognition');
       const state = initMetacognition();
       const health = generateHealthReport(state);
-      return (health.recommendations || []).map((rec: string, i: number) => ({ title: `توصية ${i + 1}`, description: rec, priority: 'medium', action: rec }));
+      return (health.recommendations || []).map((rec: string, i: number) => ({ title: ` ${i + 1}`, description: rec, priority: 'medium', action: rec }));
     } catch { return []; }
   }),
 
@@ -972,7 +973,7 @@ export const unifiedEngineRouter = router({
             urgency: Math.random() > 0.8 ? 'critical' : Math.random() > 0.5 ? 'high' : 'medium',
             countries: [country.code],
             timestamp: news.publishedAt,
-            dominantEmotion: dominantEmotion === 'anger' ? 'غضب' : dominantEmotion === 'fear' ? 'خوف' : dominantEmotion === 'hope' ? 'أمل' : dominantEmotion === 'joy' ? 'فرح' : 'حياد',
+            dominantEmotion: dominantEmotion === 'anger' ? t('auto.routers_unifiedEngineRouter.15.8e7bd750', 'ar') : dominantEmotion === 'fear' ? t('auto.routers_unifiedEngineRouter.14.1cf83ec0', 'ar') : dominantEmotion === 'hope' ? t('auto.routers_unifiedEngineRouter.13.60cd6c3d', 'ar') : dominantEmotion === 'joy' ? t('auto.routers_unifiedEngineRouter.12.15a6eacb', 'ar') : t('auto.routers_unifiedEngineRouter.11.56bc16bb', 'ar'),
             engagementScore: Math.round(Math.random() * 40) + 60,
           });
         }
@@ -1076,7 +1077,7 @@ export const unifiedEngineRouter = router({
       success: true,
       data: {
         mainTheme: "Global Analytical Synthesis",
-        mainThemeArabic: "التركيب التحليلي العالمي",
+        mainThemeArabic: t('auto.routers_unifiedEngineRouter.10.d8d103e2', 'ar'),
         recentEvents: [
           { event: "Global Market Volatility", topic: "Economy", region: "Global", impact: "high" },
           { event: "Technological Integration", topic: "Tech", region: "West", impact: "medium" }
@@ -1087,16 +1088,16 @@ export const unifiedEngineRouter = router({
           sentence3: "Economic data suggests a growing trend toward digital consciousness integration."
         },
         explanationArabic: {
-          sentence1: "يتتبع أمال سينس حالياً أنماط رنين متعددة عبر تدفقات الأخبار العالمية.",
-          sentence2: "تشير مؤشرات المشاعر إلى استقرار الخوف الجماعي بعد الارتفاعات الأخيرة.",
-          sentence3: "تشير البيانات الاقتصادية إلى اتجاه متزايد نحو تكامل الوعي الرقمي."
+          sentence1: t('auto.routers_unifiedEngineRouter.9.1ac9ca4f', 'ar'),
+          sentence2: t('auto.routers_unifiedEngineRouter.8.a4f5f400', 'ar'),
+          sentence3: t('auto.routers_unifiedEngineRouter.7.03dc499b', 'ar')
         },
         connections: [
-          { connection: "Economic stability is directly correlating with reduced CFI levels.", connectionArabic: "يرتبط الاستقرار الاقتصادي مباشرة بانخفاض مستويات مؤشر الخوف الجماعي." }
+          { connection: "Economic stability is directly correlating with reduced CFI levels.", connectionArabic: t('auto.routers_unifiedEngineRouter.6.192cbf39', 'ar') }
         ],
         forecast: {
           nextStep: "Continued stabilization of global mood indices.",
-          nextStepArabic: "استمرار استقرار مؤشرات المزاج العالمي.",
+          nextStepArabic: t('auto.routers_unifiedEngineRouter.5.7ea932d5', 'ar'),
           timeframe: "Next 48 hours"
         }
       }
@@ -1129,9 +1130,9 @@ export const unifiedEngineRouter = router({
     return {
       success: true,
       data: [
-        { id: 'is_world_dangerous', text: 'Is the world becoming more dangerous?', textArabic: 'هل العالم يصبح أكثر خطورة؟' },
-        { id: 'are_we_divided', text: 'Are we becoming more divided?', textArabic: 'هل أصبحنا أكثر انقساماً؟' },
-        { id: 'is_there_hope', text: 'Is there hope for the future?', textArabic: 'هل هناك أمل في المستقبل؟' },
+        { id: 'is_world_dangerous', text: 'Is the world becoming more dangerous?', textArabic: t('auto.routers_unifiedEngineRouter.4.c30e3e34', 'ar') },
+        { id: 'are_we_divided', text: 'Are we becoming more divided?', textArabic: t('auto.routers_unifiedEngineRouter.3.340821e8', 'ar') },
+        { id: 'is_there_hope', text: 'Is there hope for the future?', textArabic: t('auto.routers_unifiedEngineRouter.2.b984b13b', 'ar') },
       ]
     };
   }),
@@ -1149,13 +1150,13 @@ export const unifiedEngineRouter = router({
           confidence: 82,
           emoji: "🛡️",
           explanation: `Current analysis of ${input.question} suggests a period of transition where collective resilience remains strong despite localized tensions.`,
-          explanationArabic: `يشير التحليل الحالي لـ ${input.question} إلى فترة انتقالية حيث تظل المرونة الجماعية قوية رغم التوترات المحلية.`,
+          explanationArabic: `    ${input.question}           .`,
           supportingData: [
             { metric: "Global Stability", value: 65, trend: "stable" },
             { metric: "Resilience Quotient", value: 72, trend: "improving" }
           ],
           recommendation: "Monitor regional indicators for shift patterns.",
-          recommendationArabic: "راقب المؤشرات الإقليمية بحثاً عن أنماط التحول."
+          recommendationArabic: t('auto.routers_unifiedEngineRouter.1.3e9a380f', 'ar')
         }
       };
     }),

@@ -58,36 +58,36 @@ export type RequiredEngine =
 // Intent patterns for classification
 const INTENT_PATTERNS: Record<IntentType, RegExp[]> = {
   analysis: [
-    /(?:حلل|analyze|تحليل|analysis|ما هو الوضع|what is the situation|how is|كيف)/i,
-    /(?:mood|مزاج|sentiment|شعور|emotion|عاطف)/i,
-    /(?:collective|جماعي|public|عام)/i,
+    /(?:|analyze||analysis|  |what is the situation|how is|)/i,
+    /(?:mood||sentiment||emotion|)/i,
+    /(?:collective||public|)/i,
   ],
   interpretation: [
-    /(?:ماذا يعني|what does .* mean|explain|اشرح|فسر|interpret)/i,
-    /(?:GMI|CFI|HRI|مؤشر|indicator|index)/i,
-    /(?:why is|لماذا|السبب|reason)/i,
+    /(?: |what does .* mean|explain|||interpret)/i,
+    /(?:GMI|CFI|HRI||indicator|index)/i,
+    /(?:why is|||reason)/i,
   ],
   prediction: [
-    /(?:توقع|predict|forecast|ماذا سيحدث|what will happen|future|مستقبل)/i,
-    /(?:next|القادم|tomorrow|غدا|week|أسبوع|month|شهر)/i,
-    /(?:expect|متوقع|anticipate)/i,
+    /(?:|predict|forecast| |what will happen|future|)/i,
+    /(?:next||tomorrow||week||month|)/i,
+    /(?:expect||anticipate)/i,
   ],
   comparison: [
-    /(?:قارن|compare|مقارنة|versus|vs|بين|between|difference|فرق)/i,
-    /(?:better|أفضل|worse|أسوأ|more|أكثر|less|أقل)/i,
+    /(?:|compare||versus|vs||between|difference|)/i,
+    /(?:better||worse||more||less|)/i,
   ],
   recommendation: [
-    /(?:هل أشتري|should I buy|هل أبيع|should I sell|ماذا أفعل|what should I do)/i,
-    /(?:recommend|نصيحة|advice|توصية|suggest|اقترح)/i,
-    /(?:safe|آمن|risky|خطر|dangerous|خطير)/i,
+    /(?: |should I buy| |should I sell| |what should I do)/i,
+    /(?:recommend||advice||suggest|)/i,
+    /(?:safe||risky||dangerous|)/i,
   ],
   clarification: [
-    /(?:ما هو|what is|من هو|who is|أين|where|متى|when)/i,
-    /(?:define|تعريف|meaning|معنى)/i,
+    /(?: |what is| |who is||where||when)/i,
+    /(?:define||meaning|)/i,
   ],
   greeting: [
-    /(?:^hi$|^hello$|^مرحبا$|^السلام عليكم$|^أهلا$|^hey$)/i,
-    /(?:how are you|كيف حالك|شكرا|thank)/i,
+    /(?:^hi$|^hello$|^$|^ $|^$|^hey$)/i,
+    /(?:how are you| ||thank)/i,
   ],
   unknown: [],
 };
@@ -95,41 +95,41 @@ const INTENT_PATTERNS: Record<IntentType, RegExp[]> = {
 // Sub-intent patterns
 const SUB_INTENT_PATTERNS: Record<SubIntent, RegExp[]> = {
   risk_assessment: [
-    /(?:خطر|خطير|risk|danger|safe|آمن|threat|تهديد)/i,
-    /(?:worry|قلق|concern|مخاوف|afraid|خائف)/i,
+    /(?:||risk|danger|safe||threat|)/i,
+    /(?:worry||concern||afraid|)/i,
   ],
   opportunity_check: [
-    /(?:فرصة|opportunity|chance|buy|شراء|invest|استثمار)/i,
-    /(?:good time|وقت مناسب|right moment)/i,
+    /(?:|opportunity|chance|buy||invest|)/i,
+    /(?:good time| |right moment)/i,
   ],
   trend_analysis: [
-    /(?:trend|اتجاه|direction|تغير|change|rising|صاعد|falling|هابط)/i,
-    /(?:over time|مع الوقت|history|تاريخ)/i,
+    /(?:trend||direction||change|rising||falling|)/i,
+    /(?:over time| |history|)/i,
   ],
   cause_explanation: [
-    /(?:why|لماذا|because|بسبب|reason|سبب|cause|مسبب)/i,
-    /(?:explain|اشرح|understand|فهم)/i,
+    /(?:why||because||reason||cause|)/i,
+    /(?:explain||understand|)/i,
   ],
   action_guidance: [
-    /(?:what should|ماذا أفعل|do|افعل|action|إجراء|step|خطوة)/i,
-    /(?:recommend|نصيحة|suggest|اقترح)/i,
+    /(?:what should| |do||action||step|)/i,
+    /(?:recommend||suggest|)/i,
   ],
   indicator_meaning: [
-    /(?:GMI|CFI|HRI|index|مؤشر|indicator|mean|يعني)/i,
-    /(?:what is|ما هو|define|تعريف)/i,
+    /(?:GMI|CFI|HRI|index||indicator|mean|)/i,
+    /(?:what is| |define|)/i,
   ],
   scenario_planning: [
-    /(?:what if|ماذا لو|scenario|سيناريو|suppose|افترض)/i,
-    /(?:happen|يحدث|case|حالة)/i,
+    /(?:what if| |scenario||suppose|)/i,
+    /(?:happen||case|)/i,
   ],
   general: [],
 };
 
 // Entity extraction patterns
 const ENTITY_PATTERNS = {
-  countries: /(?:libya|ليبيا|egypt|مصر|saudi|السعودية|uae|الإمارات|usa|أمريكا|china|الصين|russia|روسيا|germany|ألمانيا|france|فرنسا|uk|بريطانيا|japan|اليابان|india|الهند|brazil|البرازيل|turkey|تركيا|israel|إسرائيل|palestine|فلسطين|iran|إيران|iraq|العراق|syria|سوريا|lebanon|لبنان|jordan|الأردن|morocco|المغرب|algeria|الجزائر|tunisia|تونس|sudan|السودان|yemen|اليمن|oman|عمان|kuwait|الكويت|qatar|قطر|bahrain|البحرين)/gi,
-  timeframes: /(?:today|اليوم|tomorrow|غدا|yesterday|أمس|this week|هذا الأسبوع|next week|الأسبوع القادم|this month|هذا الشهر|next month|الشهر القادم|24 hours|48 hours|ساعة|يوم|أسبوع|شهر)/gi,
-  topics: /(?:economy|اقتصاد|politics|سياسة|oil|نفط|gold|ذهب|silver|فضة|crypto|كريبتو|bitcoin|بيتكوين|stock|أسهم|market|سوق|war|حرب|peace|سلام|election|انتخاب|covid|كورونا|climate|مناخ)/gi,
+  countries: /(?:libya||egypt||saudi||uae||usa||china||russia||germany||france||uk||japan||india||brazil||turkey||israel||palestine||iran||iraq||syria||lebanon||jordan||morocco||algeria||tunisia||sudan||yemen||oman||kuwait||qatar||bahrain|)/gi,
+  timeframes: /(?:today||tomorrow||yesterday||this week| |next week| |this month| |next month| |24 hours|48 hours||||)/gi,
+  topics: /(?:economy||politics||oil||gold||silver||crypto||bitcoin||stock||market||war||peace||election||covid||climate|)/gi,
 };
 
 /**

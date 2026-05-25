@@ -1,13 +1,14 @@
+import { t } from "../_core/i18n";
 /**
- * Advanced Prediction Engine (محرك التنبؤ المتقدم)
+ * Advanced Prediction Engine (  )
  * 
- * نظام تنبؤ متعدد الطبقات يعتمد على:
- * 1. Exponential Moving Average (EMA) - للاتجاهات قصيرة وطويلة المدى
- * 2. Volatility Analysis - لقياس عدم الاستقرار
- * 3. Tipping Point Detection - لاكتشاف نقاط التحول
- * 4. Multi-factor Risk Scoring - لتقييم المخاطر
- * 5. Pattern Matching - لمطابقة الأنماط التاريخية
- * 6. LLM-Enhanced Interpretation - لتفسير ذكي بالعربية والإنجليزية
+ *      :
+ * 1. Exponential Moving Average (EMA) -    
+ * 2. Volatility Analysis -   
+ * 3. Tipping Point Detection -   
+ * 4. Multi-factor Risk Scoring -  
+ * 5. Pattern Matching -   
+ * 6. LLM-Enhanced Interpretation -    
  */
 
 import { invokeLLM } from '../_core/llm';
@@ -113,7 +114,7 @@ export interface PredictionReport {
 
 /**
  * Exponential Moving Average (EMA)
- * أكثر حساسية للتغيرات الأخيرة من المتوسط البسيط
+ *       
  */
 function calculateEMA(values: number[], period: number): number[] {
   if (values.length === 0) return [];
@@ -130,7 +131,7 @@ function calculateEMA(values: number[], period: number): number[] {
 }
 
 /**
- * Standard Deviation (الانحراف المعياري)
+ * Standard Deviation ( )
  */
 function standardDeviation(values: number[]): number {
   if (values.length < 2) return 0;
@@ -140,7 +141,7 @@ function standardDeviation(values: number[]): number {
 }
 
 /**
- * Bollinger Bands - لقياس التقلب
+ * Bollinger Bands -  
  */
 function bollingerBands(values: number[], period: number = 20, multiplier: number = 2) {
   const sma = values.slice(-period).reduce((a, b) => a + b, 0) / Math.min(period, values.length);
@@ -154,7 +155,7 @@ function bollingerBands(values: number[], period: number = 20, multiplier: numbe
 }
 
 /**
- * Rate of Change (ROC) - معدل التغير
+ * Rate of Change (ROC) -  
  */
 function rateOfChange(values: number[], period: number = 1): number {
   if (values.length < period + 1) return 0;
@@ -165,8 +166,8 @@ function rateOfChange(values: number[], period: number = 1): number {
 }
 
 /**
- * Weighted Linear Regression - انحدار خطي مرجح
- * يعطي وزن أكبر للبيانات الأحدث
+ * Weighted Linear Regression -   
+ *     
  */
 function weightedLinearRegression(values: number[]): { slope: number; intercept: number; r2: number } {
   const n = values.length;
@@ -303,7 +304,7 @@ export function detectTippingPoints(
   const cfiBands = bollingerBands(cfiValues);
   const hriBands = bollingerBands(hriValues);
   
-  // 1. Crisis Onset Detection (بداية أزمة)
+  // 1. Crisis Onset Detection ( )
   // High CFI + falling GMI + falling HRI + high volatility
   if (latest.cfi > 65 && trends.cfi.direction === 'rising' && trends.gmi.direction === 'falling') {
     const probability = Math.min(0.95, 
@@ -318,7 +319,7 @@ export function detectTippingPoints(
       probability,
       timeframe: probability > 0.7 ? '6-24 hours' : '24-48 hours',
       description: `Crisis indicators detected: Fear rising (CFI: ${latest.cfi}), mood declining (GMI: ${latest.gmi}). Collective anxiety is escalating with ${trends.cfi.strength}% trend strength.`,
-      descriptionAr: `مؤشرات أزمة: الخوف يرتفع (CFI: ${latest.cfi})، المزاج يتراجع (GMI: ${latest.gmi}). القلق الجماعي يتصاعد بقوة اتجاه ${trends.cfi.strength}%.`,
+      descriptionAr: ` :   (CFI: ${latest.cfi})   (GMI: ${latest.gmi}).      ${trends.cfi.strength}%.`,
       indicators: [
         `CFI at ${latest.cfi} (above 65 threshold)`,
         `GMI trend: ${trends.gmi.direction} (slope: ${trends.gmi.shortTermSlope})`,
@@ -332,7 +333,7 @@ export function detectTippingPoints(
     });
   }
   
-  // 2. Recovery Start Detection (بداية تعافي)
+  // 2. Recovery Start Detection ( )
   // Rising HRI + falling CFI + improving GMI
   if (trends.hri.direction === 'rising' && trends.cfi.direction === 'falling' && latest.hri > 50) {
     const probability = Math.min(0.9,
@@ -348,7 +349,7 @@ export function detectTippingPoints(
         probability,
         timeframe: '24-72 hours',
         description: `Recovery signals detected: Hope rising (HRI: ${latest.hri}), fear declining. Collective resilience is strengthening.`,
-        descriptionAr: `إشارات تعافي: الأمل يرتفع (HRI: ${latest.hri})، الخوف يتراجع. المرونة الجماعية تتعزز.`,
+        descriptionAr: ` :   (HRI: ${latest.hri})  .   .`,
         indicators: [
           `HRI rising to ${latest.hri}`,
           `CFI declining (slope: ${trends.cfi.shortTermSlope})`,
@@ -362,7 +363,7 @@ export function detectTippingPoints(
     }
   }
   
-  // 3. Escalation Detection (تصعيد)
+  // 3. Escalation Detection ()
   // Rapid CFI increase + GMI dropping fast + high volatility
   if (trends.cfi.acceleration > 2 && trends.gmi.acceleration < -2) {
     const probability = Math.min(0.9,
@@ -377,7 +378,7 @@ export function detectTippingPoints(
       probability,
       timeframe: '6-24 hours',
       description: `Rapid escalation detected: Fear accelerating (+${trends.cfi.acceleration.toFixed(1)}/period), mood deteriorating. Situation may intensify quickly.`,
-      descriptionAr: `تصعيد سريع: الخوف يتسارع (+${trends.cfi.acceleration.toFixed(1)}/فترة)، المزاج يتدهور. الوضع قد يتفاقم بسرعة.`,
+      descriptionAr: ` :   (+${trends.cfi.acceleration.toFixed(1)}/)  .    .`,
       indicators: [
         `CFI acceleration: +${trends.cfi.acceleration.toFixed(1)}`,
         `GMI acceleration: ${trends.gmi.acceleration.toFixed(1)}`,
@@ -389,7 +390,7 @@ export function detectTippingPoints(
     });
   }
   
-  // 4. Stabilization Detection (استقرار)
+  // 4. Stabilization Detection ()
   // Low volatility + stable trends + moderate values
   if (gmiVolatility < 8 && cfiVolatility < 8 && hriVolatility < 8 &&
       trends.gmi.direction === 'stable' && trends.cfi.direction === 'stable') {
@@ -399,7 +400,7 @@ export function detectTippingPoints(
       probability: 0.7,
       timeframe: '48-72 hours',
       description: `Emotional stabilization detected: Low volatility across all indices. The collective emotional state is settling into a stable pattern.`,
-      descriptionAr: `استقرار عاطفي: تقلب منخفض في جميع المؤشرات. الحالة العاطفية الجماعية تستقر في نمط ثابت.`,
+      descriptionAr: t('auto.engines_predictionEngine.19.0ff6f12b', 'ar'),
       indicators: [
         `GMI volatility: ${gmiVolatility.toFixed(1)} (low)`,
         `CFI volatility: ${cfiVolatility.toFixed(1)} (low)`,
@@ -411,7 +412,7 @@ export function detectTippingPoints(
     });
   }
   
-  // 5. Emotional Shift Detection (تحول عاطفي)
+  // 5. Emotional Shift Detection ( )
   // Bollinger band breakout - value outside bands
   if (latest.gmi > gmiBands.upper || latest.gmi < gmiBands.lower) {
     const isPositive = latest.gmi > gmiBands.upper;
@@ -421,7 +422,7 @@ export function detectTippingPoints(
       probability: 0.6,
       timeframe: '12-36 hours',
       description: `Emotional shift detected: GMI (${latest.gmi}) broke ${isPositive ? 'above' : 'below'} the expected range (${gmiBands.lower.toFixed(0)} to ${gmiBands.upper.toFixed(0)}). A significant mood change is underway.`,
-      descriptionAr: `تحول عاطفي: GMI (${latest.gmi}) تجاوز النطاق المتوقع (${gmiBands.lower.toFixed(0)} إلى ${gmiBands.upper.toFixed(0)}). تغير مزاجي كبير جارٍ.`,
+      descriptionAr: ` : GMI (${latest.gmi})    (${gmiBands.lower.toFixed(0)}  ${gmiBands.upper.toFixed(0)}).    .`,
       indicators: [
         `GMI: ${latest.gmi} (${isPositive ? 'above upper' : 'below lower'} band)`,
         `Bollinger bandwidth: ${gmiBands.bandwidth.toFixed(1)}`,
@@ -461,7 +462,7 @@ export function calculateRiskScore(
       },
       level: 'low',
       factors: ['Insufficient data'],
-      factorsAr: ['بيانات غير كافية'],
+      factorsAr: [t('auto.engines_predictionEngine.18.144e0328', 'ar')],
     };
   }
   
@@ -470,34 +471,34 @@ export function calculateRiskScore(
   const cfiValues = data.map(d => d.cfi);
   const hriValues = data.map(d => d.hri);
   
-  // 1. Emotional Instability (عدم الاستقرار العاطفي)
+  // 1. Emotional Instability (  )
   const gmiVol = standardDeviation(gmiValues.slice(-10));
   const cfiVol = standardDeviation(cfiValues.slice(-10));
   const hriVol = standardDeviation(hriValues.slice(-10));
   const emotionalInstability = Math.min(100, (gmiVol + cfiVol + hriVol) * 2);
   
-  // 2. Fear Escalation (تصاعد الخوف)
+  // 2. Fear Escalation ( )
   const fearEscalation = Math.min(100,
     (latest.cfi / 100) * 50 + 
     (trends.cfi.direction === 'rising' ? trends.cfi.strength * 0.5 : 0)
   );
   
-  // 3. Hope Degradation (تدهور الأمل)
+  // 3. Hope Degradation ( )
   const hopeDegradation = Math.min(100,
     ((100 - latest.hri) / 100) * 50 +
     (trends.hri.direction === 'falling' ? trends.hri.strength * 0.5 : 0)
   );
   
-  // 4. Mood Deterioration (تدهور المزاج)
+  // 4. Mood Deterioration ( )
   const moodDeterioration = Math.min(100,
     ((100 - (latest.gmi + 100) / 2) / 100) * 50 +
     (trends.gmi.direction === 'falling' ? trends.gmi.strength * 0.5 : 0)
   );
   
-  // 5. Volatility (التقلب)
+  // 5. Volatility ()
   const volatility = Math.min(100, emotionalInstability * 1.2);
   
-  // 6. Trend Divergence (تباعد الاتجاهات)
+  // 6. Trend Divergence ( )
   // When short-term and long-term trends diverge significantly
   const gmiDiv = Math.abs(trends.gmi.divergence);
   const cfiDiv = Math.abs(trends.cfi.divergence);
@@ -528,28 +529,28 @@ export function calculateRiskScore(
   
   if (fearEscalation > 60) {
     factors.push(`High fear escalation (${Math.round(fearEscalation)}%)`);
-    factorsAr.push(`تصاعد خوف مرتفع (${Math.round(fearEscalation)}%)`);
+    factorsAr.push(`   (${Math.round(fearEscalation)}%)`);
   }
   if (hopeDegradation > 60) {
     factors.push(`Hope degradation detected (${Math.round(hopeDegradation)}%)`);
-    factorsAr.push(`تدهور أمل (${Math.round(hopeDegradation)}%)`);
+    factorsAr.push(`  (${Math.round(hopeDegradation)}%)`);
   }
   if (moodDeterioration > 60) {
     factors.push(`Mood deteriorating (${Math.round(moodDeterioration)}%)`);
-    factorsAr.push(`تدهور مزاج (${Math.round(moodDeterioration)}%)`);
+    factorsAr.push(`  (${Math.round(moodDeterioration)}%)`);
   }
   if (volatility > 50) {
     factors.push(`High emotional volatility (${Math.round(volatility)}%)`);
-    factorsAr.push(`تقلب عاطفي مرتفع (${Math.round(volatility)}%)`);
+    factorsAr.push(`   (${Math.round(volatility)}%)`);
   }
   if (trendDivergence > 40) {
     factors.push(`Trend divergence detected (${Math.round(trendDivergence)}%)`);
-    factorsAr.push(`تباعد اتجاهات (${Math.round(trendDivergence)}%)`);
+    factorsAr.push(`  (${Math.round(trendDivergence)}%)`);
   }
   
   if (factors.length === 0) {
     factors.push('No significant risk factors detected');
-    factorsAr.push('لا توجد عوامل خطر كبيرة');
+    factorsAr.push(t('auto.engines_predictionEngine.17.c8b81b04', 'ar'));
   }
   
   return {
@@ -588,10 +589,10 @@ export function generatePredictions(
   const hriValues = data.map(d => d.hri);
   
   const timeframes: Array<{ key: '6h' | '24h' | '48h' | '7d'; hours: number; label: string; labelAr: string }> = [
-    { key: '6h', hours: 6, label: 'Next 6 Hours', labelAr: 'الـ 6 ساعات القادمة' },
-    { key: '24h', hours: 24, label: 'Next 24 Hours', labelAr: 'الـ 24 ساعة القادمة' },
-    { key: '48h', hours: 48, label: 'Next 48 Hours', labelAr: 'الـ 48 ساعة القادمة' },
-    { key: '7d', hours: 168, label: 'Next 7 Days', labelAr: 'الأسبوع القادم' },
+    { key: '6h', hours: 6, label: 'Next 6 Hours', labelAr: t('auto.engines_predictionEngine.16.fc68e97a', 'ar') },
+    { key: '24h', hours: 24, label: 'Next 24 Hours', labelAr: t('auto.engines_predictionEngine.15.8e608ad3', 'ar') },
+    { key: '48h', hours: 48, label: 'Next 48 Hours', labelAr: t('auto.engines_predictionEngine.14.b29b2112', 'ar') },
+    { key: '7d', hours: 168, label: 'Next 7 Days', labelAr: t('auto.engines_predictionEngine.13.8de32d1d', 'ar') },
   ];
   
   return timeframes.map(tf => {
@@ -685,44 +686,44 @@ function determineScenario(
   if (cfi > 70 && gmi < -20) {
     return {
       scenarioName: 'Crisis Deepening',
-      scenarioNameAr: 'تعمق الأزمة',
+      scenarioNameAr: t('auto.engines_predictionEngine.12.fa4f7576', 'ar'),
       description: `${timeLabel}: High fear (CFI: ${cfi.toFixed(0)}) combined with negative mood (GMI: ${gmi.toFixed(0)}) suggests the crisis may deepen. Collective anxiety is expected to remain elevated.`,
-      descriptionAr: `${timeLabelAr}: خوف مرتفع (CFI: ${cfi.toFixed(0)}) مع مزاج سلبي (GMI: ${gmi.toFixed(0)}) يشير إلى تعمق الأزمة. القلق الجماعي متوقع أن يبقى مرتفعاً.`,
+      descriptionAr: `${timeLabelAr}:   (CFI: ${cfi.toFixed(0)})    (GMI: ${gmi.toFixed(0)})    .      .`,
     };
   }
   
   if (hri > 60 && trends.hri.direction === 'rising') {
     return {
       scenarioName: 'Hope Surge',
-      scenarioNameAr: 'موجة أمل',
+      scenarioNameAr: t('auto.engines_predictionEngine.11.55d450e1', 'ar'),
       description: `${timeLabel}: Rising hope (HRI: ${hri.toFixed(0)}) with positive momentum suggests growing optimism. Collective resilience is strengthening.`,
-      descriptionAr: `${timeLabelAr}: أمل متصاعد (HRI: ${hri.toFixed(0)}) مع زخم إيجابي يشير إلى تفاؤل متزايد. المرونة الجماعية تتعزز.`,
+      descriptionAr: `${timeLabelAr}:   (HRI: ${hri.toFixed(0)})       .   .`,
     };
   }
   
   if (gmi > 30 && cfi < 30) {
     return {
       scenarioName: 'Positive Stability',
-      scenarioNameAr: 'استقرار إيجابي',
+      scenarioNameAr: t('auto.engines_predictionEngine.10.c3e6301b', 'ar'),
       description: `${timeLabel}: Positive mood (GMI: ${gmi.toFixed(0)}) with low fear (CFI: ${cfi.toFixed(0)}) indicates a stable and optimistic emotional climate.`,
-      descriptionAr: `${timeLabelAr}: مزاج إيجابي (GMI: ${gmi.toFixed(0)}) مع خوف منخفض (CFI: ${cfi.toFixed(0)}) يشير إلى مناخ عاطفي مستقر ومتفائل.`,
+      descriptionAr: `${timeLabelAr}:   (GMI: ${gmi.toFixed(0)})    (CFI: ${cfi.toFixed(0)})      .`,
     };
   }
   
   if (trends.gmi.direction === 'volatile' || trends.cfi.direction === 'volatile') {
     return {
       scenarioName: 'Emotional Turbulence',
-      scenarioNameAr: 'اضطراب عاطفي',
+      scenarioNameAr: t('auto.engines_predictionEngine.9.0c7407d4', 'ar'),
       description: `${timeLabel}: High volatility in emotional indices suggests unpredictable shifts. The collective mood may swing rapidly.`,
-      descriptionAr: `${timeLabelAr}: تقلب عالٍ في المؤشرات العاطفية يشير إلى تحولات غير متوقعة. المزاج الجماعي قد يتأرجح بسرعة.`,
+      descriptionAr: `${timeLabelAr}:          .     .`,
     };
   }
   
   return {
     scenarioName: 'Gradual Transition',
-    scenarioNameAr: 'انتقال تدريجي',
+    scenarioNameAr: t('auto.engines_predictionEngine.8.29bd8c2f', 'ar'),
     description: `${timeLabel}: The emotional climate is expected to transition gradually. GMI: ${gmi.toFixed(0)}, CFI: ${cfi.toFixed(0)}, HRI: ${hri.toFixed(0)}.`,
-    descriptionAr: `${timeLabelAr}: المناخ العاطفي متوقع أن ينتقل تدريجياً. GMI: ${gmi.toFixed(0)}, CFI: ${cfi.toFixed(0)}, HRI: ${hri.toFixed(0)}.`,
+    descriptionAr: `${timeLabelAr}:      . GMI: ${gmi.toFixed(0)}, CFI: ${cfi.toFixed(0)}, HRI: ${hri.toFixed(0)}.`,
   };
 }
 
@@ -804,7 +805,7 @@ Format as JSON: {"en": "...", "ar": "..."}`;
   
   return {
     interpretation: `The emotional climate for ${report.countryName} shows a ${report.overallRisk.level} risk level. ${report.overallRisk.factors.join('. ')}.`,
-    interpretationAr: `المناخ العاطفي لـ ${report.countryName} يُظهر مستوى خطر ${report.overallRisk.level === 'critical' ? 'حرج' : report.overallRisk.level === 'high' ? 'مرتفع' : report.overallRisk.level === 'elevated' ? 'مرتفع نسبياً' : report.overallRisk.level === 'moderate' ? 'معتدل' : 'منخفض'}. ${report.overallRisk.factorsAr.join('. ')}.`,
+    interpretationAr: `   ${report.countryName}    ${report.overallRisk.level === 'critical' ? t('auto.engines_predictionEngine.7.578fc664', 'ar') : report.overallRisk.level === 'high' ? t('auto.engines_predictionEngine.6.76d89630', 'ar') : report.overallRisk.level === 'elevated' ? t('auto.engines_predictionEngine.5.0055d165', 'ar') : report.overallRisk.level === 'moderate' ? t('auto.engines_predictionEngine.4.0047605f', 'ar') : t('auto.engines_predictionEngine.3.15b8dd47', 'ar')}. ${report.overallRisk.factorsAr.join('. ')}.`,
   };
 }
 
@@ -936,8 +937,8 @@ export async function generateGlobalPredictionReport(
         ? [`${highRiskCountries.length} high-risk countries: ${highRiskCountries.join(', ')}`]
         : ['No high-risk countries detected'],
       factorsAr: highRiskCountries.length > 0 
-        ? [`${highRiskCountries.length} دول عالية الخطورة: ${highRiskCountries.join('، ')}`]
-        : ['لا توجد دول عالية الخطورة'],
+        ? [`${highRiskCountries.length}   : ${highRiskCountries.join(t('auto.engines_predictionEngine.2.8715d7bc', 'ar'))}`]
+        : [t('auto.engines_predictionEngine.1.96f962ed', 'ar')],
     },
     highRiskCountries,
     tippingPointAlerts: allTippingAlerts,

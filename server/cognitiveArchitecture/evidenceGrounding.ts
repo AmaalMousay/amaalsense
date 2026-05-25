@@ -1,3 +1,5 @@
+import { t } from "../_core/i18n";
+
 /**
  * Evidence Grounding Layer
  * 
@@ -85,7 +87,7 @@ class EvidenceGroundingClass {
    */
   private extractClaims(response: string): string[] {
     // Split by sentences
-    const sentences = response.split(/[.!?؟]/);
+    const sentences = response.split(/[.!?]/);
 
     // Filter for factual claims (statements, not questions or greetings)
     const claims = sentences
@@ -171,7 +173,7 @@ class EvidenceGroundingClass {
     for (const statement of groundedStatements) {
       if (statement.confidence >= 0.7 && statement.evidence.length > 0) {
         const topEvidence = statement.evidence[0];
-        const citation = `\n\n*المصدر: ${topEvidence.source}*`;
+        const citation = `\n\n*: ${topEvidence.source}*`;
         
         // Add citation after the claim (simple approach)
         enhanced = enhanced.replace(statement.claim, statement.claim + citation);
@@ -187,7 +189,7 @@ class EvidenceGroundingClass {
   private extractKeywords(text: string): string[] {
     const stopWords = new Set([
       'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'في', 'من', 'إلى', 'على', 'عن', 'مع', 'هذا', 'هذه', 'ذلك',
+      t('auto.cognitiveArchitecture_evidenceGrounding.9.aef2099d', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.8.aa7099e2', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.7.8ab80326', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.6.16dc1dd1', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.5.38486333', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.4.f3c3b73b', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.3.6be4d5a7', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.2.f60d1f66', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.1.bcd49587', 'ar'),
     ]);
 
     return text
@@ -201,7 +203,7 @@ class EvidenceGroundingClass {
    * Check if sentence is a question
    */
   private isQuestion(sentence: string): boolean {
-    return /[?؟]/.test(sentence) || /^(what|who|when|where|why|how|ما|من|متى|أين|لماذا|كيف)/i.test(sentence);
+    return /[?]/.test(sentence) || /^(what|who|when|where|why|how||||||)/i.test(sentence);
   }
 
   /**
@@ -209,9 +211,9 @@ class EvidenceGroundingClass {
    */
   private isGreeting(sentence: string): boolean {
     const greetingPatterns = [
-      /^(hello|hi|hey|مرحبا|أهلا|السلام)/i,
-      /^(thank|شكرا)/i,
-      /^(goodbye|bye|وداعا)/i,
+      /^(hello|hi|hey|||)/i,
+      /^(thank|)/i,
+      /^(goodbye|bye|)/i,
     ];
 
     return greetingPatterns.some(pattern => pattern.test(sentence));
@@ -228,17 +230,17 @@ class EvidenceGroundingClass {
 
     // Check grounding score
     if (groundingReport.groundingScore < 0.5) {
-      warnings.push(`درجة التأريض منخفضة: ${(groundingReport.groundingScore * 100).toFixed(0)}%`);
+      warnings.push(`  : ${(groundingReport.groundingScore * 100).toFixed(0)}%`);
     }
 
     // Check for ungrounded statements
     if (groundingReport.ungroundedStatements > groundingReport.totalStatements / 2) {
-      warnings.push(`عدد كبير من الادعاءات غير المدعومة بأدلة: ${groundingReport.ungroundedStatements}`);
+      warnings.push(`      : ${groundingReport.ungroundedStatements}`);
     }
 
     // Check for weakly grounded claims
     if (groundingReport.weaklyGroundedClaims.length > 0) {
-      warnings.push(`ادعاءات ضعيفة التأريض: ${groundingReport.weaklyGroundedClaims.length}`);
+      warnings.push(`  : ${groundingReport.weaklyGroundedClaims.length}`);
     }
 
     return {

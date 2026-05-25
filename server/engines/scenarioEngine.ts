@@ -1,74 +1,76 @@
+import { t } from "../_core/i18n";
+
 /**
- * Scenario Engine - محرك محاكاة السيناريوهات المستقبلية
+ * Scenario Engine -    
  * 
- * يحول AmalSense من "نظام يرفض التنبؤ" إلى "ذكاء يحاكي المستقبل"
+ *  AmalSense  "  "  "  "
  * 
- * المبدأ: بناءً على المؤشرات الحالية + الحدث المفترض = التوقع المحاكى
+ * :     +   =  
  */
 
 export interface ScenarioInput {
-  // المؤشرات الحالية
+  //  
   currentGMI: number;
   currentCFI: number;
   currentHRI: number;
   
-  // الحدث المفترض
+  //  
   event: ScenarioEvent;
   
-  // الإطار الزمني
+  //  
   timeframe: '24h' | '48h' | '1week' | '1month';
   
-  // السياق (اختياري)
+  //  ()
   topic?: string;
   country?: string;
 }
 
 export type ScenarioEvent = 
-  | 'dollar_rise'          // ارتفاع الدولار
-  | 'dollar_fall'          // انخفاض الدولار
-  | 'positive_news'        // أخبار إيجابية
-  | 'negative_news'        // أخبار سلبية
-  | 'political_crisis'     // أزمة سياسية
-  | 'economic_improvement' // تحسن اقتصادي
-  | 'security_threat'      // تهديد أمني
-  | 'peace_agreement'      // اتفاق سلام
-  | 'market_crash'         // انهيار سوق
-  | 'market_rally'         // صعود سوق
-  | 'oil_price_up'         // ارتفاع النفط
-  | 'oil_price_down'       // انخفاض النفط
-  | 'custom';              // حدث مخصص
+  | 'dollar_rise'          //  
+  | 'dollar_fall'          //  
+  | 'positive_news'        //  
+  | 'negative_news'        //  
+  | 'political_crisis'     //  
+  | 'economic_improvement' //  
+  | 'security_threat'      //  
+  | 'peace_agreement'      //  
+  | 'market_crash'         //  
+  | 'market_rally'         //  
+  | 'oil_price_up'         //  
+  | 'oil_price_down'       //  
+  | 'custom';              //  
 
 export interface ScenarioOutput {
-  // التوقعات
+  // 
   predictedGMI: number;
   predictedCFI: number;
   predictedHRI: number;
   
-  // التغييرات
+  // 
   gmiChange: number;
   cfiChange: number;
   hriChange: number;
   
-  // الاتجاه
+  // 
   trend: 'improving' | 'declining' | 'volatile' | 'stable';
   
-  // الثقة
+  // 
   confidence: number;
   
-  // التفسير
+  // 
   explanation: string;
   
-  // التوصية
+  // 
   recommendation: string;
   
-  // المخاطر
+  // 
   risks: string[];
   
-  // الفرص
+  // 
   opportunities: string[];
 }
 
-// معاملات تأثير الأحداث على المؤشرات
+//     
 const EVENT_IMPACTS: Record<ScenarioEvent, {
   gmiImpact: number;
   cfiImpact: number;
@@ -81,137 +83,137 @@ const EVENT_IMPACTS: Record<ScenarioEvent, {
     cfiImpact: +20,
     hriImpact: -10,
     volatility: 0.7,
-    description: 'ارتفاع سعر الدولار يزيد القلق الاقتصادي ويقلل الأمل'
+    description: t('auto.engines_scenarioEngine.76.49e04133', 'ar')
   },
   dollar_fall: {
     gmiImpact: +10,
     cfiImpact: -15,
     hriImpact: +12,
     volatility: 0.5,
-    description: 'انخفاض الدولار يحسن المزاج ويقلل الخوف'
+    description: t('auto.engines_scenarioEngine.75.127e2f4a', 'ar')
   },
   positive_news: {
     gmiImpact: +20,
     cfiImpact: -15,
     hriImpact: +18,
     volatility: 0.4,
-    description: 'الأخبار الإيجابية ترفع المزاج والأمل وتقلل الخوف'
+    description: t('auto.engines_scenarioEngine.74.87bc042d', 'ar')
   },
   negative_news: {
     gmiImpact: -25,
     cfiImpact: +25,
     hriImpact: -15,
     volatility: 0.8,
-    description: 'الأخبار السلبية تخفض المزاج وترفع الخوف'
+    description: t('auto.engines_scenarioEngine.73.f0c02af4', 'ar')
   },
   political_crisis: {
     gmiImpact: -30,
     cfiImpact: +35,
     hriImpact: -20,
     volatility: 0.9,
-    description: 'الأزمات السياسية تسبب قلقاً جماعياً حاداً'
+    description: t('auto.engines_scenarioEngine.72.bf17bfb8', 'ar')
   },
   economic_improvement: {
     gmiImpact: +25,
     cfiImpact: -20,
     hriImpact: +22,
     volatility: 0.3,
-    description: 'التحسن الاقتصادي يعزز الثقة والتفاؤل'
+    description: t('auto.engines_scenarioEngine.71.7de5bba3', 'ar')
   },
   security_threat: {
     gmiImpact: -35,
     cfiImpact: +40,
     hriImpact: -25,
     volatility: 0.95,
-    description: 'التهديدات الأمنية تسبب خوفاً جماعياً شديداً'
+    description: t('auto.engines_scenarioEngine.70.97a27fae', 'ar')
   },
   peace_agreement: {
     gmiImpact: +40,
     cfiImpact: -30,
     hriImpact: +35,
     volatility: 0.2,
-    description: 'اتفاقيات السلام تحدث تحولاً إيجابياً كبيراً'
+    description: t('auto.engines_scenarioEngine.69.588d7d12', 'ar')
   },
   market_crash: {
     gmiImpact: -40,
     cfiImpact: +45,
     hriImpact: -30,
     volatility: 0.95,
-    description: 'انهيار الأسواق يسبب ذعراً جماعياً'
+    description: t('auto.engines_scenarioEngine.68.c9c1ef34', 'ar')
   },
   market_rally: {
     gmiImpact: +30,
     cfiImpact: -25,
     hriImpact: +25,
     volatility: 0.4,
-    description: 'صعود الأسواق يعزز التفاؤل والثقة'
+    description: t('auto.engines_scenarioEngine.67.1524392b', 'ar')
   },
   oil_price_up: {
     gmiImpact: -10,
     cfiImpact: +15,
     hriImpact: -8,
     volatility: 0.5,
-    description: 'ارتفاع أسعار النفط يزيد القلق الاقتصادي'
+    description: t('auto.engines_scenarioEngine.66.22d8e57d', 'ar')
   },
   oil_price_down: {
     gmiImpact: +8,
     cfiImpact: -10,
     hriImpact: +10,
     volatility: 0.4,
-    description: 'انخفاض أسعار النفط يخفف الضغط الاقتصادي'
+    description: t('auto.engines_scenarioEngine.65.7abc2f8b', 'ar')
   },
   custom: {
     gmiImpact: 0,
     cfiImpact: 0,
     hriImpact: 0,
     volatility: 0.5,
-    description: 'حدث مخصص - التأثير يعتمد على السياق'
+    description: t('auto.engines_scenarioEngine.64.b0eaf3c6', 'ar')
   }
 };
 
-// معاملات الإطار الزمني
+//   
 const TIMEFRAME_MULTIPLIERS: Record<string, number> = {
-  '24h': 0.5,   // التأثير يكون نصف القوة في 24 ساعة
-  '48h': 0.75,  // ثلاثة أرباع في 48 ساعة
-  '1week': 1.0, // كامل التأثير في أسبوع
-  '1month': 1.2 // قد يتضخم التأثير مع الوقت
+  '24h': 0.5,   //      24 
+  '48h': 0.75,  //    48 
+  '1week': 1.0, //    
+  '1month': 1.2 //     
 };
 
 /**
- * محاكاة سيناريو مستقبلي
+ *   
  */
 export function simulateScenario(input: ScenarioInput): ScenarioOutput {
   const impact = EVENT_IMPACTS[input.event];
   const timeMultiplier = TIMEFRAME_MULTIPLIERS[input.timeframe] || 1.0;
   
-  // حساب التغييرات مع مراعاة الإطار الزمني
+  //      
   const gmiChange = Math.round(impact.gmiImpact * timeMultiplier);
   const cfiChange = Math.round(impact.cfiImpact * timeMultiplier);
   const hriChange = Math.round(impact.hriImpact * timeMultiplier);
   
-  // حساب القيم المتوقعة مع الحدود
+  //     
   const predictedGMI = Math.max(-100, Math.min(100, input.currentGMI + gmiChange));
   const predictedCFI = Math.max(0, Math.min(100, input.currentCFI + cfiChange));
   const predictedHRI = Math.max(0, Math.min(100, input.currentHRI + hriChange));
   
-  // تحديد الاتجاه
+  //  
   let trend: ScenarioOutput['trend'] = 'stable';
   if (gmiChange > 10 && hriChange > 10) trend = 'improving';
   else if (gmiChange < -10 || cfiChange > 20) trend = 'declining';
   else if (impact.volatility > 0.7) trend = 'volatile';
   
-  // حساب الثقة بناءً على التقلب والبيانات
+  //      
   const confidence = Math.round((1 - impact.volatility * 0.5) * 100);
   
-  // توليد التفسير
+  //  
   const explanation = generateExplanation(input, impact, {
     gmiChange, cfiChange, hriChange, predictedGMI, predictedCFI, predictedHRI
   });
   
-  // توليد التوصية
+  //  
   const recommendation = generateRecommendation(predictedGMI, predictedCFI, predictedHRI, trend);
   
-  // تحديد المخاطر والفرص
+  //   
   const { risks, opportunities } = identifyRisksAndOpportunities(
     predictedGMI, predictedCFI, predictedHRI, input.event
   );
@@ -233,7 +235,7 @@ export function simulateScenario(input: ScenarioInput): ScenarioOutput {
 }
 
 /**
- * توليد التفسير
+ *  
  */
 function generateExplanation(
   input: ScenarioInput,
@@ -241,10 +243,10 @@ function generateExplanation(
   changes: { gmiChange: number; cfiChange: number; hriChange: number; predictedGMI: number; predictedCFI: number; predictedHRI: number }
 ): string {
   const timeframeText: Record<string, string> = {
-    '24h': 'خلال 24 ساعة',
-    '48h': 'خلال 48 ساعة',
-    '1week': 'خلال الأسبوع القادم',
-    '1month': 'خلال الشهر القادم'
+    '24h': t('auto.engines_scenarioEngine.63.665001c0', 'ar'),
+    '48h': t('auto.engines_scenarioEngine.62.bcd143a4', 'ar'),
+    '1week': t('auto.engines_scenarioEngine.61.b9bfc056', 'ar'),
+    '1month': t('auto.engines_scenarioEngine.60.bc2ac9d8', 'ar')
   };
   
   let explanation = `${impact.description}\n\n`;
@@ -252,27 +254,27 @@ function generateExplanation(
   
   // GMI
   if (changes.gmiChange !== 0) {
-    const direction = changes.gmiChange > 0 ? 'يرتفع' : 'ينخفض';
-    explanation += `- المزاج العام (GMI) ${direction} من ${input.currentGMI} إلى ${changes.predictedGMI} (${changes.gmiChange > 0 ? '+' : ''}${changes.gmiChange})\n`;
+    const direction = changes.gmiChange > 0 ? t('auto.engines_scenarioEngine.59.cd1b8fb0', 'ar') : t('auto.engines_scenarioEngine.58.76038295', 'ar');
+    explanation += `-   (GMI) ${direction}  ${input.currentGMI}  ${changes.predictedGMI} (${changes.gmiChange > 0 ? '+' : ''}${changes.gmiChange})\n`;
   }
   
   // CFI
   if (changes.cfiChange !== 0) {
-    const direction = changes.cfiChange > 0 ? 'يرتفع' : 'ينخفض';
-    explanation += `- مؤشر الخوف (CFI) ${direction} من ${input.currentCFI}% إلى ${changes.predictedCFI}% (${changes.cfiChange > 0 ? '+' : ''}${changes.cfiChange}%)\n`;
+    const direction = changes.cfiChange > 0 ? t('auto.engines_scenarioEngine.57.cd1b8fb0', 'ar') : t('auto.engines_scenarioEngine.56.76038295', 'ar');
+    explanation += `-   (CFI) ${direction}  ${input.currentCFI}%  ${changes.predictedCFI}% (${changes.cfiChange > 0 ? '+' : ''}${changes.cfiChange}%)\n`;
   }
   
   // HRI
   if (changes.hriChange !== 0) {
-    const direction = changes.hriChange > 0 ? 'يرتفع' : 'ينخفض';
-    explanation += `- مؤشر الأمل (HRI) ${direction} من ${input.currentHRI}% إلى ${changes.predictedHRI}% (${changes.hriChange > 0 ? '+' : ''}${changes.hriChange}%)\n`;
+    const direction = changes.hriChange > 0 ? t('auto.engines_scenarioEngine.55.cd1b8fb0', 'ar') : t('auto.engines_scenarioEngine.54.76038295', 'ar');
+    explanation += `-   (HRI) ${direction}  ${input.currentHRI}%  ${changes.predictedHRI}% (${changes.hriChange > 0 ? '+' : ''}${changes.hriChange}%)\n`;
   }
   
   return explanation;
 }
 
 /**
- * توليد التوصية
+ *  
  */
 function generateRecommendation(
   predictedGMI: number,
@@ -281,30 +283,30 @@ function generateRecommendation(
   trend: ScenarioOutput['trend']
 ): string {
   if (trend === 'improving' && predictedCFI < 50) {
-    return 'الظروف ستكون مواتية - يمكن التحرك بثقة معقولة';
+    return t('auto.engines_scenarioEngine.53.a92b2334', 'ar');
   }
   
   if (trend === 'declining' && predictedCFI > 70) {
-    return 'الحذر الشديد مطلوب - تأجيل القرارات الكبيرة حتى تستقر الأوضاع';
+    return t('auto.engines_scenarioEngine.52.a9064508', 'ar');
   }
   
   if (trend === 'volatile') {
-    return 'توقع تقلبات عالية - المراقبة المستمرة ضرورية والمرونة في التخطيط';
+    return t('auto.engines_scenarioEngine.51.462be557', 'ar');
   }
   
   if (predictedGMI > 30 && predictedHRI > 50) {
-    return 'الوضع سيكون إيجابياً - فرصة للتحرك التدريجي';
+    return t('auto.engines_scenarioEngine.50.90f32846', 'ar');
   }
   
   if (predictedGMI < -30) {
-    return 'الوضع سيكون صعباً - الانتظار والمراقبة هو الخيار الأمثل';
+    return t('auto.engines_scenarioEngine.49.c23b80df', 'ar');
   }
   
-  return 'المتابعة والتقييم المستمر - الوضع يحتاج مراقبة';
+  return t('auto.engines_scenarioEngine.48.39a8b42e', 'ar');
 }
 
 /**
- * تحديد المخاطر والفرص
+ *   
  */
 function identifyRisksAndOpportunities(
   predictedGMI: number,
@@ -315,49 +317,49 @@ function identifyRisksAndOpportunities(
   const risks: string[] = [];
   const opportunities: string[] = [];
   
-  // المخاطر
+  // 
   if (predictedCFI > 70) {
-    risks.push('خوف جماعي مرتفع قد يؤدي لقرارات متسرعة');
+    risks.push(t('auto.engines_scenarioEngine.47.e9636c9c', 'ar'));
   }
   if (predictedGMI < -40) {
-    risks.push('مزاج سلبي حاد قد يستمر لفترة');
+    risks.push(t('auto.engines_scenarioEngine.46.50f4ea81', 'ar'));
   }
   if (predictedHRI < 30) {
-    risks.push('انخفاض الأمل قد يبطئ التعافي');
+    risks.push(t('auto.engines_scenarioEngine.45.6c3982cd', 'ar'));
   }
   if (event === 'political_crisis' || event === 'security_threat') {
-    risks.push('الأحداث قد تتصاعد وتزيد التأثير السلبي');
+    risks.push(t('auto.engines_scenarioEngine.44.184ccf19', 'ar'));
   }
   
-  // الفرص
+  // 
   if (predictedGMI > 30 && predictedCFI < 40) {
-    opportunities.push('بيئة إيجابية للمبادرات الجديدة');
+    opportunities.push(t('auto.engines_scenarioEngine.43.229111b3', 'ar'));
   }
   if (predictedHRI > 60) {
-    opportunities.push('الأمل القوي يدعم التعافي السريع');
+    opportunities.push(t('auto.engines_scenarioEngine.42.891ce73b', 'ar'));
   }
   if (event === 'economic_improvement' || event === 'peace_agreement') {
-    opportunities.push('فرصة لتحولات إيجابية طويلة المدى');
+    opportunities.push(t('auto.engines_scenarioEngine.41.f123f597', 'ar'));
   }
   if (predictedCFI < 30) {
-    opportunities.push('انخفاض الخوف يفتح المجال للتحرك بثقة');
+    opportunities.push(t('auto.engines_scenarioEngine.40.3269cd7e', 'ar'));
   }
   
   return { risks, opportunities };
 }
 
 /**
- * اكتشاف نوع الحدث من النص
+ *     
  */
 export function detectEventFromText(text: string): ScenarioEvent {
-  // لا نستخدم toLowerCase للنص العربي
+  //   toLowerCase  
   const lowerText = text.toLowerCase();
   
-  // الدولار - البحث في النص الأصلي والمحول
-  const hasDollar = text.includes('دولار') || lowerText.includes('dollar');
-  const hasRise = text.includes('ارتفاع') || text.includes('يرتفع') || text.includes('ارتفع') || 
-                  text.includes('استمر') || lowerText.includes('rise') || lowerText.includes('up');
-  const hasFall = text.includes('انخفاض') || text.includes('ينخفض') || text.includes('انخفض') || 
+  //  -     
+  const hasDollar = text.includes(t('auto.engines_scenarioEngine.39.23163ab2', 'ar')) || lowerText.includes('dollar');
+  const hasRise = text.includes(t('auto.engines_scenarioEngine.38.a6f465eb', 'ar')) || text.includes(t('auto.engines_scenarioEngine.37.cd1b8fb0', 'ar')) || text.includes(t('auto.engines_scenarioEngine.36.294c459c', 'ar')) || 
+                  text.includes(t('auto.engines_scenarioEngine.35.6d30287b', 'ar')) || lowerText.includes('rise') || lowerText.includes('up');
+  const hasFall = text.includes(t('auto.engines_scenarioEngine.34.e990bd85', 'ar')) || text.includes(t('auto.engines_scenarioEngine.33.76038295', 'ar')) || text.includes(t('auto.engines_scenarioEngine.32.9bfee223', 'ar')) || 
                   lowerText.includes('fall') || lowerText.includes('down');
   
   if (hasDollar && hasRise) {
@@ -367,47 +369,47 @@ export function detectEventFromText(text: string): ScenarioEvent {
     return 'dollar_fall';
   }
   
-  // الأخبار
-  if (lowerText.includes('أخبار إيجابية') || lowerText.includes('positive news') || lowerText.includes('تحسن')) {
+  // 
+  if (lowerText.includes(t('auto.engines_scenarioEngine.31.f9a20d52', 'ar')) || lowerText.includes('positive news') || lowerText.includes(t('auto.engines_scenarioEngine.30.ab4c7e3d', 'ar'))) {
     return 'positive_news';
   }
-  if (lowerText.includes('أخبار سلبية') || lowerText.includes('negative news') || lowerText.includes('تدهور')) {
+  if (lowerText.includes(t('auto.engines_scenarioEngine.29.3bbb4e94', 'ar')) || lowerText.includes('negative news') || lowerText.includes(t('auto.engines_scenarioEngine.28.b3af2cb5', 'ar'))) {
     return 'negative_news';
   }
   
-  // السياسة
-  if (lowerText.includes('أزمة سياسية') || lowerText.includes('political crisis') || lowerText.includes('صراع')) {
+  // 
+  if (lowerText.includes(t('auto.engines_scenarioEngine.27.0813d5bb', 'ar')) || lowerText.includes('political crisis') || lowerText.includes(t('auto.engines_scenarioEngine.26.393955e1', 'ar'))) {
     return 'political_crisis';
   }
-  if (lowerText.includes('سلام') || lowerText.includes('peace') || lowerText.includes('اتفاق')) {
+  if (lowerText.includes(t('auto.engines_scenarioEngine.25.fa65ac78', 'ar')) || lowerText.includes('peace') || lowerText.includes(t('auto.engines_scenarioEngine.24.48d894f8', 'ar'))) {
     return 'peace_agreement';
   }
   
-  // الأمن
-  if (lowerText.includes('تهديد') || lowerText.includes('threat') || lowerText.includes('خطر أمني')) {
+  // 
+  if (lowerText.includes(t('auto.engines_scenarioEngine.23.dcdf69b3', 'ar')) || lowerText.includes('threat') || lowerText.includes(t('auto.engines_scenarioEngine.22.2b1eabd6', 'ar'))) {
     return 'security_threat';
   }
   
-  // الاقتصاد
-  if (lowerText.includes('تحسن اقتصادي') || lowerText.includes('economic improvement') || lowerText.includes('نمو')) {
+  // 
+  if (lowerText.includes(t('auto.engines_scenarioEngine.21.e5718b36', 'ar')) || lowerText.includes('economic improvement') || lowerText.includes(t('auto.engines_scenarioEngine.20.25e94d3e', 'ar'))) {
     return 'economic_improvement';
   }
   
-  // السوق
-  if (lowerText.includes('انهيار') || lowerText.includes('crash') || lowerText.includes('هبوط حاد')) {
+  // 
+  if (lowerText.includes(t('auto.engines_scenarioEngine.19.417cc6aa', 'ar')) || lowerText.includes('crash') || lowerText.includes(t('auto.engines_scenarioEngine.18.743100ad', 'ar'))) {
     return 'market_crash';
   }
-  if (lowerText.includes('صعود') || lowerText.includes('rally') || lowerText.includes('ارتفاع السوق')) {
+  if (lowerText.includes(t('auto.engines_scenarioEngine.17.b82985c6', 'ar')) || lowerText.includes('rally') || lowerText.includes(t('auto.engines_scenarioEngine.16.bc62e7ae', 'ar'))) {
     return 'market_rally';
   }
   
-  // النفط
-  if ((lowerText.includes('نفط') || lowerText.includes('oil')) && 
-      (lowerText.includes('ارتفاع') || lowerText.includes('up'))) {
+  // 
+  if ((lowerText.includes(t('auto.engines_scenarioEngine.15.02782624', 'ar')) || lowerText.includes('oil')) && 
+      (lowerText.includes(t('auto.engines_scenarioEngine.14.a6f465eb', 'ar')) || lowerText.includes('up'))) {
     return 'oil_price_up';
   }
-  if ((lowerText.includes('نفط') || lowerText.includes('oil')) && 
-      (lowerText.includes('انخفاض') || lowerText.includes('down'))) {
+  if ((lowerText.includes(t('auto.engines_scenarioEngine.13.02782624', 'ar')) || lowerText.includes('oil')) && 
+      (lowerText.includes(t('auto.engines_scenarioEngine.12.e990bd85', 'ar')) || lowerText.includes('down'))) {
     return 'oil_price_down';
   }
   
@@ -415,29 +417,29 @@ export function detectEventFromText(text: string): ScenarioEvent {
 }
 
 /**
- * اكتشاف الإطار الزمني من النص
+ *     
  */
 export function detectTimeframeFromText(text: string): ScenarioInput['timeframe'] {
   const lowerText = text.toLowerCase();
   
-  if (lowerText.includes('24 ساعة') || lowerText.includes('غداً') || lowerText.includes('tomorrow') || lowerText.includes('24h')) {
+  if (lowerText.includes(t('auto.engines_scenarioEngine.11.bef1af51', 'ar')) || lowerText.includes(t('auto.engines_scenarioEngine.10.d5da7943', 'ar')) || lowerText.includes('tomorrow') || lowerText.includes('24h')) {
     return '24h';
   }
-  if (lowerText.includes('48 ساعة') || lowerText.includes('يومين') || lowerText.includes('48h')) {
+  if (lowerText.includes(t('auto.engines_scenarioEngine.9.b91bbb18', 'ar')) || lowerText.includes(t('auto.engines_scenarioEngine.8.f0e89286', 'ar')) || lowerText.includes('48h')) {
     return '48h';
   }
-  if (lowerText.includes('أسبوع') || lowerText.includes('week') || lowerText.includes('الأسبوع القادم')) {
+  if (lowerText.includes(t('auto.engines_scenarioEngine.7.b9028253', 'ar')) || lowerText.includes('week') || lowerText.includes(t('auto.engines_scenarioEngine.6.8de32d1d', 'ar'))) {
     return '1week';
   }
-  if (lowerText.includes('شهر') || lowerText.includes('month')) {
+  if (lowerText.includes(t('auto.engines_scenarioEngine.5.492a5598', 'ar')) || lowerText.includes('month')) {
     return '1month';
   }
   
-  return '1week'; // الافتراضي
+  return '1week'; // 
 }
 
 /**
- * توليد رد السيناريو للـ AI
+ *     AI
  */
 export function generateScenarioResponse(
   question: string,
@@ -456,28 +458,28 @@ export function generateScenarioResponse(
     topic
   });
   
-  // بناء الرد
-  let response = `**محاكاة السيناريو:**\n\n`;
+  //  
+  let response = t('auto.engines_scenarioEngine.4.05f0cf4b', 'ar');
   response += scenario.explanation + '\n';
   
-  response += `\n**التوصية:**\n${scenario.recommendation}\n`;
+  response += `\n**:**\n${scenario.recommendation}\n`;
   
   if (scenario.risks.length > 0) {
-    response += `\n**المخاطر المحتملة:**\n`;
+    response += t('auto.engines_scenarioEngine.3.9509172a', 'ar');
     scenario.risks.forEach(risk => {
       response += `- ${risk}\n`;
     });
   }
   
   if (scenario.opportunities.length > 0) {
-    response += `\n**الفرص المحتملة:**\n`;
+    response += t('auto.engines_scenarioEngine.2.2f70c2ba', 'ar');
     scenario.opportunities.forEach(opp => {
       response += `- ${opp}\n`;
     });
   }
   
-  response += `\n**مستوى الثقة في هذا التوقع:** ${scenario.confidence}%`;
-  response += `\n\n---\nهل تريد استكشاف سيناريو آخر أو معرفة المزيد عن العوامل المؤثرة؟`;
+  response += `\n**    :** ${scenario.confidence}%`;
+  response += t('auto.engines_scenarioEngine.1.93d26351', 'ar');
   
   return response;
 }

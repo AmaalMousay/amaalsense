@@ -1,13 +1,13 @@
 /**
  * Real-Time Data Pipeline - AmalSense Wave Integration
- * المحرك المطور: يجلب البيانات، يحولها لمتجهات، ويخزنها في الذاكرة التراكمية.
+ *  :        .
  */
 
-// 1. الاستيرادات الضرورية (تأكدي من صحة المسارات في مشروعك)
+// 1.   (     )
 import { EventVector, createQuantumEvent } from '../utils/eventVectorModel';
 import { storeAnalysisRecord } from './learningStore';
 
-// --- 2. المبدل الذكي: تحويل أكواد GDELT إلى مواضيع AmalSense ---
+// --- 2.  :   GDELT   AmalSense ---
 function mapGDELTToTopic(code: string): 'politics' | 'conflict' | 'economy' | 'society' {
   const c = code.substring(0, 2);
   if (['01', '02', '10', '11'].includes(c)) return 'politics';
@@ -16,7 +16,7 @@ function mapGDELTToTopic(code: string): 'politics' | 'conflict' | 'economy' | 's
   return 'society';
 }
 
-// --- 3. المحول الموجي: تحويل نبرة الخبر إلى طور وسعة موجية ---
+// --- 3.  :        ---
 function convertToQuantumEmotions(tone: number, intensity: number) {
   const phase = ((tone + 100) / 200) * 2 * Math.PI;
   const amplitude = Math.max(0.1, Math.min(1, intensity));
@@ -29,7 +29,7 @@ function convertToQuantumEmotions(tone: number, intensity: number) {
 }
 
 /**
- * 4. وكيل GDELT: جلب أحداث العالم وتحويلها لموجات
+ * 4.  GDELT:     
  */
 export async function fetchGDELTEvents(): Promise<EventVector[]> {
   try {
@@ -63,7 +63,7 @@ export async function fetchGDELTEvents(): Promise<EventVector[]> {
 }
 
 /**
- * 5. وكيل البنك الدولي: جلب المؤشرات الاقتصادية
+ * 5.   :   
  */
 export async function fetchWorldBankIndicators(country: string = 'LY'): Promise<EventVector[]> {
   try {
@@ -91,7 +91,7 @@ export async function fetchWorldBankIndicators(country: string = 'LY'): Promise<
 }
 
 /**
- * 6. المحرك الرئيسي: المزامنة، التراكم، والتعلم
+ * 6.  :   
  */
 export async function fetchRealTimeData(): Promise<EventVector[]> {
   console.log('[DataPipeline] 🧠 Autonomous agents starting field research...');
@@ -103,7 +103,7 @@ export async function fetchRealTimeData(): Promise<EventVector[]> {
 
   const allEvents = [...gdelt, ...bank];
 
-  // --- عملية التخزين التراكمي (Accumulative Storage) ---
+  // ---    (Accumulative Storage) ---
   allEvents.forEach(event => {
     storeAnalysisRecord(
       {

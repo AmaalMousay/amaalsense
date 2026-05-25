@@ -1,9 +1,9 @@
 /**
  * Prediction Layer - Layer 25
  * 
- * تحليل البيانات التاريخية والتنبؤ بالمشاعر والمؤشرات في المستقبل
+ *        
  * 
- * الصيغ المستخدمة:
+ *  :
  * 1. Linear Regression: y(t+1) = α + β × t + ε
  * 2. Moving Average: MA(n) = (y(t) + y(t-1) + ... + y(t-n+1)) / n
  * 3. Exponential Smoothing: F(t+1) = α × y(t) + (1-α) × F(t)
@@ -70,7 +70,7 @@ class LinearRegressionModel {
   private beta: number = 0;
 
   /**
-   * تدريب نموذج الانحدار الخطي
+   *    
    * y(t+1) = α + β × t + ε
    */
   train(data: number[]): void {
@@ -88,7 +88,7 @@ class LinearRegressionModel {
   }
 
   /**
-   * التنبؤ بالقيمة التالية
+   *   
    */
   predict(steps: number = 1): number[] {
     const predictions: number[] = [];
@@ -103,7 +103,7 @@ class LinearRegressionModel {
   }
 
   /**
-   * حساب الخطأ
+   *  
    */
   calculateError(actual: number[], predicted: number[]): { mae: number; rmse: number; mape: number } {
     const errors = actual.map((a, i) => Math.abs(a - predicted[i]));
@@ -131,7 +131,7 @@ class MovingAverageModel {
   }
 
   /**
-   * حساب المتوسط المتحرك
+   *   
    * MA(n) = (y(t) + y(t-1) + ... + y(t-n+1)) / n
    */
   calculate(data: number[]): number[] {
@@ -148,7 +148,7 @@ class MovingAverageModel {
   }
 
   /**
-   * التنبؤ بالقيم المستقبلية
+   *   
    */
   predict(data: number[], steps: number = 1): number[] {
     const ma = this.calculate(data);
@@ -170,7 +170,7 @@ class ExponentialSmoothingModel {
   }
 
   /**
-   * التسوية الأسية
+   *  
    * F(t+1) = α × y(t) + (1-α) × F(t)
    */
   smooth(data: number[]): number[] {
@@ -185,7 +185,7 @@ class ExponentialSmoothingModel {
   }
 
   /**
-   * التنبؤ بالقيم المستقبلية
+   *   
    */
   predict(data: number[], steps: number = 1): number[] {
     const smoothed = this.smooth(data);
@@ -211,7 +211,7 @@ class ARIMAModel {
   }
 
   /**
-   * الفرق (Differencing)
+   *  (Differencing)
    */
   private difference(data: number[], order: number = 1): number[] {
     let result = [...data];
@@ -224,14 +224,14 @@ class ARIMAModel {
   }
 
   /**
-   * التنبؤ بالقيم المستقبلية
+   *   
    */
   predict(data: number[], steps: number = 1): number[] {
     const differenced = this.difference(data, this.d);
     const ma = new MovingAverageModel(this.q);
     const predictions = ma.predict(differenced, steps);
     
-    // إعادة البناء (Reverse differencing)
+    //   (Reverse differencing)
     let result = [...predictions];
     for (let i = 0; i < this.d; i++) {
       result = result.map((val, idx) => val + (data[data.length - 1 - i] || 0));
@@ -253,21 +253,21 @@ export class PredictionEngine {
   private arimaModel: ARIMAModel = new ARIMAModel(1, 1, 1);
 
   /**
-   * إضافة بيانات تاريخية
+   *   
    */
   addHistoricalData(data: HistoricalDataPoint[]): void {
     this.historicalData = [...this.historicalData, ...data].sort(
       (a, b) => a.date.getTime() - b.date.getTime()
     );
     
-    // الاحتفاظ بـ 90 يوم فقط
+    //   90  
     if (this.historicalData.length > 90) {
       this.historicalData = this.historicalData.slice(-90);
     }
   }
 
   /**
-   * التنبؤ بـ GMI (Global Mood Index)
+   *   GMI (Global Mood Index)
    */
   forecastGMI(days: number = 7): ForecastResult {
     const gmiData = this.historicalData.map(d => d.gmi);
@@ -276,19 +276,19 @@ export class PredictionEngine {
       throw new Error('Not enough historical data for prediction');
     }
     
-    // تدريب النموذج
+    //  
     this.linearModel.train(gmiData);
     
-    // التنبؤ
+    // 
     const predictions = this.linearModel.predict(days);
     const maValues = this.maModel.predict(gmiData, days);
     
-    // حساب الثقة
+    //  
     const trainingPredictions = this.linearModel.predict(gmiData.length);
     const error = this.linearModel.calculateError(gmiData, trainingPredictions);
     const confidence = Math.max(0, 100 - error.mape);
     
-    // تحويل إلى نتائج
+    //   
     const results: PredictionResult[] = predictions.map((pred, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i + 1);
@@ -315,7 +315,7 @@ export class PredictionEngine {
   }
 
   /**
-   * التنبؤ بـ CFI (Collective Fear Index)
+   *   CFI (Collective Fear Index)
    */
   forecastCFI(days: number = 7): ForecastResult {
     const cfiData = this.historicalData.map(d => d.cfi);
@@ -324,20 +324,20 @@ export class PredictionEngine {
       throw new Error('Not enough historical data for prediction');
     }
     
-    // استخدام Exponential Smoothing للخوف (أكثر استجابة)
+    //  Exponential Smoothing  ( )
     const predictions = this.esModel.predict(cfiData, days);
     
-    // حساب الثقة
+    //  
     const smoothed = this.esModel.smooth(cfiData);
     const error = this.linearModel.calculateError(cfiData, smoothed);
     const confidence = Math.max(0, 100 - error.mape);
     
-    // تحويل إلى نتائج
+    //   
     const results: PredictionResult[] = predictions.map((pred, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i + 1);
       
-      const margin = Math.abs(pred) * 0.15; // 15% margin (أكثر عدم يقين)
+      const margin = Math.abs(pred) * 0.15; // 15% margin (  )
       
       return {
         date,
@@ -359,7 +359,7 @@ export class PredictionEngine {
   }
 
   /**
-   * التنبؤ بـ HRI (Hope & Resilience Index)
+   *   HRI (Hope & Resilience Index)
    */
   forecastHRI(days: number = 7): ForecastResult {
     const hriData = this.historicalData.map(d => d.hri);
@@ -368,20 +368,20 @@ export class PredictionEngine {
       throw new Error('Not enough historical data for prediction');
     }
     
-    // استخدام Moving Average للأمل (أكثر استقراراً)
+    //  Moving Average  ( )
     const predictions = this.maModel.predict(hriData, days);
     
-    // حساب الثقة
+    //  
     const ma = this.maModel.calculate(hriData);
     const error = this.linearModel.calculateError(hriData, ma);
     const confidence = Math.max(0, 100 - error.mape);
     
-    // تحويل إلى نتائج
+    //   
     const results: PredictionResult[] = predictions.map((pred, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i + 1);
       
-      const margin = Math.abs(pred) * 0.08; // 8% margin (أقل عدم يقين)
+      const margin = Math.abs(pred) * 0.08; // 8% margin (  )
       
       return {
         date,
@@ -403,7 +403,7 @@ export class PredictionEngine {
   }
 
   /**
-   * تحليل السيناريوهات (متفائل، واقعي، متشائم)
+   *   (  )
    */
   analyzeScenarios(metric: 'GMI' | 'CFI' | 'HRI', days: number = 7): ScenarioAnalysis {
     let forecast: ForecastResult;
@@ -430,12 +430,12 @@ export class PredictionEngine {
   }
 
   /**
-   * التنبؤ بالموضوعات الناشئة
+   *   
    */
   forecastEmergingTopics(days: number = 7): { topic: string; probability: number; trend: 'emerging' | 'declining' | 'stable' }[] {
     const topicCounts: Record<string, number[]> = {};
     
-    // جمع البيانات حسب الموضوع
+    //    
     for (const data of this.historicalData) {
       if (!topicCounts[data.topic]) {
         topicCounts[data.topic] = [];
@@ -443,7 +443,7 @@ export class PredictionEngine {
       topicCounts[data.topic].push(1);
     }
     
-    // التنبؤ لكل موضوع
+    //   
     const predictions: { topic: string; probability: number; trend: 'emerging' | 'declining' | 'stable' }[] = [];
     
     for (const [topic, counts] of Object.entries(topicCounts)) {
@@ -468,14 +468,14 @@ export class PredictionEngine {
   }
 
   /**
-   * الحصول على البيانات التاريخية
+   *    
    */
   getHistoricalData(): HistoricalDataPoint[] {
     return this.historicalData;
   }
 
   /**
-   * مسح البيانات
+   *  
    */
   clearData(): void {
     this.historicalData = [];

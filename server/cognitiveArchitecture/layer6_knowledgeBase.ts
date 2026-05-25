@@ -1,3 +1,4 @@
+import { t } from "../_core/i18n";
 import { invokeLLM } from "../_core/llm";
 import { getCumulativeInsight } from "../engines/learningStore";
 
@@ -29,141 +30,141 @@ export interface CausalRelation {
 export const ECONOMIC_CAUSAL_RELATIONS: CausalRelation[] = [
   // Interest Rates
   {
-    cause: 'ارتفاع أسعار الفائدة',
-    effect: 'انخفاض أسعار الذهب',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.150.7d09fe22', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.149.abcff309', 'ar'),
     strength: 0.8,
     direction: 'negative',
     timelag: 'short',
     confidence: 0.9,
-    context: 'الفائدة المرتفعة تجعل السندات أكثر جاذبية من الذهب الذي لا يدر عائداً',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.148.d140663a', 'ar'),
     source: 'economic_theory'
   },
   {
-    cause: 'ارتفاع أسعار الفائدة',
-    effect: 'قوة الدولار',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.147.7d09fe22', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.146.0677fef7', 'ar'),
     strength: 0.85,
     direction: 'positive',
     timelag: 'immediate',
     confidence: 0.9,
-    context: 'الفائدة المرتفعة تجذب رؤوس الأموال الأجنبية للدولار',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.145.b5238828', 'ar'),
     source: 'economic_theory'
   },
   {
-    cause: 'ارتفاع أسعار الفائدة',
-    effect: 'تباطؤ النمو الاقتصادي',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.144.7d09fe22', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.143.513ec176', 'ar'),
     strength: 0.7,
     direction: 'negative',
     timelag: 'medium',
     confidence: 0.85,
-    context: 'تكلفة الاقتراض المرتفعة تقلل الاستثمار والإنفاق',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.142.77839003', 'ar'),
     source: 'economic_theory'
   },
   
   // Dollar Strength
   {
-    cause: 'قوة الدولار',
-    effect: 'انخفاض أسعار الذهب',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.141.0677fef7', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.140.abcff309', 'ar'),
     strength: 0.85,
     direction: 'negative',
     timelag: 'immediate',
     confidence: 0.95,
-    context: 'الذهب مسعّر بالدولار، فقوة الدولار تجعله أغلى للمشترين الأجانب',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.139.15db078a', 'ar'),
     source: 'market_mechanics'
   },
   {
-    cause: 'قوة الدولار',
-    effect: 'ضغط على الأسواق الناشئة',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.138.0677fef7', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.137.bca3e008', 'ar'),
     strength: 0.75,
     direction: 'negative',
     timelag: 'short',
     confidence: 0.8,
-    context: 'الدول المدينة بالدولار تعاني من ارتفاع تكلفة الديون',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.136.e7b2f2cb', 'ar'),
     source: 'economic_theory'
   },
   {
-    cause: 'قوة الدولار',
-    effect: 'انخفاض أسعار النفط',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.135.0677fef7', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.134.d6ea53e7', 'ar'),
     strength: 0.7,
     direction: 'negative',
     timelag: 'immediate',
     confidence: 0.85,
-    context: 'النفط مسعّر بالدولار، نفس منطق الذهب',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.133.16c5ab3c', 'ar'),
     source: 'market_mechanics'
   },
   
   // Inflation
   {
-    cause: 'ارتفاع التضخم',
-    effect: 'ارتفاع أسعار الذهب',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.132.daf7d9f3', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.131.85ebe3f5', 'ar'),
     strength: 0.8,
     direction: 'positive',
     timelag: 'short',
     confidence: 0.9,
-    context: 'الذهب ملاذ آمن ضد تآكل القوة الشرائية',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.130.b7b1efbe', 'ar'),
     source: 'historical_pattern'
   },
   {
-    cause: 'ارتفاع التضخم',
-    effect: 'رفع أسعار الفائدة',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.129.daf7d9f3', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.128.037453b3', 'ar'),
     strength: 0.85,
     direction: 'positive',
     timelag: 'short',
     confidence: 0.9,
-    context: 'البنوك المركزية ترفع الفائدة لمكافحة التضخم',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.127.0f99977a', 'ar'),
     source: 'monetary_policy'
   },
   
   // Geopolitical
   {
-    cause: 'توترات جيوسياسية',
-    effect: 'ارتفاع أسعار الذهب',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.126.da6ae27f', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.125.85ebe3f5', 'ar'),
     strength: 0.75,
     direction: 'positive',
     timelag: 'immediate',
     confidence: 0.85,
-    context: 'الذهب ملاذ آمن في أوقات عدم اليقين',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.124.908dd21d', 'ar'),
     source: 'historical_pattern'
   },
   {
-    cause: 'توترات جيوسياسية',
-    effect: 'ارتفاع أسعار النفط',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.123.da6ae27f', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.122.e8e75724', 'ar'),
     strength: 0.8,
     direction: 'positive',
     timelag: 'immediate',
     confidence: 0.9,
-    context: 'مخاوف من انقطاع الإمدادات',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.121.576ac413', 'ar'),
     source: 'historical_pattern'
   },
   
   // Media & Psychology
   {
-    cause: 'تغطية إعلامية سلبية مكثفة',
-    effect: 'ارتفاع مؤشر الخوف الجماعي',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.120.665898fb', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.119.645b3a18', 'ar'),
     strength: 0.85,
     direction: 'positive',
     timelag: 'immediate',
     confidence: 0.9,
-    context: 'الإعلام يضخم المشاعر السلبية',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.118.b166c8d5', 'ar'),
     source: 'psychological_research'
   },
   {
-    cause: 'ارتفاع مؤشر الخوف',
-    effect: 'بيع الأصول الخطرة',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.117.1c93c053', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.116.b64e2f5b', 'ar'),
     strength: 0.8,
     direction: 'positive',
     timelag: 'immediate',
     confidence: 0.85,
-    context: 'الخوف يدفع للهروب إلى الأمان',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.115.4bb7eae7', 'ar'),
     source: 'behavioral_finance'
   },
   {
-    cause: 'ارتفاع مؤشر الأمل',
-    effect: 'شراء الأصول الخطرة',
+    cause: t('auto.cognitiveArchitecture_layer6_knowledgeBase.114.9849e299', 'ar'),
+    effect: t('auto.cognitiveArchitecture_layer6_knowledgeBase.113.19b90cf3', 'ar'),
     strength: 0.7,
     direction: 'positive',
     timelag: 'short',
     confidence: 0.8,
-    context: 'التفاؤل يشجع على المخاطرة',
+    context: t('auto.cognitiveArchitecture_layer6_knowledgeBase.112.7ae92339', 'ar'),
     source: 'behavioral_finance'
   }
 ];
@@ -186,27 +187,27 @@ export const EXPERT_RULES: ExpertRule[] = [
   // Trading Rules
   {
     id: 'rule_fear_opportunity',
-    name: 'قاعدة الخوف والفرصة',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.111.c468b49a', 'ar'),
     condition: 'CFI > 70% AND HRI > 60%',
-    conclusion: 'قد تكون هناك فرصة شراء - الخوف المفرط مع وجود أمل يشير لقاع محتمل',
+    conclusion: t('auto.cognitiveArchitecture_layer6_knowledgeBase.110.73b01efd', 'ar'),
     confidence: 0.75,
     category: 'trading',
     actionable: true
   },
   {
     id: 'rule_greed_warning',
-    name: 'قاعدة الطمع والتحذير',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.109.b3b2fbac', 'ar'),
     condition: 'HRI > 80% AND CFI < 30%',
-    conclusion: 'تحذير من الإفراط في التفاؤل - قد تكون القمة قريبة',
+    conclusion: t('auto.cognitiveArchitecture_layer6_knowledgeBase.108.756fe69a', 'ar'),
     confidence: 0.7,
     category: 'trading',
     actionable: true
   },
   {
     id: 'rule_uncertainty',
-    name: 'قاعدة عدم اليقين',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.107.9b676af9', 'ar'),
     condition: 'GMI between 40-60%',
-    conclusion: 'السوق في حالة حيرة - تجنب القرارات الكبيرة',
+    conclusion: t('auto.cognitiveArchitecture_layer6_knowledgeBase.106.1eaabee3', 'ar'),
     confidence: 0.8,
     category: 'trading',
     actionable: true
@@ -215,18 +216,18 @@ export const EXPERT_RULES: ExpertRule[] = [
   // Psychology Rules
   {
     id: 'rule_media_amplification',
-    name: 'قاعدة التضخيم الإعلامي',
-    condition: 'تغطية إعلامية مكثفة لموضوع واحد',
-    conclusion: 'المشاعر الحقيقية قد تكون أقل حدة من الانطباع الإعلامي',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.105.feecdaaf', 'ar'),
+    condition: t('auto.cognitiveArchitecture_layer6_knowledgeBase.104.a4ab4897', 'ar'),
+    conclusion: t('auto.cognitiveArchitecture_layer6_knowledgeBase.103.a868b862', 'ar'),
     confidence: 0.85,
     category: 'media',
     actionable: false
   },
   {
     id: 'rule_crowd_contrarian',
-    name: 'قاعدة مخالفة القطيع',
-    condition: 'إجماع شبه كامل في اتجاه واحد',
-    conclusion: 'الإجماع الكامل غالباً يسبق انعكاس الاتجاه',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.102.90b17ef0', 'ar'),
+    condition: t('auto.cognitiveArchitecture_layer6_knowledgeBase.101.11b2db16', 'ar'),
+    conclusion: t('auto.cognitiveArchitecture_layer6_knowledgeBase.100.2166947a', 'ar'),
     confidence: 0.7,
     category: 'psychology',
     actionable: true
@@ -235,18 +236,18 @@ export const EXPERT_RULES: ExpertRule[] = [
   // Economic Rules
   {
     id: 'rule_fed_impact',
-    name: 'قاعدة تأثير الفيدرالي',
-    condition: 'قرار فائدة من الفيدرالي',
-    conclusion: 'توقع تقلبات قوية في الدولار والذهب والأسهم',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.99.b29df216', 'ar'),
+    condition: t('auto.cognitiveArchitecture_layer6_knowledgeBase.98.3584e73c', 'ar'),
+    conclusion: t('auto.cognitiveArchitecture_layer6_knowledgeBase.97.3d32ea0b', 'ar'),
     confidence: 0.9,
     category: 'economics',
     actionable: true
   },
   {
     id: 'rule_inflation_gold',
-    name: 'قاعدة التضخم والذهب',
-    condition: 'تضخم أعلى من المتوقع',
-    conclusion: 'الذهب يميل للارتفاع كتحوط ضد التضخم',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.96.951a8d3f', 'ar'),
+    condition: t('auto.cognitiveArchitecture_layer6_knowledgeBase.95.6a64caa1', 'ar'),
+    conclusion: t('auto.cognitiveArchitecture_layer6_knowledgeBase.94.f0ed6ee4', 'ar'),
     confidence: 0.85,
     category: 'economics',
     actionable: true
@@ -271,33 +272,33 @@ export interface HistoricalPattern {
 export const HISTORICAL_PATTERNS: HistoricalPattern[] = [
   {
     id: 'pattern_crisis_gold',
-    name: 'نمط الأزمات والذهب',
-    description: 'في الأزمات الكبرى، الذهب يرتفع كملاذ آمن',
-    triggers: ['أزمة مالية', 'حرب', 'وباء', 'انهيار بنك كبير'],
-    typicalOutcome: 'ارتفاع الذهب 10-30% خلال أسابيع',
-    duration: 'قصير إلى متوسط المدى',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.93.30cce789', 'ar'),
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.92.4c5cab2f', 'ar'),
+    triggers: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.91.1591323b', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.90.b2155e1c', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.89.aae445ae', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.88.54ab6384', 'ar')],
+    typicalOutcome: t('auto.cognitiveArchitecture_layer6_knowledgeBase.87.0866f834', 'ar'),
+    duration: t('auto.cognitiveArchitecture_layer6_knowledgeBase.86.276757d5', 'ar'),
     reliability: 0.85,
-    examples: ['أزمة 2008: الذهب ارتفع 25%', 'كورونا 2020: الذهب وصل لأعلى مستوى تاريخي']
+    examples: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.85.f8f91afe', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.84.2d06dc21', 'ar')]
   },
   {
     id: 'pattern_rate_cycle',
-    name: 'دورة أسعار الفائدة',
-    description: 'رفع الفائدة يضغط على الذهب، خفضها يدعمه',
-    triggers: ['قرارات الفيدرالي', 'تغير توقعات التضخم'],
-    typicalOutcome: 'علاقة عكسية بين الفائدة والذهب',
-    duration: 'متوسط إلى طويل المدى',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.83.cb7c731a', 'ar'),
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.82.c1db4f0f', 'ar'),
+    triggers: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.81.e1d774d7', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.80.97f88858', 'ar')],
+    typicalOutcome: t('auto.cognitiveArchitecture_layer6_knowledgeBase.79.617d85c9', 'ar'),
+    duration: t('auto.cognitiveArchitecture_layer6_knowledgeBase.78.ad373ad6', 'ar'),
     reliability: 0.9,
-    examples: ['2022-2023: رفع الفائدة ضغط على الذهب', '2020: خفض الفائدة دعم الذهب']
+    examples: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.77.3def511b', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.76.427a4d60', 'ar')]
   },
   {
     id: 'pattern_fear_reversal',
-    name: 'نمط انعكاس الخوف',
-    description: 'الخوف الشديد غالباً يسبق ارتداد السوق',
-    triggers: ['CFI > 80%', 'عناوين كارثية', 'بيع ذعر'],
-    typicalOutcome: 'ارتداد خلال أيام إلى أسابيع',
-    duration: 'قصير المدى',
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.75.e3578c0e', 'ar'),
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.74.6e6ff58a', 'ar'),
+    triggers: ['CFI > 80%', t('auto.cognitiveArchitecture_layer6_knowledgeBase.73.defe767c', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.72.0c9bf40c', 'ar')],
+    typicalOutcome: t('auto.cognitiveArchitecture_layer6_knowledgeBase.71.4de57846', 'ar'),
+    duration: t('auto.cognitiveArchitecture_layer6_knowledgeBase.70.4234ae80', 'ar'),
     reliability: 0.75,
-    examples: ['مارس 2020: ذروة الخوف سبقت أقوى ارتداد', 'أكتوبر 2022: قاع السوق']
+    examples: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.69.7026d219', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.68.efb11298', 'ar')]
   }
 ];
 
@@ -318,71 +319,71 @@ export interface EntityKnowledge {
 
 export const ENTITY_KNOWLEDGE: Record<string, EntityKnowledge> = {
   'gold': {
-    name: 'الذهب',
-    aliases: ['ذهب', 'gold', 'XAU', 'المعدن الأصفر'],
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.67.c851efa8', 'ar'),
+    aliases: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.66.d76ed4f3', 'ar'), 'gold', 'XAU', t('auto.cognitiveArchitecture_layer6_knowledgeBase.65.30806322', 'ar')],
     type: 'commodity',
-    description: 'معدن ثمين يُستخدم كملاذ آمن وتحوط ضد التضخم',
-    relatedEntities: ['الدولار', 'الفائدة', 'التضخم', 'الفضة'],
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.64.2d1f1111', 'ar'),
+    relatedEntities: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.63.c48cce56', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.62.9227e69d', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.61.bffc644c', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.60.cbd63816', 'ar')],
     keyFacts: [
-      'يتحرك عكسياً مع الدولار في 80% من الحالات',
-      'ملاذ آمن في أوقات الأزمات',
-      'لا يدر عائداً (عكس السندات)',
-      'الطلب الصيني والهندي يؤثر على الأسعار'
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.59.a1baea12', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.58.a7360cb1', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.57.6f927fb9', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.56.90b876e6', 'ar')
     ],
     volatility: 'medium'
   },
   'silver': {
-    name: 'الفضة',
-    aliases: ['فضة', 'silver', 'XAG'],
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.55.cbd63816', 'ar'),
+    aliases: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.54.25b08751', 'ar'), 'silver', 'XAG'],
     type: 'commodity',
-    description: 'معدن ثمين له استخدامات صناعية واستثمارية',
-    relatedEntities: ['الذهب', 'الدولار', 'الصناعة'],
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.53.62ec76a2', 'ar'),
+    relatedEntities: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.52.c851efa8', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.51.c48cce56', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.50.48b98e16', 'ar')],
     keyFacts: [
-      'أكثر تقلباً من الذهب',
-      '50% من الطلب صناعي (إلكترونيات، طاقة شمسية)',
-      'يتبع الذهب لكن بتحركات أكبر',
-      'نسبة الذهب/الفضة مؤشر مهم'
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.49.a0a4ead2', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.48.0980867c', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.47.048c27e2', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.46.1eb97e16', 'ar')
     ],
     volatility: 'high'
   },
   'dollar': {
-    name: 'الدولار الأمريكي',
-    aliases: ['دولار', 'USD', '$', 'الدولار'],
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.45.36761d8b', 'ar'),
+    aliases: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.44.23163ab2', 'ar'), 'USD', '$', t('auto.cognitiveArchitecture_layer6_knowledgeBase.43.c48cce56', 'ar')],
     type: 'currency',
-    description: 'العملة الاحتياطية العالمية',
-    relatedEntities: ['الفيدرالي', 'الفائدة', 'الذهب', 'النفط'],
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.42.8667e8b6', 'ar'),
+    relatedEntities: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.41.cb7921e5', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.40.9227e69d', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.39.c851efa8', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.38.79c8056d', 'ar')],
     keyFacts: [
-      'عملة الاحتياط العالمية',
-      'يتأثر بقرارات الفيدرالي',
-      'علاقة عكسية مع الذهب والسلع',
-      'مؤشر DXY يقيس قوته مقابل سلة عملات'
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.37.f190c386', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.36.b1d1a7fb', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.35.80e04566', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.34.68aa3161', 'ar')
     ],
     volatility: 'medium'
   },
   'fed': {
-    name: 'الفيدرالي الأمريكي',
-    aliases: ['الفيدرالي', 'Fed', 'البنك المركزي الأمريكي', 'الاحتياطي الفيدرالي'],
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.33.7e7e00cb', 'ar'),
+    aliases: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.32.cb7921e5', 'ar'), 'Fed', t('auto.cognitiveArchitecture_layer6_knowledgeBase.31.5b4928b6', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.30.2fa405fb', 'ar')],
     type: 'institution',
-    description: 'البنك المركزي الأمريكي، يتحكم في السياسة النقدية',
-    relatedEntities: ['الفائدة', 'الدولار', 'التضخم'],
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.29.5dc4bb15', 'ar'),
+    relatedEntities: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.28.9227e69d', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.27.c48cce56', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.26.bffc644c', 'ar')],
     keyFacts: [
-      'يجتمع 8 مرات سنوياً لتحديد الفائدة',
-      'هدفه: استقرار الأسعار والتوظيف الكامل',
-      'قراراته تؤثر على الأسواق العالمية',
-      'تصريحات رئيسه تحرك الأسواق'
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.25.dc60c13d', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.24.d36b1ae3', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.23.7887d4a9', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.22.9db28e6c', 'ar')
     ]
   },
   'oil': {
-    name: 'النفط',
-    aliases: ['نفط', 'oil', 'بترول', 'خام', 'برنت', 'WTI'],
+    name: t('auto.cognitiveArchitecture_layer6_knowledgeBase.21.79c8056d', 'ar'),
+    aliases: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.20.02782624', 'ar'), 'oil', t('auto.cognitiveArchitecture_layer6_knowledgeBase.19.507dbbb6', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.18.e2a373cb', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.17.97ce7e31', 'ar'), 'WTI'],
     type: 'commodity',
-    description: 'سلعة استراتيجية تؤثر على الاقتصاد العالمي',
-    relatedEntities: ['أوبك', 'الدولار', 'التضخم'],
+    description: t('auto.cognitiveArchitecture_layer6_knowledgeBase.16.581e4749', 'ar'),
+    relatedEntities: [t('auto.cognitiveArchitecture_layer6_knowledgeBase.15.cb85d763', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.14.c48cce56', 'ar'), t('auto.cognitiveArchitecture_layer6_knowledgeBase.13.bffc644c', 'ar')],
     keyFacts: [
-      'مسعّر بالدولار عالمياً',
-      'أوبك+ تتحكم في العرض',
-      'يؤثر على التضخم مباشرة',
-      'برنت للأسواق العالمية، WTI للأمريكية'
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.12.f33713ab', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.11.15a0a270', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.10.7d03a164', 'ar'),
+      t('auto.cognitiveArchitecture_layer6_knowledgeBase.9.13935878', 'ar')
     ],
     volatility: 'high'
   }
@@ -459,11 +460,11 @@ export function getApplicableRules(context: {
   // Check topic-based rules
   if (context.topic) {
     const topic = context.topic.toLowerCase();
-    if (topic.includes('إعلام') || topic.includes('أخبار')) {
+    if (topic.includes(t('auto.cognitiveArchitecture_layer6_knowledgeBase.8.c1d6b74e', 'ar')) || topic.includes(t('auto.cognitiveArchitecture_layer6_knowledgeBase.7.71960207', 'ar'))) {
       const rule = EXPERT_RULES.find(r => r.id === 'rule_media_amplification');
       if (rule) rules.push(rule);
     }
-    if (topic.includes('فيدرالي') || topic.includes('فائدة')) {
+    if (topic.includes(t('auto.cognitiveArchitecture_layer6_knowledgeBase.6.a6f9d332', 'ar')) || topic.includes(t('auto.cognitiveArchitecture_layer6_knowledgeBase.5.c09eeb5c', 'ar'))) {
       const rule = EXPERT_RULES.find(r => r.id === 'rule_fed_impact');
       if (rule) rules.push(rule);
     }
@@ -491,7 +492,7 @@ export function getRelevantPatterns(context: {
   // Check for topic-based patterns
   if (context.topic) {
     const topic = context.topic.toLowerCase();
-    if (topic.includes('ذهب') || topic.includes('فضة')) {
+    if (topic.includes(t('auto.cognitiveArchitecture_layer6_knowledgeBase.4.d76ed4f3', 'ar')) || topic.includes(t('auto.cognitiveArchitecture_layer6_knowledgeBase.3.25b08751', 'ar'))) {
       const crisisPattern = HISTORICAL_PATTERNS.find(p => p.id === 'pattern_crisis_gold');
       const ratePattern = HISTORICAL_PATTERNS.find(p => p.id === 'pattern_rate_cycle');
       if (crisisPattern) patterns.push(crisisPattern);
@@ -553,7 +554,7 @@ export function buildExplanationChain(
   let explanation = '';
   if (chain.length > 0) {
     explanation = chain.map((rel, i) => {
-      const prefix = i === 0 ? 'السبب الرئيسي: ' : 'وهذا بسبب: ';
+      const prefix = i === 0 ? t('auto.cognitiveArchitecture_layer6_knowledgeBase.2.7ffa230f', 'ar') : t('auto.cognitiveArchitecture_layer6_knowledgeBase.1.ab8aef6d', 'ar');
       return `${prefix}${rel.cause} → ${rel.effect} (${rel.context || ''})`;
     }).join('\n');
   }
@@ -597,7 +598,7 @@ export interface FactualQuery {
   question: string;
   context?: string;
   domain?: string;
-  topic?: string; // أضفنا الموضوع للبحث في الذاكرة
+  topic?: string; //     
 }
 
 export interface FactualResponse {
@@ -605,7 +606,7 @@ export interface FactualResponse {
   confidence: 'high' | 'medium' | 'low' | 'unknown';
   sources?: string[];
   admitsIgnorance: boolean;
-  cumulativeContext?: any; // تفاصيل من الذاكرة التراكمية
+  cumulativeContext?: any; //    
 }
 
 class KnowledgeEngineClass {
@@ -615,10 +616,10 @@ class KnowledgeEngineClass {
   async answerFactualQuestion(query: FactualQuery): Promise<FactualResponse> {
     const { question, context, domain, topic } = query;
 
-    // 1. البحث في الذاكرة التراكمية أولاً (The Self-Learning Check)
+    // 1.      (The Self-Learning Check)
     const memoryInsight = topic ? getCumulativeInsight(topic) : null;
 
-    // 2. بناء سياق مطور للـ LLM يحتوي على ما تعلمه النظام ذاتياً
+    // 2.     LLM      
     const memoryContext = memoryInsight && typeof memoryInsight !== 'string'
       ? `System Deep Memory: I have observed this topic ${memoryInsight.observationsCount} times. Average intensity: ${memoryInsight.totalIntensity}.`
       : "No prior cumulative memory on this specific vector.";
