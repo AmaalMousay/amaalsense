@@ -1,8 +1,10 @@
-import { perceptionLayer, RawDigitalInput } from './perceptionLayer';
+import { perceptionLayer } from './perceptionLayer';
+import type { RawDigitalInput } from './perceptionLayer';
 import { cognitiveLayer } from './cognitiveLayer';
-import { awarenessLayer, GlobalIndices } from './awarenessLayer';
+import { awarenessLayer } from './awarenessLayer';
+import type { GlobalIndices } from './awarenessLayer';
 
-export { RawDigitalInput };
+export type { RawDigitalInput };
 
 export interface DCFTAnalysisResult {
   indices: GlobalIndices;
