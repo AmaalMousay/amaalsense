@@ -1,29 +1,21 @@
 /**
- * AmalSense Network Engine
+ * AmalSense Network Engine — Central Orchestrator
  *
- * Central processing coordinator. It is the runtime nervous system: it resolves
- * the user question, decides whether live analysis is needed, collects signals,
- * runs independent analysis branches in parallel, builds EventVectors and sends
- * the compact context to the natural answer composer.
+ * Coordinates the end-to-end analysis pipeline by delegating to specialised
+ * sub-pipelines. This file is deliberately kept thin; the heavy lifting lives
+ * in analysisPipeline.ts and responsePipeline.ts.
  */
 
 import { layer1QuestionUnderstanding, type Layer1Output } from '../cognitiveEngine/questionUnderstanding';
 import { collectCountryData, collectTopicData, type CollectedData } from '../services/unifiedDataCollector';
 import { createUniversalEventVector, generateUniversalPrompt, type QuantumEventVector } from './eventVectorEngine';
-import { graphPipeline, type EventVector as ParallelSignalVector } from '../utils/graphPipeline';
-import { analyzeTextWithAI } from './emotionEngine';
-import { dcftEngine, type RawDigitalInput, type DCFTAnalysisResult } from '../dcft/dcftEngine';
-import { buildRAGContext, formatRAGForPrompt } from '../knowledge/ragSystem';
-import { storeAnalysisRecord, getCumulativeInsight } from './learningStore';
-import { MultiTurnContext } from './multiTurnContext';
 import { composeNaturalAnswer } from './responseBuilder';
-import { generatePredictionReport, type PredictionReport, type EmotionalDataPoint } from './predictionEngine';
-import { getCountryHistoricalIndices, getEmotionIndicesHistory } from '../_core/db';
+import { runAnalysisBranches } from './analysisPipeline';
+import { runResponseQualityCheck } from './responsePipeline';
+import { storeAnalysisRecord } from './learningStore';
+import { MultiTurnContext } from './multiTurnContext';
 import { CognitiveAnswerGate } from '../cognitiveArchitecture/cognitiveAnswerGate';
 import { ContextLockLayer } from '../cognitiveArchitecture/contextLockLayer';
-import { bindContexts, getContextualRecommendations } from '../cognitiveArchitecture/contextualBinding';
-import { CognitiveConsistencyCheck } from '../cognitiveArchitecture/cognitiveConsistencyCheck';
-import { assessAnalysis, formatAssessmentForDisplay } from '../cognitiveArchitecture/metacognition';
 
 export type EventVector = QuantumEventVector;
 
@@ -43,7 +35,7 @@ export interface NetworkContext {
   collection: {
     rawData: CollectedData;
     eventVector: EventVector;
-    parallelSignalVector?: ParallelSignalVector;
+    parallelSignalVector?: any;
     vectorPrompt: string;
     totalItems: number;
   };
@@ -54,11 +46,11 @@ export interface NetworkContext {
     confidence: number;
     resonanceInsight?: any;
     breakingNews?: any[];
-    prediction?: PredictionReport | null;
+    prediction?: any;
   };
   analytics?: NetworkContext['analysis'];
   dcft: {
-    result: DCFTAnalysisResult | null;
+    result: any;
     indices: { gmi: number; cfi: number; hri: number };
     alertLevel: string;
   };
@@ -79,12 +71,10 @@ export interface NetworkContext {
 
 function requiresLiveAnalysis(question: string, layer1: Layer1Output): boolean {
   const q = question.toLowerCase();
-  const analysisWords = [
-    'analyze', 'analysis', 'today', 'now', 'current', 'mood', 'sentiment', 'trend', 'predict', 'prediction',
-    'compare', 'comparison', 'fear', 'risk', 'market', 'country', 'news', 'social', 'weather', 'emotion',
-  ];
-  if (analysisWords.some(word => q.includes(word))) return true;
-  return ['sentiment', 'trend', 'comparison', 'prediction', 'recommendation'].includes(layer1.questionType as any);
+  const words = ['analyze','analysis','today','now','current','mood','sentiment','trend','predict','prediction',
+    'compare','comparison','fear','risk','market','country','news','social','weather','emotion'];
+  if (words.some((w) => q.includes(w))) return true;
+  return ['sentiment','trend','comparison','prediction','recommendation'].includes(layer1.questionType as any);
 }
 
 function createEmptyCollectedData(query: string): CollectedData {
@@ -95,104 +85,61 @@ function createEmptyVector(query: string): EventVector {
   return createUniversalEventVector(createEmptyCollectedData(query));
 }
 
-export async function executeNetworkEngine(userId: string, question: string, language: string = 'ar'): Promise<NetworkContext> {
+// ---------------------------------------------------------------------------
+// Main entry point
+// ---------------------------------------------------------------------------
+
+export async function executeNetworkEngine(
+  userId: string, question: string, language = 'ar',
+): Promise<NetworkContext> {
   const startTime = Date.now();
   const requestId = `net_${Date.now()}`;
   const conversationId = `user_${userId}`;
   const contextResolution = MultiTurnContext.resolveReferences(conversationId, question);
   const effectiveQuestion = contextResolution.resolvedQuestion || question;
+
   const layer1 = await layer1QuestionUnderstanding(effectiveQuestion, language);
 
-  // ================================================================
-  // Layer 1: Context Lock - prevent context drift in follow-ups
-  // ================================================================
+  // --- Context Lock Layer ---
   const contextLock = ContextLockLayer.getLock(conversationId);
   if (contextLock) {
     const country = layer1.geographicContext?.countryCode || 'global';
     const validation = ContextLockLayer.validateContext(conversationId, effectiveQuestion, country);
     if (!validation.isValid) {
-      const lockResponse = `I notice you are asking about a different topic or country. ${validation.suggestion}`;
-      const emptyVector = createEmptyVector(effectiveQuestion);
-      return {
-        requestId,
-        userId,
-        timestamp: new Date(),
-        language,
-        gate: { layer1Output: layer1, intent: 'context_clarification', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: false },
-        collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
-        analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
-        analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
-        dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
-        generation: { response: lockResponse, suggestions: [], languageEnforced: true },
-        executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: ['QuestionUnderstanding', 'ContextLock'], errors: [validation.reason || 'Context drift detected'] },
-        status: 'completed',
-      };
+      const emptyV = createEmptyVector(effectiveQuestion);
+      return earlyResponse(requestId, userId, effectiveQuestion, language, layer1, startTime,
+        `I notice you changed topic. ${validation.suggestion}`, ['ContextLock'], [validation.reason || 'Context drift'],
+      );
     }
   }
 
-  // ================================================================
-  // Layer 2: Cognitive Answer Gate - early decision gate
-  // ================================================================
-  const gateAnswerCtx = {
+  // --- Cognitive Answer Gate ---
+  const gateDecision = CognitiveAnswerGate.makeDecision({
     question: effectiveQuestion,
-    availableData: {
-      hasNews: false,
-      hasSocialMedia: false,
-      hasHistoricalData: false,
-      dataQuality: 'medium' as const,
-      dataRecency: 'none' as const,
-    },
-    questionComplexity: (layer1.questionType === 'explanation' || layer1.questionType === 'prediction' ? 'complex' : 'moderate') as 'simple' | 'moderate' | 'complex',
+    availableData: { hasNews: false, hasSocialMedia: false, hasHistoricalData: false, dataQuality: 'medium' as const, dataRecency: 'none' as const },
+    questionComplexity: (layer1.questionType === 'explanation' || layer1.questionType === 'prediction' ? 'complex' : 'moderate') as any,
     domainKnowledge: 'medium' as const,
-  };
-  const gateDecision = CognitiveAnswerGate.makeDecision(gateAnswerCtx);
-  const gateMessage = CognitiveAnswerGate.generateGateResponse(gateDecision);
+  });
 
   if (gateDecision.decision === 'clarify_question' || gateDecision.decision === 'admit_ignorance') {
-    const emptyVector = createEmptyVector(effectiveQuestion);
-    return {
-      requestId, userId, timestamp: new Date(), language,
-      gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: false },
-      collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
-      analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: gateDecision.confidence },
-      analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: gateDecision.confidence },
-      dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
-      generation: { response: gateMessage, suggestions: [], languageEnforced: true },
-      executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: ['QuestionUnderstanding', 'AnswerGate'], errors: [gateDecision.reasoning] },
-      status: 'completed',
-    };
+    return earlyResponse(requestId, userId, effectiveQuestion, language, layer1, startTime,
+      CognitiveAnswerGate.generateGateResponse(gateDecision), ['AnswerGate'], [gateDecision.reasoning],
+    );
   }
 
-  if (!requiresLiveAnalysis(effectiveQuestion, layer1)) {
-    if (gateDecision.decision === 'search_more_data') {
-      // Fall through to full analysis
-    } else {
-      const directResponse = await composeNaturalAnswer({
-        question: effectiveQuestion,
-        language,
-        intent: layer1.questionType,
-        route: 'direct',
-        limitations: ['No live data analysis was required for this question.'],
-      });
-      const emptyVector = createEmptyVector(effectiveQuestion);
-      ContextLockLayer.createLock(conversationId, layer1.entities?.topics?.[0] || effectiveQuestion, 'global', 'general');
-      return {
-        requestId, userId, timestamp: new Date(), language,
-        gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: true },
-        collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
-        analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
-        analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
-        dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
-        generation: { response: directResponse, suggestions: [], languageEnforced: true },
-        executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: ['QuestionUnderstanding', 'NaturalGeneration'], errors: [] },
-        status: 'completed',
-      };
-    }
+  // --- Direct answer (no live analysis) ---
+  if (!requiresLiveAnalysis(effectiveQuestion, layer1) && gateDecision.decision !== 'search_more_data') {
+    const directResponse = await composeNaturalAnswer({
+      question: effectiveQuestion, language, intent: layer1.questionType, route: 'direct',
+      limitations: ['No live analysis was required.'],
+    });
+    ContextLockLayer.createLock(conversationId, layer1.entities?.topics?.[0] || effectiveQuestion, 'global', 'general');
+    return earlyResponse(requestId, userId, effectiveQuestion, language, layer1, startTime,
+      directResponse, ['NaturalGeneration'], [], { needsLLM: true },
+    );
   }
 
-  // ================================================================
-  // Data Collection Phase
-  // ================================================================
+  // --- Live analysis path ---
   const detectedCountry = detectCountryInQuery(effectiveQuestion, layer1);
   const intent = detectedCountry.code !== 'GLOBAL' ? 'country' : 'topic';
   const rawData = detectedCountry.code !== 'GLOBAL'
@@ -200,363 +147,159 @@ export async function executeNetworkEngine(userId: string, question: string, lan
     : await collectTopicData(layer1.entities?.topics?.[0] || effectiveQuestion);
 
   const eventVector = createUniversalEventVector(rawData);
-  const vectorPrompt = generateUniversalPrompt(eventVector, language);
-  const graphInput = rawData.items.map(item => `${item.title} ${item.description || ''}`).join('\n') || effectiveQuestion;
+  const graphInput = rawData.items.map((i) => `${i.title} ${i.description || ''}`).join('\n') || effectiveQuestion;
   const topicKey = detectedCountry.code !== 'GLOBAL' ? detectedCountry.name : (layer1.entities?.topics?.[0] || 'Global_Trends');
-  const resonanceInsight = getCumulativeInsight(topicKey);
 
-  // ================================================================
-  // Parallel Analysis Branches
-  // ================================================================
-  const [emotions, dcftResult, ragContext, parallelSignalVector, predictionReport] = await Promise.all([
-    analyzeEmotionsFromData(rawData),
-    executeDCFTProcess(rawData),
-    buildRAGContext(effectiveQuestion),
-    graphPipeline(graphInput),
-    buildPredictionContext(effectiveQuestion, detectedCountry),
-  ]);
+  // Parallel analysis branches — delegated to analysisPipeline
+  const branches = await runAnalysisBranches(rawData, effectiveQuestion, graphInput, topicKey, detectedCountry);
 
-  // ================================================================
-  // Layer 3: Contextual Binding (cultural, temporal, situational)
-  // ================================================================
-  const boundContext = bindContexts(
-    detectedCountry.name,
-    Date.now(),
-    rawData.items.map(item => item.title),
-    dcftResult?.indices?.cfi ? dcftResult.indices.cfi / 100 : 0.5,
-  );
-  const contextualRecommendations = getContextualRecommendations(boundContext);
-  const boundEmotions = {
-    fear: emotions.vector.fear || 0,
-    hope: emotions.vector.hope || 0,
-    anger: emotions.vector.anger || 0,
-    mood: (dcftResult?.indices?.gmi ?? 0) / 100,
-  };
-
-  // ================================================================
-  // Knowledge + Natural Answer Generation
-  // ================================================================
-  const knowledgeContext = formatRAGForPrompt(ragContext);
+  // Response generation
   const finalResponse = await composeNaturalAnswer({
-    question: effectiveQuestion,
-    language,
-    intent,
-    route: 'analysis',
-    eventVector: { central: eventVector, parallel: parallelSignalVector, prediction: predictionReport },
-    indices: dcftResult?.indices,
-    emotions: emotions.vector,
-    confidence: emotions.dominantEmotion ? 80 : layer1.confidence,
-    evidence: rawData.items.slice(0, 6).map(item => ({ title: item.title, source: item.source, url: item.url })),
-    memory: resonanceInsight,
-    knowledgeContext,
+    question: effectiveQuestion, language, intent, route: 'analysis',
+    eventVector: { central: eventVector, parallel: branches.parallelSignalVector, prediction: branches.predictionReport },
+    indices: branches.dcftResult?.indices,
+    emotions: branches.emotions.vector,
+    confidence: branches.emotions.dominantEmotion ? 80 : layer1.confidence,
+    evidence: rawData.items.slice(0, 6).map((i) => ({ title: i.title, source: i.source, url: i.url })),
+    memory: branches.resonanceInsight,
+    knowledgeContext: branches.knowledgeContext,
     limitations: [
-      ...(rawData.items.length === 0 ? ['No live source items were available.'] : []),
-      ...(!predictionReport && isPredictionQuestion(effectiveQuestion) ? ['Prediction was requested, but there was not enough historical data to generate a reliable forecast.'] : []),
-      ...(contextualRecommendations.length ? [`Contextual note: ${contextualRecommendations.join('; ')}`] : []),
+      ...(rawData.items.length === 0 ? ['No live sources.'] : []),
+      ...(!branches.predictionReport && isPredictionQuestion(effectiveQuestion)
+        ? ['Not enough historical data for prediction.'] : []),
     ],
   });
 
-  // ================================================================
-  // Layer 4: Cognitive Consistency Check (post-generation)
-  // ================================================================
-  const consistencyResult = CognitiveConsistencyCheck.checkConsistency(
-    conversationId,
-    finalResponse,
-    [], // previousResponses – can be extended with a conversation store
-    effectiveQuestion,
+  // Post-generation quality checks — delegated to responsePipeline
+  const quality = await runResponseQualityCheck(
+    conversationId, finalResponse, effectiveQuestion, detectedCountry.name,
+    rawData.items.map((i) => i.title), branches.dcftResult?.indices?.cfi ?? 50,
+    Object.keys(eventVector.sourceBreakdown).length, eventVector.totalItems,
+    (branches.dcftResult?.indices?.gmi ?? 0) !== 0, rawData.items.length > 0,
   );
 
-  // ================================================================
-  // Layer 5: Metacognition – self-assessment of quality
-  // ================================================================
-  const metacognitiveAssessment = assessAnalysis({
-    dataSourcesCount: eventVector.sourceBreakdown ? Object.keys(eventVector.sourceBreakdown).length : 0,
-    relevantHeadlinesCount: eventVector.totalItems || 0,
-    hasCausalChain: (dcftResult?.indices?.gmi ?? 0) !== 0,
-    hasEvidence: rawData.items.length > 0,
-    acknowledgesUncertainty: consistencyResult.confidenceScore < 0.9,
-    alternativesConsidered: true,
-  });
-
-  // ================================================================
-  // Create final context with all layers integrated
-  // ================================================================
-  const errors: string[] = [];
-  if (!consistencyResult.isConsistent) {
-    for (const violation of consistencyResult.violations) {
-      errors.push(`[Consistency] ${violation.description}`);
-    }
-  }
-  if (metacognitiveAssessment.overallConfidence < 0.5) {
-    errors.push(`[Metacognition] Low confidence: ${metacognitiveAssessment.selfCritique}`);
-  }
-
+  // Build final context
   const context: NetworkContext = {
-    requestId,
-    userId,
-    timestamp: new Date(),
-    language,
-    gate: {
-      layer1Output: layer1,
-      intent,
-      searchQuery: effectiveQuestion,
-      detectedCountry: detectedCountry.code !== 'GLOBAL' ? detectedCountry : undefined,
-      needsAnalysis: true,
-      needsLLM: true,
-    },
-    collection: { rawData, eventVector, parallelSignalVector, vectorPrompt, totalItems: eventVector.totalItems },
-    analysis: { emotions: emotions.vector, dominantEmotion: emotions.dominantEmotion, confidence: 90, resonanceInsight, breakingNews: rawData.items.slice(0, 5) },
-    analytics: { emotions: emotions.vector, dominantEmotion: emotions.dominantEmotion, confidence: 90, resonanceInsight, breakingNews: rawData.items.slice(0, 5) },
-    dcft: { result: dcftResult, indices: dcftResult?.indices || { gmi: 0, cfi: 50, hri: 50 }, alertLevel: dcftResult?.alertLevel || 'normal' },
-    generation: {
-      response: finalResponse,
-      suggestions: ['Analyze global economic impact', 'Inspect historical resonance for this pattern'],
-      languageEnforced: true,
-      quality: {
-        score: Math.round(metacognitiveAssessment.overallConfidence * 100),
-        relevance: 98,
-        accuracy: Math.round(metacognitiveAssessment.overallConfidence * 100),
-        completeness: consistencyResult.confidenceScore < 0.7 ? 75 : 90,
-        clarity: boundContext.confidence > 0.7 ? 95 : 80,
-      },
-    },
+    requestId, userId, timestamp: new Date(), language,
+    gate: { layer1Output: layer1, intent, searchQuery: effectiveQuestion, detectedCountry: detectedCountry.code !== 'GLOBAL' ? detectedCountry : undefined, needsAnalysis: true, needsLLM: true },
+    collection: { rawData, eventVector, parallelSignalVector: branches.parallelSignalVector, vectorPrompt: generateUniversalPrompt(eventVector, language), totalItems: eventVector.totalItems },
+    analysis: { emotions: branches.emotions.vector, dominantEmotion: branches.emotions.dominantEmotion, confidence: 90, resonanceInsight: branches.resonanceInsight, breakingNews: rawData.items.slice(0, 5) },
+    analytics: { emotions: branches.emotions.vector, dominantEmotion: branches.emotions.dominantEmotion, confidence: 90, resonanceInsight: branches.resonanceInsight, breakingNews: rawData.items.slice(0, 5) },
+    dcft: { result: branches.dcftResult, indices: branches.dcftResult?.indices || { gmi: 0, cfi: 50, hri: 50 }, alertLevel: branches.dcftResult?.alertLevel || 'normal' },
+    generation: { response: finalResponse, suggestions: ['Analyze global economic impact', 'Inspect historical resonance for this pattern'], languageEnforced: true, quality: quality.qualityScores },
     executionMetrics: {
       totalDurationMs: Date.now() - startTime,
       layerTraces: [
         { layer: 'ContextLockLayer', status: contextLock ? 'checked' : 'no_lock' },
-        { layer: 'CognitiveAnswerGate', decision: gateDecision.decision },
-        { layer: 'ContextualBinding', confidence: boundContext.confidence, region: boundContext.cultural.region },
-        { layer: 'CognitiveConsistencyCheck', isConsistent: consistencyResult.isConsistent, score: consistencyResult.confidenceScore },
-        { layer: 'Metacognition', overallConfidence: metacognitiveAssessment.overallConfidence, level: metacognitiveAssessment.confidenceLevel },
+        { layer: 'AnswerGate', decision: gateDecision.decision },
+        { layer: 'ContextualBinding', confidence: quality.boundContext.confidence, region: quality.boundContext.cultural.region },
+        { layer: 'ConsistencyCheck', isConsistent: quality.consistencyResult.isConsistent, score: quality.consistencyResult.confidenceScore },
+        { layer: 'Metacognition', overallConfidence: quality.metacognitiveAssessment.overallConfidence },
       ],
-      parallelGroups: ['Collection', 'ParallelSignalGraph', 'EventVectorFusion', 'DCFT+RAG+Emotion', 'NaturalGeneration', 'Consistency+Metacognition'],
-      errors,
+      parallelGroups: ['Collection','ParallelBranches','Generation','Consistency+Metacognition'],
+      errors: quality.errors,
     },
     status: 'completed',
   };
 
-  // Update context lock for this session
-  ContextLockLayer.createLock(
-    conversationId,
-    topicKey,
-    detectedCountry.code,
-    intent,
-  );
-
+  ContextLockLayer.createLock(conversationId, topicKey, detectedCountry.code, intent);
   saveToLearningMemory(context);
   return context;
 }
 
-export async function analyzeForMap(query: string, userId: string = 'system') {
-  return executeNetworkEngine(userId, query);
-}
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
-export async function analyzeForWeather(countryCode: string, countryName: string, userId: string = 'system') {
-  return executeNetworkEngine(userId, `Weather and mood in ${countryName}`);
-}
-
-export async function analyzeForCountryDetail(countryCode: string, countryName: string, includeAISummary: boolean = false, language: string = 'ar', userId: string = 'system') {
-  return executeNetworkEngine(userId, `Detailed analysis of ${countryName}`, language);
-}
-
-export async function analyzeForSmartAnalysis(query: string, userId: string = 'system') {
-  return executeNetworkEngine(userId, query);
-}
-
-export async function analyzeForSmartAnalysisV2(query: string, userId: string = 'system') {
-  return executeNetworkEngine(userId, query);
-}
-
-export async function analyzeCountriesBatch(countries: string[], userId: string = 'system') {
-  return Promise.all(countries.map(country => executeNetworkEngine(userId, country)));
-}
-
-export async function getGlobalMood() {
-  const context = await executeNetworkEngine('system', 'Global Mood Summary', 'en');
+function earlyResponse(
+  requestId: string, userId: string, question: string, language: string,
+  layer1: Layer1Output, startTime: number, response: string,
+  groups: string[], errors: string[],
+  extra?: { needsLLM?: boolean },
+): NetworkContext {
+  const emptyV = createEmptyVector(question);
   return {
-    gmi: context.dcft.indices.gmi,
-    cfi: context.dcft.indices.cfi,
-    hri: context.dcft.indices.hri,
-    overall: context.dcft.indices.gmi,
-    dominantEmotion: context.analysis.dominantEmotion,
-    intensity: context.collection.eventVector.intensity,
-    confidence: context.analysis.confidence,
-    sourceCount: context.collection.totalItems,
-    timestamp: new Date(),
+    requestId, userId, timestamp: new Date(), language,
+    gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: question, needsAnalysis: false, needsLLM: extra?.needsLLM ?? false },
+    collection: { rawData: createEmptyCollectedData(question), eventVector: emptyV, vectorPrompt: '', totalItems: 0 },
+    analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
+    analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
+    dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
+    generation: { response, suggestions: [], languageEnforced: true },
+    executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: groups, errors },
+    status: 'completed',
   };
-}
-
-export function getEngineStats() {
-  return {
-    status: 'active',
-    version: 'central-network-2.0',
-    uptime: process.uptime(),
-    memory: process.memoryUsage(),
-    lastPulse: new Date(),
-    centralProcessor: 'networkEngine',
-    parallelBranches: ['graphPipeline', 'emotionEngine', 'dcftEngine', 'ragSystem'],
-    layers: [
-      'ContextLockLayer',
-      'CognitiveAnswerGate',
-      'ContextualBinding',
-      'CognitiveConsistencyCheck',
-      'Metacognition',
-    ],
-    networkCacheSize: 0,
-    dataCacheStats: { hits: 0, misses: 0, ratio: 0 },
-    learning: {
-      totalCycles: 0,
-      totalAnalyses: 0,
-      accuracyRate: 0,
-      verifiedAnalyses: 0,
-      totalFeedback: 0,
-      adjustmentsMade: 0,
-      currentWeights: {},
-      emotionBiases: {},
-    },
-  };
-}
-
-export function clearAllCaches() {
-  return { success: true };
-}
-
-export async function runEngineLearningCycle() {
-  return { analysesReviewed: 0, adjustmentsMade: 0 };
-}
-
-export async function evaluateEnginePrediction(id: string, isCorrect: boolean) {
-  return { success: true, id, isCorrect };
 }
 
 function isPredictionQuestion(question: string): boolean {
   return /\b(predict|prediction|forecast|future|next|will|scenario|outlook)\b/i.test(question);
 }
 
-async function buildPredictionContext(
-  question: string,
-  detectedCountry: { code: string; name: string }
-): Promise<PredictionReport | null> {
-  if (!isPredictionQuestion(question)) return null;
-  try {
-    const history = detectedCountry.code !== 'GLOBAL'
-      ? await getCountryHistoricalIndices(detectedCountry.code, 168)
-      : await getEmotionIndicesHistory(168);
-
-    const points: EmotionalDataPoint[] = history
-      .map((item: any) => ({
-        timestamp: new Date(item.analyzedAt).getTime(),
-        gmi: Number(item.gmi ?? 0),
-        cfi: Number(item.cfi ?? 50),
-        hri: Number(item.hri ?? 50),
-        dominantEmotion: item.dominantEmotion || 'neutral',
-        confidence: item.confidence ?? 70,
-        countryCode: item.countryCode || detectedCountry.code,
-      }))
-      .filter(point => Number.isFinite(point.timestamp));
-
-    if (points.length < 3) return null;
-    return generatePredictionReport(
-      detectedCountry.code,
-      detectedCountry.name,
-      points,
-      false
-    );
-  } catch (error) {
-    console.warn('[NetworkEngine] Prediction branch failed:', error);
-    return null;
-  }
-}
-
 function detectCountryInQuery(query: string, layer1Data: Layer1Output) {
   if (layer1Data.geographicContext?.countryCode && layer1Data.geographicContext.countryCode !== 'GLOBAL') {
     return { code: layer1Data.geographicContext.countryCode, name: layer1Data.geographicContext.locationName || 'Specified Location' };
   }
-
-  const normalized = query.toLowerCase();
-  const patterns = [
-    { pattern: /libya|tripoli|benghazi/i, code: 'LY', name: 'Libya' },
-    { pattern: /egypt|cairo/i, code: 'EG', name: 'Egypt' },
-    { pattern: /palestine|gaza/i, code: 'PS', name: 'Palestine' },
-    { pattern: /usa|america|united states/i, code: 'US', name: 'United States' },
-    { pattern: /china/i, code: 'CN', name: 'China' },
-    { pattern: /russia/i, code: 'RU', name: 'Russia' },
-    { pattern: /japan/i, code: 'JP', name: 'Japan' },
-  ];
-
-  return patterns.find(item => item.pattern.test(normalized)) || { code: 'GLOBAL', name: 'Global' };
+  const q = query.toLowerCase();
+  const patterns: Array<{ pattern: RegExp; code: string; name: string }> = [
+    /libya|tripoli|benghazi/i, /egypt|cairo/i, /palestine|gaza/i,
+    /usa|america|united states/i, /china/i, /russia/i, /japan/i,
+  ].map((p, i) => ({ pattern: p, code: ['LY','EG','PS','US','CN','RU','JP'][i], name: ['Libya','Egypt','Palestine','United States','China','Russia','Japan'][i] }));
+  return patterns.find((p) => p.pattern.test(q)) || { code: 'GLOBAL', name: 'Global' };
 }
 
 function saveToLearningMemory(ctx: NetworkContext) {
   try {
-    const vector = ctx.collection.eventVector;
-    const financialKeywords = ['gold', 'silver', 'oil', 'currency', 'economy', 'inflation', 'trading', 'market', 'finance'];
-    const isFinancial = financialKeywords.some(word => ctx.gate.searchQuery.toLowerCase().includes(word));
-
+    const v = ctx.collection.eventVector;
+    const finance = ['gold','silver','oil','currency','economy','inflation','trading','market','finance'];
+    const isFinancial = finance.some((w) => ctx.gate.searchQuery.toLowerCase().includes(w));
     storeAnalysisRecord(
-      {
-        topic: ctx.gate.detectedCountry?.name || 'Global Trends',
-        newsText: ctx.collection.rawData.items[0]?.description || ctx.gate.searchQuery,
-        countryCode: ctx.gate.detectedCountry?.code || 'GLOBAL',
-        isFinancial,
-      },
+      { topic: ctx.gate.detectedCountry?.name || 'Global Trends', newsText: ctx.collection.rawData.items[0]?.description || ctx.gate.searchQuery, countryCode: ctx.gate.detectedCountry?.code || 'GLOBAL', isFinancial },
       { source: 'CentralNetworkEngine', intent: ctx.gate.intent },
       {
-        gmi: ctx.dcft.indices.gmi,
-        cfi: ctx.dcft.indices.cfi,
-        hri: ctx.dcft.indices.hri,
-        dominantEmotion: ctx.analysis.dominantEmotion,
-        emotionalIntensity: vector.intensity || 0.5,
+        gmi: ctx.dcft.indices.gmi, cfi: ctx.dcft.indices.cfi, hri: ctx.dcft.indices.hri,
+        dominantEmotion: ctx.analysis.dominantEmotion, emotionalIntensity: v.intensity || 0.5,
         valence: (ctx.dcft.indices.hri - 50) / 50,
-        tradingSignal: isFinancial ? (vector.intensity > 0.7 ? 'VOLATILE' : 'STABLE') : 'NONE',
-        affectiveVector: ctx.analysis.emotions,
-        insights: vector.topHeadlines?.slice(0, 3).map(headline => headline.title) || [],
+        tradingSignal: isFinancial ? (v.intensity > 0.7 ? 'VOLATILE' : 'STABLE') : 'NONE',
+        affectiveVector: ctx.analysis.emotions, insights: v.topHeadlines?.slice(0, 3).map((h) => h.title) || [],
       },
-      { resonanceCount: ctx.analysis.resonanceInsight?.observationsCount || 0 }
+      { resonanceCount: ctx.analysis.resonanceInsight?.observationsCount || 0 },
     );
-  } catch (error) {
-    console.warn('[NetworkEngine] Memory synchronization failed:', error);
+  } catch (e) {
+    console.warn('[NetworkEngine] Memory sync failed:', e);
   }
 }
 
-async function analyzeEmotionsFromData(data: CollectedData) {
-  const text = data.items.map(item => item.title).join(' ');
-  const result = await analyzeTextWithAI(text || data.query);
-  return { vector: result.emotions as unknown as Record<string, number>, dominantEmotion: result.dominantEmotion };
+// ---------------------------------------------------------------------------
+// Public view helpers (delegate to executeNetworkEngine)
+// ---------------------------------------------------------------------------
+
+export async function analyzeForMap(query: string, userId = 'system') { return executeNetworkEngine(userId, query); }
+export async function analyzeForWeather(code: string, name: string, userId = 'system') { return executeNetworkEngine(userId, `Weather and mood in ${name}`, 'en'); }
+export async function analyzeForCountryDetail(code: string, name: string, _ai = false, lang = 'ar', userId = 'system') { return executeNetworkEngine(userId, `Detailed analysis of ${name}`, lang); }
+export async function analyzeForSmartAnalysis(query: string, userId = 'system') { return executeNetworkEngine(userId, query); }
+export async function analyzeForSmartAnalysisV2(query: string, userId = 'system') { return executeNetworkEngine(userId, query); }
+export async function analyzeCountriesBatch(countries: string[], userId = 'system') { return Promise.all(countries.map((c) => executeNetworkEngine(userId, c))); }
+
+export async function getGlobalMood() {
+  const ctx = await executeNetworkEngine('system', 'Global Mood Summary', 'en');
+  return { gmi: ctx.dcft.indices.gmi, cfi: ctx.dcft.indices.cfi, hri: ctx.dcft.indices.hri, overall: ctx.dcft.indices.gmi, dominantEmotion: ctx.analysis.dominantEmotion, intensity: ctx.collection.eventVector.intensity, confidence: ctx.analysis.confidence, sourceCount: ctx.collection.totalItems, timestamp: new Date() };
 }
 
-async function executeDCFTProcess(data: CollectedData): Promise<DCFTAnalysisResult | null> {
-  const inputs: RawDigitalInput[] = data.items.map((item, index) => ({
-    id: `idx_${index}`,
-    content: item.title,
-    source: item.source,
-    timestamp: new Date(),
-    reach: 100,
-    engagement: 10,
-    isVerified: false,
-  }));
-  return inputs.length > 0 ? dcftEngine.analyze(inputs) : null;
+export function getEngineStats() {
+  return { status: 'active', version: 'central-network-2.0', uptime: process.uptime(), memory: process.memoryUsage(), lastPulse: new Date(), centralProcessor: 'networkEngine', parallelBranches: ['graphPipeline','emotionEngine','dcftEngine','ragSystem'], layers: ['ContextLockLayer','CognitiveAnswerGate','ContextualBinding','CognitiveConsistencyCheck','Metacognition'], networkCacheSize: 0, dataCacheStats: { hits: 0, misses: 0, ratio: 0 }, learning: { totalCycles: 0, totalAnalyses: 0, accuracyRate: 0, verifiedAnalyses: 0, totalFeedback: 0, adjustmentsMade: 0, currentWeights: {}, emotionBiases: {} } };
 }
+
+export function clearAllCaches() { return { success: true }; }
+export async function runEngineLearningCycle() { return { analysesReviewed: 0, adjustmentsMade: 0 }; }
+export async function evaluateEnginePrediction(id: string, correct: boolean) { return { success: true, id, correct }; }
 
 export async function getAggregatedNetworkData(topic: string, country?: string) {
   try {
-    const rawData = country ? await collectCountryData(country, country) : await collectTopicData(topic);
-    const eventVector = createUniversalEventVector(rawData);
-    const emotions = await analyzeEmotionsFromData(rawData);
-    return {
-      newsItems: rawData.items,
-      emotionData: {
-        fear: emotions.vector.fear || 0.1,
-        hope: emotions.vector.hope || 0.5,
-        anger: emotions.vector.anger || 0.1,
-        gmi: (emotions.vector.joy || 0.5) * 100,
-        cfi: (emotions.vector.fear || 0.1) * 100,
-        hri: (emotions.vector.hope || 0.5) * 100,
-      },
-      eventVector,
-    };
-  } catch (error) {
-    console.error('[NetworkEngine] Data aggregation failed:', error);
-    return null;
-  }
+    const { createUniversalEventVector } = await import('./eventVectorEngine');
+    const { analyzeTextWithAI } = await import('./emotionEngine');
+    const raw = country ? await collectCountryData(country, country) : await collectTopicData(topic);
+    const v = createUniversalEventVector(raw);
+    const em = await analyzeTextWithAI(raw.items.map((i) => i.title).join(' '));
+    return { newsItems: raw.items, emotionData: { fear: em.emotions.fear || 0.1, hope: em.emotions.hope || 0.5, anger: em.emotions.anger || 0.1, gmi: (em.emotions.joy || 0.5) * 100, cfi: (em.emotions.fear || 0.1) * 100, hri: (em.emotions.hope || 0.5) * 100 }, eventVector: v };
+  } catch { return null; }
 }
