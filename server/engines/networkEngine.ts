@@ -19,6 +19,7 @@ import { MultiTurnContext } from './multiTurnContext';
 import { composeNaturalAnswer } from './responseBuilder';
 import { generatePredictionReport, type PredictionReport, type EmotionalDataPoint } from './predictionEngine';
 import { getCountryHistoricalIndices, getEmotionIndicesHistory } from '../_core/db';
+import { CognitiveAnswerGate, type AnswerDecision } from '../cognitiveArchitecture/cognitiveAnswerGate';
 
 export type EventVector = QuantumEventVector;
 
@@ -98,29 +99,70 @@ export async function executeNetworkEngine(userId: string, question: string, lan
   const effectiveQuestion = contextResolution.resolvedQuestion || question;
   const layer1 = await layer1QuestionUnderstanding(effectiveQuestion, language);
 
-  if (!requiresLiveAnalysis(effectiveQuestion, layer1)) {
-    const directResponse = await composeNaturalAnswer({
-      question: effectiveQuestion,
-      language,
-      intent: layer1.questionType,
-      route: 'direct',
-      limitations: ['No live data analysis was required for this question.'],
-    });
+  // ---- CognitiveAnswerGate: early gate check before analysis ----
+  const gateAnswerCtx = {
+    question: effectiveQuestion,
+    availableData: {
+      hasNews: false,
+      hasSocialMedia: false,
+      hasHistoricalData: false,
+      dataQuality: 'medium' as const,
+      dataRecency: 'none' as const,
+    },
+    questionComplexity: layer1.questionType === 'explanation' || layer1.questionType === 'prediction' ? 'complex' as const : 'moderate' as const,
+    domainKnowledge: 'medium' as const,
+  };
+  const gateDecision = CognitiveAnswerGate.makeDecision(gateAnswerCtx);
+  const gateMessage = CognitiveAnswerGate.generateGateResponse(gateDecision);
+
+  // If the gate says clarify or admit ignorance, return early
+  if (gateDecision.decision === 'clarify_question' || gateDecision.decision === 'admit_ignorance') {
     const emptyVector = createEmptyVector(effectiveQuestion);
     return {
       requestId,
       userId,
       timestamp: new Date(),
       language,
-      gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: true },
+      gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: false },
       collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
-      analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
-      analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
+      analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: gateDecision.confidence },
+      analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: gateDecision.confidence },
       dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
-      generation: { response: directResponse, suggestions: [], languageEnforced: true },
-      executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: ['QuestionUnderstanding', 'NaturalGeneration'], errors: [] },
+      generation: { response: gateMessage, suggestions: [], languageEnforced: true },
+      executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: ['QuestionUnderstanding', 'AnswerGate'], errors: [gateDecision.reasoning] },
       status: 'completed',
     };
+  }
+
+  // ---- Direct answer path (no live analysis needed) ----
+  if (!requiresLiveAnalysis(effectiveQuestion, layer1)) {
+    // Use gate to decide: search_more_data? Then collect. Otherwise answer directly.
+    if (gateDecision.decision === 'search_more_data') {
+      // Fall through to analysis path
+    } else {
+      const directResponse = await composeNaturalAnswer({
+        question: effectiveQuestion,
+        language,
+        intent: layer1.questionType,
+        route: 'direct',
+        limitations: ['No live data analysis was required for this question.'],
+      });
+      const emptyVector = createEmptyVector(effectiveQuestion);
+      return {
+        requestId,
+        userId,
+        timestamp: new Date(),
+        language,
+        gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: true },
+        collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
+        analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
+        analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
+        dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
+        generation: { response: directResponse, suggestions: [], languageEnforced: true },
+        executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: ['QuestionUnderstanding', 'NaturalGeneration'], errors: [] },
+        status: 'completed',
+      };
+    }
   }
 
   const detectedCountry = detectCountryInQuery(effectiveQuestion, layer1);
