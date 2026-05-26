@@ -13,6 +13,7 @@
  * - Feedback Loop Ready (  )
  */
 
+import { calculateGMI as _calculateGMI, calculateCFI as _calculateCFI, calculateHRI as _calculateHRI } from '../utils/emotionIndices';
 import { classifyContext, ContextResult } from './contextClassification';
 import { fuseEmotions, EmotionFusionResult, AffectiveVector } from './emotionEngine';
 import { analyzeEmotionalDynamics, DynamicsResult } from './emotionEngine';
@@ -360,35 +361,43 @@ export async function analyze(input: AnalyzeInput): Promise<AnalyzeOutput> {
  * Calculate GMI (Global Mood Index) from emotional state
  */
 export function calculateGMI(state: EmotionFusionResult): number {
-  // GMI = weighted average of all emotions normalized to 0-100
-  const { vector } = state;
-  const positive = vector.joy + vector.hope;
-  const negative = vector.fear + vector.anger + vector.sadness;
-  const neutral = vector.curiosity;
-  
-  // Scale: 0 = very negative, 50 = neutral, 100 = very positive
-  const total = positive + negative + neutral;
-  if (total === 0) return 50;
-  
-  return Math.round(50 + ((positive - negative) / total) * 50);
+  // Delegated to shared utility
+  return _calculateGMI({
+    joy: state.vector.joy,
+    fear: state.vector.fear,
+    anger: state.vector.anger,
+    sadness: state.vector.sadness,
+    hope: state.vector.hope,
+    curiosity: state.vector.curiosity,
+  });
 }
 
 /**
  * Calculate CFI (Collective Fear Index) from emotional state
  */
 export function calculateCFI(state: EmotionFusionResult): number {
-  const { vector } = state;
-  // CFI focuses on fear and related negative emotions
-  return Math.min(100, Math.round(vector.fear * 0.6 + vector.anger * 0.25 + vector.sadness * 0.15));
+  return _calculateCFI({
+    joy: state.vector.joy,
+    fear: state.vector.fear,
+    anger: state.vector.anger,
+    sadness: state.vector.sadness,
+    hope: state.vector.hope,
+    curiosity: state.vector.curiosity,
+  });
 }
 
 /**
  * Calculate HRI (Hope & Resilience Index) from emotional state
  */
 export function calculateHRI(state: EmotionFusionResult): number {
-  const { vector } = state;
-  // HRI focuses on hope and positive emotions
-  return Math.min(100, Math.round(vector.hope * 0.5 + vector.joy * 0.3 + vector.curiosity * 0.2));
+  return _calculateHRI({
+    joy: state.vector.joy,
+    fear: state.vector.fear,
+    anger: state.vector.anger,
+    sadness: state.vector.sadness,
+    hope: state.vector.hope,
+    curiosity: state.vector.curiosity,
+  });
 }
 
 /**

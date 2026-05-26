@@ -1,4 +1,5 @@
 import { invokeLLMProvider } from '../_core/llm';
+import { calculateGMI, calculateCFI, calculateHRI } from '../utils/emotionIndices';
 import type { ContextResult } from './contextClassification';
 
 export interface EmotionVector {
@@ -149,27 +150,9 @@ function findDominantEmotion(vector: EmotionVector): keyof EmotionVector {
   return EMOTIONS.reduce((best, emotion) => vector[emotion] > vector[best] ? emotion : best, 'curiosity');
 }
 
-function calculateGMI(emotions: EmotionVector): number {
-  const positive = emotions.joy + emotions.hope + emotions.curiosity * 0.5;
-  const negative = emotions.fear + emotions.anger + emotions.sadness;
-  const total = positive + negative;
-  if (total === 0) return 0;
-  return Math.round(clamp(((positive - negative) / total) * 100, -100, 100));
-}
-
-function calculateCFI(emotions: EmotionVector): number {
-  const total = Object.values(emotions).reduce((sum, value) => sum + value, 0);
-  if (total === 0) return 50;
-  const fearComponent = emotions.fear * 1.5 + emotions.anger * 0.6 + emotions.sadness * 0.35;
-  return Math.round(clamp((fearComponent / total) * 100));
-}
-
-function calculateHRI(emotions: EmotionVector): number {
-  const total = Object.values(emotions).reduce((sum, value) => sum + value, 0);
-  if (total === 0) return 50;
-  const hopeComponent = emotions.hope * 1.5 + emotions.joy + emotions.curiosity * 0.45;
-  return Math.round(clamp((hopeComponent / total) * 100));
-}
+// calculateGMI delegated to shared utils/emotionIndices
+// calculateCFI delegated to shared utils/emotionIndices
+// calculateHRI delegated to shared utils/emotionIndices
 
 function createResult(text: string, emotions: EmotionVector, confidence: number, aiAnalyzed = false): SentimentAnalysisResult {
   const dominantEmotion = findDominantEmotion(emotions);
