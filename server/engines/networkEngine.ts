@@ -16,6 +16,8 @@ import { storeAnalysisRecord } from './learningStore';
 import { MultiTurnContext } from './multiTurnContext';
 import { CognitiveAnswerGate } from '../cognitiveArchitecture/cognitiveAnswerGate';
 import { ContextLockLayer } from '../cognitiveArchitecture/contextLockLayer';
+import { CognitiveControlLayer } from '../cognitiveArchitecture/cognitiveControlLayer';
+import { DialogicalConsciousness } from '../cognitiveArchitecture/dialogicalConsciousness';
 
 export type EventVector = QuantumEventVector;
 
@@ -100,6 +102,10 @@ export async function executeNetworkEngine(
 
   const layer1 = await layer1QuestionUnderstanding(effectiveQuestion, language);
 
+  // --- Cognitive Control Layer (Layer 0: Fast question classification) ---
+  // Determines the cognitive pathway without needing LLM
+  const pathwayDecision = CognitiveControlLayer.classifyQuestion(effectiveQuestion);
+
   // --- Context Lock Layer ---
   const contextLock = ContextLockLayer.getLock(conversationId);
   if (contextLock) {
@@ -153,6 +159,11 @@ export async function executeNetworkEngine(
   // Parallel analysis branches — delegated to analysisPipeline
   const branches = await runAnalysisBranches(rawData, effectiveQuestion, graphInput, topicKey, detectedCountry);
 
+  // --- Dialogical Consciousness (Layer 13) ---
+  // Track dialogue state for response coherence
+  const dialogueCtx = DialogicalConsciousness.analyzeDialogueContext(conversationId, effectiveQuestion);
+  const dialogueState = DialogicalConsciousness.updateDialogue(conversationId, effectiveQuestion, ''); // placeholder, updated after compose
+
   // Response generation
   const finalResponse = await composeNaturalAnswer({
     question: effectiveQuestion, language, intent, route: 'analysis',
@@ -192,17 +203,22 @@ export async function executeNetworkEngine(
     executionMetrics: {
       totalDurationMs: Date.now() - startTime,
       layerTraces: [
+        { layer: 'CognitiveControl', pathway: pathwayDecision.pathway, type: pathwayDecision.type },
+        { layer: 'DialogicalConsciousness', phase: dialogueCtx.conversationPhase, coherence: dialogueCtx.coherenceScore },
         { layer: 'ContextLockLayer', status: contextLock ? 'checked' : 'no_lock' },
         { layer: 'AnswerGate', decision: gateDecision.decision },
         { layer: 'ContextualBinding', confidence: quality.boundContext.confidence, region: quality.boundContext.cultural.region },
         { layer: 'ConsistencyCheck', isConsistent: quality.consistencyResult.isConsistent, score: quality.consistencyResult.confidenceScore },
         { layer: 'Metacognition', overallConfidence: quality.metacognitiveAssessment.overallConfidence },
       ],
-      parallelGroups: ['Collection','ParallelBranches','Generation','Consistency+Metacognition'],
+      parallelGroups: ['CognitiveControl','Collection','ParallelBranches','Generation','Consistency+Metacognition','DialogicalConsciousness'],
       errors: quality.errors,
     },
     status: 'completed',
   };
+
+  // Update dialogue state with the actual response
+  DialogicalConsciousness.updateDialogue(conversationId, effectiveQuestion, finalResponse);
 
   ContextLockLayer.createLock(conversationId, topicKey, detectedCountry.code, intent);
   saveToLearningMemory(context);
@@ -228,7 +244,9 @@ function earlyResponse(
     analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
     dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
     generation: { response, suggestions: [], languageEnforced: true },
-    executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: groups, errors },
+    executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [
+        { layer: 'CognitiveControl', pathway: pathwayDecision.pathway, type: pathwayDecision.type },
+        { layer: 'DialogicalConsciousness', phase: dialogueCtx.conversationPhase, coherence: dialogueCtx.coherenceScore },], parallelGroups: groups, errors },
     status: 'completed',
   };
 }
