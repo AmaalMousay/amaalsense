@@ -70,7 +70,7 @@ export interface EmotionBreakdown {
 }
 
 export interface EmotionGap {
-  fearGap: number;      //  =    =  
+  fearGap: number;      =    =  
   hopeGap: number;
   angerGap: number;
   interpretation: string;
@@ -86,8 +86,7 @@ export async function generateSmartSurvey(
 ): Promise<Survey> {
   const surveyId = `survey_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   
-  //    
-  const questions = await generateSurveyQuestions(topic, domain, country);
+    const questions = await generateSurveyQuestions(topic, domain, country);
   
   return {
     id: surveyId,
@@ -110,25 +109,22 @@ async function generateSurveyQuestions(
 ): Promise<SurveyQuestion[]> {
   const countryContext = country ? `  ${country}` : '';
   
-  const prompt = `    .    (5  )    :
-: ${topic}${countryContext}
-: ${domain}
+  const prompt = `Generate a short survey (max 2 questions) about:
+Topic: ${topic}${countryContext}
+Domain: ${domain}
 
-   :
-1.   (1-5)   
-2.       
-3.     
-4.     
-5.   
+Rules:
+1. First question: scale (1-5) about how the user feels
+2. Second question: choice or open about the reason
 
-  JSON :
+Respond in JSON only:
 {
   "questions": [
     {
       "id": "q1",
-      "text": " ",
-      "type": "scale|choice|open",
-      "options": ["1", "2"] //  
+      "text": "Question text",
+      "type": "scale",
+      "options": ["1", "2", "3", "4", "5"]
     }
   ]
 }`;
@@ -136,7 +132,7 @@ async function generateSurveyQuestions(
   try {
     const response = await invokeLLM({
       messages: [
-        { role: 'system', content: `أنت مساعد يولد استبيانات بصيغة JSON فقط.` },
+        { role: 'system', content: "You are a survey generator. Return valid JSON only." },
         { role: 'user', content: prompt },
       ],
       response_format: { type: 'json_object' },
@@ -157,45 +153,26 @@ async function generateSurveyQuestions(
  *     
  */
 function getDefaultQuestions(topic: string, domain: string): SurveyQuestion[] {
+  // 2 questions max for interactive chat — one feeling scale, one open reason
   return [
     {
       id: 'q1',
-      text: `     ${topic}`,
+      text: `How do you feel about ${topic}?`,
       type: 'scale',
       scaleMin: 1,
       scaleMax: 5,
-      scaleLabels: { min: `قلق جداً`, max: `متفائل جداً` },
+      scaleLabels: { min: 'Very Negative', max: 'Very Positive' },
     },
     {
       id: 'q2',
-      text: `ما السبب الرئيسي لهذا الشعور؟`,
+      text: 'What is the main reason for this feeling?',
       type: 'choice',
       options: [
-        `الأخبار والإعلام`,
-        `تجربة شخصية`,
-        `آراء المحيطين`,
-        `تحليل منطقي`,
-        `حدس وشعور`,
-      ],
-    },
-    {
-      id: 'q3',
-      text: `ما مستوى قلقك من التطورات القادمة؟`,
-      type: 'scale',
-      scaleMin: 1,
-      scaleMax: 5,
-      scaleLabels: { min: `لا قلق`, max: `قلق شديد` },
-    },
-    {
-      id: 'q4',
-      text: `ما توقعاتك للأشهر القادمة؟`,
-      type: 'choice',
-      options: [
-        `تحسن كبير`,
-        `تحسن طفيف`,
-        `استقرار`,
-        `تراجع طفيف`,
-        `تراجع كبير`,
+        'News and media I have seen',
+        'Personal experience',
+        'People around me',
+        'Logical analysis',
+        'Gut feeling / intuition',
       ],
     },
     {
@@ -222,28 +199,28 @@ export function analyzeSurveyResponses(responses: SurveyResponse[]): EmotionBrea
   
   for (const response of responses) {
     for (const answer of response.answers) {
-      //   
+       
       if (typeof answer.value === 'number') {
         const normalized = (answer.value - 1) / 4; // 0 to 1
         
         if (answer.questionId === 'q1') {
-          //  : 1= 5=
+          : 1= 5=
           totalFear += (1 - normalized);
           totalHope += normalized;
         } else if (answer.questionId === 'q3') {
-          //  
+          
           totalFear += normalized;
         }
       }
       
-      //  
+      
       if (answer.questionId === 'q4' && typeof answer.value === 'string') {
         if (answer.value.includes(`تحسن`)) totalHope += 1;
         else if (answer.value.includes(`تراجع`)) totalFear += 0.5;
         else totalAcceptance += 0.5;
       }
       
-      //     
+         
       if (answer.sentiment !== undefined) {
         if (answer.sentiment < -0.3) totalAnger += Math.abs(answer.sentiment);
         else if (answer.sentiment > 0.3) totalHope += answer.sentiment;
@@ -254,7 +231,7 @@ export function analyzeSurveyResponses(responses: SurveyResponse[]): EmotionBrea
   
   const count = responses.length;
   
-  //  
+  
   const total = totalFear + totalHope + totalAnger + totalConfusion + totalAcceptance;
   if (total === 0) {
     return { fear: 20, hope: 20, anger: 20, confusion: 20, acceptance: 20 };
@@ -280,7 +257,7 @@ export function generateCalibrationReport(
 ): CalibrationReport {
   const publicPerception = analyzeSurveyResponses(surveyResponses);
   
-  //  
+  
   const gap: EmotionGap = {
     fearGap: mediaPerception.fear - publicPerception.fear,
     hopeGap: mediaPerception.hope - publicPerception.hope,
@@ -288,7 +265,7 @@ export function generateCalibrationReport(
     interpretation: '',
   };
   
-  //  
+  
   const interpretations: string[] = [];
   
   if (gap.fearGap > 15) {
@@ -311,10 +288,10 @@ export function generateCalibrationReport(
   
   gap.interpretation = interpretations.join('. ') || `الإعلام يعكس مشاعر الناس بشكل متوازن`;
   
-  //  
+  
   const insights = generateCalibrationInsights(mediaPerception, publicPerception, gap);
   
-  //   
+   
   const confidence = surveyResponses.length >= 50 ? 'high' :
                      surveyResponses.length >= 20 ? 'medium' : 'low';
   
@@ -339,22 +316,20 @@ function generateCalibrationInsights(
 ): string[] {
   const insights: string[] = [];
   
-  //    
-  const maxGap = Math.max(Math.abs(gap.fearGap), Math.abs(gap.hopeGap), Math.abs(gap.angerGap));
+    const maxGap = Math.max(Math.abs(gap.fearGap), Math.abs(gap.hopeGap), Math.abs(gap.angerGap));
   
   if (maxGap > 20) {
     insights.push(`هناك فجوة كبيرة بين الصورة الإعلامية والواقع الشعبي`);
   }
   
-  //    
-  const dominantMedia = Object.entries(media).sort((a, b) => b[1] - a[1])[0];
+    const dominantMedia = Object.entries(media).sort((a, b) => b[1] - a[1])[0];
   const dominantPublic = Object.entries(public_).sort((a, b) => b[1] - a[1])[0];
   
   if (dominantMedia[0] !== dominantPublic[0]) {
     insights.push(`   ${translateEmotion(dominantMedia[0])}     ${translateEmotion(dominantPublic[0])}`);
   }
   
-  //   
+   
   if (public_.confusion > 30) {
     insights.push(`هناك حيرة واضحة لدى الناس تحتاج توضيحاً`);
   }
@@ -388,8 +363,8 @@ export function calculateCalibrationGap(
   surveyData: { fear: number; hope: number; anger: number }
 ): { fear: number; hope: number; anger: number } {
   return {
-    fear: surveyData.fear - mediaData.fear,  //  =  
-    hope: surveyData.hope - mediaData.hope,  //  =  
+    fear: surveyData.fear - mediaData.fear,  =  
+    hope: surveyData.hope - mediaData.hope,  =  
     anger: surveyData.anger - mediaData.anger,
   };
 }
@@ -400,21 +375,21 @@ export function calculateCalibrationGap(
 export function generateCalibrationInsight(gap: { fear: number; hope: number; anger: number }): string {
   const insights: string[] = [];
   
-  //   
+   
   if (gap.fear < -20) {
     insights.push(`الإعلام يبالغ في تضخيم الخوف مقارنة بمشاعر الناس الحقيقية`);
   } else if (gap.fear > 20) {
     insights.push(`الإعلام يقلل من مستوى القلق الفعلي لدى الناس`);
   }
   
-  //   
+   
   if (gap.hope > 20) {
     insights.push(`الناس أكثر تفاؤلاً مما ينقله الإعلام`);
   } else if (gap.hope < -20) {
     insights.push(`الإعلام يبالغ في التفاؤل مقارنة بالواقع`);
   }
   
-  //   
+   
   if (gap.anger < -20) {
     insights.push(`الإعلام يركز على الغضب أكثر من الواقع`);
   } else if (gap.anger > 20) {
