@@ -1,0 +1,1350 @@
+import { eq, desc, asc, gte, and, inArray, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
+import { InsertUser, users, emotionIndices, emotionAnalyses, InsertEmotionAnalysis, InsertEmotionIndex, countryEmotionIndices, countryEmotionAnalyses, InsertCountryEmotionIndex, InsertCountryEmotionAnalysis, enterpriseInquiries, InsertEnterpriseInquiry, usageTracking, InsertUsageTracking, customAlerts, InsertCustomAlert, CustomAlert, classifiedAnalyses, followedTopics, topicAlerts, InsertClassifiedAnalysis, InsertFollowedTopic, InsertTopicAlert, responseFeedback, InsertResponseFeedback } from "../drizzle/schema";
+import { ENV } from './env';
+
+export let db: ReturnType<typeof drizzle> | null = null;
+
+// Lazily create the drizzle instance so local tooling can run without a DB.
+export async function getDb() {
+  if (!db) {
+    try {
+      // Use sqlite.db as default if no DATABASE_URL provided
+      const dbPath = process.env.DATABASE_URL || "sqlite.db";
+      const sqlite = new Database(dbPath);
+      // Enable WAL mode: allows concurrent readers/writers without SQLITE_BUSY errors
+      sqlite.pragma('journal_mode = WAL');
+      // Increase busy timeout so agents waiting on a locked DB retry instead of crashing
+      sqlite.pragma('busy_timeout = 5000');
+      // Enable foreign keys
+      sqlite.pragma("foreign_keys = ON");
+      // Cache size in KB (e.g. -20000 = 20 MB)
+      sqlite.pragma("cache_size = -20000");
+      // Store temp tables in memory instead of on disk
+      sqlite.pragma("temp_store = MEMORY");
+      // Synchronous mode NORMAL balances safety with speed (good for WAL)
+      sqlite.pragma("synchronous = NORMAL");
+      db = drizzle(sqlite);
+      console.log(`[Database] Connected to SQLite at ${dbPath} (WAL mode enabled)`);
+    } catch (error) {
+      console.warn("[Database] Failed to connect to SQLite:", error);
+      db = null;
+    }
+  }
+  return db;
+}
+
+export async function upsertUser(user: InsertUser): Promise<void> {
+  if (!user.openId) {
+    throw new Error("User openId is required for upsert");
+  }
+
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot upsert user: database not available");
+    return;
+  }
+
+  try {
+    const values: InsertUser = {
+      openId: user.openId,
+    };
+    const updateSet: Record<string, unknown> = {};
+
+    const textFields = ["name", "email", "loginMethod"] as const;
+    type TextField = (typeof textFields)[number];
+
+    const assignNullable = (field: TextField) => {
+      const value = user[field];
+      if (value === undefined) return;
+      const normalized = value ?? null;
+      values[field] = normalized;
+      updateSet[field] = normalized;
+    };
+
+    textFields.forEach(assignNullable);
+
+    if (user.lastSignedIn !== undefined) {
+      values.lastSignedIn = user.lastSignedIn;
+      updateSet.lastSignedIn = user.lastSignedIn;
+    }
+    if (user.role !== undefined) {
+      values.role = user.role;
+      updateSet.role = user.role;
+    } else if (user.openId === ENV.ownerOpenId) {
+      values.role = 'admin';
+      updateSet.role = 'admin';
+    }
+
+    if (!values.lastSignedIn) {
+      values.lastSignedIn = new Date();
+    }
+
+    if (Object.keys(updateSet).length === 0) {
+      updateSet.lastSignedIn = new Date();
+    }
+
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
+      set: updateSet,
+    });
+  } catch (error) {
+    console.error("[Database] Failed to upsert user:", error);
+    throw error;
+  }
+}
+
+export async function getUserByOpenId(openId: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Get the latest emotion indices
+ */
+export async function getLatestEmotionIndices() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(emotionIndices)
+    .orderBy((t) => desc(t.analyzedAt))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Get emotion indices history for a given time range
+ */
+export async function getEmotionIndicesHistory(hoursBack: number = 24) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const cutoffTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(emotionIndices)
+    .where(gte(emotionIndices.analyzedAt, cutoffTime))
+    .orderBy((t) => asc(t.analyzedAt));
+}
+
+/**
+ * Create a new emotion analysis record
+ */
+export async function createEmotionAnalysis(analysis: InsertEmotionAnalysis) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(emotionAnalyses).values(analysis);
+  return result;
+}
+
+/**
+ * Create a new emotion index snapshot
+ */
+export async function createEmotionIndex(index: InsertEmotionIndex) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(emotionIndices).values(index);
+  return result;
+}
+
+/**
+ * Get recent emotion analyses
+ */
+export async function getRecentEmotionAnalyses(limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(emotionAnalyses)
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get all country emotion indices
+ */
+export async function getAllCountryEmotionIndices() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .orderBy((t) => desc(t.analyzedAt));
+}
+
+/**
+ * Get latest emotion index for a specific country
+ */
+export async function getCountryEmotionIndex(countryCode: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(eq(countryEmotionIndices.countryCode, countryCode))
+    .orderBy((t) => desc(t.analyzedAt))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Create or update country emotion index
+ */
+export async function upsertCountryEmotionIndex(data: InsertCountryEmotionIndex) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(countryEmotionIndices).values(data).onConflictDoUpdate({
+    target: countryEmotionIndices.countryCode,
+    set: {
+      gmi: data.gmi,
+      cfi: data.cfi,
+      hri: data.hri,
+      confidence: data.confidence,
+      analyzedAt: new Date(),
+    },
+  });
+}
+
+/**
+ * Create country emotion analysis record
+ */
+export async function createCountryEmotionAnalysis(data: InsertCountryEmotionAnalysis) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(countryEmotionAnalyses).values(data);
+}
+
+/**
+ * Get recent analyses for a specific country
+ */
+export async function getCountryRecentAnalyses(countryCode: string, limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(countryEmotionAnalyses)
+    .where(eq(countryEmotionAnalyses.countryCode, countryCode))
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+
+
+
+/**
+ * Get historical emotion indices for a country within a time range
+ */
+export async function getCountryHistoricalIndices(
+  countryCode: string,
+  hoursBack: number = 24
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(
+      and(
+        eq(countryEmotionIndices.countryCode, countryCode),
+        gte(countryEmotionIndices.analyzedAt, startTime)
+      )
+    )
+    .orderBy((t) => asc(t.analyzedAt));
+}
+
+/**
+ * Get historical emotion indices for all countries within a time range
+ */
+export async function getAllCountriesHistoricalIndices(hoursBack: number = 24) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(gte(countryEmotionIndices.analyzedAt, startTime))
+    .orderBy((t) => asc(t.analyzedAt));
+}
+
+/**
+ * Get historical emotion indices for multiple countries
+ */
+export async function getMultipleCountriesHistoricalIndices(
+  countryCodes: string[],
+  hoursBack: number = 24
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startTime = new Date(Date.now() - hoursBack * 60 * 60 * 1000);
+
+  return await db
+    .select()
+    .from(countryEmotionIndices)
+    .where(
+      and(
+        inArray(countryEmotionIndices.countryCode, countryCodes),
+        gte(countryEmotionIndices.analyzedAt, startTime)
+      )
+    )
+    .orderBy((t) => asc(t.analyzedAt));
+}
+
+
+/**
+ * Create an enterprise inquiry
+ */
+export async function createEnterpriseInquiry(data: InsertEnterpriseInquiry) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(enterpriseInquiries).values(data);
+}
+
+/**
+ * Get all enterprise inquiries (for admin)
+ */
+export async function getEnterpriseInquiries() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(enterpriseInquiries)
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Update enterprise inquiry status
+ */
+export async function updateEnterpriseInquiryStatus(id: number, status: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(enterpriseInquiries)
+    .set({ status })
+    .where(eq(enterpriseInquiries.id, id));
+}
+
+/**
+ * Track user usage
+ */
+export async function trackUsage(data: InsertUsageTracking) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db.insert(usageTracking).values(data);
+}
+
+/**
+ * Get user's daily usage count
+ */
+export async function getUserDailyUsage(userId: number, usageType: string) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const result = await db
+    .select()
+    .from(usageTracking)
+    .where(
+      and(
+        eq(usageTracking.userId, userId),
+        eq(usageTracking.usageType, usageType),
+        gte(usageTracking.usageDate, today)
+      )
+    );
+
+  return result.reduce((sum, r) => sum + r.count, 0);
+}
+
+
+// Import payment records
+import { paymentRecords, InsertPaymentRecord, PaymentRecord } from "../drizzle/schema";
+
+/**
+ * Create a new payment record
+ */
+export async function createPaymentRecord(data: InsertPaymentRecord) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(paymentRecords).values(data);
+  return result;
+}
+
+/**
+ * Get all payment records (for admin) — capped to prevent unbounded RAM usage.
+ * Use page/limit params for full pagination in admin UIs.
+ */
+export async function getAllPaymentRecords(limit: number = 200) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get payment records by status
+ */
+export async function getPaymentRecordsByStatus(status: "pending" | "confirmed" | "rejected" | "refunded") {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.status, status))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get payment record by ID
+ */
+export async function getPaymentRecordById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Update payment record status
+ */
+export async function updatePaymentRecordStatus(
+  id: number,
+  status: "pending" | "confirmed" | "rejected" | "refunded",
+  adminNotes?: string,
+  confirmedBy?: number
+) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const updateData: Partial<PaymentRecord> = {
+    status,
+    adminNotes: adminNotes || null,
+  };
+
+  if (status === "confirmed") {
+    updateData.confirmedAt = new Date();
+    if (confirmedBy) {
+      updateData.confirmedBy = confirmedBy;
+    }
+  }
+
+  return await db
+    .update(paymentRecords)
+    .set(updateData)
+    .where(eq(paymentRecords.id, id));
+}
+
+/**
+ * Get user's payment records
+ */
+export async function getUserPaymentRecords(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.userId, userId))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get payment records by email
+ */
+export async function getPaymentRecordsByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(paymentRecords)
+    .where(eq(paymentRecords.email, email))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+
+// ============================================
+// Custom Alerts Functions
+// ============================================
+
+/**
+ * Get user's custom alerts
+ */
+export async function getUserCustomAlerts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(customAlerts)
+    .where(eq(customAlerts.userId, userId))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Create a new custom alert
+ */
+export async function createCustomAlert(data: InsertCustomAlert) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(customAlerts).values(data);
+  return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0), ...data };
+}
+
+/**
+ * Update a custom alert
+ */
+export async function updateCustomAlert(
+  id: number,
+  userId: number,
+  data: Partial<InsertCustomAlert>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(customAlerts)
+    .set(data)
+    .where(and(eq(customAlerts.id, id), eq(customAlerts.userId, userId)));
+
+  return { success: true };
+}
+
+/**
+ * Delete a custom alert
+ */
+export async function deleteCustomAlert(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .delete(customAlerts)
+    .where(and(eq(customAlerts.id, id), eq(customAlerts.userId, userId)));
+
+  return { success: true };
+}
+
+/**
+ * Toggle custom alert active status
+ */
+export async function toggleCustomAlert(id: number, userId: number, isActive: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(customAlerts)
+    .set({ isActive: isActive })
+    .where(and(eq(customAlerts.id, id), eq(customAlerts.userId, userId)));
+
+  return { success: true };
+}
+
+/**
+ * Get all active alerts for checking
+ */
+export async function getActiveCustomAlerts() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(customAlerts)
+    .where(eq(customAlerts.isActive, true));
+}
+
+/**
+ * Update alert trigger info
+ */
+export async function updateAlertTrigger(id: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(customAlerts)
+    .set({
+      lastTriggered: new Date(),
+      triggerCount: sql`${customAlerts.triggerCount} + 1`
+    })
+    .where(eq(customAlerts.id, id));
+}
+
+
+// ============================================
+// User Registration Functions
+// ============================================
+
+import { userRegistrations, passwordResetTokens, InsertUserRegistration, InsertPasswordResetToken } from "../drizzle/schema";
+
+/**
+ * Create a new user registration
+ */
+export async function createUserRegistration(data: InsertUserRegistration) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(userRegistrations).values(data);
+  return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0), ...data };
+}
+
+/**
+ * Get user registration by email
+ */
+export async function getUserRegistrationByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(userRegistrations)
+    .where(eq(userRegistrations.email, email))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Verify user email
+ */
+export async function verifyUserEmail(email: string, token: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const user = await db
+    .select()
+    .from(userRegistrations)
+    .where(and(
+      eq(userRegistrations.email, email),
+      eq(userRegistrations.verificationToken, token)
+    ))
+    .limit(1);
+
+  if (user.length === 0) return null;
+
+  // Check if token is expired
+  if (user[0].tokenExpiresAt && new Date() > user[0].tokenExpiresAt) {
+    return null;
+  }
+
+  await db
+    .update(userRegistrations)
+    .set({
+      isVerified: true,
+      verifiedAt: new Date(),
+      verificationToken: null,
+      tokenExpiresAt: null
+    })
+    .where(eq(userRegistrations.email, email));
+
+  return user[0];
+}
+
+/**
+ * Update user password
+ */
+export async function updateUserPassword(email: string, passwordHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(userRegistrations)
+    .set({ passwordHash })
+    .where(eq(userRegistrations.email, email));
+
+  return { success: true };
+}
+
+// ============================================
+// Password Reset Functions
+// ============================================
+
+/**
+ * Create a password reset token
+ */
+export async function createPasswordResetToken(data: InsertPasswordResetToken) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Invalidate any existing tokens for this email
+  await db
+    .update(passwordResetTokens)
+    .set({ isUsed: true })
+    .where(eq(passwordResetTokens.email, data.email));
+
+  const result = await db.insert(passwordResetTokens).values(data);
+  return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0), ...data };
+}
+
+/**
+ * Get password reset token
+ */
+export async function getPasswordResetToken(token: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(passwordResetTokens)
+    .where(and(
+      eq(passwordResetTokens.token, token),
+      eq(passwordResetTokens.isUsed, false)
+    ))
+    .limit(1);
+
+  if (result.length === 0) return null;
+
+  // Check if token is expired
+  if (new Date() > result[0].expiresAt) {
+    return null;
+  }
+
+  return result[0];
+}
+
+/**
+ * Mark password reset token as used
+ */
+export async function markPasswordResetTokenUsed(token: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(passwordResetTokens)
+    .set({ isUsed: true })
+    .where(eq(passwordResetTokens.token, token));
+
+  return { success: true };
+}
+
+
+// ============================================
+// Classified Analyses Functions
+// ============================================
+
+/**
+ * Create a classified analysis record
+ */
+export async function createClassifiedAnalysis(data: InsertClassifiedAnalysis) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(classifiedAnalyses).values(data);
+  return result;
+}
+
+/**
+ * Get user's classified analyses
+ */
+export async function getUserClassifiedAnalyses(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(classifiedAnalyses)
+    .where(eq(classifiedAnalyses.userId, userId))
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get all classified analyses (for reports) — default capped at 200 rows.
+ * Pass a custom limit or use offset-based pagination for larger datasets.
+ */
+export async function getAllClassifiedAnalyses(limit: number = 200, offset: number = 0) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(classifiedAnalyses)
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+/**
+ * Get classified analyses by domain
+ */
+export async function getClassifiedAnalysesByDomain(domain: string, limit: number = 100) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(classifiedAnalyses)
+    .where(eq(classifiedAnalyses.domain, domain as any))
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get classification statistics
+ */
+export async function getClassificationStats() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const stats = await db
+    .select({
+      domain: classifiedAnalyses.domain,
+      sensitivity: classifiedAnalyses.sensitivity,
+      count: sql<number>`COUNT(*)`,
+      avgRisk: sql<number>`AVG(${classifiedAnalyses.emotionalRiskScore})`,
+    })
+    .from(classifiedAnalyses)
+    .groupBy(classifiedAnalyses.domain, classifiedAnalyses.sensitivity);
+
+  return stats;
+}
+
+/**
+ * Get domain distribution
+ */
+export async function getDomainDistribution() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      domain: classifiedAnalyses.domain,
+      count: sql<number>`COUNT(*)`,
+      avgRisk: sql<number>`AVG(${classifiedAnalyses.emotionalRiskScore})`,
+    })
+    .from(classifiedAnalyses)
+    .groupBy(classifiedAnalyses.domain);
+}
+
+/**
+ * Get sensitivity distribution
+ */
+export async function getSensitivityDistribution() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      sensitivity: classifiedAnalyses.sensitivity,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(classifiedAnalyses)
+    .groupBy(classifiedAnalyses.sensitivity);
+}
+
+/**
+ * Get analyses over time (for trend chart)
+ */
+export async function getAnalysesOverTime(days: number = 30) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  return await db
+    .select({
+      date: sql<string>`DATE(${classifiedAnalyses.createdAt})`,
+      domain: classifiedAnalyses.domain,
+      count: sql<number>`COUNT(*)`,
+      avgRisk: sql<number>`AVG(${classifiedAnalyses.emotionalRiskScore})`,
+    })
+    .from(classifiedAnalyses)
+    .where(gte(classifiedAnalyses.createdAt, startDate))
+    .groupBy(sql`DATE(${classifiedAnalyses.createdAt})`, classifiedAnalyses.domain)
+    .orderBy(sql`DATE(${classifiedAnalyses.createdAt})`);
+}
+
+// ============================================
+// Followed Topics Functions
+// ============================================
+
+/**
+ * Create a followed topic
+ */
+export async function createFollowedTopic(data: InsertFollowedTopic) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(followedTopics).values(data);
+  return result;
+}
+
+/**
+ * Get user's followed topics
+ */
+export async function getUserFollowedTopics(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(followedTopics)
+    .where(eq(followedTopics.userId, userId))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get active followed topics for a user
+ */
+export async function getActiveFollowedTopics(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(followedTopics)
+    .where(and(
+      eq(followedTopics.userId, userId),
+      eq(followedTopics.isActive, true)
+    ))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Update followed topic
+ */
+export async function updateFollowedTopic(id: number, data: Partial<InsertFollowedTopic>) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(followedTopics)
+    .set(data)
+    .where(eq(followedTopics.id, id));
+}
+
+/**
+ * Delete followed topic
+ */
+export async function deleteFollowedTopic(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .delete(followedTopics)
+    .where(eq(followedTopics.id, id));
+}
+
+/**
+ * Toggle followed topic active status
+ */
+export async function toggleFollowedTopicActive(id: number, isActive: boolean) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(followedTopics)
+    .set({ isActive: isActive })
+    .where(eq(followedTopics.id, id));
+}
+
+// ============================================
+// Topic Alerts Functions
+// ============================================
+
+/**
+ * Create a topic alert
+ */
+export async function createTopicAlert(data: InsertTopicAlert) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(topicAlerts).values(data);
+  return result;
+}
+
+/**
+ * Get user's topic alerts
+ */
+export async function getUserTopicAlerts(userId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(topicAlerts)
+    .where(eq(topicAlerts.userId, userId))
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
+}
+
+/**
+ * Get user's unread topic alerts
+ */
+export async function getUnreadTopicAlerts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(topicAlerts)
+    .where(and(
+      eq(topicAlerts.userId, userId),
+      eq(topicAlerts.isRead, false)
+    ))
+    .orderBy((t) => desc(t.createdAt));
+}
+
+/**
+ * Get unread alerts count
+ */
+export async function getUnreadAlertsCount(userId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const result = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(topicAlerts)
+    .where(and(
+      eq(topicAlerts.userId, userId),
+      eq(topicAlerts.isRead, false)
+    ));
+
+  return result[0]?.count || 0;
+}
+
+/**
+ * Mark alert as read
+ */
+export async function markAlertAsRead(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(topicAlerts)
+    .set({ isRead: true, readAt: new Date() })
+    .where(eq(topicAlerts.id, id));
+}
+
+/**
+ * Mark all alerts as read for a user
+ */
+export async function markAllAlertsAsRead(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return await db
+    .update(topicAlerts)
+    .set({ isRead: true, readAt: new Date() })
+    .where(and(
+      eq(topicAlerts.userId, userId),
+      eq(topicAlerts.isRead, false)
+    ));
+}
+
+/**
+ * Delete old alerts (cleanup)
+ */
+export async function deleteOldAlerts(daysOld: number = 30) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const cutoffDate = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000);
+
+  return await db
+    .delete(topicAlerts)
+    .where(and(
+      eq(topicAlerts.isRead, true),
+      sql`${topicAlerts.createdAt} < ${cutoffDate}`
+    ));
+}
+
+
+// ============================================
+// User Statistics Functions
+// ============================================
+
+/**
+ * Get user's comprehensive statistics
+ */
+export async function getUserStats(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    return {
+      totalAnalyses: 0,
+      activeAlerts: 0,
+      followedTopics: 0,
+      countriesAnalyzed: 0,
+      recentAnalyses: [],
+      recentAlerts: [],
+      memberSince: null,
+      lastActive: null,
+    };
+  }
+
+  try {
+    // Get total analyses count
+    const analysesCount = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId));
+
+    // Get active alerts count
+    const alertsCount = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(customAlerts)
+      .where(and(
+        eq(customAlerts.userId, userId),
+        eq(customAlerts.isActive, true)
+      ));
+
+    // Get followed topics count
+    const topicsCount = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(followedTopics)
+      .where(and(
+        eq(followedTopics.userId, userId),
+        eq(followedTopics.isActive, true)
+      ));
+
+    // Get unique countries analyzed (from classified analyses)
+    // For now, we'll count unique domains as a proxy
+    const domainsAnalyzed = await db
+      .select({ domain: classifiedAnalyses.domain })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId))
+      .groupBy(classifiedAnalyses.domain);
+
+    // Get recent analyses
+    const recentAnalyses = await db
+      .select({
+        id: classifiedAnalyses.id,
+        headline: classifiedAnalyses.headline,
+        domain: classifiedAnalyses.domain,
+        dominantEmotion: classifiedAnalyses.dominantEmotion,
+        confidence: classifiedAnalyses.confidence,
+        emotionalRiskScore: classifiedAnalyses.emotionalRiskScore,
+        createdAt: classifiedAnalyses.createdAt,
+      })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId))
+      .orderBy(desc(classifiedAnalyses.createdAt))
+      .limit(5);
+
+    // Get recent alerts
+    const recentAlerts = await db
+      .select({
+        id: customAlerts.id,
+        name: customAlerts.name,
+        metric: customAlerts.metric,
+        condition: customAlerts.condition,
+        threshold: customAlerts.threshold,
+        isActive: customAlerts.isActive,
+        createdAt: customAlerts.createdAt,
+      })
+      .from(customAlerts)
+      .where(eq(customAlerts.userId, userId))
+      .orderBy(desc(customAlerts.createdAt))
+      .limit(5);
+
+    // Get user info for member since
+    const userInfo = await db
+      .select({
+        createdAt: users.createdAt,
+        lastSignedIn: users.lastSignedIn,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    return {
+      totalAnalyses: Number(analysesCount[0]?.count || 0),
+      activeAlerts: Number(alertsCount[0]?.count || 0),
+      followedTopics: Number(topicsCount[0]?.count || 0),
+      countriesAnalyzed: domainsAnalyzed.length,
+      recentAnalyses,
+      recentAlerts,
+      memberSince: userInfo[0]?.createdAt || null,
+      lastActive: userInfo[0]?.lastSignedIn || null,
+    };
+  } catch (error) {
+    console.error("[Database] Failed to get user stats:", error);
+    return {
+      totalAnalyses: 0,
+      activeAlerts: 0,
+      followedTopics: 0,
+      countriesAnalyzed: 0,
+      recentAnalyses: [],
+      recentAlerts: [],
+      memberSince: null,
+      lastActive: null,
+    };
+  }
+}
+
+/**
+ * Get user's recent analyses
+ */
+export async function getUserRecentAnalyses(userId: number, limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select({
+        id: classifiedAnalyses.id,
+        headline: classifiedAnalyses.headline,
+        domain: classifiedAnalyses.domain,
+        sensitivity: classifiedAnalyses.sensitivity,
+        dominantEmotion: classifiedAnalyses.dominantEmotion,
+        confidence: classifiedAnalyses.confidence,
+        emotionalRiskScore: classifiedAnalyses.emotionalRiskScore,
+        createdAt: classifiedAnalyses.createdAt,
+      })
+      .from(classifiedAnalyses)
+      .where(eq(classifiedAnalyses.userId, userId))
+      .orderBy(desc(classifiedAnalyses.createdAt))
+      .limit(limit);
+  } catch (error) {
+    console.error("[Database] Failed to get user recent analyses:", error);
+    return [];
+  }
+}
+
+/**
+ * Get user's active alerts
+ */
+export async function getUserActiveAlerts(userId: number, limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select({
+        id: customAlerts.id,
+        name: customAlerts.name,
+        metric: customAlerts.metric,
+        condition: customAlerts.condition,
+        threshold: customAlerts.threshold,
+        isActive: customAlerts.isActive,
+        createdAt: customAlerts.createdAt,
+      })
+      .from(customAlerts)
+      .where(and(
+        eq(customAlerts.userId, userId),
+        eq(customAlerts.isActive, true)
+      ))
+      .orderBy(desc(customAlerts.createdAt))
+      .limit(limit);
+  } catch (error) {
+    console.error("[Database] Failed to get user active alerts:", error);
+    return [];
+  }
+}
+
+
+// ============================================
+// Response Feedback Functions
+// ============================================
+
+export async function submitResponseFeedback(feedback: InsertResponseFeedback): Promise<{ id: number } | null> {
+  try {
+    const db = await getDb();
+    if (!db) return null;
+
+    const result = await db.insert(responseFeedback).values(feedback);
+    return { id: Number((result as any).lastInsertRowid ?? (result as any).insertId ?? 0) };
+  } catch (error) {
+    console.error("[Database] Failed to submit response feedback:", error);
+    return null;
+  }
+}
+
+export async function getResponseFeedbackStats(): Promise<{
+  totalFeedback: number;
+  averageRating: number;
+  helpfulPercentage: number;
+  accuratePercentage: number;
+  recentFeedback: any[];
+}> {
+  try {
+    const db = await getDb();
+    if (!db) return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
+
+    const allFeedback = await db.select().from(responseFeedback).orderBy(desc(responseFeedback.createdAt)).limit(100);
+
+    const total = allFeedback.length;
+    if (total === 0) return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
+
+    const avgRating = allFeedback.reduce((sum, f) => sum + (f.rating || 0), 0) / total;
+    const helpfulCount = allFeedback.filter(f => f.wasHelpful === "yes").length;
+    const accurateCount = allFeedback.filter(f => f.wasAccurate === "yes").length;
+
+    return {
+      totalFeedback: total,
+      averageRating: Math.round(avgRating * 10) / 10,
+      helpfulPercentage: Math.round((helpfulCount / total) * 100),
+      accuratePercentage: Math.round((accurateCount / total) * 100),
+      recentFeedback: allFeedback.slice(0, 10).map(f => ({
+        id: f.id,
+        question: f.question?.substring(0, 100),
+        rating: f.rating,
+        wasHelpful: f.wasHelpful,
+        wasAccurate: f.wasAccurate,
+        comment: f.comment?.substring(0, 200),
+        topic: f.topic,
+        createdAt: f.createdAt,
+      })),
+    };
+  } catch (error) {
+    console.error("[Database] Failed to get feedback stats:", error);
+    return { totalFeedback: 0, averageRating: 0, helpfulPercentage: 0, accuratePercentage: 0, recentFeedback: [] };
+  }
+}
+
+export async function getUserFeedbackHistory(userId: number, limit: number = 20): Promise<any[]> {
+  try {
+    const db = await getDb();
+    if (!db) return [];
+
+    return await db.select().from(responseFeedback)
+      .where(eq(responseFeedback.userId, userId))
+      .orderBy(desc(responseFeedback.createdAt))
+      .limit(limit);
+  } catch (error) {
+    console.error("[Database] Failed to get user feedback history:", error);
+    return [];
+  }
+}

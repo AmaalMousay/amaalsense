@@ -1,0 +1,129 @@
+/**
+ * AmalSense Emotional Intelligence Engine
+ * 
+ * Core Engines:
+ * 0. Emotional Memory -    
+ * 1. Context Classification -    
+ * 2. Emotion Fusion -      
+ * 3. Emotional Dynamics -    
+ * 4. Driver Detection -   
+ * 5. Explainable Insight -   
+ * 
+ * Support Systems:
+ * - Source Weighting -  
+ * - Confidence Propagation -  
+ * - Feedback Store -   
+ * 
+ * Unified API: analyze({ text, country, userType })
+ */
+
+// Engine 1: Context Classification
+export { 
+  classifyContext,
+  type ContextResult,
+  type ContentDomain,
+  type EventType,
+  type SensitivityLevel
+} from './contextClassification';
+
+// Engine 2: Emotion Fusion
+export {
+  fuseEmotions,
+  type AffectiveVector,
+  type EmotionFusionResult
+} from './emotionEngine';
+
+// Engine 3: Emotional Dynamics
+export {
+  analyzeEmotionalDynamics,
+  type DynamicsResult,
+  type TrendDirection,
+  type MomentumLevel,
+  type EmotionalSpike
+} from './emotionEngine';
+
+// Engine 4: Driver Detection
+export {
+  detectDrivers,
+  type DriverDetectionResult,
+  type KeyDriver,
+  type RootCause,
+  type Narrative,
+  type RelatedEvent
+} from './driverDetection';
+
+// Engine 5: Explainable Insight
+export {
+  generateInsights,
+  type ExplainableInsightResult,
+  type UserType,
+  type JournalistInsight,
+  type ResearcherInsight,
+  type TraderInsight,
+  type GeneralInsight
+} from './explainableInsight';
+
+// Unified Analyzer
+export {
+  analyze,
+  analyzeQuick,
+  analyzeBatch,
+  type AnalyzeInput,
+  type AnalyzeOutput
+} from './unifiedAnalyzer';
+
+// Engine 0: Emotional Memory Layer
+export {
+  storeAnalysis,
+  getHistoricalData,
+  calculateHistoricalTrend,
+  getLastAnalysis,
+  getMemoryStats,
+  type EmotionalMemoryEntry,
+  type HistoricalQuery,
+  type HistoricalTrend
+} from './emotionEngine';
+
+// Source Weighting System
+export {
+  getSourceWeight,
+  detectSourceFromUrl,
+  applySourceWeights,
+  calculateWeightedAverage,
+  calculateWeightedEmotions,
+  getSourcesSummary,
+  type SourceType,
+  type SourceWeight,
+  type WeightedContent
+} from './sourceWeighting';
+
+// Confidence Propagation System
+export {
+  calculateContextConfidence,
+  calculateFusionConfidence,
+  calculateDynamicsConfidence,
+  calculateDriverConfidence,
+  calculateInsightConfidence,
+  calculateOverallConfidence,
+  quickConfidenceScore,
+  type EngineConfidence,
+  type ConfidenceFactor,
+  type OverallConfidence
+} from './confidencePropagation';
+
+// Feedback Store
+export {
+  addFeedback,
+  submitEmotionCorrection,
+  submitAccuracyRating,
+  submitRelevanceRating,
+  submitGeneralComment,
+  getFeedbackForAnalysis,
+  getFeedbackForTopic,
+  getFeedbackStats,
+  analyzeFeedbackPatterns,
+  type FeedbackEntry,
+  type FeedbackType,
+  type FeedbackSentiment,
+  type FeedbackStats
+} from './feedbackStore';
