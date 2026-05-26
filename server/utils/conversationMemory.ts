@@ -1,10 +1,11 @@
-import { t } from "../_core/i18n";
-import { EventVector } from './graphPipeline';
-
 /**
  * Conversation Memory System
- * Maintains multi-turn context for intelligent follow-up questions
+ *
+ * Maintains multi-turn context for intelligent follow-up questions.
+ * Stores message history, topic, and emotional context per conversation.
  */
+
+import type { EventVector } from './graphPipeline';
 
 export interface ConversationMessage {
   id: string;
@@ -29,130 +30,106 @@ export interface ConversationContext {
 }
 
 /**
- * Build context string from conversation history
+ * Build a compact context string from conversation history
  */
 export function buildConversationContext(context: ConversationContext): string {
-  const recentMessages = context.messages.slice(-5); // Last 5 messages
-  const messageHistory = recentMessages
-    .map((msg) => `${msg.role === 'user' ? t('auto.utils_conversationMemory.34.d79fe04a', 'ar') : t('auto.utils_conversationMemory.33.5af1a8ad', 'ar')}: ${msg.content}`)
+  const recentMessages = context.messages.slice(-5);
+  const history = recentMessages
+    .map((msg) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
     .join('\n\n');
 
-  const contextString = `
-  :
- : ${context.currentTopic}
- : ${context.regionContext.join(', ')}
- : ${context.emotionalContext.dominantEmotion}
- : ${context.emotionalContext.overallSentiment > 0 ? t('auto.utils_conversationMemory.32.3c9380a2', 'ar') : t('auto.utils_conversationMemory.31.a5ed0453', 'ar')}
-
- :
-${messageHistory}
-
-       .
-`;
-
-  return contextString;
+  return [
+    `Active topic: ${context.currentTopic}`,
+    `Region: ${context.regionContext.join(', ')}`,
+    `Dominant emotion: ${context.emotionalContext.dominantEmotion}`,
+    `Overall sentiment: ${context.emotionalContext.overallSentiment > 0 ? 'positive' : 'negative'}`,
+    '',
+    'Recent conversation:',
+    history,
+    '',
+    'Use this context to maintain continuity.',
+  ].join('\n');
 }
 
 /**
- * Create enhanced prompt with conversation context
+ * Create a context-aware prompt for the language model.
  */
 export function createContextAwarePrompt(
   userQuery: string,
   eventVector: EventVector,
-  conversationContext?: ConversationContext
+  conversationContext?: ConversationContext,
 ): string {
-  const basePrompt = `
-         .
-
-: ${userQuery}
-
- :
--  : ${eventVector.topic}
-- : =${eventVector.emotions.fear}, =${eventVector.emotions.hope}, =${eventVector.emotions.anger}
--  : ${eventVector.region}
--  : ${eventVector.impactScore}/100
--  : ${eventVector.regionConfidence}%
-
-:
-1.    
-2.    
-3.    
-4.   
-5.  
-
-       .
-`;
+  const base = [
+    'You are AmalSense collective emotion analyst.',
+    '',
+    `User question: ${userQuery}`,
+    '',
+    'Event vector context:',
+    `- Topic: ${eventVector.topic}`,
+    `- Emotion signals: fear=${eventVector.emotions.fear}, hope=${eventVector.emotions.hope}, anger=${eventVector.emotions.anger}`,
+    `- Region: ${eventVector.region}`,
+    `- Impact score: ${eventVector.impactScore}/100`,
+    `- Region confidence: ${eventVector.regionConfidence}%`,
+    '',
+    'Answer structure:',
+    '1. Direct answer to the question',
+    '2. Key emotion signals observed',
+    '3. Causal factors if identifiable',
+    '4. Relevant event context',
+    '5. Confidence note',
+    '',
+    'Stay factual. Do not invent data.',
+  ].join('\n');
 
   if (conversationContext && conversationContext.messages.length > 0) {
-    return basePrompt + '\n\n' + buildConversationContext(conversationContext);
+    return base + '\n\n' + buildConversationContext(conversationContext);
   }
 
-  return basePrompt;
+  return base;
 }
 
+const REGION_KEYWORDS: Record<string, string[]> = {
+  Egypt: ['egypt', 'cairo', 'alexandria', 'giza'],
+  'Saudi Arabia': ['saudi arabia', 'riyadh', 'jeddah', 'dammam'],
+  UAE: ['uae', 'dubai', 'abu dhabi', 'sharjah'],
+  Libya: ['libya', 'tripoli', 'benghazi', 'misrata'],
+  Morocco: ['morocco', 'rabat', 'casablanca', 'marrakesh'],
+  Tunisia: ['tunisia', 'tunis', 'sousse'],
+  Jordan: ['jordan', 'amman'],
+};
+
 /**
- * Extract topic and regions from user query
+ * Extract topic and regions from a user query.
  */
-export function extractQueryContext(query: string): {
-  topic: string;
-  regions: string[];
-} {
-  const regionKeywords: { [key: string]: string[] } = {
-    '': [t('auto.utils_conversationMemory.30.9f5f187b', 'ar'), t('auto.utils_conversationMemory.29.93019aa0', 'ar'), t('auto.utils_conversationMemory.28.a26da63f', 'ar'), t('auto.utils_conversationMemory.27.593d7ba1', 'ar')],
-    '': [t('auto.utils_conversationMemory.26.cd8d189f', 'ar'), t('auto.utils_conversationMemory.25.ec7f247f', 'ar'), t('auto.utils_conversationMemory.24.de8dd0bd', 'ar'), t('auto.utils_conversationMemory.23.822c2b16', 'ar')],
-    '': [t('auto.utils_conversationMemory.22.9bc10b8c', 'ar'), t('auto.utils_conversationMemory.21.4a07a7fb', 'ar'), t('auto.utils_conversationMemory.20.cd666d65', 'ar')],
-    '': [t('auto.utils_conversationMemory.19.251aff72', 'ar'), t('auto.utils_conversationMemory.18.da7424b2', 'ar'), t('auto.utils_conversationMemory.17.63a58999', 'ar')],
-    '': [t('auto.utils_conversationMemory.16.94b11d17', 'ar'), t('auto.utils_conversationMemory.15.ae6723ec', 'ar'), t('auto.utils_conversationMemory.14.e4002e13', 'ar')],
-    '': [t('auto.utils_conversationMemory.13.ba84e974', 'ar'), t('auto.utils_conversationMemory.12.fb618b1a', 'ar')],
-    '': [t('auto.utils_conversationMemory.11.bdd0aaf6', 'ar'), t('auto.utils_conversationMemory.10.0304eff4', 'ar')],
-  };
-
-  const detectedRegions: string[] = [];
-  for (const [region, keywords] of Object.entries(regionKeywords)) {
-    if (keywords.some((kw) => query.includes(kw))) {
-      detectedRegions.push(region);
-    }
+export function extractQueryContext(query: string): { topic: string; regions: string[] } {
+  const lower = query.toLowerCase();
+  const regions: string[] = [];
+  for (const [region, keywords] of Object.entries(REGION_KEYWORDS)) {
+    if (keywords.some((kw) => lower.includes(kw))) regions.push(region);
   }
-
-  return {
-    topic: query.substring(0, 100),
-    regions: detectedRegions.length > 0 ? detectedRegions : [t('auto.utils_conversationMemory.9.17859487', 'ar')],
-  };
+  return { topic: query.substring(0, 100), regions: regions.length > 0 ? regions : ['General'] };
 }
 
 /**
- * Update conversation context with new message and analysis
+ * Update a conversation context with a new user-assistant exchange.
  */
 export function updateConversationContext(
   context: ConversationContext,
   userMessage: string,
   assistantResponse: string,
-  eventVector: EventVector
+  eventVector: EventVector,
 ): ConversationContext {
   const newMessages: ConversationMessage[] = [
     ...context.messages,
-    {
-      id: `msg-${Date.now()}-user`,
-      role: 'user',
-      content: userMessage,
-      timestamp: Date.now(),
-    },
-    {
-      id: `msg-${Date.now()}-assistant`,
-      role: 'assistant',
-      content: assistantResponse,
-      eventVector,
-      timestamp: Date.now(),
-    },
+    { id: `msg-${Date.now()}-user`, role: 'user', content: userMessage, timestamp: Date.now() },
+    { id: `msg-${Date.now()}-assistant`, role: 'assistant', content: assistantResponse, eventVector, timestamp: Date.now() },
   ];
-
-  const queryContext = extractQueryContext(userMessage);
-
+  const ctx = extractQueryContext(userMessage);
   return {
     ...context,
     messages: newMessages,
-    currentTopic: queryContext.topic,
-    regionContext: queryContext.regions,
+    currentTopic: ctx.topic,
+    regionContext: ctx.regions,
     emotionalContext: {
       dominantEmotion: eventVector.dominantEmotion,
       overallSentiment: eventVector.emotions.hope - eventVector.emotions.fear,
@@ -162,46 +139,29 @@ export function updateConversationContext(
 }
 
 /**
- * Create new conversation context
+ * Create a fresh conversation context.
  */
-export function createConversationContext(
-  conversationId: string,
-  userId: string
-): ConversationContext {
+export function createConversationContext(conversationId: string, userId: string): ConversationContext {
   return {
     conversationId,
     userId,
     messages: [],
     currentTopic: '',
     regionContext: [],
-    emotionalContext: {
-      dominantEmotion: 'neutral',
-      overallSentiment: 0,
-    },
+    emotionalContext: { dominantEmotion: 'neutral', overallSentiment: 0 },
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
 }
 
 /**
- * Check if follow-up question is related to previous context
+ * Heuristic check: is the current query a follow-up to a previous conversation?
  */
-export function isFollowUpQuestion(
-  currentQuery: string,
-  conversationContext: ConversationContext
-): boolean {
+export function isFollowUpQuestion(currentQuery: string, conversationContext: ConversationContext): boolean {
   if (conversationContext.messages.length === 0) return false;
-
-  const followUpKeywords = [
-    t('auto.utils_conversationMemory.8.9dd0db2c', 'ar'),
-    t('auto.utils_conversationMemory.7.dc0f9a10', 'ar'),
-    t('auto.utils_conversationMemory.6.daa59aa1', 'ar'),
-    t('auto.utils_conversationMemory.5.2500c161', 'ar'),
-    t('auto.utils_conversationMemory.4.34a86013', 'ar'),
-    t('auto.utils_conversationMemory.3.979407ea', 'ar'),
-    t('auto.utils_conversationMemory.2.c3612400', 'ar'),
-    t('auto.utils_conversationMemory.1.f9620a18', 'ar'),
+  const followUpPatterns = [
+    /^(what about|and|how about|why|how|tell me more|explain|compare)/i,
+    /(more|again|instead|also|further|elaborate)/i,
   ];
-
-  return followUpKeywords.some((keyword) => currentQuery.includes(keyword));
+  return followUpPatterns.some((p) => p.test(currentQuery.trim()));
 }
