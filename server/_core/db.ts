@@ -13,8 +13,12 @@ export async function getDb() {
       // Use sqlite.db as default if no DATABASE_URL provided
       const dbPath = process.env.DATABASE_URL || "sqlite.db";
       const sqlite = new Database(dbPath);
+      // Enable WAL mode: allows concurrent readers/writers without SQLITE_BUSY errors
+      sqlite.pragma('journal_mode = WAL');
+      // Increase busy timeout so agents waiting on a locked DB retry instead of crashing
+      sqlite.pragma('busy_timeout = 5000');
       db = drizzle(sqlite);
-      console.log(`[Database] Connected to SQLite at ${dbPath}`);
+      console.log(`[Database] Connected to SQLite at ${dbPath} (WAL mode enabled)`);
     } catch (error) {
       console.warn("[Database] Failed to connect to SQLite:", error);
       db = null;
@@ -391,16 +395,18 @@ export async function createPaymentRecord(data: InsertPaymentRecord) {
 }
 
 /**
- * Get all payment records (for admin)
+ * Get all payment records (for admin) — capped to prevent unbounded RAM usage.
+ * Use page/limit params for full pagination in admin UIs.
  */
-export async function getAllPaymentRecords() {
+export async function getAllPaymentRecords(limit: number = 200) {
   const db = await getDb();
   if (!db) return [];
 
   return await db
     .select()
     .from(paymentRecords)
-    .orderBy((t) => desc(t.createdAt));
+    .orderBy((t) => desc(t.createdAt))
+    .limit(limit);
 }
 
 /**
@@ -777,9 +783,10 @@ export async function getUserClassifiedAnalyses(userId: number, limit: number = 
 }
 
 /**
- * Get all classified analyses (for reports)
+ * Get all classified analyses (for reports) — default capped at 200 rows.
+ * Pass a custom limit or use offset-based pagination for larger datasets.
  */
-export async function getAllClassifiedAnalyses(limit: number = 1000) {
+export async function getAllClassifiedAnalyses(limit: number = 200, offset: number = 0) {
   const db = await getDb();
   if (!db) return [];
 
@@ -787,7 +794,8 @@ export async function getAllClassifiedAnalyses(limit: number = 1000) {
     .select()
     .from(classifiedAnalyses)
     .orderBy((t) => desc(t.createdAt))
-    .limit(limit);
+    .limit(limit)
+    .offset(offset);
 }
 
 /**

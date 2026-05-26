@@ -56,10 +56,11 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- 
+    Analytics script (optional - enable by setting VITE_ANALYTICS_ENDPOINT and VITE_ANALYTICS_WEBSITE_ID in .env)
     <script
       defer
-      src="%VITE_ANALYTICS_ENDPOINT%/umami"
-      data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+      src="[VITE_ANALYTICS_ENDPOINT]/umami"
+      data-website-id="[VITE_ANALYTICS_WEBSITE_ID]"></script>
     -->
     <script>
       if ('serviceWorker' in navigator) {

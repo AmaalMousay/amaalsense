@@ -9,6 +9,10 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { applySecurityMiddleware } from "./security";
 import { multiAgentSystem } from "../agents/multiAgentSystem";
+import { validateProductionEnv } from "./env";
+
+// Validate critical secrets before anything else starts
+validateProductionEnv();
 
 
 function isPortAvailable(port: number): Promise<boolean> {
