@@ -61,13 +61,13 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
     
     //  
     const currencyNames: Record<string, string> = {
-      'EUR': `يورو`,
-      'GBP': `جنيه إسترليني`,
-      'LYD': `دينار ليبي`,
-      'EGP': `جنيه مصري`,
-      'TND': `دينار تونسي`,
-      'SAR': `ريال سعودي`,
-      'AED': `درهم إماراتي`
+      'EUR': 'Euro',
+      'GBP': 'British Pound',
+      'LYD': 'Libyan Dinar',
+      'EGP': 'Egyptian Pound',
+      'TND': 'Tunisian Dinar',
+      'SAR': 'Saudi Riyal',
+      'AED': 'UAE Dirham'
     };
     
     for (const [code, rate] of Object.entries(data.rates)) {
@@ -90,7 +90,7 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
     //   
     rates.unshift({
       code: 'USD',
-      name: `دولار أمريكي`,
+      name: 'US Dollar',
       rate: 1,
       change: 0,
       changePercent: 0,
@@ -126,7 +126,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
       if (goldEntry) {
         const commodities: CommodityPrice[] = [
           {
-            name: `الذهب`,
+            name: 'Gold',
             symbol: 'XAU',
             price: goldEntry.price,
             currency: 'USD',
@@ -136,7 +136,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
             lastUpdated: new Date()
           },
           {
-            name: `الفضة`,
+            name: 'Silver',
             symbol: 'XAG',
             price: silverEntry?.price ?? 31,
             currency: 'USD',
@@ -147,7 +147,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
           },
           //    metals.live -     
           lastKnownCommodities?.find(c => c.symbol === 'BRENT') ?? {
-            name: `نفط برنت`,
+            name: 'Brent Crude',
             symbol: 'BRENT',
             price: 78,
             currency: 'USD',
@@ -157,7 +157,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
             lastUpdated: new Date()
           },
           lastKnownCommodities?.find(c => c.symbol === 'WTI') ?? {
-            name: `نفط WTI`,
+            name: 'WTI Crude',
             symbol: 'WTI',
             price: 74,
             currency: 'USD',
@@ -193,11 +193,11 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
  */
 function getDefaultCurrencyRates(): CurrencyRate[] {
   return [
-    { code: 'USD', name: `دولار أمريكي`, rate: 1, change: 0, changePercent: 0, direction: 'stable', lastUpdated: new Date() },
-    { code: 'EUR', name: `يورو`, rate: 0.92, change: -0.002, changePercent: -0.22, direction: 'down', lastUpdated: new Date() },
-    { code: 'GBP', name: `جنيه إسترليني`, rate: 0.79, change: 0.001, changePercent: 0.13, direction: 'up', lastUpdated: new Date() },
-    { code: 'LYD', name: `دينار ليبي`, rate: 4.85, change: 0.02, changePercent: 0.41, direction: 'up', lastUpdated: new Date() },
-    { code: 'EGP', name: `جنيه مصري`, rate: 50.5, change: 0.3, changePercent: 0.60, direction: 'up', lastUpdated: new Date() },
+    { code: 'USD', name: 'US Dollar', rate: 1, change: 0, changePercent: 0, direction: 'stable', lastUpdated: new Date() },
+    { code: 'EUR', name: 'Euro', rate: 0.92, change: -0.002, changePercent: -0.22, direction: 'down', lastUpdated: new Date() },
+    { code: 'GBP', name: 'British Pound', rate: 0.79, change: 0.001, changePercent: 0.13, direction: 'up', lastUpdated: new Date() },
+    { code: 'LYD', name: 'Libyan Dinar', rate: 4.85, change: 0.02, changePercent: 0.41, direction: 'up', lastUpdated: new Date() },
+    { code: 'EGP', name: 'Egyptian Pound', rate: 50.5, change: 0.3, changePercent: 0.60, direction: 'up', lastUpdated: new Date() },
   ];
 }
 
@@ -206,10 +206,10 @@ function getDefaultCurrencyRates(): CurrencyRate[] {
  */
 function getDefaultCommodityPrices(): CommodityPrice[] {
   return [
-    { name: `الذهب`, symbol: 'XAU', price: 2650, currency: 'USD', change: 15, changePercent: 0.57, direction: 'up', lastUpdated: new Date() },
-    { name: `الفضة`, symbol: 'XAG', price: 31, currency: 'USD', change: -0.2, changePercent: -0.64, direction: 'down', lastUpdated: new Date() },
-    { name: `نفط برنت`, symbol: 'BRENT', price: 78, currency: 'USD', change: 1.2, changePercent: 1.56, direction: 'up', lastUpdated: new Date() },
-    { name: `نفط WTI`, symbol: 'WTI', price: 74, currency: 'USD', change: 0.8, changePercent: 1.09, direction: 'up', lastUpdated: new Date() },
+    { name: 'Gold', symbol: 'XAU', price: 2650, currency: 'USD', change: 15, changePercent: 0.57, direction: 'up', lastUpdated: new Date() },
+    { name: 'Silver', symbol: 'XAG', price: 31, currency: 'USD', change: -0.2, changePercent: -0.64, direction: 'down', lastUpdated: new Date() },
+    { name: 'Brent Crude', symbol: 'BRENT', price: 78, currency: 'USD', change: 1.2, changePercent: 1.56, direction: 'up', lastUpdated: new Date() },
+    { name: 'WTI Crude', symbol: 'WTI', price: 74, currency: 'USD', change: 0.8, changePercent: 1.09, direction: 'up', lastUpdated: new Date() },
   ];
 }
 
@@ -307,11 +307,11 @@ export function analyzeEconomicSentiment(data: EconomicData): {
   // 
   let summary = '';
   if (trend === 'bullish') {
-    summary = `المؤشرات الاقتصادية تميل للإيجابية مع ثقة في الأسواق`;
+    summary = 'Economic indicators lean positive with market confidence';
   } else if (trend === 'bearish') {
-    summary = `المؤشرات الاقتصادية تشير لحذر مع توجه نحو الملاذات الآمنة`;
+    summary = 'Economic indicators suggest caution with safe-haven flows';
   } else {
-    summary = `الأسواق في حالة ترقب مع إشارات متباينة`;
+    summary = 'Markets in wait-and-see mode with mixed signals';
   }
   
   return {
@@ -328,12 +328,12 @@ export function analyzeEconomicSentiment(data: EconomicData): {
 export function formatEconomicDataForResponse(data: EconomicData): string {
   const analysis = analyzeEconomicSentiment(data);
   
-  let text = `**المؤشرات الاقتصادية:**\n`;
+  let text = '**Economic Indicators:**\n';
   
   //  
   const mainCurrencies = data.currencies.filter(c => ['EUR', 'LYD', 'EGP'].includes(c.code));
   if (mainCurrencies.length > 0) {
-    text += `\n• العملات: `;
+    text += '\n• Currencies: ';
     text += mainCurrencies.map(c => {
       const arrow = c.direction === 'up' ? '↑' : c.direction === 'down' ? '↓' : '→';
       return `${c.name} ${arrow}${Math.abs(c.changePercent).toFixed(1)}%`;
@@ -345,7 +345,7 @@ export function formatEconomicDataForResponse(data: EconomicData): string {
   const oil = data.commodities.find(c => c.symbol === 'BRENT');
   
   if (gold || oil) {
-    text += `\n• السلع: `;
+    text += '\n• Commodities: ';
     const items: string[] = [];
     if (gold) {
       const arrow = gold.direction === 'up' ? '↑' : gold.direction === 'down' ? '↓' : '→';

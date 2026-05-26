@@ -725,12 +725,12 @@ function stripHtml(html: string): string {
 // ============================================
 
 const COUNTRY_SEARCH_TERMS: Record<string, { en: string[]; ar?: string[] }> = {
-  SA: { en: ['Saudi Arabia', 'Riyadh', 'Saudi news'], ar: [`السعودية`, `الرياض`] },
+  SA: { en: ['Saudi Arabia', 'Riyadh', 'Saudi news'] },
   US: { en: ['United States', 'USA news', 'America'] },
   GB: { en: ['United Kingdom', 'UK news', 'Britain'] },
-  AE: { en: ['UAE', 'Dubai news', 'Emirates'], ar: [`الإمارات`, `دبي`] },
-  EG: { en: ['Egypt', 'Cairo news', 'Egyptian'], ar: [`مصر`, `القاهرة`] },
-  LY: { en: ['Libya', 'Tripoli', 'Libyan news'], ar: [`ليبيا`, `طرابلس`] },
+  AE: { en: ['UAE', 'Dubai news', 'Emirates'] },
+  EG: { en: ['Egypt', 'Cairo news', 'Egyptian'] },
+  LY: { en: ['Libya', 'Tripoli', 'Libyan news'] },
   JP: { en: ['Japan', 'Tokyo news', 'Japanese'] },
   DE: { en: ['Germany', 'Berlin news', 'German'] },
   FR: { en: ['France', 'Paris news', 'French'] },
@@ -739,12 +739,12 @@ const COUNTRY_SEARCH_TERMS: Record<string, { en: string[]; ar?: string[] }> = {
   BR: { en: ['Brazil', 'Brazilian news'] },
   RU: { en: ['Russia', 'Moscow news', 'Russian'] },
   AU: { en: ['Australia', 'Sydney news', 'Australian'] },
-  TR: { en: ['Turkey', 'Istanbul', 'Turkish'], ar: [`تركيا`, `اسطنبول`] },
-  MA: { en: ['Morocco', 'Rabat', 'Moroccan'], ar: [`المغرب`, `الرباط`] },
-  TN: { en: ['Tunisia', 'Tunis', 'Tunisian'], ar: [`تونس`] },
-  DZ: { en: ['Algeria', 'Algiers', 'Algerian'], ar: [`الجزائر`] },
-  IQ: { en: ['Iraq', 'Baghdad', 'Iraqi'], ar: [`العراق`, `بغداد`] },
-  JO: { en: ['Jordan', 'Amman', 'Jordanian'], ar: [`الأردن`, `عمان`] },
+  TR: { en: ['Turkey', 'Istanbul', 'Turkish'] },
+  MA: { en: ['Morocco', 'Rabat', 'Moroccan'] },
+  TN: { en: ['Tunisia', 'Tunis', 'Tunisian'] },
+  DZ: { en: ['Algeria', 'Algiers', 'Algerian'] },
+  IQ: { en: ['Iraq', 'Baghdad', 'Iraqi'] },
+  JO: { en: ['Jordan', 'Amman', 'Jordanian'] },
 };
 
 /**
