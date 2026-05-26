@@ -35,7 +35,7 @@ export async function analyzeEventVectorWithUniversalModel(
   } catch (error) {
     console.error('[Reasoning Engine] ❌ Fallback triggered due to error:', error);
     return language === 'ar'
-      ? `نعتذر، المحرك في حالة تحديث للوعي الرقمي. يرجى المحاولة لاحقاً.`
+      // [cleaned Arabic string]
       : "Apologies, the engine is updating its digital consciousness. Please try again later.";
   }
 }
@@ -52,7 +52,7 @@ export function createUniversalPrompt(vector: any, language: string = 'ar'): str
     ar: ` "  " (ASI)      (DCFT):
     
       (   ):
-: ${vector.topic || `غير محدد`}
+: ${vector.topic || "translated"}
  : ${vector.dominantEmotion || 'neutral'}
  : ${vector.dominantCategory || 'General'}
  : ${emotionsList}

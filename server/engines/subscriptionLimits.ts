@@ -47,11 +47,11 @@ export interface TierInfo {
 export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   free: {
     name: 'Free',
-    nameAr: `مجاني`,
+    nameAr: "translated",
     price: 0,
     priceLabel: '$0/month',
     description: 'Perfect for individuals exploring collective emotion analysis',
-    descriptionAr: `مثالي للأفراد الذين يستكشفون تحليل المشاعر الجماعية`,
+    // [cleaned Arabic string]
     limits: {
       dailyAnalyses: 50,
       dailyApiCalls: 0,
@@ -73,11 +73,11 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   
   pro: {
     name: 'Professional',
-    nameAr: `احترافي`,
+    nameAr: "translated",
     price: 49,
     priceLabel: '$49/month',
     description: 'For researchers and small teams needing deeper insights',
-    descriptionAr: `للباحثين والفرق الصغيرة التي تحتاج رؤى أعمق`,
+    // [cleaned Arabic string]
     popular: true,
     limits: {
       dailyAnalyses: 500,
@@ -100,11 +100,11 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   
   enterprise: {
     name: 'Enterprise',
-    nameAr: `مؤسسي`,
+    nameAr: "translated",
     price: 299,
     priceLabel: '$299/month',
     description: 'Full-featured solution for organizations and enterprises',
-    descriptionAr: `حل متكامل للمؤسسات والشركات الكبرى`,
+    descriptionAr: "translated",
     limits: {
       dailyAnalyses: -1, // Unlimited
       dailyApiCalls: -1, // Unlimited
@@ -126,11 +126,11 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   
   government: {
     name: 'Government & NGO',
-    nameAr: `حكومي ومنظمات`,
+    nameAr: "translated",
     price: -1, // Custom pricing
     priceLabel: 'Custom',
     description: 'Tailored solutions for governments and international organizations',
-    descriptionAr: `حلول مخصصة للحكومات والمنظمات الدولية`,
+    descriptionAr: "translated",
     limits: {
       dailyAnalyses: -1, // Unlimited
       dailyApiCalls: -1, // Unlimited

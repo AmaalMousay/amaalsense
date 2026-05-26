@@ -242,24 +242,24 @@ export async function analyzeFeedback(): Promise<FeedbackAnalysis> {
 
   //   
   const strengths: string[] = [];
-  if (stats.helpfulPercentage >= 70) strengths.push(`الردود مفيدة للمستخدمين`);
-  if (stats.accuratePercentage >= 70) strengths.push(`التحليلات دقيقة`);
-  if (stats.understandablePercentage >= 70) strengths.push(`الردود واضحة ومفهومة`);
-  if (stats.averageRating >= 4) strengths.push(`رضا عام مرتفع`);
+  if (stats.helpfulPercentage >= 70) strengths.push("translated");
+  if (stats.accuratePercentage >= 70) strengths.push("translated");
+  if (stats.understandablePercentage >= 70) strengths.push("translated");
+  if (stats.averageRating >= 4) strengths.push("translated");
 
   //   
   const weaknesses: string[] = [];
-  if (stats.helpfulPercentage < 50) weaknesses.push(`الردود ليست مفيدة بما فيه الكفاية`);
-  if (stats.accuratePercentage < 50) weaknesses.push(`مشاكل في دقة التحليل`);
-  if (stats.understandablePercentage < 50) weaknesses.push(`الردود غير واضحة`);
-  if (stats.averageRating < 3) weaknesses.push(`رضا عام منخفض`);
+  if (stats.helpfulPercentage < 50) weaknesses.push("translated");
+  if (stats.accuratePercentage < 50) weaknesses.push("translated");
+  if (stats.understandablePercentage < 50) weaknesses.push("translated");
+  if (stats.averageRating < 3) weaknesses.push("translated");
 
   //  
   const recommendations: string[] = [];
-  if (stats.helpfulPercentage < 70) recommendations.push(`تحسين جودة الأسباب والتفسيرات`);
-  if (stats.accuratePercentage < 70) recommendations.push(`تحسين دقة جلب البيانات`);
-  if (stats.understandablePercentage < 70) recommendations.push(`تبسيط اللغة والهيكل`);
-  if (stats.topIssues.length > 0) recommendations.push(`معالجة الشكاوى المتكررة`);
+  if (stats.helpfulPercentage < 70) recommendations.push("translated");
+  if (stats.accuratePercentage < 70) recommendations.push("translated");
+  if (stats.understandablePercentage < 70) recommendations.push("translated");
+  if (stats.topIssues.length > 0) recommendations.push("translated");
 
   return {
     overallSatisfaction,

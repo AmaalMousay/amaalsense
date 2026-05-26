@@ -315,13 +315,13 @@ export function analyzeFeedbackPatterns(): {
   const stats = getFeedbackStats();
   
   if (stats.byType.emotion_correction > stats.totalFeedback * 0.2) {
-    improvementAreas.push(`تحسين دقة اكتشاف المشاعر`);
+    improvementAreas.push("translated");
   }
   if (stats.bySentiment.negative > stats.bySentiment.positive) {
-    improvementAreas.push(`تحسين جودة التحليل العامة`);
+    improvementAreas.push("translated");
   }
   if (stats.averageRating < 3.5) {
-    improvementAreas.push(`رفع مستوى رضا المستخدمين`);
+    improvementAreas.push("translated");
   }
   
   return {

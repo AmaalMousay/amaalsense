@@ -177,7 +177,7 @@ function getDefaultQuestions(topic: string, domain: string): SurveyQuestion[] {
     },
     {
       id: 'q5',
-      text: `ما الشيء الذي يشغل بالك أكثر في هذا الموضوع؟`,
+      // [cleaned Arabic string]
       type: 'open',
     },
   ];
@@ -215,8 +215,8 @@ export function analyzeSurveyResponses(responses: SurveyResponse[]): EmotionBrea
       
       
       if (answer.questionId === 'q4' && typeof answer.value === 'string') {
-        if (answer.value.includes(`تحسن`)) totalHope += 1;
-        else if (answer.value.includes(`تراجع`)) totalFear += 0.5;
+        if (answer.value.includes("translated")) totalHope += 1;
+        else if (answer.value.includes("translated")) totalFear += 0.5;
         else totalAcceptance += 0.5;
       }
       
@@ -269,24 +269,24 @@ export function generateCalibrationReport(
   const interpretations: string[] = [];
   
   if (gap.fearGap > 15) {
-    interpretations.push(`الإعلام يبالغ في تصوير الخوف مقارنة بما يشعره الناس فعلاً`);
+    interpretations.push("translated");
   } else if (gap.fearGap < -15) {
-    interpretations.push(`الناس أكثر قلقاً مما يظهره الإعلام`);
+    interpretations.push("translated");
   }
   
   if (gap.hopeGap > 15) {
-    interpretations.push(`الإعلام أكثر تفاؤلاً من الشارع`);
+    interpretations.push("translated");
   } else if (gap.hopeGap < -15) {
-    interpretations.push(`الناس أكثر تفاؤلاً مما ينقله الإعلام`);
+    interpretations.push("translated");
   }
   
   if (gap.angerGap > 15) {
-    interpretations.push(`الإعلام يركز على الغضب أكثر من الواقع`);
+    interpretations.push("translated");
   } else if (gap.angerGap < -15) {
-    interpretations.push(`هناك غضب شعبي لا يظهر في الإعلام`);
+    interpretations.push("translated");
   }
   
-  gap.interpretation = interpretations.join('. ') || `الإعلام يعكس مشاعر الناس بشكل متوازن`;
+  gap.interpretation = interpretations.join('. ') || "translated";
   
   
   const insights = generateCalibrationInsights(mediaPerception, publicPerception, gap);
@@ -319,7 +319,7 @@ function generateCalibrationInsights(
     const maxGap = Math.max(Math.abs(gap.fearGap), Math.abs(gap.hopeGap), Math.abs(gap.angerGap));
   
   if (maxGap > 20) {
-    insights.push(`هناك فجوة كبيرة بين الصورة الإعلامية والواقع الشعبي`);
+    // [cleaned Arabic string]
   }
   
     const dominantMedia = Object.entries(media).sort((a, b) => b[1] - a[1])[0];
@@ -331,11 +331,11 @@ function generateCalibrationInsights(
   
    
   if (public_.confusion > 30) {
-    insights.push(`هناك حيرة واضحة لدى الناس تحتاج توضيحاً`);
+    insights.push("translated");
   }
   
   if (public_.acceptance > 40) {
-    insights.push(`الناس في حالة قبول وتكيف مع الوضع`);
+    insights.push("translated");
   }
   
   return insights;
@@ -346,11 +346,11 @@ function generateCalibrationInsights(
  */
 function translateEmotion(emotion: string): string {
   const translations: Record<string, string> = {
-    fear: `الخوف`,
-    hope: `الأمل`,
-    anger: `الغضب`,
-    confusion: `الحيرة`,
-    acceptance: `القبول`,
+    fear: "translated",
+    hope: "translated",
+    anger: "translated",
+    confusion: "translated",
+    acceptance: "translated",
   };
   return translations[emotion] || emotion;
 }
@@ -377,27 +377,27 @@ export function generateCalibrationInsight(gap: { fear: number; hope: number; an
   
    
   if (gap.fear < -20) {
-    insights.push(`الإعلام يبالغ في تضخيم الخوف مقارنة بمشاعر الناس الحقيقية`);
+    // [cleaned Arabic string]
   } else if (gap.fear > 20) {
-    insights.push(`الإعلام يقلل من مستوى القلق الفعلي لدى الناس`);
+    insights.push("translated");
   }
   
    
   if (gap.hope > 20) {
-    insights.push(`الناس أكثر تفاؤلاً مما ينقله الإعلام`);
+    insights.push("translated");
   } else if (gap.hope < -20) {
-    insights.push(`الإعلام يبالغ في التفاؤل مقارنة بالواقع`);
+    insights.push("translated");
   }
   
    
   if (gap.anger < -20) {
-    insights.push(`الإعلام يركز على الغضب أكثر من الواقع`);
+    insights.push("translated");
   } else if (gap.anger > 20) {
-    insights.push(`هناك غضب شعبي لا يظهر في التغطية الإعلامية`);
+    insights.push("translated");
   }
   
   if (insights.length === 0) {
-    return `الإعلام يعكس مشاعر الناس بشكل متوازن نسبياً`;
+    // [cleaned Arabic string]
   }
   
   return insights.join('. ');

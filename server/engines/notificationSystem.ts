@@ -112,7 +112,7 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.gmiChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'warning' : 'critical',
-          `تغيير في مؤشر الحالة العام`,
+          // [cleaned Arabic string]
           `     ${changePercentage.toFixed(2)}%`,
           'GMI',
           previousGMI,
@@ -150,7 +150,7 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.cfiChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'warning' : 'info',
-          `تغيير في مؤشر الثقة الجماعية`,
+          // [cleaned Arabic string]
           `     ${changePercentage.toFixed(2)}%`,
           'CFI',
           previousCFI,
@@ -188,7 +188,7 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.hriChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'info' : 'warning',
-          `تغيير في مؤشر الأمل والمرونة`,
+          // [cleaned Arabic string]
           `     ${changePercentage.toFixed(2)}%`,
           'HRI',
           previousHRI,
@@ -225,7 +225,7 @@ export class NotificationSystem extends EventEmitter {
       if (emotionShiftPercentage >= subscriber.thresholds.emotionShift) {
         const alert = this.createAlert(
           'warning',
-          `تحول عاطفي كبير`,
+          // [cleaned Arabic string]
           `  ${previousEmotion}  ${currentEmotion}  ${emotionShiftPercentage.toFixed(2)}%`,
           'EMOTION',
           0,
@@ -261,7 +261,7 @@ export class NotificationSystem extends EventEmitter {
       if (impactScore >= subscriber.thresholds.eventImpact) {
         const alert = this.createAlert(
           'critical',
-          `حدث ذو تأثير كبير`,
+          // [cleaned Arabic string]
           ` "${eventTitle}"  ${impactScore}`,
           'EVENT',
           0,

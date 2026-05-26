@@ -84,7 +84,7 @@ export const alertsRouter = router({
             notifyMethod: 'email',
             isActive: 1,
             countryCode: 'LY',
-            countryName: `ليبيا`,
+            countryName: "translated",
             createdAt: new Date(),
           }
         ];

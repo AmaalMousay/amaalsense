@@ -106,40 +106,40 @@ const BASE_VOCABULARY: LearnedVocabulary[] = [
   { word: 'celebrate', emotion: 'joy', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'victory', emotion: 'joy', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'success', emotion: 'joy', baseWeight: 0.75, learnedWeight: 0.75, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
-  { word: `فرح`, emotion: 'joy', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
-  { word: `سعادة`, emotion: 'joy', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'joy', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'joy', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
   
   // Fear
   { word: 'fear', emotion: 'fear', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'crisis', emotion: 'fear', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'danger', emotion: 'fear', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'threat', emotion: 'fear', baseWeight: 0.8, learnedWeight: 0.8, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
-  { word: `خوف`, emotion: 'fear', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
-  { word: `رعب`, emotion: 'fear', baseWeight: 0.95, learnedWeight: 0.95, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'fear', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'fear', baseWeight: 0.95, learnedWeight: 0.95, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
   
   // Anger
   { word: 'angry', emotion: 'anger', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'outrage', emotion: 'anger', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'fury', emotion: 'anger', baseWeight: 0.95, learnedWeight: 0.95, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
-  { word: `غضب`, emotion: 'anger', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'anger', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
   
   // Sadness
   { word: 'sad', emotion: 'sadness', baseWeight: 0.8, learnedWeight: 0.8, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'tragedy', emotion: 'sadness', baseWeight: 0.95, learnedWeight: 0.95, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'grief', emotion: 'sadness', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
-  { word: `حزن`, emotion: 'sadness', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'sadness', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
   
   // Hope
   { word: 'hope', emotion: 'hope', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'optimism', emotion: 'hope', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'recovery', emotion: 'hope', baseWeight: 0.75, learnedWeight: 0.75, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
-  { word: `أمل`, emotion: 'hope', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'hope', baseWeight: 0.9, learnedWeight: 0.9, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
   
   // Curiosity
   { word: 'discover', emotion: 'curiosity', baseWeight: 0.8, learnedWeight: 0.8, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'research', emotion: 'curiosity', baseWeight: 0.7, learnedWeight: 0.7, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
   { word: 'mystery', emotion: 'curiosity', baseWeight: 0.75, learnedWeight: 0.75, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base' },
-  { word: `فضول`, emotion: 'curiosity', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
+  { word: "translated", emotion: 'curiosity', baseWeight: 0.85, learnedWeight: 0.85, confidence: 1, occurrences: 0, correctPredictions: 0, lastUpdated: new Date(), source: 'base', regions: ['AR'] },
 ];
 
 /**

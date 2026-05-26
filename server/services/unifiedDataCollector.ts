@@ -19,6 +19,9 @@ import { fetchGoogleNewsByCountry, fetchGoogleNewsByTopic } from './googleRssSer
 import { WebScraperService } from './webScraperService';
 import { fetchRedditPosts } from './socialMediaService';
 import { fetchAllMajorNews } from './majorNewsRssService';
+import { fetchGlobalTrends, fetchCountryTrends, trendToRawDataItem } from './googleTrendsService';
+import { fetchTopPageViews, wikiToRawDataItems } from './wikipediaService';
+import { fetchAllMajorNews } from './majorNewsRssService';
 import { searchGDELT, searchGDELTByCountry } from './gdeltService';
 import { searchNewsAPI, getTopHeadlinesByCountry } from './newsApiService';
 
@@ -211,6 +214,46 @@ async function collectFromScraper(query: string, countryCode?: string): Promise<
 }
 
 
+
+async function collectFromTrends(query: string, countryCode?: string): Promise<RawDataItem[]> {
+  try {
+    const trends = countryCode
+      ? await fetchCountryTrends(countryCode)
+      : await fetchGlobalTrends();
+    return trends.map(t => trendToRawDataItem(t, countryCode)).filter(Boolean) as RawDataItem[];
+  } catch { return []; }
+}
+
+async function collectFromWikipedia(countryCode?: string): Promise<RawDataItem[]> {
+  try {
+    const views = await fetchTopPageViews(countryCode || 'en', 15);
+    return wikiToRawDataItems(views);
+  } catch { return []; }
+}
+
+async function collectFromTwitter(query: string): Promise<RawDataItem[]> {
+  try {
+    const { searchTwitterPosts } = await import('./twitterService');
+    const tweets = await searchTwitterPosts({ query, limit: 15 });
+    return tweets.map((t) => ({
+      id: `tw_${t.id}`,
+      timestamp: t.publishedAt.getTime(),
+      title: t.text.slice(0, 200),
+      description: t.text,
+      source: `@${t.author}`,
+      sourceType: 'social' as const,
+      platform: 'Twitter',
+      url: t.url,
+      publishedAt: t.publishedAt.toISOString(),
+      language: 'en',
+      region: 'global' as const,
+      topic: detectTopic(t.text),
+      intensity: Math.min(1, (t.engagement.likes + t.engagement.shares) / 5000),
+      trustScore: t.isReal ? 80 : 30,
+    }));
+  } catch { return []; }
+}
+
 async function collectFromMajorRSS(_query: string): Promise<RawDataItem[]> {
   try {
     const items = await fetchAllMajorNews(20);
@@ -268,6 +311,9 @@ async function collectAllSources(query: string, countryCode?: string): Promise<R
     collectFromGoogleRSS(query, countryCode),
     collectFromScraper(query, countryCode),
     collectFromReddit(query),
+    collectFromTrends(query, countryCode),
+    collectFromWikipedia(countryCode),
+    collectFromTwitter(query),
   ]);
 
   const items: RawDataItem[] = [];

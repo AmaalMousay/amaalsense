@@ -24,7 +24,7 @@ export interface CountryNewsItem {
 export interface CountryAnalysis {
   countryCode: string;
   countryName: string;
-  countryNameAr: string;
+  // countryNameAr: string;  — removed, use nameEn
   gmi: number;
   cfi: number;
   hri: number;
@@ -54,30 +54,30 @@ interface CountryMeta {
 }
 
 const COUNTRY_META: Record<string, CountryMeta> = {
-  LY: { nameEn: 'Libya', nameAr: 'ليبيا', searchTerms: ['Libya', 'Tripoli', 'Benghazi'] },
-  EG: { nameEn: 'Egypt', nameAr: 'مصر', searchTerms: ['Egypt', 'Cairo'] },
-  PS: { nameEn: 'Palestine', nameAr: 'فلسطين', searchTerms: ['Palestine', 'Gaza'] },
-  SA: { nameEn: 'Saudi Arabia', nameAr: 'السعودية', searchTerms: ['Saudi Arabia', 'Riyadh'] },
-  AE: { nameEn: 'UAE', nameAr: 'الإمارات', searchTerms: ['UAE', 'Dubai'] },
-  IQ: { nameEn: 'Iraq', nameAr: 'العراق', searchTerms: ['Iraq', 'Baghdad'] },
-  SY: { nameEn: 'Syria', nameAr: 'سوريا', searchTerms: ['Syria', 'Damascus'] },
-  YE: { nameEn: 'Yemen', nameAr: 'اليمن', searchTerms: ['Yemen', 'Sanaa'] },
-  TN: { nameEn: 'Tunisia', nameAr: 'تونس', searchTerms: ['Tunisia', 'Tunis'] },
-  DZ: { nameEn: 'Algeria', nameAr: 'الجزائر', searchTerms: ['Algeria', 'Algiers'] },
-  MA: { nameEn: 'Morocco', nameAr: 'المغرب', searchTerms: ['Morocco', 'Rabat'] },
-  JO: { nameEn: 'Jordan', nameAr: 'الأردن', searchTerms: ['Jordan', 'Amman'] },
-  LB: { nameEn: 'Lebanon', nameAr: 'لبنان', searchTerms: ['Lebanon', 'Beirut'] },
-  SD: { nameEn: 'Sudan', nameAr: 'السودان', searchTerms: ['Sudan', 'Khartoum'] },
-  US: { nameEn: 'United States', nameAr: 'الولايات المتحدة', searchTerms: ['USA', 'America'] },
-  GB: { nameEn: 'United Kingdom', nameAr: 'بريطانيا', searchTerms: ['UK', 'London'] },
-  FR: { nameEn: 'France', nameAr: 'فرنسا', searchTerms: ['France', 'Paris'] },
-  DE: { nameEn: 'Germany', nameAr: 'ألمانيا', searchTerms: ['Germany', 'Berlin'] },
-  CN: { nameEn: 'China', nameAr: 'الصين', searchTerms: ['China', 'Beijing'] },
-  RU: { nameEn: 'Russia', nameAr: 'روسيا', searchTerms: ['Russia', 'Moscow'] },
-  JP: { nameEn: 'Japan', nameAr: 'اليابان', searchTerms: ['Japan', 'Tokyo'] },
-  IN: { nameEn: 'India', nameAr: 'الهند', searchTerms: ['India', 'New Delhi'] },
-  BR: { nameEn: 'Brazil', nameAr: 'البرازيل', searchTerms: ['Brazil', 'Brasilia'] },
-  ZA: { nameEn: 'South Africa', nameAr: 'جنوب أفريقيا', searchTerms: ['South Africa', 'Pretoria'] },
+  LY: { nameEn: 'Libya', searchTerms: ['Libya', 'Tripoli', 'Benghazi'] },
+  EG: { nameEn: 'Egypt', searchTerms: ['Egypt', 'Cairo'] },
+  PS: { nameEn: 'Palestine', searchTerms: ['Palestine', 'Gaza'] },
+  SA: { nameEn: 'Saudi Arabia', searchTerms: ['Saudi Arabia', 'Riyadh'] },
+  AE: { nameEn: 'UAE', searchTerms: ['UAE', 'Dubai'] },
+  IQ: { nameEn: 'Iraq', searchTerms: ['Iraq', 'Baghdad'] },
+  SY: { nameEn: 'Syria', searchTerms: ['Syria', 'Damascus'] },
+  YE: { nameEn: 'Yemen', searchTerms: ['Yemen', 'Sanaa'] },
+  TN: { nameEn: 'Tunisia', searchTerms: ['Tunisia', 'Tunis'] },
+  DZ: { nameEn: 'Algeria', searchTerms: ['Algeria', 'Algiers'] },
+  MA: { nameEn: 'Morocco', searchTerms: ['Morocco', 'Rabat'] },
+  JO: { nameEn: 'Jordan', searchTerms: ['Jordan', 'Amman'] },
+  LB: { nameEn: 'Lebanon', searchTerms: ['Lebanon', 'Beirut'] },
+  SD: { nameEn: 'Sudan', searchTerms: ['Sudan', 'Khartoum'] },
+  US: { nameEn: 'United States', searchTerms: ['USA', 'America'] },
+  GB: { nameEn: 'United Kingdom', searchTerms: ['UK', 'London'] },
+  FR: { nameEn: 'France', searchTerms: ['France', 'Paris'] },
+  DE: { nameEn: 'Germany', searchTerms: ['Germany', 'Berlin'] },
+  CN: { nameEn: 'China', searchTerms: ['China', 'Beijing'] },
+  RU: { nameEn: 'Russia', searchTerms: ['Russia', 'Moscow'] },
+  JP: { nameEn: 'Japan', searchTerms: ['Japan', 'Tokyo'] },
+  IN: { nameEn: 'India', searchTerms: ['India', 'New Delhi'] },
+  BR: { nameEn: 'Brazil', searchTerms: ['Brazil', 'Brasilia'] },
+  ZA: { nameEn: 'South Africa', searchTerms: ['South Africa', 'Pretoria'] },
 };
 
 export function getCountryMeta(code: string): CountryMeta | undefined {
@@ -154,7 +154,7 @@ export async function analyzeCountry(countryCode: string): Promise<CountryAnalys
     emotionIntensity: Math.round((ev.intensity || 0.5) * 100),
     news: { political, economic, social },
     summary: ctx.generation.response.slice(0, 500),
-    summaryAr: ctx.generation.response.slice(0, 500),
+    summaryAr: '',
     trendingTopics: ev.trendingKeywords || [],
     totalSources: items.length,
     isRealData: items.length > 0,

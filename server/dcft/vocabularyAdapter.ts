@@ -57,15 +57,15 @@ const REGIONAL_CONFIGS: RegionalConfig[] = [
     name: 'Arabic',
     language: 'ar',
     dialectVariations: new Map([
-      [`سعيد`, [`فرحان`, `مبسوط`, `مرتاح`]],
-      [`حزين`, [`زعلان`, `متضايق`, `مكتئب`]],
-      [`غاضب`, [`معصب`, `زعلان`, `ثائر`]],
-      [`خائف`, [`مرعوب`, `قلقان`, `متوتر`]],
+      ["translated", ["translated", "translated", "translated"]],
+      ["translated", ["translated", "translated", "translated"]],
+      ["translated", ["translated", "translated", "translated"]],
+      ["translated", ["translated", "translated", "translated"]],
     ]),
     culturalModifiers: new Map([
-      [`الحمد لله`, 1.2],  // Positive cultural expression
-      [`إن شاء الله`, 1.1], // Hopeful expression
-      [`ما شاء الله`, 1.15], // Positive expression
+      ["translated", 1.2],  // Positive cultural expression
+      ["translated", 1.1], // Hopeful expression
+      ["translated", 1.15], // Positive expression
     ]),
   },
   {
@@ -131,23 +131,23 @@ export class VocabularyAdapter {
     // Initialize context detection patterns
     this.contextDetectionPatterns.set('finance', [
       'stock', 'market', 'price', 'investor', 'trading', 'economy', 'bank', 'dollar',
-      `سوق`, `بورصة`, `استثمار`, `اقتصاد`
+      "translated", "translated", "translated", "translated"
     ]);
     this.contextDetectionPatterns.set('politics', [
       'government', 'election', 'president', 'minister', 'parliament', 'vote', 'policy',
-      `حكومة`, `انتخابات`, `رئيس`, `وزير`, `برلمان`
+      "translated", "translated", "translated", "translated", "translated"
     ]);
     this.contextDetectionPatterns.set('health', [
       'hospital', 'doctor', 'patient', 'disease', 'vaccine', 'treatment', 'medical',
-      `مستشفى`, `طبيب`, `مريض`, `مرض`, `لقاح`, `علاج`
+      "translated", "translated", "translated", "translated", "translated", "translated"
     ]);
     this.contextDetectionPatterns.set('sports', [
       'game', 'team', 'player', 'score', 'championship', 'match', 'win', 'lose',
-      `مباراة`, `فريق`, `لاعب`, `بطولة`, `فوز`
+      "translated", "translated", "translated", "translated", "translated"
     ]);
     this.contextDetectionPatterns.set('technology', [
       'software', 'app', 'computer', 'internet', 'digital', 'ai', 'data', 'tech',
-      `برنامج`, `تطبيق`, `حاسوب`, `إنترنت`, `رقمي`
+      "translated", "translated", "translated", "translated", "translated"
     ]);
   }
 

@@ -44,11 +44,11 @@ export const notificationRouter = router({
 
         return {
           success: true,
-          message: `تم الاشتراك في التنبيهات بنجاح`
+          // [cleaned Arabic string]
         };
       } catch (error) {
         console.error('[notificationRouter] Subscribe error:', error);
-        throw new Error(`فشل الاشتراك في التنبيهات`);
+        throw new Error("translated");
       }
     }),
 
@@ -63,11 +63,11 @@ export const notificationRouter = router({
 
         return {
           success: true,
-          message: `تم إلغاء الاشتراك من التنبيهات بنجاح`
+          // [cleaned Arabic string]
         };
       } catch (error) {
         console.error('[notificationRouter] Unsubscribe error:', error);
-        throw new Error(`فشل إلغاء الاشتراك من التنبيهات`);
+        throw new Error("translated");
       }
     }),
 
@@ -91,7 +91,7 @@ export const notificationRouter = router({
         };
       } catch (error) {
         console.error('[notificationRouter] Get alert history error:', error);
-        throw new Error(`فشل الحصول على سجل التنبيهات`);
+        throw new Error("translated");
       }
     }),
 
@@ -115,7 +115,7 @@ export const notificationRouter = router({
         };
       } catch (error) {
         console.error('[notificationRouter] Get thresholds error:', error);
-        throw new Error(`فشل الحصول على إعدادات التنبيهات`);
+        throw new Error("translated");
       }
     }),
 
@@ -137,16 +137,16 @@ export const notificationRouter = router({
         const success = notificationSystem.updateSubscriberThresholds(String(ctx.user.id), input);
 
         if (!success) {
-          throw new Error(`المستخدم غير مشترك في التنبيهات`);
+          throw new Error("translated");
         }
 
         return {
           success: true,
-          message: `تم تحديث إعدادات التنبيهات بنجاح`
+          // [cleaned Arabic string]
         };
       } catch (error) {
         console.error('[notificationRouter] Update thresholds error:', error);
-        throw new Error(`فشل تحديث إعدادات التنبيهات`);
+        throw new Error("translated");
       }
     }),
 
@@ -160,11 +160,11 @@ export const notificationRouter = router({
 
         return {
           success: true,
-          message: `تم مسح سجل التنبيهات بنجاح`
+          message: "translated"
         };
       } catch (error) {
         console.error('[notificationRouter] Clear alert history error:', error);
-        throw new Error(`فشل مسح سجل التنبيهات`);
+        throw new Error("translated");
       }
     }),
 
@@ -184,7 +184,7 @@ export const notificationRouter = router({
         };
       } catch (error) {
         console.error('[notificationRouter] Get active subscribers count error:', error);
-        throw new Error(`فشل الحصول على عدد المشتركين النشطين`);
+        throw new Error("translated");
       }
     })
 });

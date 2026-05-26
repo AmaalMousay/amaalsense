@@ -68,7 +68,7 @@ export async function updateUserMemory(
   profile.historyCount += 1;
   
   // Track interests (only if it's a specific topic)
-  if (topic && topic !== `موضوع عام` && !profile.interests.includes(topic)) {
+  if (topic && topic !== "translated" && !profile.interests.includes(topic)) {
     profile.interests.push(topic);
     // Keep top 10 most recent/relevant interests
     if (profile.interests.length > 10) {
@@ -99,11 +99,11 @@ export function personalizeResponseContext(profile: UserProfile): string {
   }
 
   const lang = profile.preferences.language;
-  let contextStr = lang === 'ar' ? `ملاحظة لتخصيص الإجابة للمستخدم:\n` : "User Personalization Note:\n";
+  let contextStr = lang === 'ar' ? "translated" : "User Personalization Note:\n";
   
   if (profile.interests.length > 0) {
     contextStr += lang === 'ar' 
-      ? `-    : ${profile.interests.join(`، `)}\n`
+      ? `-    : ${profile.interests.join("translated")}\n`
       : `- This user is interested in: ${profile.interests.join(', ')}\n`;
   }
   

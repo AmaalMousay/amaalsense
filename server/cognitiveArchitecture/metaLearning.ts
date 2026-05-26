@@ -82,10 +82,10 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
   if (helpfulPercentage < 50) {
     insights.push({
       patternType: 'weakness',
-      description: `الردود ليست مفيدة بما فيه الكفاية للمستخدمين`,
+      // [cleaned Arabic string]
       evidenceCount: stats.totalFeedback,
       confidence: 80,
-      suggestedAction: `تحسين جودة الأسباب والتفسيرات في الردود`,
+      suggestedAction: "translated",
     });
   }
 
@@ -93,10 +93,10 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
   if (stats.averageRating < 3.0) {
     insights.push({
       patternType: 'weakness',
-      description: `مشاكل في دقة التحليل`,
+      description: "translated",
       evidenceCount: stats.totalFeedback,
       confidence: 80,
-      suggestedAction: `تحسين Query Builder لجلب بيانات أكثر صلة`,
+      suggestedAction: "translated",
     });
   }
 
@@ -156,7 +156,7 @@ function getActionForWeakness(weakness: string): string {
     unclear_language: 'Improve response clarity and remove ambiguous phrasing.',
     missing_context: 'Add contextual binding before final response generation.',
   };
-  return actionMap[weakness] || `مراجعة وتحسين هذا الجانب`;
+  return actionMap[weakness] || "translated";
 }
 
 // ============================================================================
@@ -345,12 +345,12 @@ export async function generateWeeklyReport(): Promise<WeeklyReport> {
 
   //   
   const dataGapTopics = weaknesses
-    .filter(w => w.topic && w.description.includes(`بيانات`))
+    .filter(w => w.topic && w.description.includes("translated"))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
 
   const weakInterpretationTopics = weaknesses
-    .filter(w => w.topic && w.description.includes(`تحليل`))
+    .filter(w => w.topic && w.description.includes("translated"))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
 
@@ -358,16 +358,16 @@ export async function generateWeeklyReport(): Promise<WeeklyReport> {
   const recommendedAdjustments: string[] = [];
 
   if (selfEvalSummary.averageDataSufficiency < 50) {
-    recommendedAdjustments.push(`تحسين Query Builder لجلب بيانات أكثر`);
+    recommendedAdjustments.push("translated");
   }
   if (selfEvalSummary.averageCausesFromData < 50) {
-    recommendedAdjustments.push(`ربط Why Layer بالبيانات الحقيقية`);
+    recommendedAdjustments.push("translated");
   }
   if (selfEvalSummary.averageAnalysisVsNarration < 50) {
-    recommendedAdjustments.push(`تحسين Decision Engine ليحسم ويرجح`);
+    recommendedAdjustments.push("translated");
   }
   if (stats.averageRating < 3.5) {
-    recommendedAdjustments.push(`تحسين جودة الردود لتكون أكثر فائدة`);
+    recommendedAdjustments.push("translated");
   }
 
   const helpfulCount = stats.recentFeedback.filter(f => f.sentiment === 'positive').length;

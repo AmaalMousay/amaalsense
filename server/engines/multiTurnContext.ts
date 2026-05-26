@@ -106,7 +106,7 @@ class ConversationContextManager {
     let resolvedQuestion = question;
     const referencedEntities: Entity[] = [];
     let contextUsed = false;
-    const pronouns = [`هو`, `هي`, `هذا`, `هذه`, 'it', 'this', 'that'];
+    const pronouns = ["translated", "translated", "translated", "translated", 'it', 'this', 'that'];
     for (const pronoun of pronouns) {
       if (question.toLowerCase().includes(pronoun)) {
         const relevantEntity = this.findMostRelevantEntity(context);
@@ -114,7 +114,7 @@ class ConversationContextManager {
       }
     }
     if (!contextUsed && context.mainTopic && this.isAmbiguousQuestion(question)) { 
-      resolvedQuestion = question + ` (بخصوص ` + context.mainTopic + ')'; 
+      resolvedQuestion = question + "translated" + context.mainTopic + ')'; 
       contextUsed = true; 
     }
     return { resolvedQuestion, referencedEntities, contextUsed };
@@ -143,8 +143,8 @@ class ConversationContextManager {
     const conversationHistory = recentTurns.map(turn => ({ role: turn.role, content: turn.content }));
     const activeEntities = Array.from(context.activeEntities.values()).sort((a, b) => b.frequency - a.frequency).slice(0, 10);
     const parts: string[] = [];
-    if (context.mainTopic) parts.push(`الموضوع الرئيسي: ` + context.mainTopic);
-    if (context.subTopics.length > 0) parts.push(`مواضيع فرعية: ` + context.subTopics.join(', '));
+    if (context.mainTopic) parts.push("translated" + context.mainTopic);
+    if (context.subTopics.length > 0) parts.push("translated" + context.subTopics.join(', '));
     return { conversationHistory, activeEntities, mainTopic: context.mainTopic, emotionalState: context.emotionalState, summary: parts.join(' | ') };
   }
   

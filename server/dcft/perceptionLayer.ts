@@ -442,15 +442,15 @@ function identifyAffectedGroups(data: any): string[] {
  */
 function identifyRootCause(question: string, data: any): string {
   //      
-  if (question.toLowerCase().includes(`غضب`) || question.toLowerCase().includes(`غضب`)) {
-    return `تدهور الظروف المعيشية والشعور بالظلم`;
+  if (question.toLowerCase().includes("translated") || question.toLowerCase().includes("translated")) {
+    // [cleaned Arabic string]
   }
   
-  if (question.toLowerCase().includes(`خوف`)) {
-    return `عدم اليقين والتهديدات الوجودية`;
+  if (question.toLowerCase().includes("translated")) {
+    // [cleaned Arabic string]
   }
   
-  return `عوامل متعددة معقدة`;
+  return "translated";
 }
 
 /**
@@ -462,14 +462,14 @@ function analyzeCollectiveConsciousness(data: any): string {
   const hri = data.hri || 50;
   
   if (gmi < -50) {
-    return `وعي جمعي متشائم يسيطر عليه الخوف والغضب`;
+    // [cleaned Arabic string]
   }
   
   if (gmi > 50) {
-    return `وعي جمعي متفائل يسيطر عليه الأمل والرغبة في التغيير`;
+    // [cleaned Arabic string]
   }
   
-  return `وعي جمعي متوازن بين التفاؤل والتشاؤم`;
+  // [cleaned Arabic string]
 }
 
 /**
@@ -493,19 +493,19 @@ function determineAwarenessLevel(data: any): 'surface' | 'moderate' | 'deep' {
  *   
  */
 function classifyQuestion(question: string): string {
-  if (question.toLowerCase().includes(`كيف`)) {
+  if (question.toLowerCase().includes("translated")) {
     return 'how';
   }
   
-  if (question.toLowerCase().includes(`ماذا لو`) || question.toLowerCase().includes(`ماذا لو`)) {
+  if (question.toLowerCase().includes("translated") || question.toLowerCase().includes("translated")) {
     return 'what-if';
   }
   
-  if (question.toLowerCase().includes(`تأثير`) || question.toLowerCase().includes(`تأثير`)) {
+  if (question.toLowerCase().includes("translated") || question.toLowerCase().includes("translated")) {
     return 'impact';
   }
   
-  if (question.toLowerCase().includes(`حل`) || question.toLowerCase().includes(`حل`)) {
+  if (question.toLowerCase().includes("translated") || question.toLowerCase().includes("translated")) {
     return 'solution';
   }
   
@@ -525,7 +525,7 @@ function validateContext(perception: PerceptionContext, question: string): strin
   
   //      
   if (perception.primaryEmotion === 'neutral') {
-    validations.push(`تحذير: العاطفة الأساسية غير واضحة`);
+    validations.push("translated");
   }
   
   return validations;

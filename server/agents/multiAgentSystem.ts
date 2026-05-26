@@ -102,9 +102,9 @@ class ActionAgent {
 class ObserverAgent {
   private analystAgent = new AnalystAgent();
   private watchlist = [
-    { name: `الشرق الأوسط`, code: 'ME', domain: 'politics' },
-    { name: `ميكانيكا الكم`, code: 'PHYS', domain: 'physics' },
-    { name: `ليبيا - سبها`, code: 'LY_SB', domain: 'general' }
+    { name: "translated", code: 'ME', domain: 'politics' },
+    { name: "translated", code: 'PHYS', domain: 'physics' },
+    { name: "translated", code: 'LY_SB', domain: 'general' }
   ];
 
   /**
@@ -119,7 +119,7 @@ class ObserverAgent {
    *    " "      ( )
    */
   async runPeriodicObservation(): Promise<void> {
-    console.log(`\n[ObserverAgent] 🌌 بدء دورة الاستشعار المستقل (Parallel Mesh Processing)...`);
+    console.log("translated");
 
     await Promise.all(this.watchlist.map(async (item) => {
       try {
@@ -134,7 +134,7 @@ class ObserverAgent {
       }
     }));
 
-    console.log(`[ObserverAgent] ✅ اكتملت دورة الوعي الرقمي.\n`);
+    console.log("translated");
   }
 }
 

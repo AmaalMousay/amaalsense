@@ -216,35 +216,35 @@ function inferMechanism(cause: string, effect: string, domain: string): string {
   // Political domain
   if (domain === 'politics') {
     if (causeLower.includes('protest') && effectLower.includes('response')) {
-      return `الاحتجاجات تدفع السلطات للاستجابة`;
+      // [cleaned Arabic string]
     }
     if (causeLower.includes('crisis') && effectLower.includes('anger')) {
-      return `الأزمة تزيد من الغضب الشعبي`;
+      // [cleaned Arabic string]
     }
   }
   
   // Economic domain
   if (domain === 'economy') {
     if (causeLower.includes('inflation') && effectLower.includes('protest')) {
-      return `التضخم يؤدي إلى احتجاجات شعبية`;
+      // [cleaned Arabic string]
     }
     if (causeLower.includes('unemployment') && effectLower.includes('frustration')) {
-      return `البطالة تزيد من الإحباط`;
+      // [cleaned Arabic string]
     }
   }
   
   // Social domain
   if (domain === 'social') {
     if (causeLower.includes('violence') && effectLower.includes('fear')) {
-      return `العنف يولد الخوف`;
+      return "translated";
     }
     if (causeLower.includes('reform') && effectLower.includes('hope')) {
-      return `الإصلاحات تبعث الأمل`;
+      return "translated";
     }
   }
   
   // Default mechanism
-  return `علاقة سببية مباشرة`;
+  return "translated";
 }
 
 /**
@@ -419,10 +419,10 @@ function areSimilarEvents(label1: string, label2: string): boolean {
  */
 export function explainCausalChain(chain: CausalChain): string {
   if (chain.nodes.length < 2) {
-    return `لا توجد سلسلة سببية واضحة.`;
+    return "translated";
   }
   
-  let explanation = `السلسلة السببية:\n`;
+  let explanation = "translated";
   
   for (let i = 0; i < chain.relationships.length; i++) {
     const rel = chain.relationships[i];

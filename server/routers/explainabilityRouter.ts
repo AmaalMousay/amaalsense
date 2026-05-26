@@ -103,59 +103,59 @@ export const explainabilityRouter = router({
       try {
         const explanation: ResponseExplanation = {
           responseId: input.responseId,
-          question: `السؤال الأصلي من المستخدم`,
-          response: `الاستجابة الكاملة من النظام`,
+          question: "translated",
+          response: "translated",
           reasoning: [
             {
               step: 1,
-              description: `فهم السؤال واستخراج الكلمات المفتاحية`,
-              dataUsed: [`معالجة اللغة الطبيعية`, `تحليل النية`],
+              // [cleaned Arabic string]
+              dataUsed: ["translated", "translated"],
               confidence: 95
             },
             {
               step: 2,
-              description: `البحث عن معلومات ذات صلة`,
-              dataUsed: [`قاعدة البيانات`, `مصادر خارجية`],
+              description: "translated",
+              dataUsed: ["translated", "translated"],
               confidence: 88
             },
             {
               step: 3,
-              description: `تحليل المعلومات وتوليد الاستجابة`,
-              dataUsed: [`محرك التحليل`, `نموذج اللغة`],
+              // [cleaned Arabic string]
+              dataUsed: ["translated", "translated"],
               confidence: 82
             },
             {
               step: 4,
-              description: `التحقق من جودة الاستجابة`,
-              dataUsed: [`معايير الجودة`, `التحقق من الحقائق`],
+              description: "translated",
+              dataUsed: ["translated", "translated"],
               confidence: 85
             }
           ],
           dataSourcesUsed: [
-            { source: `قاعدة البيانات الداخلية`, reliability: 95, weight: 0.5 },
-            { source: `مصادر الأخبار`, reliability: 85, weight: 0.3 },
-            { source: `وسائل التواصل الاجتماعي`, reliability: 70, weight: 0.2 }
+            { source: "translated", reliability: 95, weight: 0.5 },
+            { source: "translated", reliability: 85, weight: 0.3 },
+            { source: "translated", reliability: 70, weight: 0.2 }
           ],
           assumptionsMade: [
-            `افتراض أن البيانات المتاحة دقيقة وحالية`,
-            `افتراض أن السياق الثقافي مفهوم بشكل صحيح`,
-            `افتراض أن المستخدم يريد إجابة شاملة`
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
           ],
           limitationsAcknowledged: [
-            `قد تكون البيانات غير كاملة`,
-            `قد تكون هناك تأخير في تحديث المعلومات`,
-            `قد تختلف الآراء حول بعض الجوانب`
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
           ],
           alternativeAnswers: [
             {
-              answer: `إجابة بديلة 1 مع تركيز مختلف`,
+              answer: "translated",
               confidence: 75,
-              reasoning: `تركيز على جوانب اقتصادية بدلاً من اجتماعية`
+              // [cleaned Arabic string]
             },
             {
-              answer: `إجابة بديلة 2 مع منظور مختلف`,
+              answer: "translated",
               confidence: 68,
-              reasoning: `منظور قصير الأجل بدلاً من طويل الأجل`
+              // [cleaned Arabic string]
             }
           ],
           timestamp: new Date()
@@ -170,7 +170,7 @@ export const explainabilityRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: `فشل في جلب شرح الاستجابة`,
+          error: "translated",
           data: null
         };
       }
@@ -198,8 +198,8 @@ export const explainabilityRouter = router({
             accuracy: 5,
             clarity: 5,
             completeness: 4,
-            comment: `إجابة ممتازة وشاملة جداً`,
-            suggestedImprovement: `يمكن إضافة المزيد من الأمثلة`,
+            comment: "translated",
+            suggestedImprovement: "translated",
             timestamp: new Date()
           },
           {
@@ -211,8 +211,8 @@ export const explainabilityRouter = router({
             accuracy: 4,
             clarity: 4,
             completeness: 4,
-            comment: `إجابة جيدة لكن تحتاج توضيح أكثر`,
-            suggestedImprovement: `شرح أفضل للمصطلحات التقنية`,
+            // [cleaned Arabic string]
+            suggestedImprovement: "translated",
             timestamp: new Date()
           },
           {
@@ -224,8 +224,8 @@ export const explainabilityRouter = router({
             accuracy: 3,
             clarity: 3,
             completeness: 2,
-            comment: `إجابة متوسطة، تفتقد بعض المعلومات`,
-            suggestedImprovement: `إضافة بيانات أكثر حداثة`,
+            // [cleaned Arabic string]
+            suggestedImprovement: "translated",
             timestamp: new Date()
           }
         ];
@@ -248,7 +248,7 @@ export const explainabilityRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: `فشل في جلب تقييمات الاستجابة`,
+          // [cleaned Arabic string]
           data: []
         };
       }
@@ -290,13 +290,13 @@ export const explainabilityRouter = router({
         return {
           success: true,
           data: feedback,
-          message: `تم حفظ التقييم بنجاح`,
+          message: "translated",
           timestamp: new Date()
         };
       } catch (error) {
         return {
           success: false,
-          error: `فشل في حفظ التقييم`,
+          error: "translated",
           data: null
         };
       }
@@ -315,61 +315,61 @@ export const explainabilityRouter = router({
       try {
         const structuredResponse: StructuredResponse = {
           responseId: input.responseId,
-          question: `السؤال الأصلي`,
-          summary: `ملخص الاستجابة في جملة واحدة`,
+          question: "translated",
+          summary: "translated",
           mainPoints: [
             {
-              point: `النقطة الرئيسية الأولى`,
+              // [cleaned Arabic string]
               importance: "high",
-              evidence: [`دليل 1`, `دليل 2`, `دليل 3`]
+              evidence: ["translated", "translated", "translated"]
             },
             {
-              point: `النقطة الرئيسية الثانية`,
+              // [cleaned Arabic string]
               importance: "high",
-              evidence: [`دليل 1`, `دليل 2`]
+              evidence: ["translated", "translated"]
             },
             {
-              point: `النقطة الرئيسية الثالثة`,
+              // [cleaned Arabic string]
               importance: "medium",
-              evidence: [`دليل 1`]
+              evidence: ["translated"]
             }
           ],
           keyFindings: [
-            `الاكتشاف الرئيسي الأول`,
-            `الاكتشاف الرئيسي الثاني`,
-            `الاكتشاف الرئيسي الثالث`
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
           ],
           implications: [
             {
-              implication: `الآثار المترتبة الأولى`,
+              implication: "translated",
               severity: "high"
             },
             {
-              implication: `الآثار المترتبة الثانية`,
+              implication: "translated",
               severity: "medium"
             }
           ],
           recommendations: [
             {
-              recommendation: `التوصية الأولى`,
+              recommendation: "translated",
               priority: "high",
-              actionableSteps: [`الخطوة 1`, `الخطوة 2`, `الخطوة 3`]
+              actionableSteps: ["translated", "translated", "translated"]
             },
             {
-              recommendation: `التوصية الثانية`,
+              recommendation: "translated",
               priority: "medium",
-              actionableSteps: [`الخطوة 1`, `الخطوة 2`]
+              actionableSteps: ["translated", "translated"]
             }
           ],
-          relatedTopics: [`الموضوع ذو الصلة 1`, `الموضوع ذو الصلة 2`, `الموضوع ذو الصلة 3`],
+          relatedTopics: ["translated", "translated", "translated"],
           furtherReading: [
             {
-              title: `مقالة ذات صلة 1`,
+              title: "translated",
               url: "https://example.com/article1",
               relevance: 0.95
             },
             {
-              title: `مقالة ذات صلة 2`,
+              title: "translated",
               url: "https://example.com/article2",
               relevance: 0.85
             }
@@ -385,7 +385,7 @@ export const explainabilityRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: `فشل في جلب الاستجابة المنظمة`,
+          // [cleaned Arabic string]
           data: null
         };
       }
@@ -407,9 +407,9 @@ export const explainabilityRouter = router({
           helpfulPercentage: 87.5,
           improvementTrend: "up",
           topIssues: [
-            `نقص في الأمثلة العملية`,
-            `عدم وضوح بعض المصطلحات`,
-            `نقص في البيانات الحديثة`
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
+            // [cleaned Arabic string]
           ]
         },
         timestamp: new Date()
@@ -417,7 +417,7 @@ export const explainabilityRouter = router({
     } catch (error) {
       return {
         success: false,
-        error: `فشل في جلب إحصائيات الجودة`,
+        // [cleaned Arabic string]
         data: null
       };
     }

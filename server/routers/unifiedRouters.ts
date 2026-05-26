@@ -46,7 +46,7 @@ export const unifiedRouter = router({
   analyzeQuestion: publicProcedure
     .input(
       z.object({
-        question: z.string().min(1, `السؤال لا يمكن أن يكون فارغاً`),
+        question: z.string().min(1, "translated"),
         language: z.string().optional().default("ar")
       })
     )
@@ -66,7 +66,7 @@ export const unifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : `فشل في معالجة السؤال`,
+          error: error instanceof Error ? error.message : "translated",
           code: "PIPELINE_ERROR"
         };
       }
@@ -78,7 +78,7 @@ export const unifiedRouter = router({
   analyzeBatch: publicProcedure
     .input(
       z.object({
-        questions: z.array(z.string()).min(1, `يجب تقديم سؤال واحد على الأقل`),
+        questions: z.array(z.string()).min(1, "translated"),
         language: z.string().optional().default("ar")
       })
     )
@@ -125,7 +125,7 @@ export const unifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : `فشل في معالجة الأسئلة`
+          error: error instanceof Error ? error.message : "translated"
         };
       }
     }),
@@ -188,13 +188,13 @@ export const unifiedRouter = router({
     )
     .mutation(async ({ input }) => {
       const testQuestions = {
-        quick: [`ما رأي الناس في هذا الموضوع؟`],
+        quick: ["translated"],
         full: [
-          `ما رأي الناس في هذا الموضوع؟`,
-          `هل هناك اتجاه عام نحو هذا؟`,
-          `ما هي الأسباب الرئيسية؟`
+          // [cleaned Arabic string]
+          // [cleaned Arabic string]
+          // [cleaned Arabic string]
         ],
-        stress: Array(10).fill(`ما رأي الناس في هذا الموضوع؟`)
+        stress: Array(10).fill("translated")
       };
 
       const questions = testQuestions[input.testType];
@@ -273,7 +273,7 @@ export const protectedUnifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : `فشل في معالجة السؤال`
+          error: error instanceof Error ? error.message : "translated"
         };
       }
     }),
@@ -313,12 +313,12 @@ export const protectedUnifiedRouter = router({
       try {
         return {
           success: true,
-          message: `تم حفظ التقييم بنجاح`
+          message: "translated"
         };
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : `خطأ في حفظ التقييم`
+          error: error instanceof Error ? error.message : "translated"
         };
       }
     }),
@@ -352,12 +352,12 @@ export const protectedUnifiedRouter = router({
       try {
         return {
           success: true,
-          message: `تم حذف المحادثة بنجاح`
+          message: "translated"
         };
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : `خطأ في حذف المحادثة`
+          error: error instanceof Error ? error.message : "translated"
         };
       }
     })

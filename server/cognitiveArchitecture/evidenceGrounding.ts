@@ -188,7 +188,7 @@ class EvidenceGroundingClass {
   private extractKeywords(text: string): string[] {
     const stopWords = new Set([
       'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      `في`, `من`, `إلى`, `على`, `عن`, `مع`, `هذا`, `هذه`, `ذلك`,
+      "translated", "translated", "translated", "translated", "translated", "translated", "translated", "translated", "translated",
     ]);
 
     return text

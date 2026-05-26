@@ -1081,7 +1081,7 @@ export const unifiedEngineRouter = router({
             urgency: Math.random() > 0.8 ? 'critical' : Math.random() > 0.5 ? 'high' : 'medium',
             countries: [country.code],
             timestamp: news.publishedAt,
-            dominantEmotion: dominantEmotion === 'anger' ? `غضب` : dominantEmotion === 'fear' ? `خوف` : dominantEmotion === 'hope' ? `أمل` : dominantEmotion === 'joy' ? `فرح` : `حياد`,
+            dominantEmotion: dominantEmotion === 'anger' ? "translated" : dominantEmotion === 'fear' ? "translated" : dominantEmotion === 'hope' ? "translated" : dominantEmotion === 'joy' ? "translated" : "translated",
             engagementScore: Math.round(Math.random() * 40) + 60,
             /**
    * GET COUNTRY ANALYSIS: Full analysis for a country (when clicking on map)
@@ -1212,7 +1212,7 @@ export const unifiedEngineRouter = router({
       success: true,
       data: {
         mainTheme: "Global Analytical Synthesis",
-        mainThemeArabic: `التركيب التحليلي العالمي`,
+        mainThemeArabic: "translated",
         recentEvents: [
           { event: "Global Market Volatility", topic: "Economy", region: "Global", impact: "high" },
           { event: "Technological Integration", topic: "Tech", region: "West", impact: "medium" }
@@ -1223,16 +1223,16 @@ export const unifiedEngineRouter = router({
           sentence3: "Economic data suggests a growing trend toward digital consciousness integration."
         },
         explanationArabic: {
-          sentence1: `يتتبع أمال سينس حالياً أنماط رنين متعددة عبر تدفقات الأخبار العالمية.`,
-          sentence2: `تشير مؤشرات المشاعر إلى استقرار الخوف الجماعي بعد الارتفاعات الأخيرة.`,
-          sentence3: `تشير البيانات الاقتصادية إلى اتجاه متزايد نحو تكامل الوعي الرقمي.`
+          // [cleaned Arabic string]
+          // [cleaned Arabic string]
+          // [cleaned Arabic string]
         },
         connections: [
-          { connection: "Economic stability is directly correlating with reduced CFI levels.", connectionArabic: `يرتبط الاستقرار الاقتصادي مباشرة بانخفاض مستويات مؤشر الخوف الجماعي.` }
+          { connection: "Economic stability is directly correlating with reduced CFI levels.", connectionArabic: "translated" }
         ],
         forecast: {
           nextStep: "Continued stabilization of global mood indices.",
-          nextStepArabic: `استمرار استقرار مؤشرات المزاج العالمي.`,
+          nextStepArabic: "translated",
           timeframe: "Next 48 hours"
         }
       }
@@ -1265,9 +1265,9 @@ export const unifiedEngineRouter = router({
     return {
       success: true,
       data: [
-        { id: 'is_world_dangerous', text: 'Is the world becoming more dangerous?', textArabic: `هل العالم يصبح أكثر خطورة؟` },
-        { id: 'are_we_divided', text: 'Are we becoming more divided?', textArabic: `هل أصبحنا أكثر انقساماً؟` },
-        { id: 'is_there_hope', text: 'Is there hope for the future?', textArabic: `هل هناك أمل في المستقبل؟` },
+        { id: 'is_world_dangerous', text: 'Is the world becoming more dangerous?', textArabic: "translated" },
+        { id: 'are_we_divided', text: 'Are we becoming more divided?', textArabic: "translated" },
+        { id: 'is_there_hope', text: 'Is there hope for the future?', textArabic: "translated" },
       ]
     };
   }),
@@ -1291,7 +1291,7 @@ export const unifiedEngineRouter = router({
             { metric: "Resilience Quotient", value: 72, trend: "improving" }
           ],
           recommendation: "Monitor regional indicators for shift patterns.",
-          recommendationArabic: `راقب المؤشرات الإقليمية بحثاً عن أنماط التحول.`
+          recommendationArabic: "translated"
         }
       };
     }),

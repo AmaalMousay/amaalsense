@@ -189,7 +189,7 @@ export const detectLanguageHeuristic = (text: string): string => {
 
 export const getLanguageSystemPrompt = (language: string): string => {
   const prompts: Record<string, string> = {
-    ar: `أنت محلل عاطفي متخصص. تحليلك يجب أن يكون باللغة العربية فقط. \n    أرجع النتيجة بصيغة JSON. تأكد أن جميع الحقول والشروحات بالعربية.`,
+    // [cleaned Arabic string]
     fr: `Vous êtes un analyste émotionnel spécialisé. Votre analyse doit être entièrement en français.
     Répondez en format JSON. Assurez-vous que tous les champs et explications sont en français.`,
     es: `Eres un analista emocional especializado. Tu análisis debe ser completamente en español.
@@ -209,7 +209,7 @@ export const getLanguageSystemPrompt = (language: string): string => {
 
 export const getLanguageSpecificPrompt = (language: string, basePrompt: string): string => {
   const languageInstructions: Record<string, string> = {
-    ar: `\n\nملاحظة مهمة: أجب باللغة العربية فقط. جميع الشروحات والتحليلات يجب أن تكون بالعربية.`,
+    // [cleaned Arabic string]
     fr: `\n\nRemarque importante: Répondez uniquement en français. Toutes les explications et analyses doivent être en français.`,
     es: `\n\nNota importante: Responde solo en español. Todas las explicaciones y análisis deben estar en español.`,
     de: `\n\nWichtiger Hinweis: Antworten Sie nur auf Deutsch. Alle Erklärungen und Analysen müssen auf Deutsch sein.`,
@@ -271,14 +271,14 @@ const LANGUAGE_CONFIGS: Record<UILanguage, LanguageConfig> = {
   ar: {
     code: 'ar',
     name: 'Arabic',
-    nativeName: `العربية`,
+    nativeName: "translated",
     direction: 'rtl',
     emotionalContext: {
-      hope: `أمل`,
-      fear: `خوف`,
-      joy: `فرح`,
-      sadness: `حزن`,
-      anger: `غضب`,
+      hope: "translated",
+      fear: "translated",
+      joy: "translated",
+      sadness: "translated",
+      anger: "translated",
     },
   },
   en: {
@@ -494,7 +494,7 @@ export function formatTextByLanguage(
  */
 export function getGreeting(language: UILanguage): string {
   const greetings: Record<UILanguage, string> = {
-    ar: `مرحباً بك في AmalSense`,
+    ar: "translated",
     en: 'Welcome to AmalSense',
     fr: 'Bienvenue sur AmalSense',
     es: 'Bienvenido a AmalSense',
@@ -517,11 +517,11 @@ export function getGreeting(language: UILanguage): string {
 export function getUIStrings(language: UILanguage) {
   const strings: Record<UILanguage, Record<string, string>> = {
     ar: {
-      search: `بحث`,
-      analyze: `تحليل`,
-      feedback: `تقييم`,
-      settings: `الإعدادات`,
-      logout: `تسجيل الخروج`,
+      search: "translated",
+      analyze: "translated",
+      feedback: "translated",
+      settings: "translated",
+      logout: "translated",
     },
     en: {
       search: 'Search',
@@ -645,7 +645,7 @@ export function getCulturallyAwareInterpretation(
 
   // Add culturally-aware context
   if (language === 'ar') {
-    interpretation += `تحليل يأخذ في الاعتبار السياق الثقافي والاجتماعي.`;
+    interpretation += "translated";
   } else if (language === 'en') {
     interpretation += 'Analysis considers cultural and social context.';
   }

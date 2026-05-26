@@ -69,7 +69,7 @@ export const predictionRouter = router({
         if (data.length < 3) {
           return {
             success: false,
-            message: `بيانات غير كافية للتنبؤ. يرجى تحليل المزيد من البيانات أولاً.`,
+            // [cleaned Arabic string]
             messageEn: 'Insufficient data for prediction. Please analyze more data first.',
             data: null,
           };
@@ -197,7 +197,7 @@ export const predictionRouter = router({
       if (data.length < 3) {
         return {
           success: false,
-          message: `بيانات غير كافية لتحليل الاتجاهات`,
+          // [cleaned Arabic string]
           data: null,
         };
       }
@@ -245,7 +245,7 @@ export const predictionRouter = router({
         return {
           success: true,
           data: [],
-          message: `بيانات غير كافية لكشف نقاط التحول`,
+          // [cleaned Arabic string]
         };
       }
       
@@ -302,8 +302,8 @@ export const predictionRouter = router({
               trendDivergence: 0,
             },
             level: 'low' as const,
-            factors: [`بيانات غير كافية`],
-            factorsAr: [`بيانات غير كافية`],
+            factors: ["translated"],
+            factorsAr: ["translated"],
           },
         };
       }
@@ -438,10 +438,10 @@ export const predictionRouter = router({
             actual: { gmi: closest.gmi, cfi: closest.cfi, hri: closest.hri },
             accuracyScore,
             feedback: accuracyScore >= 70 
-              ? `تنبؤ دقيق! النموذج يتحسن.` 
+              // [cleaned Arabic string]
               : accuracyScore >= 40 
-                ? `تنبؤ متوسط الدقة. يحتاج تحسين.`
-                : `تنبؤ غير دقيق. النظام يتعلم من هذا الخطأ.`,
+                // [cleaned Arabic string]
+                // [cleaned Arabic string]
           },
         };
       } catch (e) {
