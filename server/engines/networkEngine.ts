@@ -19,7 +19,11 @@ import { MultiTurnContext } from './multiTurnContext';
 import { composeNaturalAnswer } from './responseBuilder';
 import { generatePredictionReport, type PredictionReport, type EmotionalDataPoint } from './predictionEngine';
 import { getCountryHistoricalIndices, getEmotionIndicesHistory } from '../_core/db';
-import { CognitiveAnswerGate, type AnswerDecision } from '../cognitiveArchitecture/cognitiveAnswerGate';
+import { CognitiveAnswerGate } from '../cognitiveArchitecture/cognitiveAnswerGate';
+import { ContextLockLayer } from '../cognitiveArchitecture/contextLockLayer';
+import { bindContexts, getContextualRecommendations } from '../cognitiveArchitecture/contextualBinding';
+import { CognitiveConsistencyCheck } from '../cognitiveArchitecture/cognitiveConsistencyCheck';
+import { assessAnalysis, formatAssessmentForDisplay } from '../cognitiveArchitecture/metacognition';
 
 export type EventVector = QuantumEventVector;
 
@@ -99,7 +103,36 @@ export async function executeNetworkEngine(userId: string, question: string, lan
   const effectiveQuestion = contextResolution.resolvedQuestion || question;
   const layer1 = await layer1QuestionUnderstanding(effectiveQuestion, language);
 
-  // ---- CognitiveAnswerGate: early gate check before analysis ----
+  // ================================================================
+  // Layer 1: Context Lock - prevent context drift in follow-ups
+  // ================================================================
+  const contextLock = ContextLockLayer.getLock(conversationId);
+  if (contextLock) {
+    const country = layer1.geographicContext?.countryCode || 'global';
+    const validation = ContextLockLayer.validateContext(conversationId, effectiveQuestion, country);
+    if (!validation.isValid) {
+      const lockResponse = `I notice you are asking about a different topic or country. ${validation.suggestion}`;
+      const emptyVector = createEmptyVector(effectiveQuestion);
+      return {
+        requestId,
+        userId,
+        timestamp: new Date(),
+        language,
+        gate: { layer1Output: layer1, intent: 'context_clarification', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: false },
+        collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
+        analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
+        analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
+        dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
+        generation: { response: lockResponse, suggestions: [], languageEnforced: true },
+        executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: ['QuestionUnderstanding', 'ContextLock'], errors: [validation.reason || 'Context drift detected'] },
+        status: 'completed',
+      };
+    }
+  }
+
+  // ================================================================
+  // Layer 2: Cognitive Answer Gate - early decision gate
+  // ================================================================
   const gateAnswerCtx = {
     question: effectiveQuestion,
     availableData: {
@@ -109,20 +142,16 @@ export async function executeNetworkEngine(userId: string, question: string, lan
       dataQuality: 'medium' as const,
       dataRecency: 'none' as const,
     },
-    questionComplexity: layer1.questionType === 'explanation' || layer1.questionType === 'prediction' ? 'complex' as const : 'moderate' as const,
+    questionComplexity: (layer1.questionType === 'explanation' || layer1.questionType === 'prediction' ? 'complex' : 'moderate') as 'simple' | 'moderate' | 'complex',
     domainKnowledge: 'medium' as const,
   };
   const gateDecision = CognitiveAnswerGate.makeDecision(gateAnswerCtx);
   const gateMessage = CognitiveAnswerGate.generateGateResponse(gateDecision);
 
-  // If the gate says clarify or admit ignorance, return early
   if (gateDecision.decision === 'clarify_question' || gateDecision.decision === 'admit_ignorance') {
     const emptyVector = createEmptyVector(effectiveQuestion);
     return {
-      requestId,
-      userId,
-      timestamp: new Date(),
-      language,
+      requestId, userId, timestamp: new Date(), language,
       gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: false },
       collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
       analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: gateDecision.confidence },
@@ -134,11 +163,9 @@ export async function executeNetworkEngine(userId: string, question: string, lan
     };
   }
 
-  // ---- Direct answer path (no live analysis needed) ----
   if (!requiresLiveAnalysis(effectiveQuestion, layer1)) {
-    // Use gate to decide: search_more_data? Then collect. Otherwise answer directly.
     if (gateDecision.decision === 'search_more_data') {
-      // Fall through to analysis path
+      // Fall through to full analysis
     } else {
       const directResponse = await composeNaturalAnswer({
         question: effectiveQuestion,
@@ -148,11 +175,9 @@ export async function executeNetworkEngine(userId: string, question: string, lan
         limitations: ['No live data analysis was required for this question.'],
       });
       const emptyVector = createEmptyVector(effectiveQuestion);
+      ContextLockLayer.createLock(conversationId, layer1.entities?.topics?.[0] || effectiveQuestion, 'global', 'general');
       return {
-        requestId,
-        userId,
-        timestamp: new Date(),
-        language,
+        requestId, userId, timestamp: new Date(), language,
         gate: { layer1Output: layer1, intent: 'direct_answer', searchQuery: effectiveQuestion, needsAnalysis: false, needsLLM: true },
         collection: { rawData: createEmptyCollectedData(effectiveQuestion), eventVector: emptyVector, vectorPrompt: '', totalItems: 0 },
         analysis: { emotions: {}, dominantEmotion: 'neutral', confidence: layer1.confidence },
@@ -165,6 +190,9 @@ export async function executeNetworkEngine(userId: string, question: string, lan
     }
   }
 
+  // ================================================================
+  // Data Collection Phase
+  // ================================================================
   const detectedCountry = detectCountryInQuery(effectiveQuestion, layer1);
   const intent = detectedCountry.code !== 'GLOBAL' ? 'country' : 'topic';
   const rawData = detectedCountry.code !== 'GLOBAL'
@@ -177,6 +205,9 @@ export async function executeNetworkEngine(userId: string, question: string, lan
   const topicKey = detectedCountry.code !== 'GLOBAL' ? detectedCountry.name : (layer1.entities?.topics?.[0] || 'Global_Trends');
   const resonanceInsight = getCumulativeInsight(topicKey);
 
+  // ================================================================
+  // Parallel Analysis Branches
+  // ================================================================
   const [emotions, dcftResult, ragContext, parallelSignalVector, predictionReport] = await Promise.all([
     analyzeEmotionsFromData(rawData),
     executeDCFTProcess(rawData),
@@ -185,6 +216,26 @@ export async function executeNetworkEngine(userId: string, question: string, lan
     buildPredictionContext(effectiveQuestion, detectedCountry),
   ]);
 
+  // ================================================================
+  // Layer 3: Contextual Binding (cultural, temporal, situational)
+  // ================================================================
+  const boundContext = bindContexts(
+    detectedCountry.name,
+    Date.now(),
+    rawData.items.map(item => item.title),
+    dcftResult?.indices?.cfi ? dcftResult.indices.cfi / 100 : 0.5,
+  );
+  const contextualRecommendations = getContextualRecommendations(boundContext);
+  const boundEmotions = {
+    fear: emotions.vector.fear || 0,
+    hope: emotions.vector.hope || 0,
+    anger: emotions.vector.anger || 0,
+    mood: (dcftResult?.indices?.gmi ?? 0) / 100,
+  };
+
+  // ================================================================
+  // Knowledge + Natural Answer Generation
+  // ================================================================
   const knowledgeContext = formatRAGForPrompt(ragContext);
   const finalResponse = await composeNaturalAnswer({
     question: effectiveQuestion,
@@ -201,8 +252,44 @@ export async function executeNetworkEngine(userId: string, question: string, lan
     limitations: [
       ...(rawData.items.length === 0 ? ['No live source items were available.'] : []),
       ...(!predictionReport && isPredictionQuestion(effectiveQuestion) ? ['Prediction was requested, but there was not enough historical data to generate a reliable forecast.'] : []),
+      ...(contextualRecommendations.length ? [`Contextual note: ${contextualRecommendations.join('; ')}`] : []),
     ],
   });
+
+  // ================================================================
+  // Layer 4: Cognitive Consistency Check (post-generation)
+  // ================================================================
+  const consistencyResult = CognitiveConsistencyCheck.checkConsistency(
+    conversationId,
+    finalResponse,
+    [], // previousResponses – can be extended with a conversation store
+    effectiveQuestion,
+  );
+
+  // ================================================================
+  // Layer 5: Metacognition – self-assessment of quality
+  // ================================================================
+  const metacognitiveAssessment = assessAnalysis({
+    dataSourcesCount: eventVector.sourceBreakdown ? Object.keys(eventVector.sourceBreakdown).length : 0,
+    relevantHeadlinesCount: eventVector.totalItems || 0,
+    hasCausalChain: (dcftResult?.indices?.gmi ?? 0) !== 0,
+    hasEvidence: rawData.items.length > 0,
+    acknowledgesUncertainty: consistencyResult.confidenceScore < 0.9,
+    alternativesConsidered: true,
+  });
+
+  // ================================================================
+  // Create final context with all layers integrated
+  // ================================================================
+  const errors: string[] = [];
+  if (!consistencyResult.isConsistent) {
+    for (const violation of consistencyResult.violations) {
+      errors.push(`[Consistency] ${violation.description}`);
+    }
+  }
+  if (metacognitiveAssessment.overallConfidence < 0.5) {
+    errors.push(`[Metacognition] Low confidence: ${metacognitiveAssessment.selfCritique}`);
+  }
 
   const context: NetworkContext = {
     requestId,
@@ -225,16 +312,36 @@ export async function executeNetworkEngine(userId: string, question: string, lan
       response: finalResponse,
       suggestions: ['Analyze global economic impact', 'Inspect historical resonance for this pattern'],
       languageEnforced: true,
-      quality: { score: 95, relevance: 98, accuracy: 95, completeness: 90, clarity: 98 },
+      quality: {
+        score: Math.round(metacognitiveAssessment.overallConfidence * 100),
+        relevance: 98,
+        accuracy: Math.round(metacognitiveAssessment.overallConfidence * 100),
+        completeness: consistencyResult.confidenceScore < 0.7 ? 75 : 90,
+        clarity: boundContext.confidence > 0.7 ? 95 : 80,
+      },
     },
     executionMetrics: {
       totalDurationMs: Date.now() - startTime,
-      layerTraces: [],
-      parallelGroups: ['Collection', 'ParallelSignalGraph', 'EventVectorFusion', 'DCFT+RAG+Emotion', 'NaturalGeneration'],
-      errors: [],
+      layerTraces: [
+        { layer: 'ContextLockLayer', status: contextLock ? 'checked' : 'no_lock' },
+        { layer: 'CognitiveAnswerGate', decision: gateDecision.decision },
+        { layer: 'ContextualBinding', confidence: boundContext.confidence, region: boundContext.cultural.region },
+        { layer: 'CognitiveConsistencyCheck', isConsistent: consistencyResult.isConsistent, score: consistencyResult.confidenceScore },
+        { layer: 'Metacognition', overallConfidence: metacognitiveAssessment.overallConfidence, level: metacognitiveAssessment.confidenceLevel },
+      ],
+      parallelGroups: ['Collection', 'ParallelSignalGraph', 'EventVectorFusion', 'DCFT+RAG+Emotion', 'NaturalGeneration', 'Consistency+Metacognition'],
+      errors,
     },
     status: 'completed',
   };
+
+  // Update context lock for this session
+  ContextLockLayer.createLock(
+    conversationId,
+    topicKey,
+    detectedCountry.code,
+    intent,
+  );
 
   saveToLearningMemory(context);
   return context;
@@ -282,12 +389,19 @@ export async function getGlobalMood() {
 export function getEngineStats() {
   return {
     status: 'active',
-    version: 'central-network-1.0',
+    version: 'central-network-2.0',
     uptime: process.uptime(),
     memory: process.memoryUsage(),
     lastPulse: new Date(),
     centralProcessor: 'networkEngine',
     parallelBranches: ['graphPipeline', 'emotionEngine', 'dcftEngine', 'ragSystem'],
+    layers: [
+      'ContextLockLayer',
+      'CognitiveAnswerGate',
+      'ContextualBinding',
+      'CognitiveConsistencyCheck',
+      'Metacognition',
+    ],
     networkCacheSize: 0,
     dataCacheStats: { hits: 0, misses: 0, ratio: 0 },
     learning: {
@@ -314,7 +428,6 @@ export async function runEngineLearningCycle() {
 export async function evaluateEnginePrediction(id: string, isCorrect: boolean) {
   return { success: true, id, isCorrect };
 }
-
 
 function isPredictionQuestion(question: string): boolean {
   return /\b(predict|prediction|forecast|future|next|will|scenario|outlook)\b/i.test(question);
