@@ -17,6 +17,14 @@ export async function getDb() {
       sqlite.pragma('journal_mode = WAL');
       // Increase busy timeout so agents waiting on a locked DB retry instead of crashing
       sqlite.pragma('busy_timeout = 5000');
+      // Enable foreign keys
+      sqlite.pragma("foreign_keys = ON");
+      // Cache size in KB (e.g. -20000 = 20 MB)
+      sqlite.pragma("cache_size = -20000");
+      // Store temp tables in memory instead of on disk
+      sqlite.pragma("temp_store = MEMORY");
+      // Synchronous mode NORMAL balances safety with speed (good for WAL)
+      sqlite.pragma("synchronous = NORMAL");
       db = drizzle(sqlite);
       console.log(`[Database] Connected to SQLite at ${dbPath} (WAL mode enabled)`);
     } catch (error) {
