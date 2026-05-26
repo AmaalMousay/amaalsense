@@ -1,9 +1,7 @@
-import { t } from "../_core/i18n";
 /**
  * Language Enforcement Layer (Layer 15)
- * 
- *    
- *          
+ *
+ * Forces response language to match the detected user language.
  */
 
 import { smartChat } from '../_core/llm';
@@ -21,8 +19,7 @@ export interface LanguageEnforcementResult {
 }
 
 /**
- *    
- */
+ * */
 export function quickDetectLanguage(text: string): SupportedLanguage {
   //   
   const arabicRegex = /[\u0600-\u06FF]/g;
@@ -38,8 +35,7 @@ export function quickDetectLanguage(text: string): SupportedLanguage {
 }
 
 /**
- *     
- */
+ *  */
 export async function translateResponse(
   response: string,
   targetLanguage: SupportedLanguage
@@ -61,7 +57,6 @@ export async function translateResponse(
       'translation'
     );
 
-    
     return translatedText || response;
   } catch (error) {
     console.error('[LanguageEnforcement] Translation error:', error);
@@ -70,8 +65,7 @@ export async function translateResponse(
 }
 
 /**
- *    
- */
+ * */
 export async function enforceLanguage(
   question: string,
   response: string
@@ -83,12 +77,10 @@ export async function enforceLanguage(
     const questionLanguage = quickDetectLanguage(question);
     console.log('[LanguageEnforcement] Question language:', questionLanguage);
 
-    //    
-    const responseLanguage = quickDetectLanguage(response);
+    //    const responseLanguage = quickDetectLanguage(response);
     console.log('[LanguageEnforcement] Response language:', responseLanguage);
 
-    //      
-    let enforcedResponse = response;
+    //      let enforcedResponse = response;
     let translationNeeded = false;
 
     if (questionLanguage !== responseLanguage) {
@@ -198,22 +190,16 @@ export const detectLanguageHeuristic = (text: string): string => {
 export const getLanguageSystemPrompt = (language: string): string => {
   const prompts: Record<string, string> = {
     ar: t('auto.engines_languageEnforcementLayer.15.4aa9fe4e', 'ar'),
-    
     fr: `Vous êtes un analyste émotionnel spécialisé. Votre analyse doit être entièrement en français.
     Répondez en format JSON. Assurez-vous que tous les champs et explications sont en français.`,
-    
     es: `Eres un analista emocional especializado. Tu análisis debe ser completamente en español.
     Responde en formato JSON. Asegúrate de que todos los campos y explicaciones estén en español.`,
-    
     de: `Du bist ein spezialisierter Emotionsanalyst. Deine Analyse muss vollständig auf Deutsch sein.
     Antworte im JSON-Format. Stelle sicher, dass alle Felder und Erklärungen auf Deutsch sind.`,
-    
     zh: `你是一位专业的情感分析师。你的分析必须完全用中文进行。
     以JSON格式回复。确保所有字段和解释都是中文。`,
-    
     ja: `あなたは専門的な感情分析者です。あなたの分析は完全に日本語である必要があります。
     JSON形式で応答してください。すべてのフィールドと説明が日本語であることを確認してください。`,
-    
     en: `You are a specialized emotional analyst. Your analysis must be entirely in English.
     Respond in JSON format. Ensure all fields and explanations are in English.`,
   };
