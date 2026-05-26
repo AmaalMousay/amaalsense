@@ -176,6 +176,8 @@ export async function executeNetworkEngine(
     rawData.items.map((i) => i.title), branches.dcftResult?.indices?.cfi ?? 50,
     Object.keys(eventVector.sourceBreakdown).length, eventVector.totalItems,
     (branches.dcftResult?.indices?.gmi ?? 0) !== 0, rawData.items.length > 0,
+    branches.emotions.vector, branches.emotions.dominantEmotion,
+    branches.dcftResult?.indices?.gmi, branches.dcftResult?.indices?.hri,
   );
 
   // Build final context
