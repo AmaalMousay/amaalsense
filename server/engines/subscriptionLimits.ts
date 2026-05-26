@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 
 /**
  * Subscription Limits Configuration
@@ -48,11 +47,11 @@ export interface TierInfo {
 export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   free: {
     name: 'Free',
-    nameAr: t('auto.engines_subscriptionLimits.8.67c20675', 'ar'),
+    nameAr: `مجاني`,
     price: 0,
     priceLabel: '$0/month',
     description: 'Perfect for individuals exploring collective emotion analysis',
-    descriptionAr: t('auto.engines_subscriptionLimits.7.0d7f313a', 'ar'),
+    descriptionAr: `مثالي للأفراد الذين يستكشفون تحليل المشاعر الجماعية`,
     limits: {
       dailyAnalyses: 50,
       dailyApiCalls: 0,
@@ -74,11 +73,11 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   
   pro: {
     name: 'Professional',
-    nameAr: t('auto.engines_subscriptionLimits.6.1fdf3507', 'ar'),
+    nameAr: `احترافي`,
     price: 49,
     priceLabel: '$49/month',
     description: 'For researchers and small teams needing deeper insights',
-    descriptionAr: t('auto.engines_subscriptionLimits.5.0d9c51d0', 'ar'),
+    descriptionAr: `للباحثين والفرق الصغيرة التي تحتاج رؤى أعمق`,
     popular: true,
     limits: {
       dailyAnalyses: 500,
@@ -101,11 +100,11 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   
   enterprise: {
     name: 'Enterprise',
-    nameAr: t('auto.engines_subscriptionLimits.4.228fee0b', 'ar'),
+    nameAr: `مؤسسي`,
     price: 299,
     priceLabel: '$299/month',
     description: 'Full-featured solution for organizations and enterprises',
-    descriptionAr: t('auto.engines_subscriptionLimits.3.6d39d699', 'ar'),
+    descriptionAr: `حل متكامل للمؤسسات والشركات الكبرى`,
     limits: {
       dailyAnalyses: -1, // Unlimited
       dailyApiCalls: -1, // Unlimited
@@ -127,11 +126,11 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
   
   government: {
     name: 'Government & NGO',
-    nameAr: t('auto.engines_subscriptionLimits.2.69f30e94', 'ar'),
+    nameAr: `حكومي ومنظمات`,
     price: -1, // Custom pricing
     priceLabel: 'Custom',
     description: 'Tailored solutions for governments and international organizations',
-    descriptionAr: t('auto.engines_subscriptionLimits.1.5aabaa2c', 'ar'),
+    descriptionAr: `حلول مخصصة للحكومات والمنظمات الدولية`,
     limits: {
       dailyAnalyses: -1, // Unlimited
       dailyApiCalls: -1, // Unlimited

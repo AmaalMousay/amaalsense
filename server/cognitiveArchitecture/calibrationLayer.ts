@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * Calibration Layer
  *   -   
@@ -137,7 +136,7 @@ async function generateSurveyQuestions(
   try {
     const response = await invokeLLM({
       messages: [
-        { role: 'system', content: t('auto.cognitiveArchitecture_calibrationLayer.43.d1a2bba9', 'ar') },
+        { role: 'system', content: `أنت مساعد يولد استبيانات بصيغة JSON فقط.` },
         { role: 'user', content: prompt },
       ],
       response_format: { type: 'json_object' },
@@ -165,43 +164,43 @@ function getDefaultQuestions(topic: string, domain: string): SurveyQuestion[] {
       type: 'scale',
       scaleMin: 1,
       scaleMax: 5,
-      scaleLabels: { min: t('auto.cognitiveArchitecture_calibrationLayer.42.d40a44ce', 'ar'), max: t('auto.cognitiveArchitecture_calibrationLayer.41.8f51596b', 'ar') },
+      scaleLabels: { min: `قلق جداً`, max: `متفائل جداً` },
     },
     {
       id: 'q2',
-      text: t('auto.cognitiveArchitecture_calibrationLayer.40.1a927e2a', 'ar'),
+      text: `ما السبب الرئيسي لهذا الشعور؟`,
       type: 'choice',
       options: [
-        t('auto.cognitiveArchitecture_calibrationLayer.39.47d5edbb', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.38.dbe74435', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.37.2aeb5b3d', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.36.91459477', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.35.b6f7fec5', 'ar'),
+        `الأخبار والإعلام`,
+        `تجربة شخصية`,
+        `آراء المحيطين`,
+        `تحليل منطقي`,
+        `حدس وشعور`,
       ],
     },
     {
       id: 'q3',
-      text: t('auto.cognitiveArchitecture_calibrationLayer.34.e9cb30d1', 'ar'),
+      text: `ما مستوى قلقك من التطورات القادمة؟`,
       type: 'scale',
       scaleMin: 1,
       scaleMax: 5,
-      scaleLabels: { min: t('auto.cognitiveArchitecture_calibrationLayer.33.74e51c8a', 'ar'), max: t('auto.cognitiveArchitecture_calibrationLayer.32.aeef8149', 'ar') },
+      scaleLabels: { min: `لا قلق`, max: `قلق شديد` },
     },
     {
       id: 'q4',
-      text: t('auto.cognitiveArchitecture_calibrationLayer.31.361cc29e', 'ar'),
+      text: `ما توقعاتك للأشهر القادمة؟`,
       type: 'choice',
       options: [
-        t('auto.cognitiveArchitecture_calibrationLayer.30.018ee7f0', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.29.47eaecee', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.28.a99b2730', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.27.aa7554dd', 'ar'),
-        t('auto.cognitiveArchitecture_calibrationLayer.26.53b9a789', 'ar'),
+        `تحسن كبير`,
+        `تحسن طفيف`,
+        `استقرار`,
+        `تراجع طفيف`,
+        `تراجع كبير`,
       ],
     },
     {
       id: 'q5',
-      text: t('auto.cognitiveArchitecture_calibrationLayer.25.fa561b29', 'ar'),
+      text: `ما الشيء الذي يشغل بالك أكثر في هذا الموضوع؟`,
       type: 'open',
     },
   ];
@@ -239,8 +238,8 @@ export function analyzeSurveyResponses(responses: SurveyResponse[]): EmotionBrea
       
       //  
       if (answer.questionId === 'q4' && typeof answer.value === 'string') {
-        if (answer.value.includes(t('auto.cognitiveArchitecture_calibrationLayer.24.ab4c7e3d', 'ar'))) totalHope += 1;
-        else if (answer.value.includes(t('auto.cognitiveArchitecture_calibrationLayer.23.98df46fb', 'ar'))) totalFear += 0.5;
+        if (answer.value.includes(`تحسن`)) totalHope += 1;
+        else if (answer.value.includes(`تراجع`)) totalFear += 0.5;
         else totalAcceptance += 0.5;
       }
       
@@ -293,24 +292,24 @@ export function generateCalibrationReport(
   const interpretations: string[] = [];
   
   if (gap.fearGap > 15) {
-    interpretations.push(t('auto.cognitiveArchitecture_calibrationLayer.22.afa0df06', 'ar'));
+    interpretations.push(`الإعلام يبالغ في تصوير الخوف مقارنة بما يشعره الناس فعلاً`);
   } else if (gap.fearGap < -15) {
-    interpretations.push(t('auto.cognitiveArchitecture_calibrationLayer.21.ffe652e6', 'ar'));
+    interpretations.push(`الناس أكثر قلقاً مما يظهره الإعلام`);
   }
   
   if (gap.hopeGap > 15) {
-    interpretations.push(t('auto.cognitiveArchitecture_calibrationLayer.20.f1e9556a', 'ar'));
+    interpretations.push(`الإعلام أكثر تفاؤلاً من الشارع`);
   } else if (gap.hopeGap < -15) {
-    interpretations.push(t('auto.cognitiveArchitecture_calibrationLayer.19.0e9aa370', 'ar'));
+    interpretations.push(`الناس أكثر تفاؤلاً مما ينقله الإعلام`);
   }
   
   if (gap.angerGap > 15) {
-    interpretations.push(t('auto.cognitiveArchitecture_calibrationLayer.18.73cef36c', 'ar'));
+    interpretations.push(`الإعلام يركز على الغضب أكثر من الواقع`);
   } else if (gap.angerGap < -15) {
-    interpretations.push(t('auto.cognitiveArchitecture_calibrationLayer.17.408f4cb3', 'ar'));
+    interpretations.push(`هناك غضب شعبي لا يظهر في الإعلام`);
   }
   
-  gap.interpretation = interpretations.join('. ') || t('auto.cognitiveArchitecture_calibrationLayer.16.8b086817', 'ar');
+  gap.interpretation = interpretations.join('. ') || `الإعلام يعكس مشاعر الناس بشكل متوازن`;
   
   //  
   const insights = generateCalibrationInsights(mediaPerception, publicPerception, gap);
@@ -344,7 +343,7 @@ function generateCalibrationInsights(
   const maxGap = Math.max(Math.abs(gap.fearGap), Math.abs(gap.hopeGap), Math.abs(gap.angerGap));
   
   if (maxGap > 20) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.15.f354f97a', 'ar'));
+    insights.push(`هناك فجوة كبيرة بين الصورة الإعلامية والواقع الشعبي`);
   }
   
   //    
@@ -357,11 +356,11 @@ function generateCalibrationInsights(
   
   //   
   if (public_.confusion > 30) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.14.bd7e0591', 'ar'));
+    insights.push(`هناك حيرة واضحة لدى الناس تحتاج توضيحاً`);
   }
   
   if (public_.acceptance > 40) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.13.5fde84e1', 'ar'));
+    insights.push(`الناس في حالة قبول وتكيف مع الوضع`);
   }
   
   return insights;
@@ -372,11 +371,11 @@ function generateCalibrationInsights(
  */
 function translateEmotion(emotion: string): string {
   const translations: Record<string, string> = {
-    fear: t('auto.cognitiveArchitecture_calibrationLayer.12.b4cbc50d', 'ar'),
-    hope: t('auto.cognitiveArchitecture_calibrationLayer.11.05554470', 'ar'),
-    anger: t('auto.cognitiveArchitecture_calibrationLayer.10.0a67288b', 'ar'),
-    confusion: t('auto.cognitiveArchitecture_calibrationLayer.9.30b8e235', 'ar'),
-    acceptance: t('auto.cognitiveArchitecture_calibrationLayer.8.7377ae7d', 'ar'),
+    fear: `الخوف`,
+    hope: `الأمل`,
+    anger: `الغضب`,
+    confusion: `الحيرة`,
+    acceptance: `القبول`,
   };
   return translations[emotion] || emotion;
 }
@@ -403,27 +402,27 @@ export function generateCalibrationInsight(gap: { fear: number; hope: number; an
   
   //   
   if (gap.fear < -20) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.7.ef12ef07', 'ar'));
+    insights.push(`الإعلام يبالغ في تضخيم الخوف مقارنة بمشاعر الناس الحقيقية`);
   } else if (gap.fear > 20) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.6.792155e9', 'ar'));
+    insights.push(`الإعلام يقلل من مستوى القلق الفعلي لدى الناس`);
   }
   
   //   
   if (gap.hope > 20) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.5.0e9aa370', 'ar'));
+    insights.push(`الناس أكثر تفاؤلاً مما ينقله الإعلام`);
   } else if (gap.hope < -20) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.4.b18ec2dd', 'ar'));
+    insights.push(`الإعلام يبالغ في التفاؤل مقارنة بالواقع`);
   }
   
   //   
   if (gap.anger < -20) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.3.73cef36c', 'ar'));
+    insights.push(`الإعلام يركز على الغضب أكثر من الواقع`);
   } else if (gap.anger > 20) {
-    insights.push(t('auto.cognitiveArchitecture_calibrationLayer.2.8bb3231e', 'ar'));
+    insights.push(`هناك غضب شعبي لا يظهر في التغطية الإعلامية`);
   }
   
   if (insights.length === 0) {
-    return t('auto.cognitiveArchitecture_calibrationLayer.1.fec2281e', 'ar');
+    return `الإعلام يعكس مشاعر الناس بشكل متوازن نسبياً`;
   }
   
   return insights.join('. ');

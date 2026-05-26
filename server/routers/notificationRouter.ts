@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * NOTIFICATION ROUTER - tRPC PROCEDURES
  * 
@@ -45,11 +44,11 @@ export const notificationRouter = router({
 
         return {
           success: true,
-          message: t('auto.routers_notificationRouter.12.c8055a6f', 'ar')
+          message: `تم الاشتراك في التنبيهات بنجاح`
         };
       } catch (error) {
         console.error('[notificationRouter] Subscribe error:', error);
-        throw new Error(t('auto.routers_notificationRouter.11.ae484c22', 'ar'));
+        throw new Error(`فشل الاشتراك في التنبيهات`);
       }
     }),
 
@@ -64,11 +63,11 @@ export const notificationRouter = router({
 
         return {
           success: true,
-          message: t('auto.routers_notificationRouter.10.70ebddbc', 'ar')
+          message: `تم إلغاء الاشتراك من التنبيهات بنجاح`
         };
       } catch (error) {
         console.error('[notificationRouter] Unsubscribe error:', error);
-        throw new Error(t('auto.routers_notificationRouter.9.dcacaf3f', 'ar'));
+        throw new Error(`فشل إلغاء الاشتراك من التنبيهات`);
       }
     }),
 
@@ -92,7 +91,7 @@ export const notificationRouter = router({
         };
       } catch (error) {
         console.error('[notificationRouter] Get alert history error:', error);
-        throw new Error(t('auto.routers_notificationRouter.8.7cafdbb8', 'ar'));
+        throw new Error(`فشل الحصول على سجل التنبيهات`);
       }
     }),
 
@@ -116,7 +115,7 @@ export const notificationRouter = router({
         };
       } catch (error) {
         console.error('[notificationRouter] Get thresholds error:', error);
-        throw new Error(t('auto.routers_notificationRouter.7.65c30ff3', 'ar'));
+        throw new Error(`فشل الحصول على إعدادات التنبيهات`);
       }
     }),
 
@@ -138,16 +137,16 @@ export const notificationRouter = router({
         const success = notificationSystem.updateSubscriberThresholds(String(ctx.user.id), input);
 
         if (!success) {
-          throw new Error(t('auto.routers_notificationRouter.6.0d20a5a2', 'ar'));
+          throw new Error(`المستخدم غير مشترك في التنبيهات`);
         }
 
         return {
           success: true,
-          message: t('auto.routers_notificationRouter.5.f456c9c2', 'ar')
+          message: `تم تحديث إعدادات التنبيهات بنجاح`
         };
       } catch (error) {
         console.error('[notificationRouter] Update thresholds error:', error);
-        throw new Error(t('auto.routers_notificationRouter.4.23fe66cc', 'ar'));
+        throw new Error(`فشل تحديث إعدادات التنبيهات`);
       }
     }),
 
@@ -161,11 +160,11 @@ export const notificationRouter = router({
 
         return {
           success: true,
-          message: t('auto.routers_notificationRouter.3.af858d6a', 'ar')
+          message: `تم مسح سجل التنبيهات بنجاح`
         };
       } catch (error) {
         console.error('[notificationRouter] Clear alert history error:', error);
-        throw new Error(t('auto.routers_notificationRouter.2.a696621f', 'ar'));
+        throw new Error(`فشل مسح سجل التنبيهات`);
       }
     }),
 
@@ -185,7 +184,7 @@ export const notificationRouter = router({
         };
       } catch (error) {
         console.error('[notificationRouter] Get active subscribers count error:', error);
-        throw new Error(t('auto.routers_notificationRouter.1.8e23c945', 'ar'));
+        throw new Error(`فشل الحصول على عدد المشتركين النشطين`);
       }
     })
 });

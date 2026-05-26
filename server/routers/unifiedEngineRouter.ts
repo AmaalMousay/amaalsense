@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * UNIFIED ENGINE ROUTER
  * 
@@ -973,7 +972,7 @@ export const unifiedEngineRouter = router({
             urgency: Math.random() > 0.8 ? 'critical' : Math.random() > 0.5 ? 'high' : 'medium',
             countries: [country.code],
             timestamp: news.publishedAt,
-            dominantEmotion: dominantEmotion === 'anger' ? t('auto.routers_unifiedEngineRouter.15.8e7bd750', 'ar') : dominantEmotion === 'fear' ? t('auto.routers_unifiedEngineRouter.14.1cf83ec0', 'ar') : dominantEmotion === 'hope' ? t('auto.routers_unifiedEngineRouter.13.60cd6c3d', 'ar') : dominantEmotion === 'joy' ? t('auto.routers_unifiedEngineRouter.12.15a6eacb', 'ar') : t('auto.routers_unifiedEngineRouter.11.56bc16bb', 'ar'),
+            dominantEmotion: dominantEmotion === 'anger' ? `غضب` : dominantEmotion === 'fear' ? `خوف` : dominantEmotion === 'hope' ? `أمل` : dominantEmotion === 'joy' ? `فرح` : `حياد`,
             engagementScore: Math.round(Math.random() * 40) + 60,
           });
         }
@@ -1077,7 +1076,7 @@ export const unifiedEngineRouter = router({
       success: true,
       data: {
         mainTheme: "Global Analytical Synthesis",
-        mainThemeArabic: t('auto.routers_unifiedEngineRouter.10.d8d103e2', 'ar'),
+        mainThemeArabic: `التركيب التحليلي العالمي`,
         recentEvents: [
           { event: "Global Market Volatility", topic: "Economy", region: "Global", impact: "high" },
           { event: "Technological Integration", topic: "Tech", region: "West", impact: "medium" }
@@ -1088,16 +1087,16 @@ export const unifiedEngineRouter = router({
           sentence3: "Economic data suggests a growing trend toward digital consciousness integration."
         },
         explanationArabic: {
-          sentence1: t('auto.routers_unifiedEngineRouter.9.1ac9ca4f', 'ar'),
-          sentence2: t('auto.routers_unifiedEngineRouter.8.a4f5f400', 'ar'),
-          sentence3: t('auto.routers_unifiedEngineRouter.7.03dc499b', 'ar')
+          sentence1: `يتتبع أمال سينس حالياً أنماط رنين متعددة عبر تدفقات الأخبار العالمية.`,
+          sentence2: `تشير مؤشرات المشاعر إلى استقرار الخوف الجماعي بعد الارتفاعات الأخيرة.`,
+          sentence3: `تشير البيانات الاقتصادية إلى اتجاه متزايد نحو تكامل الوعي الرقمي.`
         },
         connections: [
-          { connection: "Economic stability is directly correlating with reduced CFI levels.", connectionArabic: t('auto.routers_unifiedEngineRouter.6.192cbf39', 'ar') }
+          { connection: "Economic stability is directly correlating with reduced CFI levels.", connectionArabic: `يرتبط الاستقرار الاقتصادي مباشرة بانخفاض مستويات مؤشر الخوف الجماعي.` }
         ],
         forecast: {
           nextStep: "Continued stabilization of global mood indices.",
-          nextStepArabic: t('auto.routers_unifiedEngineRouter.5.7ea932d5', 'ar'),
+          nextStepArabic: `استمرار استقرار مؤشرات المزاج العالمي.`,
           timeframe: "Next 48 hours"
         }
       }
@@ -1130,9 +1129,9 @@ export const unifiedEngineRouter = router({
     return {
       success: true,
       data: [
-        { id: 'is_world_dangerous', text: 'Is the world becoming more dangerous?', textArabic: t('auto.routers_unifiedEngineRouter.4.c30e3e34', 'ar') },
-        { id: 'are_we_divided', text: 'Are we becoming more divided?', textArabic: t('auto.routers_unifiedEngineRouter.3.340821e8', 'ar') },
-        { id: 'is_there_hope', text: 'Is there hope for the future?', textArabic: t('auto.routers_unifiedEngineRouter.2.b984b13b', 'ar') },
+        { id: 'is_world_dangerous', text: 'Is the world becoming more dangerous?', textArabic: `هل العالم يصبح أكثر خطورة؟` },
+        { id: 'are_we_divided', text: 'Are we becoming more divided?', textArabic: `هل أصبحنا أكثر انقساماً؟` },
+        { id: 'is_there_hope', text: 'Is there hope for the future?', textArabic: `هل هناك أمل في المستقبل؟` },
       ]
     };
   }),
@@ -1156,7 +1155,7 @@ export const unifiedEngineRouter = router({
             { metric: "Resilience Quotient", value: 72, trend: "improving" }
           ],
           recommendation: "Monitor regional indicators for shift patterns.",
-          recommendationArabic: t('auto.routers_unifiedEngineRouter.1.3e9a380f', 'ar')
+          recommendationArabic: `راقب المؤشرات الإقليمية بحثاً عن أنماط التحول.`
         }
       };
     }),

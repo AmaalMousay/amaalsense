@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * Vocabulary Adapter for DCFT Meta-Learning
  * Based on DCFT Theory by Amaal Radwan
@@ -58,15 +57,15 @@ const REGIONAL_CONFIGS: RegionalConfig[] = [
     name: 'Arabic',
     language: 'ar',
     dialectVariations: new Map([
-      [t('auto.dcft_vocabularyAdapter.44.e7b1cbf3', 'ar'), [t('auto.dcft_vocabularyAdapter.43.a9b0aa76', 'ar'), t('auto.dcft_vocabularyAdapter.42.43801599', 'ar'), t('auto.dcft_vocabularyAdapter.41.fcde99e3', 'ar')]],
-      [t('auto.dcft_vocabularyAdapter.40.8dbba75f', 'ar'), [t('auto.dcft_vocabularyAdapter.39.77517ba3', 'ar'), t('auto.dcft_vocabularyAdapter.38.d1fdc008', 'ar'), t('auto.dcft_vocabularyAdapter.37.1a1c9de9', 'ar')]],
-      [t('auto.dcft_vocabularyAdapter.36.70daa8f3', 'ar'), [t('auto.dcft_vocabularyAdapter.35.b7aecac7', 'ar'), t('auto.dcft_vocabularyAdapter.34.77517ba3', 'ar'), t('auto.dcft_vocabularyAdapter.33.2968ff78', 'ar')]],
-      [t('auto.dcft_vocabularyAdapter.32.df944736', 'ar'), [t('auto.dcft_vocabularyAdapter.31.c997fb2a', 'ar'), t('auto.dcft_vocabularyAdapter.30.902b0f0f', 'ar'), t('auto.dcft_vocabularyAdapter.29.67ad637c', 'ar')]],
+      [`سعيد`, [`فرحان`, `مبسوط`, `مرتاح`]],
+      [`حزين`, [`زعلان`, `متضايق`, `مكتئب`]],
+      [`غاضب`, [`معصب`, `زعلان`, `ثائر`]],
+      [`خائف`, [`مرعوب`, `قلقان`, `متوتر`]],
     ]),
     culturalModifiers: new Map([
-      [t('auto.dcft_vocabularyAdapter.28.c6e09f39', 'ar'), 1.2],  // Positive cultural expression
-      [t('auto.dcft_vocabularyAdapter.27.b092517c', 'ar'), 1.1], // Hopeful expression
-      [t('auto.dcft_vocabularyAdapter.26.cad225b2', 'ar'), 1.15], // Positive expression
+      [`الحمد لله`, 1.2],  // Positive cultural expression
+      [`إن شاء الله`, 1.1], // Hopeful expression
+      [`ما شاء الله`, 1.15], // Positive expression
     ]),
   },
   {
@@ -132,23 +131,23 @@ export class VocabularyAdapter {
     // Initialize context detection patterns
     this.contextDetectionPatterns.set('finance', [
       'stock', 'market', 'price', 'investor', 'trading', 'economy', 'bank', 'dollar',
-      t('auto.dcft_vocabularyAdapter.25.16c73be6', 'ar'), t('auto.dcft_vocabularyAdapter.24.27d9d4af', 'ar'), t('auto.dcft_vocabularyAdapter.23.2efcd729', 'ar'), t('auto.dcft_vocabularyAdapter.22.6d38c2ea', 'ar')
+      `سوق`, `بورصة`, `استثمار`, `اقتصاد`
     ]);
     this.contextDetectionPatterns.set('politics', [
       'government', 'election', 'president', 'minister', 'parliament', 'vote', 'policy',
-      t('auto.dcft_vocabularyAdapter.21.52d79bae', 'ar'), t('auto.dcft_vocabularyAdapter.20.d9b242e6', 'ar'), t('auto.dcft_vocabularyAdapter.19.5ef70e19', 'ar'), t('auto.dcft_vocabularyAdapter.18.854382ce', 'ar'), t('auto.dcft_vocabularyAdapter.17.b80d3d91', 'ar')
+      `حكومة`, `انتخابات`, `رئيس`, `وزير`, `برلمان`
     ]);
     this.contextDetectionPatterns.set('health', [
       'hospital', 'doctor', 'patient', 'disease', 'vaccine', 'treatment', 'medical',
-      t('auto.dcft_vocabularyAdapter.16.dc7cff7f', 'ar'), t('auto.dcft_vocabularyAdapter.15.471e98a3', 'ar'), t('auto.dcft_vocabularyAdapter.14.992759e3', 'ar'), t('auto.dcft_vocabularyAdapter.13.51f4011d', 'ar'), t('auto.dcft_vocabularyAdapter.12.8d48fc93', 'ar'), t('auto.dcft_vocabularyAdapter.11.ad5a18db', 'ar')
+      `مستشفى`, `طبيب`, `مريض`, `مرض`, `لقاح`, `علاج`
     ]);
     this.contextDetectionPatterns.set('sports', [
       'game', 'team', 'player', 'score', 'championship', 'match', 'win', 'lose',
-      t('auto.dcft_vocabularyAdapter.10.10fb9dc5', 'ar'), t('auto.dcft_vocabularyAdapter.9.874011c4', 'ar'), t('auto.dcft_vocabularyAdapter.8.a1873e2a', 'ar'), t('auto.dcft_vocabularyAdapter.7.5c6d8448', 'ar'), t('auto.dcft_vocabularyAdapter.6.837787a2', 'ar')
+      `مباراة`, `فريق`, `لاعب`, `بطولة`, `فوز`
     ]);
     this.contextDetectionPatterns.set('technology', [
       'software', 'app', 'computer', 'internet', 'digital', 'ai', 'data', 'tech',
-      t('auto.dcft_vocabularyAdapter.5.10d843e1', 'ar'), t('auto.dcft_vocabularyAdapter.4.b177f0b3', 'ar'), t('auto.dcft_vocabularyAdapter.3.6f59ef41', 'ar'), t('auto.dcft_vocabularyAdapter.2.0daf322c', 'ar'), t('auto.dcft_vocabularyAdapter.1.56cc4abe', 'ar')
+      `برنامج`, `تطبيق`, `حاسوب`, `إنترنت`, `رقمي`
     ]);
   }
 

@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * Perception Layer (Layer 1) - Input Processing
  * Based on DCFT Theory by Amaal Radwan
@@ -443,15 +442,15 @@ function identifyAffectedGroups(data: any): string[] {
  */
 function identifyRootCause(question: string, data: any): string {
   //      
-  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.17.8e7bd750', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.16.8e7bd750', 'ar'))) {
-    return t('auto.dcft_perceptionLayer.15.64ba5a0e', 'ar');
+  if (question.toLowerCase().includes(`غضب`) || question.toLowerCase().includes(`غضب`)) {
+    return `تدهور الظروف المعيشية والشعور بالظلم`;
   }
   
-  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.14.1cf83ec0', 'ar'))) {
-    return t('auto.dcft_perceptionLayer.13.92c4953d', 'ar');
+  if (question.toLowerCase().includes(`خوف`)) {
+    return `عدم اليقين والتهديدات الوجودية`;
   }
   
-  return t('auto.dcft_perceptionLayer.12.ec116012', 'ar');
+  return `عوامل متعددة معقدة`;
 }
 
 /**
@@ -463,14 +462,14 @@ function analyzeCollectiveConsciousness(data: any): string {
   const hri = data.hri || 50;
   
   if (gmi < -50) {
-    return t('auto.dcft_perceptionLayer.11.ec97343d', 'ar');
+    return `وعي جمعي متشائم يسيطر عليه الخوف والغضب`;
   }
   
   if (gmi > 50) {
-    return t('auto.dcft_perceptionLayer.10.7ab636da', 'ar');
+    return `وعي جمعي متفائل يسيطر عليه الأمل والرغبة في التغيير`;
   }
   
-  return t('auto.dcft_perceptionLayer.9.aaafd30a', 'ar');
+  return `وعي جمعي متوازن بين التفاؤل والتشاؤم`;
 }
 
 /**
@@ -494,19 +493,19 @@ function determineAwarenessLevel(data: any): 'surface' | 'moderate' | 'deep' {
  *   
  */
 function classifyQuestion(question: string): string {
-  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.8.daa59aa1', 'ar'))) {
+  if (question.toLowerCase().includes(`كيف`)) {
     return 'how';
   }
   
-  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.7.9dd0db2c', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.6.9dd0db2c', 'ar'))) {
+  if (question.toLowerCase().includes(`ماذا لو`) || question.toLowerCase().includes(`ماذا لو`)) {
     return 'what-if';
   }
   
-  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.5.99a6db74', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.4.99a6db74', 'ar'))) {
+  if (question.toLowerCase().includes(`تأثير`) || question.toLowerCase().includes(`تأثير`)) {
     return 'impact';
   }
   
-  if (question.toLowerCase().includes(t('auto.dcft_perceptionLayer.3.fc4046c9', 'ar')) || question.toLowerCase().includes(t('auto.dcft_perceptionLayer.2.fc4046c9', 'ar'))) {
+  if (question.toLowerCase().includes(`حل`) || question.toLowerCase().includes(`حل`)) {
     return 'solution';
   }
   
@@ -526,7 +525,7 @@ function validateContext(perception: PerceptionContext, question: string): strin
   
   //      
   if (perception.primaryEmotion === 'neutral') {
-    validations.push(t('auto.dcft_perceptionLayer.1.5c2af2dd', 'ar'));
+    validations.push(`تحذير: العاطفة الأساسية غير واضحة`);
   }
   
   return validations;

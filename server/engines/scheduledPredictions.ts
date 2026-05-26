@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * Scheduled Predictions Service
  * Automatically generates predictions at regular intervals and notifies on critical tipping points
@@ -26,21 +25,21 @@ let lastRunResults: PredictionCycleResult | null = null;
 
 // Countries to monitor
 const MONITORED_COUNTRIES = [
-  { code: "US", name: "United States", nameAr: t('auto.engines_scheduledPredictions.18.a9eb5a2b', 'ar') },
-  { code: "GB", name: "United Kingdom", nameAr: t('auto.engines_scheduledPredictions.17.029342e2', 'ar') },
-  { code: "DE", name: "Germany", nameAr: t('auto.engines_scheduledPredictions.16.b47da9fb', 'ar') },
-  { code: "FR", name: "France", nameAr: t('auto.engines_scheduledPredictions.15.36a1dc72', 'ar') },
-  { code: "JP", name: "Japan", nameAr: t('auto.engines_scheduledPredictions.14.622a5ab0', 'ar') },
-  { code: "SA", name: "Saudi Arabia", nameAr: t('auto.engines_scheduledPredictions.13.cd8d189f', 'ar') },
-  { code: "AE", name: "UAE", nameAr: t('auto.engines_scheduledPredictions.12.9bc10b8c', 'ar') },
-  { code: "EG", name: "Egypt", nameAr: t('auto.engines_scheduledPredictions.11.9f5f187b', 'ar') },
-  { code: "LY", name: "Libya", nameAr: t('auto.engines_scheduledPredictions.10.251aff72', 'ar') },
-  { code: "CN", name: "China", nameAr: t('auto.engines_scheduledPredictions.9.b1664a7c', 'ar') },
-  { code: "RU", name: "Russia", nameAr: t('auto.engines_scheduledPredictions.8.613c149d', 'ar') },
-  { code: "BR", name: "Brazil", nameAr: t('auto.engines_scheduledPredictions.7.57bcc508', 'ar') },
-  { code: "IN", name: "India", nameAr: t('auto.engines_scheduledPredictions.6.1d85704e', 'ar') },
-  { code: "AU", name: "Australia", nameAr: t('auto.engines_scheduledPredictions.5.f62c5d9c', 'ar') },
-  { code: "TR", name: "Turkey", nameAr: t('auto.engines_scheduledPredictions.4.dfac1e74', 'ar') },
+  { code: "US", name: "United States", nameAr: `الولايات المتحدة` },
+  { code: "GB", name: "United Kingdom", nameAr: `المملكة المتحدة` },
+  { code: "DE", name: "Germany", nameAr: `ألمانيا` },
+  { code: "FR", name: "France", nameAr: `فرنسا` },
+  { code: "JP", name: "Japan", nameAr: `اليابان` },
+  { code: "SA", name: "Saudi Arabia", nameAr: `السعودية` },
+  { code: "AE", name: "UAE", nameAr: `الإمارات` },
+  { code: "EG", name: "Egypt", nameAr: `مصر` },
+  { code: "LY", name: "Libya", nameAr: `ليبيا` },
+  { code: "CN", name: "China", nameAr: `الصين` },
+  { code: "RU", name: "Russia", nameAr: `روسيا` },
+  { code: "BR", name: "Brazil", nameAr: `البرازيل` },
+  { code: "IN", name: "India", nameAr: `الهند` },
+  { code: "AU", name: "Australia", nameAr: `أستراليا` },
+  { code: "TR", name: "Turkey", nameAr: `تركيا` },
 ];
 
 // Alert thresholds
@@ -241,7 +240,7 @@ async function sendCountryAlert(
     .map((tp) => `  - ${tp.description} (${tp.severity}, : ${Math.round(tp.probability * 100)}%)`)
     .join("\n");
 
-  const factorsAr = riskScore.factorsAr?.join(t('auto.engines_scheduledPredictions.3.8715d7bc', 'ar')) || riskScore.factors.join(", ");
+  const factorsAr = riskScore.factorsAr?.join(`، `) || riskScore.factors.join(", ");
 
   const nextPred = preds[0];
   const predInfo = nextPred
@@ -255,7 +254,7 @@ async function sendCountryAlert(
 ${factorsAr}
 
 🔥   :
-${tpList || t('auto.engines_scheduledPredictions.2.62aad351', 'ar')}
+${tpList || `  لا توجد نقاط تحول حرجة`}
 ${predInfo}
 
 ⏰ : ${new Date().toISOString()}
@@ -287,7 +286,7 @@ async function sendCriticalSummaryNotification(result: PredictionCycleResult): P
 
 🚨  : ${result.criticalCountries.join(", ")}
 
-${result.errors.length > 0 ? `❌ : ${result.errors.length}\n${result.errors.slice(0, 3).join("\n")}` : t('auto.engines_scheduledPredictions.1.8825509a', 'ar')}
+${result.errors.length > 0 ? `❌ : ${result.errors.length}\n${result.errors.slice(0, 3).join("\n")}` : `✅ لا أخطاء`}
 
 ⏰ : ${new Date().toISOString()}`;
 

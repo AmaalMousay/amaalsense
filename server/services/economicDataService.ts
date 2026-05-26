@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 
 // @ts-nocheck
 /**
@@ -62,13 +61,13 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
     
     //  
     const currencyNames: Record<string, string> = {
-      'EUR': t('auto.services_economicDataService.27.41503f39', 'ar'),
-      'GBP': t('auto.services_economicDataService.26.14ea6c1d', 'ar'),
-      'LYD': t('auto.services_economicDataService.25.bbfb98bc', 'ar'),
-      'EGP': t('auto.services_economicDataService.24.c5dd2803', 'ar'),
-      'TND': t('auto.services_economicDataService.23.5d841334', 'ar'),
-      'SAR': t('auto.services_economicDataService.22.22847c50', 'ar'),
-      'AED': t('auto.services_economicDataService.21.3e393840', 'ar')
+      'EUR': `يورو`,
+      'GBP': `جنيه إسترليني`,
+      'LYD': `دينار ليبي`,
+      'EGP': `جنيه مصري`,
+      'TND': `دينار تونسي`,
+      'SAR': `ريال سعودي`,
+      'AED': `درهم إماراتي`
     };
     
     for (const [code, rate] of Object.entries(data.rates)) {
@@ -91,7 +90,7 @@ async function fetchCurrencyRates(): Promise<CurrencyRate[]> {
     //   
     rates.unshift({
       code: 'USD',
-      name: t('auto.services_economicDataService.20.9baef1f7', 'ar'),
+      name: `دولار أمريكي`,
       rate: 1,
       change: 0,
       changePercent: 0,
@@ -127,7 +126,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
       if (goldEntry) {
         const commodities: CommodityPrice[] = [
           {
-            name: t('auto.services_economicDataService.19.c851efa8', 'ar'),
+            name: `الذهب`,
             symbol: 'XAU',
             price: goldEntry.price,
             currency: 'USD',
@@ -137,7 +136,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
             lastUpdated: new Date()
           },
           {
-            name: t('auto.services_economicDataService.18.cbd63816', 'ar'),
+            name: `الفضة`,
             symbol: 'XAG',
             price: silverEntry?.price ?? 31,
             currency: 'USD',
@@ -148,7 +147,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
           },
           //    metals.live -     
           lastKnownCommodities?.find(c => c.symbol === 'BRENT') ?? {
-            name: t('auto.services_economicDataService.17.cffedf5c', 'ar'),
+            name: `نفط برنت`,
             symbol: 'BRENT',
             price: 78,
             currency: 'USD',
@@ -158,7 +157,7 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
             lastUpdated: new Date()
           },
           lastKnownCommodities?.find(c => c.symbol === 'WTI') ?? {
-            name: t('auto.services_economicDataService.16.206330ac', 'ar'),
+            name: `نفط WTI`,
             symbol: 'WTI',
             price: 74,
             currency: 'USD',
@@ -194,11 +193,11 @@ async function fetchCommodityPrices(): Promise<CommodityPrice[]> {
  */
 function getDefaultCurrencyRates(): CurrencyRate[] {
   return [
-    { code: 'USD', name: t('auto.services_economicDataService.15.9baef1f7', 'ar'), rate: 1, change: 0, changePercent: 0, direction: 'stable', lastUpdated: new Date() },
-    { code: 'EUR', name: t('auto.services_economicDataService.14.41503f39', 'ar'), rate: 0.92, change: -0.002, changePercent: -0.22, direction: 'down', lastUpdated: new Date() },
-    { code: 'GBP', name: t('auto.services_economicDataService.13.14ea6c1d', 'ar'), rate: 0.79, change: 0.001, changePercent: 0.13, direction: 'up', lastUpdated: new Date() },
-    { code: 'LYD', name: t('auto.services_economicDataService.12.bbfb98bc', 'ar'), rate: 4.85, change: 0.02, changePercent: 0.41, direction: 'up', lastUpdated: new Date() },
-    { code: 'EGP', name: t('auto.services_economicDataService.11.c5dd2803', 'ar'), rate: 50.5, change: 0.3, changePercent: 0.60, direction: 'up', lastUpdated: new Date() },
+    { code: 'USD', name: `دولار أمريكي`, rate: 1, change: 0, changePercent: 0, direction: 'stable', lastUpdated: new Date() },
+    { code: 'EUR', name: `يورو`, rate: 0.92, change: -0.002, changePercent: -0.22, direction: 'down', lastUpdated: new Date() },
+    { code: 'GBP', name: `جنيه إسترليني`, rate: 0.79, change: 0.001, changePercent: 0.13, direction: 'up', lastUpdated: new Date() },
+    { code: 'LYD', name: `دينار ليبي`, rate: 4.85, change: 0.02, changePercent: 0.41, direction: 'up', lastUpdated: new Date() },
+    { code: 'EGP', name: `جنيه مصري`, rate: 50.5, change: 0.3, changePercent: 0.60, direction: 'up', lastUpdated: new Date() },
   ];
 }
 
@@ -207,10 +206,10 @@ function getDefaultCurrencyRates(): CurrencyRate[] {
  */
 function getDefaultCommodityPrices(): CommodityPrice[] {
   return [
-    { name: t('auto.services_economicDataService.10.c851efa8', 'ar'), symbol: 'XAU', price: 2650, currency: 'USD', change: 15, changePercent: 0.57, direction: 'up', lastUpdated: new Date() },
-    { name: t('auto.services_economicDataService.9.cbd63816', 'ar'), symbol: 'XAG', price: 31, currency: 'USD', change: -0.2, changePercent: -0.64, direction: 'down', lastUpdated: new Date() },
-    { name: t('auto.services_economicDataService.8.cffedf5c', 'ar'), symbol: 'BRENT', price: 78, currency: 'USD', change: 1.2, changePercent: 1.56, direction: 'up', lastUpdated: new Date() },
-    { name: t('auto.services_economicDataService.7.206330ac', 'ar'), symbol: 'WTI', price: 74, currency: 'USD', change: 0.8, changePercent: 1.09, direction: 'up', lastUpdated: new Date() },
+    { name: `الذهب`, symbol: 'XAU', price: 2650, currency: 'USD', change: 15, changePercent: 0.57, direction: 'up', lastUpdated: new Date() },
+    { name: `الفضة`, symbol: 'XAG', price: 31, currency: 'USD', change: -0.2, changePercent: -0.64, direction: 'down', lastUpdated: new Date() },
+    { name: `نفط برنت`, symbol: 'BRENT', price: 78, currency: 'USD', change: 1.2, changePercent: 1.56, direction: 'up', lastUpdated: new Date() },
+    { name: `نفط WTI`, symbol: 'WTI', price: 74, currency: 'USD', change: 0.8, changePercent: 1.09, direction: 'up', lastUpdated: new Date() },
   ];
 }
 
@@ -308,11 +307,11 @@ export function analyzeEconomicSentiment(data: EconomicData): {
   // 
   let summary = '';
   if (trend === 'bullish') {
-    summary = t('auto.services_economicDataService.6.362b420b', 'ar');
+    summary = `المؤشرات الاقتصادية تميل للإيجابية مع ثقة في الأسواق`;
   } else if (trend === 'bearish') {
-    summary = t('auto.services_economicDataService.5.ec1e518c', 'ar');
+    summary = `المؤشرات الاقتصادية تشير لحذر مع توجه نحو الملاذات الآمنة`;
   } else {
-    summary = t('auto.services_economicDataService.4.8b755bd7', 'ar');
+    summary = `الأسواق في حالة ترقب مع إشارات متباينة`;
   }
   
   return {
@@ -329,12 +328,12 @@ export function analyzeEconomicSentiment(data: EconomicData): {
 export function formatEconomicDataForResponse(data: EconomicData): string {
   const analysis = analyzeEconomicSentiment(data);
   
-  let text = t('auto.services_economicDataService.3.a47f4f87', 'ar');
+  let text = `**المؤشرات الاقتصادية:**\n`;
   
   //  
   const mainCurrencies = data.currencies.filter(c => ['EUR', 'LYD', 'EGP'].includes(c.code));
   if (mainCurrencies.length > 0) {
-    text += t('auto.services_economicDataService.2.d437a1aa', 'ar');
+    text += `\n• العملات: `;
     text += mainCurrencies.map(c => {
       const arrow = c.direction === 'up' ? '↑' : c.direction === 'down' ? '↓' : '→';
       return `${c.name} ${arrow}${Math.abs(c.changePercent).toFixed(1)}%`;
@@ -346,7 +345,7 @@ export function formatEconomicDataForResponse(data: EconomicData): string {
   const oil = data.commodities.find(c => c.symbol === 'BRENT');
   
   if (gold || oil) {
-    text += t('auto.services_economicDataService.1.438cb2e3', 'ar');
+    text += `\n• السلع: `;
     const items: string[] = [];
     if (gold) {
       const arrow = gold.direction === 'up' ? '↑' : gold.direction === 'down' ? '↓' : '→';

@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * Feedback Loop -   
  * 
@@ -243,24 +242,24 @@ export async function analyzeFeedback(): Promise<FeedbackAnalysis> {
 
   //   
   const strengths: string[] = [];
-  if (stats.helpfulPercentage >= 70) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.12.f8a62bdb', 'ar'));
-  if (stats.accuratePercentage >= 70) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.11.8305cb2f', 'ar'));
-  if (stats.understandablePercentage >= 70) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.10.759469c8', 'ar'));
-  if (stats.averageRating >= 4) strengths.push(t('auto.cognitiveArchitecture_feedbackLoop.9.a7e5cb06', 'ar'));
+  if (stats.helpfulPercentage >= 70) strengths.push(`الردود مفيدة للمستخدمين`);
+  if (stats.accuratePercentage >= 70) strengths.push(`التحليلات دقيقة`);
+  if (stats.understandablePercentage >= 70) strengths.push(`الردود واضحة ومفهومة`);
+  if (stats.averageRating >= 4) strengths.push(`رضا عام مرتفع`);
 
   //   
   const weaknesses: string[] = [];
-  if (stats.helpfulPercentage < 50) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.8.2a0dd52c', 'ar'));
-  if (stats.accuratePercentage < 50) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.7.86904410', 'ar'));
-  if (stats.understandablePercentage < 50) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.6.7afd5c8b', 'ar'));
-  if (stats.averageRating < 3) weaknesses.push(t('auto.cognitiveArchitecture_feedbackLoop.5.9c70c0b4', 'ar'));
+  if (stats.helpfulPercentage < 50) weaknesses.push(`الردود ليست مفيدة بما فيه الكفاية`);
+  if (stats.accuratePercentage < 50) weaknesses.push(`مشاكل في دقة التحليل`);
+  if (stats.understandablePercentage < 50) weaknesses.push(`الردود غير واضحة`);
+  if (stats.averageRating < 3) weaknesses.push(`رضا عام منخفض`);
 
   //  
   const recommendations: string[] = [];
-  if (stats.helpfulPercentage < 70) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.4.0569e9d8', 'ar'));
-  if (stats.accuratePercentage < 70) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.3.95c57c79', 'ar'));
-  if (stats.understandablePercentage < 70) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.2.830fa966', 'ar'));
-  if (stats.topIssues.length > 0) recommendations.push(t('auto.cognitiveArchitecture_feedbackLoop.1.a2f23a1c', 'ar'));
+  if (stats.helpfulPercentage < 70) recommendations.push(`تحسين جودة الأسباب والتفسيرات`);
+  if (stats.accuratePercentage < 70) recommendations.push(`تحسين دقة جلب البيانات`);
+  if (stats.understandablePercentage < 70) recommendations.push(`تبسيط اللغة والهيكل`);
+  if (stats.topIssues.length > 0) recommendations.push(`معالجة الشكاوى المتكررة`);
 
   return {
     overallSatisfaction,

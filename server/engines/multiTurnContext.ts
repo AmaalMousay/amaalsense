@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 
 /**
  * Multi-turn Context -   
@@ -107,7 +106,7 @@ class ConversationContextManager {
     let resolvedQuestion = question;
     const referencedEntities: Entity[] = [];
     let contextUsed = false;
-    const pronouns = [t('auto.engines_multiTurnContext.7.1b78792e', 'ar'), t('auto.engines_multiTurnContext.6.7a898715', 'ar'), t('auto.engines_multiTurnContext.5.6be4d5a7', 'ar'), t('auto.engines_multiTurnContext.4.f60d1f66', 'ar'), 'it', 'this', 'that'];
+    const pronouns = [`هو`, `هي`, `هذا`, `هذه`, 'it', 'this', 'that'];
     for (const pronoun of pronouns) {
       if (question.toLowerCase().includes(pronoun)) {
         const relevantEntity = this.findMostRelevantEntity(context);
@@ -115,7 +114,7 @@ class ConversationContextManager {
       }
     }
     if (!contextUsed && context.mainTopic && this.isAmbiguousQuestion(question)) { 
-      resolvedQuestion = question + t('auto.engines_multiTurnContext.3.1ec9fac8', 'ar') + context.mainTopic + ')'; 
+      resolvedQuestion = question + ` (بخصوص ` + context.mainTopic + ')'; 
       contextUsed = true; 
     }
     return { resolvedQuestion, referencedEntities, contextUsed };
@@ -144,8 +143,8 @@ class ConversationContextManager {
     const conversationHistory = recentTurns.map(turn => ({ role: turn.role, content: turn.content }));
     const activeEntities = Array.from(context.activeEntities.values()).sort((a, b) => b.frequency - a.frequency).slice(0, 10);
     const parts: string[] = [];
-    if (context.mainTopic) parts.push(t('auto.engines_multiTurnContext.2.da5e1ae2', 'ar') + context.mainTopic);
-    if (context.subTopics.length > 0) parts.push(t('auto.engines_multiTurnContext.1.a269703f', 'ar') + context.subTopics.join(', '));
+    if (context.mainTopic) parts.push(`الموضوع الرئيسي: ` + context.mainTopic);
+    if (context.subTopics.length > 0) parts.push(`مواضيع فرعية: ` + context.subTopics.join(', '));
     return { conversationHistory, activeEntities, mainTopic: context.mainTopic, emotionalState: context.emotionalState, summary: parts.join(' | ') };
   }
   

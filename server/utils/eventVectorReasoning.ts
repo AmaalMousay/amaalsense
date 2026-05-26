@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * AMALSENSE UNIVERSAL REASONING ENGINE - Autonomous Edition
  *            .
@@ -36,7 +35,7 @@ export async function analyzeEventVectorWithUniversalModel(
   } catch (error) {
     console.error('[Reasoning Engine] ❌ Fallback triggered due to error:', error);
     return language === 'ar'
-      ? t('auto.utils_eventVectorReasoning.2.dbf72a42', 'ar')
+      ? `نعتذر، المحرك في حالة تحديث للوعي الرقمي. يرجى المحاولة لاحقاً.`
       : "Apologies, the engine is updating its digital consciousness. Please try again later.";
   }
 }
@@ -53,7 +52,7 @@ export function createUniversalPrompt(vector: any, language: string = 'ar'): str
     ar: ` "  " (ASI)      (DCFT):
     
       (   ):
-: ${vector.topic || t('auto.utils_eventVectorReasoning.1.b2c702e7', 'ar')}
+: ${vector.topic || `غير محدد`}
  : ${vector.dominantEmotion || 'neutral'}
  : ${vector.dominantCategory || 'General'}
  : ${emotionsList}

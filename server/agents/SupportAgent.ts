@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * AMALSENSE SUPPORT & KNOWLEDGE AGENT - Autonomous Counselor
  *               .
@@ -9,8 +8,8 @@ import { buildRAGContext } from "../knowledge/ragSystem"; //
 
 export class SupportAgent {
   private baseFaq = [
-    { q: t('auto.agents_SupportAgent.5.532982e8', 'ar'), a: t('auto.agents_SupportAgent.4.a9d2f4fc', 'ar') },
-    { q: t('auto.agents_SupportAgent.3.8080ee6f', 'ar'), a: t('auto.agents_SupportAgent.2.d238d766', 'ar') }
+    { q: `ما هو AmalSense؟`, a: `هو محرك ذكاء اصطناعي موسوعي يحلل الوعي الرقمي عبر 24 طبقة معرفية تعتمد على نظرية DCFT.` },
+    { q: `اللغة العربية`, a: `نعم، النظام يمتلك وعياً دلالياً عميقاً باللغة العربية وسياقاتها الثقافية.` }
   ];
 
   /**
@@ -34,7 +33,7 @@ export class SupportAgent {
       const topFact = ragContext.scientificKnowledge[0];
       response = `    AmalSense   (${topFact.domain}):\n${topFact.content}\n\n         `;
     } else {
-      response = t('auto.agents_SupportAgent.1.c30565c1', 'ar');
+      response = `شكراً لتواصلك. استفسارك يقع في منطقة 'عدم يقين' حالياً. سأقوم بتفعيل الوكيل الباحث (Observer) لجلب إجابة دقيقة والرد عليك عبر البريد.`;
 
       //         
       await notifyOwner({

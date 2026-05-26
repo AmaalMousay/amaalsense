@@ -7,7 +7,6 @@
  */
 
 import { invokeLLMProvider, type LLMMessage } from '../_core/llm';
-import { t } from '../_core/i18n';
 import type { EconomicData } from '../services/economicDataService';
 
 export interface AnalysisData {
@@ -104,7 +103,7 @@ export async function composeNaturalAnswer(input: NaturalAnswerInput): Promise<s
     max_tokens: 900,
   });
 
-  return response.content?.trim() || t('naturalAnswerUnavailable', language);
+  return response.content?.trim() || "Natural language generation is currently unavailable.";
 }
 
 /**

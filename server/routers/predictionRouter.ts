@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * Advanced Prediction Router - tRPC Endpoints
  * 
@@ -70,7 +69,7 @@ export const predictionRouter = router({
         if (data.length < 3) {
           return {
             success: false,
-            message: t('auto.routers_predictionRouter.8.929eefd0', 'ar'),
+            message: `بيانات غير كافية للتنبؤ. يرجى تحليل المزيد من البيانات أولاً.`,
             messageEn: 'Insufficient data for prediction. Please analyze more data first.',
             data: null,
           };
@@ -198,7 +197,7 @@ export const predictionRouter = router({
       if (data.length < 3) {
         return {
           success: false,
-          message: t('auto.routers_predictionRouter.7.d989a683', 'ar'),
+          message: `بيانات غير كافية لتحليل الاتجاهات`,
           data: null,
         };
       }
@@ -246,7 +245,7 @@ export const predictionRouter = router({
         return {
           success: true,
           data: [],
-          message: t('auto.routers_predictionRouter.6.9482cf8b', 'ar'),
+          message: `بيانات غير كافية لكشف نقاط التحول`,
         };
       }
       
@@ -303,8 +302,8 @@ export const predictionRouter = router({
               trendDivergence: 0,
             },
             level: 'low' as const,
-            factors: [t('auto.routers_predictionRouter.5.144e0328', 'ar')],
-            factorsAr: [t('auto.routers_predictionRouter.4.144e0328', 'ar')],
+            factors: [`بيانات غير كافية`],
+            factorsAr: [`بيانات غير كافية`],
           },
         };
       }
@@ -439,10 +438,10 @@ export const predictionRouter = router({
             actual: { gmi: closest.gmi, cfi: closest.cfi, hri: closest.hri },
             accuracyScore,
             feedback: accuracyScore >= 70 
-              ? t('auto.routers_predictionRouter.3.eac8170c', 'ar') 
+              ? `تنبؤ دقيق! النموذج يتحسن.` 
               : accuracyScore >= 40 
-                ? t('auto.routers_predictionRouter.2.f0ad65bf', 'ar')
-                : t('auto.routers_predictionRouter.1.ac77ec31', 'ar'),
+                ? `تنبؤ متوسط الدقة. يحتاج تحسين.`
+                : `تنبؤ غير دقيق. النظام يتعلم من هذا الخطأ.`,
           },
         };
       } catch (e) {

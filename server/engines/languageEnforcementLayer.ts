@@ -189,7 +189,7 @@ export const detectLanguageHeuristic = (text: string): string => {
 
 export const getLanguageSystemPrompt = (language: string): string => {
   const prompts: Record<string, string> = {
-    ar: t('auto.engines_languageEnforcementLayer.15.4aa9fe4e', 'ar'),
+    ar: `أنت محلل عاطفي متخصص. تحليلك يجب أن يكون باللغة العربية فقط. \n    أرجع النتيجة بصيغة JSON. تأكد أن جميع الحقول والشروحات بالعربية.`,
     fr: `Vous êtes un analyste émotionnel spécialisé. Votre analyse doit être entièrement en français.
     Répondez en format JSON. Assurez-vous que tous les champs et explications sont en français.`,
     es: `Eres un analista emocional especializado. Tu análisis debe ser completamente en español.
@@ -209,7 +209,7 @@ export const getLanguageSystemPrompt = (language: string): string => {
 
 export const getLanguageSpecificPrompt = (language: string, basePrompt: string): string => {
   const languageInstructions: Record<string, string> = {
-    ar: t('auto.engines_languageEnforcementLayer.14.cb2d6fc2', 'ar'),
+    ar: `\n\nملاحظة مهمة: أجب باللغة العربية فقط. جميع الشروحات والتحليلات يجب أن تكون بالعربية.`,
     fr: `\n\nRemarque importante: Répondez uniquement en français. Toutes les explications et analyses doivent être en français.`,
     es: `\n\nNota importante: Responde solo en español. Todas las explicaciones y análisis deben estar en español.`,
     de: `\n\nWichtiger Hinweis: Antworten Sie nur auf Deutsch. Alle Erklärungen und Analysen müssen auf Deutsch sein.`,
@@ -271,14 +271,14 @@ const LANGUAGE_CONFIGS: Record<UILanguage, LanguageConfig> = {
   ar: {
     code: 'ar',
     name: 'Arabic',
-    nativeName: t('auto.engines_languageEnforcementLayer.13.9970632f', 'ar'),
+    nativeName: `العربية`,
     direction: 'rtl',
     emotionalContext: {
-      hope: t('auto.engines_languageEnforcementLayer.12.60cd6c3d', 'ar'),
-      fear: t('auto.engines_languageEnforcementLayer.11.1cf83ec0', 'ar'),
-      joy: t('auto.engines_languageEnforcementLayer.10.15a6eacb', 'ar'),
-      sadness: t('auto.engines_languageEnforcementLayer.9.fdbc4b1b', 'ar'),
-      anger: t('auto.engines_languageEnforcementLayer.8.8e7bd750', 'ar'),
+      hope: `أمل`,
+      fear: `خوف`,
+      joy: `فرح`,
+      sadness: `حزن`,
+      anger: `غضب`,
     },
   },
   en: {
@@ -494,7 +494,7 @@ export function formatTextByLanguage(
  */
 export function getGreeting(language: UILanguage): string {
   const greetings: Record<UILanguage, string> = {
-    ar: t('auto.engines_languageEnforcementLayer.7.cbf03f1f', 'ar'),
+    ar: `مرحباً بك في AmalSense`,
     en: 'Welcome to AmalSense',
     fr: 'Bienvenue sur AmalSense',
     es: 'Bienvenido a AmalSense',
@@ -517,11 +517,11 @@ export function getGreeting(language: UILanguage): string {
 export function getUIStrings(language: UILanguage) {
   const strings: Record<UILanguage, Record<string, string>> = {
     ar: {
-      search: t('auto.engines_languageEnforcementLayer.6.ba3add14', 'ar'),
-      analyze: t('auto.engines_languageEnforcementLayer.5.6c1732f8', 'ar'),
-      feedback: t('auto.engines_languageEnforcementLayer.4.c6c05368', 'ar'),
-      settings: t('auto.engines_languageEnforcementLayer.3.90b6c869', 'ar'),
-      logout: t('auto.engines_languageEnforcementLayer.2.8710d64f', 'ar'),
+      search: `بحث`,
+      analyze: `تحليل`,
+      feedback: `تقييم`,
+      settings: `الإعدادات`,
+      logout: `تسجيل الخروج`,
     },
     en: {
       search: 'Search',
@@ -645,7 +645,7 @@ export function getCulturallyAwareInterpretation(
 
   // Add culturally-aware context
   if (language === 'ar') {
-    interpretation += t('auto.engines_languageEnforcementLayer.1.670f98dc', 'ar');
+    interpretation += `تحليل يأخذ في الاعتبار السياق الثقافي والاجتماعي.`;
   } else if (language === 'en') {
     interpretation += 'Analysis considers cultural and social context.';
   }

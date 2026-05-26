@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 
 /**
  * Evidence Grounding Layer
@@ -189,7 +188,7 @@ class EvidenceGroundingClass {
   private extractKeywords(text: string): string[] {
     const stopWords = new Set([
       'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      t('auto.cognitiveArchitecture_evidenceGrounding.9.aef2099d', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.8.aa7099e2', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.7.8ab80326', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.6.16dc1dd1', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.5.38486333', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.4.f3c3b73b', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.3.6be4d5a7', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.2.f60d1f66', 'ar'), t('auto.cognitiveArchitecture_evidenceGrounding.1.bcd49587', 'ar'),
+      `في`, `من`, `إلى`, `على`, `عن`, `مع`, `هذا`, `هذه`, `ذلك`,
     ]);
 
     return text

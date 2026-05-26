@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 
 /**
  * Layer 9: Causal Inference
@@ -217,35 +216,35 @@ function inferMechanism(cause: string, effect: string, domain: string): string {
   // Political domain
   if (domain === 'politics') {
     if (causeLower.includes('protest') && effectLower.includes('response')) {
-      return t('auto.cognitiveArchitecture_causalInference.9.a8899971', 'ar');
+      return `الاحتجاجات تدفع السلطات للاستجابة`;
     }
     if (causeLower.includes('crisis') && effectLower.includes('anger')) {
-      return t('auto.cognitiveArchitecture_causalInference.8.b88f81a8', 'ar');
+      return `الأزمة تزيد من الغضب الشعبي`;
     }
   }
   
   // Economic domain
   if (domain === 'economy') {
     if (causeLower.includes('inflation') && effectLower.includes('protest')) {
-      return t('auto.cognitiveArchitecture_causalInference.7.4d94ddaa', 'ar');
+      return `التضخم يؤدي إلى احتجاجات شعبية`;
     }
     if (causeLower.includes('unemployment') && effectLower.includes('frustration')) {
-      return t('auto.cognitiveArchitecture_causalInference.6.a4b6e0b1', 'ar');
+      return `البطالة تزيد من الإحباط`;
     }
   }
   
   // Social domain
   if (domain === 'social') {
     if (causeLower.includes('violence') && effectLower.includes('fear')) {
-      return t('auto.cognitiveArchitecture_causalInference.5.17276969', 'ar');
+      return `العنف يولد الخوف`;
     }
     if (causeLower.includes('reform') && effectLower.includes('hope')) {
-      return t('auto.cognitiveArchitecture_causalInference.4.3ad6e35d', 'ar');
+      return `الإصلاحات تبعث الأمل`;
     }
   }
   
   // Default mechanism
-  return t('auto.cognitiveArchitecture_causalInference.3.2a156858', 'ar');
+  return `علاقة سببية مباشرة`;
 }
 
 /**
@@ -420,10 +419,10 @@ function areSimilarEvents(label1: string, label2: string): boolean {
  */
 export function explainCausalChain(chain: CausalChain): string {
   if (chain.nodes.length < 2) {
-    return t('auto.cognitiveArchitecture_causalInference.2.7e71f076', 'ar');
+    return `لا توجد سلسلة سببية واضحة.`;
   }
   
-  let explanation = t('auto.cognitiveArchitecture_causalInference.1.a92e3b02', 'ar');
+  let explanation = `السلسلة السببية:\n`;
   
   for (let i = 0; i < chain.relationships.length; i++) {
     const rel = chain.relationships[i];

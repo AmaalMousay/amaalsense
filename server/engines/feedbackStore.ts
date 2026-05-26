@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 
 /**
  * Feedback Loop Structure
@@ -316,13 +315,13 @@ export function analyzeFeedbackPatterns(): {
   const stats = getFeedbackStats();
   
   if (stats.byType.emotion_correction > stats.totalFeedback * 0.2) {
-    improvementAreas.push(t('auto.engines_feedbackStore.3.105e1bb9', 'ar'));
+    improvementAreas.push(`تحسين دقة اكتشاف المشاعر`);
   }
   if (stats.bySentiment.negative > stats.bySentiment.positive) {
-    improvementAreas.push(t('auto.engines_feedbackStore.2.25ca2344', 'ar'));
+    improvementAreas.push(`تحسين جودة التحليل العامة`);
   }
   if (stats.averageRating < 3.5) {
-    improvementAreas.push(t('auto.engines_feedbackStore.1.0b436039', 'ar'));
+    improvementAreas.push(`رفع مستوى رضا المستخدمين`);
   }
   
   return {

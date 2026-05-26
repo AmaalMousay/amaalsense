@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 import axios from 'axios';
 
 export interface NewsArticle {
@@ -72,13 +71,13 @@ function buildSearchQuery(query: NewsQuery): string {
   // Add regional context
   if (query.country) {
     const countryKeywords: Record<string, string> = {
-      'LY': t('auto.engines_newsDataFetcher.7.61ec4fe6', 'ar'),
-      'EG': t('auto.engines_newsDataFetcher.6.0ed77df7', 'ar'),
-      'SA': t('auto.engines_newsDataFetcher.5.773b38cc', 'ar'),
-      'AE': t('auto.engines_newsDataFetcher.4.c302cbfd', 'ar'),
-      'MA': t('auto.engines_newsDataFetcher.3.3e722511', 'ar'),
-      'TN': t('auto.engines_newsDataFetcher.2.994ad55f', 'ar'),
-      'DZ': t('auto.engines_newsDataFetcher.1.5d2e50e7', 'ar'),
+      'LY': `Libya ليبيا`,
+      'EG': `Egypt مصر`,
+      'SA': `Saudi Arabia السعودية`,
+      'AE': `UAE الإمارات`,
+      'MA': `Morocco المغرب`,
+      'TN': `Tunisia تونس`,
+      'DZ': `Algeria الجزائر`,
     };
     const keywords = countryKeywords[query.country];
     if (keywords) {

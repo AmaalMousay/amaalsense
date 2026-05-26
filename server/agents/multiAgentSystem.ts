@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * AMALSENSE MULTI-AGENT SYSTEM (MAS) - Autonomous Polymath Version
  *         .
@@ -103,9 +102,9 @@ class ActionAgent {
 class ObserverAgent {
   private analystAgent = new AnalystAgent();
   private watchlist = [
-    { name: t('auto.agents_multiAgentSystem.5.9fe83a08', 'ar'), code: 'ME', domain: 'politics' },
-    { name: t('auto.agents_multiAgentSystem.4.ce36dfe6', 'ar'), code: 'PHYS', domain: 'physics' },
-    { name: t('auto.agents_multiAgentSystem.3.fc2a3635', 'ar'), code: 'LY_SB', domain: 'general' }
+    { name: `الشرق الأوسط`, code: 'ME', domain: 'politics' },
+    { name: `ميكانيكا الكم`, code: 'PHYS', domain: 'physics' },
+    { name: `ليبيا - سبها`, code: 'LY_SB', domain: 'general' }
   ];
 
   /**
@@ -120,7 +119,7 @@ class ObserverAgent {
    *    " "      ( )
    */
   async runPeriodicObservation(): Promise<void> {
-    console.log(t('auto.agents_multiAgentSystem.2.5aa8c26e', 'ar'));
+    console.log(`\n[ObserverAgent] 🌌 بدء دورة الاستشعار المستقل (Parallel Mesh Processing)...`);
 
     await Promise.all(this.watchlist.map(async (item) => {
       try {
@@ -135,7 +134,7 @@ class ObserverAgent {
       }
     }));
 
-    console.log(t('auto.agents_multiAgentSystem.1.a6bceac3', 'ar'));
+    console.log(`[ObserverAgent] ✅ اكتملت دورة الوعي الرقمي.\n`);
   }
 }
 

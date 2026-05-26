@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 
 /**
  * Confidence Scorer (Phase 92)
@@ -264,13 +263,13 @@ ${score.icon} Overall Confidence: ${score.overall}% (${score.level})
  */
 function getArabicLevel(level: string): string {
   const levels: Record<string, string> = {
-    very_high: t('auto.utils_confidenceScorer.11.233b787d', 'ar'),
-    high: t('auto.utils_confidenceScorer.10.59de5bef', 'ar'),
-    medium: t('auto.utils_confidenceScorer.9.4167c04a', 'ar'),
-    low: t('auto.utils_confidenceScorer.8.81bceec2', 'ar'),
-    very_low: t('auto.utils_confidenceScorer.7.fd5e5a17', 'ar')
+    very_high: `عالية جداً`,
+    high: `عالية`,
+    medium: `متوسطة`,
+    low: `منخفضة`,
+    very_low: `منخفضة جداً`
   };
-  return levels[level] || t('auto.utils_confidenceScorer.6.b2c702e7', 'ar');
+  return levels[level] || `غير محدد`;
 }
 
 /**
@@ -296,15 +295,15 @@ export function getConfidenceRecommendation(
 ): string {
   if (language === "ar") {
     if (score.overall >= 90) {
-      return t('auto.utils_confidenceScorer.5.38324f4a', 'ar');
+      return `✅ يمكنك الاعتماد على هذه الإجابة بثقة`;
     } else if (score.overall >= 75) {
-      return t('auto.utils_confidenceScorer.4.c429c95b', 'ar');
+      return `👍 هذه الإجابة موثوقة بشكل عام`;
     } else if (score.overall >= 50) {
-      return t('auto.utils_confidenceScorer.3.5df5ec61', 'ar');
+      return `⚠️ يُنصح بالتحقق من مصادر إضافية`;
     } else if (score.overall >= 25) {
-      return t('auto.utils_confidenceScorer.2.3e59a12a', 'ar');
+      return `❌ هذه الإجابة قد لا تكون موثوقة - تجنب الاعتماد عليها`;
     } else {
-      return t('auto.utils_confidenceScorer.1.09b2d5a0', 'ar');
+      return `🚫 هذه الإجابة غير موثوقة - لا تعتمد عليها`;
     }
   } else {
     if (score.overall >= 90) {

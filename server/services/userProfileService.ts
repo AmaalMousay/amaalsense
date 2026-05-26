@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * User Profile Service
  * 
@@ -31,11 +30,11 @@ export interface UserProfileData {
 //       
 const TECHNICAL_TERMS = [
   'gmi', 'cfi', 'hri',
-  t('auto.services_userProfileService.11.49356ffb', 'ar'), t('auto.services_userProfileService.10.6c1732f8', 'ar'), t('auto.services_userProfileService.9.4dcc1a07', 'ar'),
+  `مؤشر`, `تحليل`, `سيناريو`,
   'sentiment', 'analysis', 'index',
-  t('auto.services_userProfileService.8.4251f876', 'ar'), t('auto.services_userProfileService.7.16320168', 'ar'), t('auto.services_userProfileService.6.47c17787', 'ar'),
+  `توقع`, `محاكاة`, `نمط`,
   'trend', 'pattern', 'correlation',
-  t('auto.services_userProfileService.5.c1cac259', 'ar'), t('auto.services_userProfileService.4.d52795d5', 'ar'), 'volatility'
+  `ارتباط`, `تذبذب`, 'volatility'
 ];
 
 /**
@@ -353,9 +352,9 @@ function updateCountriesOfInterest(currentCountries: string[], newCountry: strin
  */
 export function getProfileSummary(profile: UserProfileData): string {
   const levelLabels: Record<UserLevel, string> = {
-    beginner: t('auto.services_userProfileService.3.d7ef0837', 'ar'),
-    intermediate: t('auto.services_userProfileService.2.91fa23bd', 'ar'),
-    advanced: t('auto.services_userProfileService.1.4f9ffd09', 'ar')
+    beginner: `مبتدئ`,
+    intermediate: `متوسط`,
+    advanced: `خبير`
   };
   
   return `: ${levelLabels[profile.userLevel]} | : ${profile.conversationCount} | : ${profile.messageCount}`;

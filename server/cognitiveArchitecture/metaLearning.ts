@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * Meta-Learning -   
  * 
@@ -83,10 +82,10 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
   if (helpfulPercentage < 50) {
     insights.push({
       patternType: 'weakness',
-      description: t('auto.cognitiveArchitecture_metaLearning.16.6d5ce121', 'ar'),
+      description: `الردود ليست مفيدة بما فيه الكفاية للمستخدمين`,
       evidenceCount: stats.totalFeedback,
       confidence: 80,
-      suggestedAction: t('auto.cognitiveArchitecture_metaLearning.15.a7757583', 'ar'),
+      suggestedAction: `تحسين جودة الأسباب والتفسيرات في الردود`,
     });
   }
 
@@ -94,10 +93,10 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
   if (stats.averageRating < 3.0) {
     insights.push({
       patternType: 'weakness',
-      description: t('auto.cognitiveArchitecture_metaLearning.14.86904410', 'ar'),
+      description: `مشاكل في دقة التحليل`,
       evidenceCount: stats.totalFeedback,
       confidence: 80,
-      suggestedAction: t('auto.cognitiveArchitecture_metaLearning.13.5cedb2d9', 'ar'),
+      suggestedAction: `تحسين Query Builder لجلب بيانات أكثر صلة`,
     });
   }
 
@@ -157,7 +156,7 @@ function getActionForWeakness(weakness: string): string {
     unclear_language: 'Improve response clarity and remove ambiguous phrasing.',
     missing_context: 'Add contextual binding before final response generation.',
   };
-  return actionMap[weakness] || t('auto.cognitiveArchitecture_metaLearning.7.b21fd726', 'ar');
+  return actionMap[weakness] || `مراجعة وتحسين هذا الجانب`;
 }
 
 // ============================================================================
@@ -346,12 +345,12 @@ export async function generateWeeklyReport(): Promise<WeeklyReport> {
 
   //   
   const dataGapTopics = weaknesses
-    .filter(w => w.topic && w.description.includes(t('auto.cognitiveArchitecture_metaLearning.6.e0ac9792', 'ar')))
+    .filter(w => w.topic && w.description.includes(`بيانات`))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
 
   const weakInterpretationTopics = weaknesses
-    .filter(w => w.topic && w.description.includes(t('auto.cognitiveArchitecture_metaLearning.5.6c1732f8', 'ar')))
+    .filter(w => w.topic && w.description.includes(`تحليل`))
     .map(w => w.topic!)
     .filter((v, i, a) => a.indexOf(v) === i);
 
@@ -359,16 +358,16 @@ export async function generateWeeklyReport(): Promise<WeeklyReport> {
   const recommendedAdjustments: string[] = [];
 
   if (selfEvalSummary.averageDataSufficiency < 50) {
-    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.4.ca33e81f', 'ar'));
+    recommendedAdjustments.push(`تحسين Query Builder لجلب بيانات أكثر`);
   }
   if (selfEvalSummary.averageCausesFromData < 50) {
-    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.3.f19becea', 'ar'));
+    recommendedAdjustments.push(`ربط Why Layer بالبيانات الحقيقية`);
   }
   if (selfEvalSummary.averageAnalysisVsNarration < 50) {
-    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.2.d790eac7', 'ar'));
+    recommendedAdjustments.push(`تحسين Decision Engine ليحسم ويرجح`);
   }
   if (stats.averageRating < 3.5) {
-    recommendedAdjustments.push(t('auto.cognitiveArchitecture_metaLearning.1.01972321', 'ar'));
+    recommendedAdjustments.push(`تحسين جودة الردود لتكون أكثر فائدة`);
   }
 
   const helpfulCount = stats.recentFeedback.filter(f => f.sentiment === 'positive').length;

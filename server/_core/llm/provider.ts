@@ -8,7 +8,6 @@
  *   4. Manus API (paid fallback, when ALLOW_PAID_LLM=true)
  */
 
-import { t } from '../i18n';
 import { invokeLLM } from './invoke';
 import type {
   InvokeParams, InvokeResult, TaskType,
@@ -108,7 +107,7 @@ export async function smartInvokeLLM(params: InvokeParams, _taskType: TaskType =
     try { return await invokeLLM(params); } catch { /* fall through */ }
   }
 
-  return formatToInvokeResult(t('llmProviderUnavailable', 'ar'), 'llm-disabled-or-unavailable');
+  return formatToInvokeResult('The language model provider is currently unreachable.', 'llm-disabled-or-unavailable');
 }
 
 export async function smartChat(system: string, user: string, task: TaskType = 'general'): Promise<string> {

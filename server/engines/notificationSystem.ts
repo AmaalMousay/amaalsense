@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * NOTIFICATION SYSTEM - WEBSOCKET BASED
  * 
@@ -113,7 +112,7 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.gmiChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'warning' : 'critical',
-          t('auto.engines_notificationSystem.5.28d7a8b1', 'ar'),
+          `تغيير في مؤشر الحالة العام`,
           `     ${changePercentage.toFixed(2)}%`,
           'GMI',
           previousGMI,
@@ -151,7 +150,7 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.cfiChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'warning' : 'info',
-          t('auto.engines_notificationSystem.4.7055742e', 'ar'),
+          `تغيير في مؤشر الثقة الجماعية`,
           `     ${changePercentage.toFixed(2)}%`,
           'CFI',
           previousCFI,
@@ -189,7 +188,7 @@ export class NotificationSystem extends EventEmitter {
       if (Math.abs(changePercentage) >= subscriber.thresholds.hriChange) {
         const alert = this.createAlert(
           changePercentage > 0 ? 'info' : 'warning',
-          t('auto.engines_notificationSystem.3.bc04f7a3', 'ar'),
+          `تغيير في مؤشر الأمل والمرونة`,
           `     ${changePercentage.toFixed(2)}%`,
           'HRI',
           previousHRI,
@@ -226,7 +225,7 @@ export class NotificationSystem extends EventEmitter {
       if (emotionShiftPercentage >= subscriber.thresholds.emotionShift) {
         const alert = this.createAlert(
           'warning',
-          t('auto.engines_notificationSystem.2.18fef4ed', 'ar'),
+          `تحول عاطفي كبير`,
           `  ${previousEmotion}  ${currentEmotion}  ${emotionShiftPercentage.toFixed(2)}%`,
           'EMOTION',
           0,
@@ -262,7 +261,7 @@ export class NotificationSystem extends EventEmitter {
       if (impactScore >= subscriber.thresholds.eventImpact) {
         const alert = this.createAlert(
           'critical',
-          t('auto.engines_notificationSystem.1.0bc2a66f', 'ar'),
+          `حدث ذو تأثير كبير`,
           ` "${eventTitle}"  ${impactScore}`,
           'EVENT',
           0,

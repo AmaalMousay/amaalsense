@@ -1,4 +1,3 @@
-import { t } from "../_core/i18n";
 /**
  * UNIFIED ROUTERS
  * 
@@ -47,7 +46,7 @@ export const unifiedRouter = router({
   analyzeQuestion: publicProcedure
     .input(
       z.object({
-        question: z.string().min(1, t('auto.routers_unifiedRouters.14.4a9ad0a4', 'ar')),
+        question: z.string().min(1, `السؤال لا يمكن أن يكون فارغاً`),
         language: z.string().optional().default("ar")
       })
     )
@@ -67,7 +66,7 @@ export const unifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.13.e2fe6481', 'ar'),
+          error: error instanceof Error ? error.message : `فشل في معالجة السؤال`,
           code: "PIPELINE_ERROR"
         };
       }
@@ -79,7 +78,7 @@ export const unifiedRouter = router({
   analyzeBatch: publicProcedure
     .input(
       z.object({
-        questions: z.array(z.string()).min(1, t('auto.routers_unifiedRouters.12.8d2c95fc', 'ar')),
+        questions: z.array(z.string()).min(1, `يجب تقديم سؤال واحد على الأقل`),
         language: z.string().optional().default("ar")
       })
     )
@@ -126,7 +125,7 @@ export const unifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.11.245061e9', 'ar')
+          error: error instanceof Error ? error.message : `فشل في معالجة الأسئلة`
         };
       }
     }),
@@ -189,13 +188,13 @@ export const unifiedRouter = router({
     )
     .mutation(async ({ input }) => {
       const testQuestions = {
-        quick: [t('auto.routers_unifiedRouters.10.d587fbe8', 'ar')],
+        quick: [`ما رأي الناس في هذا الموضوع؟`],
         full: [
-          t('auto.routers_unifiedRouters.9.d587fbe8', 'ar'),
-          t('auto.routers_unifiedRouters.8.efd86769', 'ar'),
-          t('auto.routers_unifiedRouters.7.7e20541a', 'ar')
+          `ما رأي الناس في هذا الموضوع؟`,
+          `هل هناك اتجاه عام نحو هذا؟`,
+          `ما هي الأسباب الرئيسية؟`
         ],
-        stress: Array(10).fill(t('auto.routers_unifiedRouters.6.d587fbe8', 'ar'))
+        stress: Array(10).fill(`ما رأي الناس في هذا الموضوع؟`)
       };
 
       const questions = testQuestions[input.testType];
@@ -274,7 +273,7 @@ export const protectedUnifiedRouter = router({
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.5.e2fe6481', 'ar')
+          error: error instanceof Error ? error.message : `فشل في معالجة السؤال`
         };
       }
     }),
@@ -314,12 +313,12 @@ export const protectedUnifiedRouter = router({
       try {
         return {
           success: true,
-          message: t('auto.routers_unifiedRouters.4.c593ac22', 'ar')
+          message: `تم حفظ التقييم بنجاح`
         };
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.3.f348ee8d', 'ar')
+          error: error instanceof Error ? error.message : `خطأ في حفظ التقييم`
         };
       }
     }),
@@ -353,12 +352,12 @@ export const protectedUnifiedRouter = router({
       try {
         return {
           success: true,
-          message: t('auto.routers_unifiedRouters.2.ad2e10e7', 'ar')
+          message: `تم حذف المحادثة بنجاح`
         };
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error.message : t('auto.routers_unifiedRouters.1.f6d013f7', 'ar')
+          error: error instanceof Error ? error.message : `خطأ في حذف المحادثة`
         };
       }
     })
