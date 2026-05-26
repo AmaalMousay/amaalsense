@@ -19,9 +19,11 @@ import { fetchGoogleNewsByCountry, fetchGoogleNewsByTopic } from './googleRssSer
 import { WebScraperService } from './webScraperService';
 import { fetchRedditPosts } from './socialMediaService';
 import { fetchAllMajorNews } from './majorNewsRssService';
+import { fetchMastodonPosts, fetchBlueskyPosts, fetchYouTubeComments, fetchTelegramPosts } from './socialMediaService';
 import { fetchGlobalTrends, fetchCountryTrends, trendToRawDataItem } from './googleTrendsService';
 import { fetchTopPageViews, wikiToRawDataItems } from './wikipediaService';
 import { fetchAllMajorNews } from './majorNewsRssService';
+import { fetchMastodonPosts, fetchBlueskyPosts, fetchYouTubeComments, fetchTelegramPosts } from './socialMediaService';
 import { searchGDELT, searchGDELTByCountry } from './gdeltService';
 import { searchNewsAPI, getTopHeadlinesByCountry } from './newsApiService';
 
@@ -273,6 +275,95 @@ async function collectFromMajorRSS(_query: string): Promise<RawDataItem[]> {
       topic: detectTopic(item.title + ' ' + item.description),
       intensity: 0.55,
       trustScore: 85,
+    }));
+  } catch { return []; }
+}
+
+
+async function collectFromMastodon(query: string): Promise<RawDataItem[]> {
+  try {
+    const posts = await fetchMastodonPosts({ query, limit: 10 });
+    return posts.map((p) => ({
+      id: p.id || `masto_${Date.now()}`,
+      timestamp: p.publishedAt?.getTime() || Date.now(),
+      title: p.text?.slice(0, 200) || '',
+      description: p.text || '',
+      source: p.author || 'mastodon.social',
+      sourceType: 'social' as const,
+      platform: 'Mastodon',
+      url: p.url || '',
+      publishedAt: (p.publishedAt || new Date()).toISOString(),
+      language: 'en',
+      region: 'global' as const,
+      topic: detectTopic(p.text || ''),
+      intensity: Math.min(1, (p.engagement?.likes || 0) / 500),
+      trustScore: p.isReal ? 70 : 30,
+    }));
+  } catch { return []; }
+}
+
+async function collectFromBluesky(query: string): Promise<RawDataItem[]> {
+  try {
+    const posts = await fetchBlueskyPosts({ query, limit: 10 });
+    return posts.map((p) => ({
+      id: p.id || `bsky_${Date.now()}`,
+      timestamp: p.publishedAt?.getTime() || Date.now(),
+      title: p.text?.slice(0, 200) || '',
+      description: p.text || '',
+      source: p.author || 'bsky.social',
+      sourceType: 'social' as const,
+      platform: 'Bluesky',
+      url: p.url || '',
+      publishedAt: (p.publishedAt || new Date()).toISOString(),
+      language: 'en',
+      region: 'global' as const,
+      topic: detectTopic(p.text || ''),
+      intensity: Math.min(1, (p.engagement?.likes || 0) / 1000),
+      trustScore: p.isReal ? 70 : 30,
+    }));
+  } catch { return []; }
+}
+
+async function collectFromYouTube(query: string): Promise<RawDataItem[]> {
+  try {
+    const comments = await fetchYouTubeComments({ query, limit: 15 });
+    return comments.map((p) => ({
+      id: p.id || `yt_${Date.now()}`,
+      timestamp: p.publishedAt?.getTime() || Date.now(),
+      title: p.text?.slice(0, 200) || '',
+      description: p.text || '',
+      source: p.author || 'YouTube',
+      sourceType: 'social' as const,
+      platform: 'YouTube',
+      url: p.url || '',
+      publishedAt: (p.publishedAt || new Date()).toISOString(),
+      language: 'en',
+      region: 'global' as const,
+      topic: detectTopic(p.text || ''),
+      intensity: Math.min(1, (p.engagement?.likes || 0) / 5000),
+      trustScore: p.isReal ? 75 : 30,
+    }));
+  } catch { return []; }
+}
+
+async function collectFromTelegram(query: string): Promise<RawDataItem[]> {
+  try {
+    const posts = await fetchTelegramPosts({ query, limit: 15 });
+    return posts.map((p) => ({
+      id: p.id || `tg_${Date.now()}`,
+      timestamp: p.publishedAt?.getTime() || Date.now(),
+      title: p.text?.slice(0, 200) || '',
+      description: p.text || '',
+      source: p.author || 'Telegram',
+      sourceType: 'social' as const,
+      platform: 'Telegram',
+      url: p.url || '',
+      publishedAt: (p.publishedAt || new Date()).toISOString(),
+      language: 'en',
+      region: 'global' as const,
+      topic: detectTopic(p.text || ''),
+      intensity: Math.min(1, (p.engagement?.likes || 0) / 2000),
+      trustScore: p.isReal ? 70 : 30,
     }));
   } catch { return []; }
 }
