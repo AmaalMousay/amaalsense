@@ -1,26 +1,26 @@
 /**
- * UNIFIED DATA COLLECTOR
+ * UNIFIED DATA COLLECTOR — Multi-Source Edition (V5)
  *
- * Central data ingestion point for AmalSense. Coordinates multiple sources:
+ * Coordinates 5 parallel data sources for maximum coverage:
  *
- * News Layer:
- *   - Google RSS (by country / topic)
- *   - GNews API
- *   - News Service (RSS feeds)
- *   - Web Scraper (Google News scrape fallback)
+ *   News Sources:
+ *     1. GDELT Project    — strongest, millions of articles, global
+ *     2. NewsAPI          — structured news aggregator
+ *     3. Google RSS       — quick topic/country RSS feed
+ *     4. Web Scraper      — fallback when APIs fail
  *
- * Social Layer:
- *   - Reddit (via socialMediaService)
+ *   Social Sources:
+ *     5. Reddit           — public sentiment / discussions
  *
- * The collector normalises every source into a standard RawDataItem,
- * deduplicates, caches, and optionally feeds the knowledge core.
+ * Every source normalises to RawDataItem[], then deduplicated and cached.
  */
 
 import { fetchGoogleNewsByCountry, fetchGoogleNewsByTopic } from './googleRssService';
-import { fetchCountryNews } from './newsService';
-import { searchGNews } from './gnewsService';
-import { fetchRedditPosts } from './socialMediaService';
 import { WebScraperService } from './webScraperService';
+import { fetchRedditPosts } from './socialMediaService';
+import { fetchAllMajorNews } from './majorNewsRssService';
+import { searchGDELT, searchGDELTByCountry } from './gdeltService';
+import { searchNewsAPI, getTopHeadlinesByCountry } from './newsApiService';
 
 // ============================================================
 // TYPES
@@ -64,16 +64,8 @@ export interface CollectedData {
 
 const scraper = new WebScraperService();
 
-// ============================================================
-// CACHE
-// ============================================================
-
 const dataCache = new Map<string, { data: CollectedData; expiresAt: number }>();
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
-
-// ============================================================
-// HELPERS
-// ============================================================
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
 function genId(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -81,22 +73,23 @@ function genId(): string {
 
 function detectTopic(text: string): TopicType {
   const t = text.toLowerCase();
-  if (/health|virus|doctor|medical|hospital|medicine/i.test(t)) return 'health';
-  if (/economy|market|finance|trading|stock|inflation|currency/i.test(t)) return 'economy';
-  if (/politics|election|government|parliament|minister/i.test(t)) return 'politics';
-  if (/conflict|war|army|attack|clash|security|military/i.test(t)) return 'conflict';
-  if (/environment|climate|green|nature|pollution/i.test(t)) return 'environment';
-  if (/technology|software|ai|digital|cyber/i.test(t)) return 'technology';
-  if (/culture|art|music|movie|heritage|tradition/i.test(t)) return 'culture';
-  if (/society|people|community|social|protest|public/i.test(t)) return 'society';
+  if (/health|virus|doctor|medical|hospital|medicine|covid|patient/i.test(t)) return 'health';
+  if (/economy|market|finance|trading|stock|inflation|currency|gdp|bank/i.test(t)) return 'economy';
+  if (/politics|election|government|parliament|minister|president|vote/i.test(t)) return 'politics';
+  if (/conflict|war|army|attack|clash|security|military|violence|protest/i.test(t)) return 'conflict';
+  if (/environment|climate|green|nature|pollution|emission/i.test(t)) return 'environment';
+  if (/technology|software|ai|digital|cyber|tech|startup/i.test(t)) return 'technology';
+  if (/culture|art|music|movie|heritage|tradition|film/i.test(t)) return 'culture';
+  if (/society|people|community|social|education|housing/i.test(t)) return 'society';
   return 'other';
 }
 
 const REGION_MAP: Record<string, RawDataItem['region']> = {
-  US: 'americas', CA: 'americas', BR: 'americas',
-  GB: 'europe', FR: 'europe', DE: 'europe', IT: 'europe', ES: 'europe',
-  EG: 'africa', ZA: 'africa', NG: 'africa', LY: 'africa',
-  CN: 'asia', JP: 'asia', IN: 'asia', KR: 'asia',
+  US: 'americas', CA: 'americas', BR: 'americas', MX: 'americas',
+  GB: 'europe', FR: 'europe', DE: 'europe', IT: 'europe',
+  ES: 'europe', RU: 'europe', NL: 'europe',
+  EG: 'africa', ZA: 'africa', NG: 'africa', LY: 'africa', DZ: 'africa',
+  CN: 'asia', JP: 'asia', IN: 'asia', KR: 'asia', SG: 'asia',
   AU: 'oceania',
 };
 
@@ -107,7 +100,7 @@ function detectRegion(countryCode?: string): RawDataItem['region'] {
 function deduplicateItems(items: RawDataItem[]): RawDataItem[] {
   const seen = new Set<string>();
   return items.filter((item) => {
-    const key = `${item.title}|${item.platform}`.toLowerCase();
+    const key = `${item.title.slice(0, 80)}|${item.platform}`.toLowerCase();
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -115,10 +108,60 @@ function deduplicateItems(items: RawDataItem[]): RawDataItem[] {
 }
 
 // ============================================================
-// SOURCE COLLECTORS
+// SOURCE COLLECTORS — each returns RawDataItem[]
 // ============================================================
 
-async function collectFromRSS(query: string, countryCode?: string): Promise<RawDataItem[]> {
+async function collectFromGDELT(query: string, countryCode?: string): Promise<RawDataItem[]> {
+  try {
+    const articles = countryCode
+      ? await searchGDELTByCountry(countryCode, query, 20)
+      : await searchGDELT(query, 20);
+    return articles.map((a) => ({
+      id: genId(),
+      timestamp: Date.now(),
+      title: a.title,
+      description: a.description,
+      source: a.source,
+      sourceType: 'news' as const,
+      platform: 'GDELT',
+      url: a.url,
+      publishedAt: a.publishedAt,
+      language: 'en',
+      country: a.countryCode || countryCode,
+      region: detectRegion(a.countryCode || countryCode),
+      topic: detectTopic(a.title + ' ' + a.description),
+      intensity: Math.min(1, Math.abs(a.tone) / 100 + 0.3),
+      trustScore: Math.max(50, Math.min(100, 60 + Math.abs(a.tone) / 5)),
+    }));
+  } catch { return []; }
+}
+
+async function collectFromNewsAPI(query: string, countryCode?: string): Promise<RawDataItem[]> {
+  try {
+    const articles = countryCode
+      ? await getTopHeadlinesByCountry(countryCode, 15)
+      : await searchNewsAPI(query, 15);
+    return articles.map((a) => ({
+      id: genId(),
+      timestamp: Date.now(),
+      title: a.title,
+      description: a.description,
+      source: a.source,
+      sourceType: 'news' as const,
+      platform: 'NewsAPI',
+      url: a.url,
+      publishedAt: a.publishedAt,
+      language: 'en',
+      country: countryCode,
+      region: detectRegion(countryCode),
+      topic: detectTopic(a.title + ' ' + a.description),
+      intensity: 0.5,
+      trustScore: 70,
+    }));
+  } catch { return []; }
+}
+
+async function collectFromGoogleRSS(query: string, countryCode?: string): Promise<RawDataItem[]> {
   try {
     const items = countryCode
       ? await fetchGoogleNewsByCountry(countryCode)
@@ -140,9 +183,7 @@ async function collectFromRSS(query: string, countryCode?: string): Promise<RawD
       intensity: 0.5,
       trustScore: 75,
     }));
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 async function collectFromScraper(query: string, countryCode?: string): Promise<RawDataItem[]> {
@@ -166,12 +207,34 @@ async function collectFromScraper(query: string, countryCode?: string): Promise<
       intensity: 0.6,
       trustScore: 85,
     }));
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
-async function collectFromSocial(query: string): Promise<RawDataItem[]> {
+
+async function collectFromMajorRSS(_query: string): Promise<RawDataItem[]> {
+  try {
+    const items = await fetchAllMajorNews(20);
+    return items.map((item) => ({
+      id: genId(),
+      timestamp: new Date(item.pubDate || Date.now()).getTime(),
+      title: item.title,
+      description: item.description,
+      source: item.source,
+      sourceType: 'news' as const,
+      platform: item.source,
+      url: item.link,
+      publishedAt: item.pubDate || new Date().toISOString(),
+      language: item.language || 'en',
+      country: undefined,
+      region: 'global' as const,
+      topic: detectTopic(item.title + ' ' + item.description),
+      intensity: 0.55,
+      trustScore: 85,
+    }));
+  } catch { return []; }
+}
+
+async function collectFromReddit(query: string): Promise<RawDataItem[]> {
   try {
     const posts = await fetchRedditPosts(query);
     return (posts || []).map((p: any) => ({
@@ -187,35 +250,47 @@ async function collectFromSocial(query: string): Promise<RawDataItem[]> {
       language: 'en',
       region: 'global' as const,
       topic: detectTopic((p.title || '') + ' ' + (p.selftext || '')),
-      intensity: Math.min(1, (p.score || 0) / 100),
+      intensity: Math.min(1, (p.score || 0) / 1000),
       trustScore: Math.min(100, (p.upvote_ratio || 0.5) * 100),
     }));
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 // ============================================================
-// ALL SOURCES
+// ALL SOURCES (parallel)
 // ============================================================
 
 async function collectAllSources(query: string, countryCode?: string): Promise<RawDataItem[]> {
-  const [rss, scraped, social] = await Promise.all([
-    collectFromRSS(query, countryCode),
+  const results = await Promise.allSettled([
+    collectFromGDELT(query, countryCode),
+    collectFromNewsAPI(query, countryCode),
+    collectFromMajorRSS(query),
+    collectFromGoogleRSS(query, countryCode),
     collectFromScraper(query, countryCode),
-    collectFromSocial(query),
+    collectFromReddit(query),
   ]);
-  return [...rss, ...scraped, ...social];
+
+  const items: RawDataItem[] = [];
+  const sourcesUsed: string[] = [];
+
+  for (const result of results) {
+    if (result.status === 'fulfilled' && result.value.length > 0) {
+      items.push(...result.value);
+      sourcesUsed.push(result.value[0].platform);
+    }
+  }
+
+  console.log(`[DataCollector] Fetched ${items.length} items from ${sourcesUsed.length} sources: ${sourcesUsed.join(', ')}`);
+  return items;
 }
 
 // ============================================================
-// PUBLIC API — used by networkEngine.ts
+// PUBLIC API
 // ============================================================
 
-export async function collectTopicData(topic: string, region: string = 'global'): Promise<CollectedData> {
+export async function collectTopicData(topic: string, _region: string = 'global'): Promise<CollectedData> {
   const all = await collectAllSources(topic);
-  const filtered = region === 'global' ? all : all.filter((i) => i.region === region);
-  const deduped = deduplicateItems(filtered);
+  const deduped = deduplicateItems(all);
   const sources = [...new Set(deduped.map((i) => i.platform))];
   return { items: deduped, sources, sourceCount: sources.length, fetchedAt: Date.now(), query: topic, queryType: 'topic' };
 }
@@ -225,12 +300,7 @@ export async function collectCountryData(countryCode: string, countryName: strin
   const cached = dataCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return cached.data;
 
-  const [rssItems, scrapedData] = await Promise.all([
-    collectFromRSS(countryName, countryCode),
-    collectFromScraper(countryName, countryCode),
-  ]);
-
-  const all = [...rssItems, ...scrapedData];
+  const all = await collectAllSources(countryName, countryCode);
   const deduped = deduplicateItems(all);
   const sources = [...new Set(deduped.map((i) => i.platform))];
   const result: CollectedData = { items: deduped, sources, sourceCount: sources.length, fetchedAt: Date.now(), query: countryName, queryType: 'country', countryCode };
