@@ -1,13 +1,9 @@
-import { t } from "../_core/i18n";
-
 /**
- * Deduplication Engine - Prevents duplicate data and ensures unique indices per topic
- * 
- * This system:
- * 1. Tracks previously analyzed topics to prevent duplicate results
- * 2. Generates topic-specific variations to ensure different indices
- * 3. Manages cache invalidation for stale data
- * 4. Provides deduplication detection and reporting
+ * Deduplication Engine
+ *
+ * Prevents duplicate analyses and ensures unique results per topic/country.
+ * Tracks previously computed results so the pipeline can reuse cached data
+ * instead of re-running expensive collection and analysis.
  */
 
 interface CachedAnalysis {
@@ -24,269 +20,129 @@ interface CachedAnalysis {
   dataHash: string;
 }
 
-interface DeduplicationReport {
+export interface DeduplicationReport {
   isDuplicate: boolean;
-  similarity: number; // 0-1
+  similarity: number;
   previousAnalysisTime?: number;
   suggestedAction: 'use_cache' | 'generate_new' | 'invalidate_cache';
 }
 
-// In-memory cache for analysis results
 const analysisCache = new Map<string, CachedAnalysis>();
 
-// Track topic-specific keywords to generate unique data
-const topicKeywords: Record<string, string[]> = {
-  'vision 2030': ['vision', 'reform', 'investment', 'development', 'strategy'],
-  economy: ['economy', 'market', 'inflation', 'currency', 'growth'],
-  politics: ['government', 'election', 'policy', 'parliament', 'diplomacy'],
-  conflict: ['conflict', 'security', 'military', 'ceasefire', 'risk'],
-  society: ['society', 'community', 'public', 'services', 'living conditions'],
-  health: ['health', 'hospital', 'medicine', 'disease', 'public health'],
-  technology: ['technology', 'ai', 'software', 'digital', 'innovation'],
-  energy: ['oil', 'gas', 'electricity', 'renewable', 'energy'],
+const TOPIC_WEIGHTS: Record<string, { gmi: number; cfi: number; hri: number; aci: number; sdi: number }> = {
+  economy:           { gmi: 15, cfi: -10, hri: 10, aci: 0,  sdi: 0   },
+  politics:          { gmi: -10, cfi: 15, hri: -5, aci: 0,  sdi: 5   },
+  conflict:          { gmi: -20, cfi: 25, hri: -15, aci: 0, sdi: 10  },
+  society:           { gmi: 10, cfi: 0,  hri: 15, aci: 0,  sdi: 0    },
+  health:            { gmi: -5,  cfi: 15, hri: 5,  aci: 0,  sdi: 0   },
+  technology:        { gmi: 20, cfi: -5, hri: 20, aci: 0,  sdi: 0    },
+  energy:            { gmi: 5,  cfi: 10, hri: 0,  aci: 0,  sdi: 0    },
+  'vision 2030':     { gmi: 25, cfi: -20, hri: 20, aci: 0, sdi: 0    },
+  environment:       { gmi: -10, cfi: 15, hri: -5, aci: 0, sdi: 5    },
+  security:          { gmi: -15, cfi: 20, hri: -10, aci: 0, sdi: 10  },
+  innovation:        { gmi: 20, cfi: -10, hri: 20, aci: 0, sdi: 0    },
 };
 
-/**
- * Generate a hash for analysis data to detect duplicates
- */
 function generateDataHash(
   topic: string,
   countryCode: string,
-  indices: { gmi: number; cfi: number; hri: number; aci: number; sdi: number }
+  indices: { gmi: number; cfi: number; hri: number; aci: number; sdi: number },
 ): string {
   const data = `${topic}|${countryCode}|${indices.gmi}|${indices.cfi}|${indices.hri}|${indices.aci}|${indices.sdi}`;
   let hash = 0;
   for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash = ((hash << 5) - hash) + data.charCodeAt(i);
+    hash = hash & hash;
   }
   return Math.abs(hash).toString(16);
 }
 
-/**
- * Calculate similarity between two sets of indices (0-1)
- */
-function calculateSimilarity(
-  indices1: { gmi: number; cfi: number; hri: number; aci: number; sdi: number },
-  indices2: { gmi: number; cfi: number; hri: number; aci: number; sdi: number }
-): number {
-  const maxDiff = 400; // Max possible difference (5 indices * 100 range)
-  const differences = [
-    Math.abs(indices1.gmi - indices2.gmi),
-    Math.abs(indices1.cfi - indices2.cfi),
-    Math.abs(indices1.hri - indices2.hri),
-    Math.abs(indices1.aci - indices2.aci),
-    Math.abs(indices1.sdi - indices2.sdi),
-  ];
-  const totalDiff = differences.reduce((a, b) => a + b, 0);
-  return 1 - (totalDiff / maxDiff);
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
 }
 
-/**
- * Check if an analysis is a duplicate of a previous one
- */
+function calculateSimilarity(
+  a: { gmi: number; cfi: number; hri: number; aci: number; sdi: number },
+  b: { gmi: number; cfi: number; hri: number; aci: number; sdi: number },
+): number {
+  const maxDiff = 400;
+  const diffs = [
+    Math.abs(a.gmi - b.gmi),
+    Math.abs(a.cfi - b.cfi),
+    Math.abs(a.hri - b.hri),
+    Math.abs(a.aci - b.aci),
+    Math.abs(a.sdi - b.sdi),
+  ].reduce((sum, d) => sum + d, 0);
+  return 1 - diffs / maxDiff;
+}
+
 export function checkForDuplicates(
   topic: string,
   countryCode: string,
   indices: { gmi: number; cfi: number; hri: number; aci: number; sdi: number },
-  cacheExpiryMs: number = 3600000 // 1 hour default
+  cacheExpiryMs = 3_600_000,
 ): DeduplicationReport {
-  const cacheKey = `${topic}|${countryCode}`;
-  const now = Date.now();
-  
-  // Check if we have a cached analysis
-  const cached = analysisCache.get(cacheKey);
-  
-  if (cached) {
-    // Check if cache is expired
-    if (now - cached.timestamp > cacheExpiryMs) {
-      return {
-        isDuplicate: false,
-        similarity: 0,
-        suggestedAction: 'invalidate_cache',
-      };
-    }
-    
-    // Calculate similarity
-    const similarity = calculateSimilarity(cached.indices, indices);
-    
-    // Consider it a duplicate if similarity > 0.85 (85%)
-    if (similarity > 0.85) {
-      return {
-        isDuplicate: true,
-        similarity,
-        previousAnalysisTime: cached.timestamp,
-        suggestedAction: 'use_cache',
-      };
-    }
+  const key = `${topic}|${countryCode}`;
+  const cached = analysisCache.get(key);
+  if (!cached) return { isDuplicate: false, similarity: 0, suggestedAction: 'generate_new' };
+  if (Date.now() - cached.timestamp > cacheExpiryMs) {
+    return { isDuplicate: false, similarity: 0, suggestedAction: 'invalidate_cache' };
   }
-  
-  return {
-    isDuplicate: false,
-    similarity: cached ? calculateSimilarity(cached.indices, indices) : 0,
-    suggestedAction: 'generate_new',
-  };
+  const similarity = calculateSimilarity(cached.indices, indices);
+  if (similarity > 0.85) {
+    return { isDuplicate: true, similarity, previousAnalysisTime: cached.timestamp, suggestedAction: 'use_cache' };
+  }
+  return { isDuplicate: false, similarity, suggestedAction: 'generate_new' };
 }
 
-/**
- * Register an analysis result in the cache
- */
 export function registerAnalysis(
   topic: string,
   countryCode: string,
-  indices: { gmi: number; cfi: number; hri: number; aci: number; sdi: number }
+  indices: { gmi: number; cfi: number; hri: number; aci: number; sdi: number },
 ): void {
-  const cacheKey = `${topic}|${countryCode}`;
-  const dataHash = generateDataHash(topic, countryCode, indices);
-  
-  analysisCache.set(cacheKey, {
-    topic,
-    countryCode,
-    indices,
-    timestamp: Date.now(),
-    dataHash,
+  analysisCache.set(`${topic}|${countryCode}`, {
+    topic, countryCode, indices, timestamp: Date.now(), dataHash: generateDataHash(topic, countryCode, indices),
   });
 }
 
-/**
- * Invalidate cache for a specific topic/country
- */
 export function invalidateCache(topic?: string, countryCode?: string): number {
-  let invalidatedCount = 0;
-  
+  let count = 0;
   if (topic && countryCode) {
-    const cacheKey = `${topic}|${countryCode}`;
-    if (analysisCache.has(cacheKey)) {
-      analysisCache.delete(cacheKey);
-      invalidatedCount = 1;
-    }
+    if (analysisCache.delete(`${topic}|${countryCode}`)) count = 1;
   } else if (topic) {
-    // Invalidate all entries for a topic
-    const keysToDelete: string[] = [];
-    analysisCache.forEach((_, key) => {
-      if (key.startsWith(topic)) {
-        keysToDelete.push(key);
-      }
-    });
-    keysToDelete.forEach(key => {
-      analysisCache.delete(key);
-      invalidatedCount++;
-    });
+    for (const key of analysisCache.keys()) {
+      if (key.startsWith(topic)) { analysisCache.delete(key); count++; }
+    }
   } else {
-    // Clear entire cache
-    invalidatedCount = analysisCache.size;
+    count = analysisCache.size;
     analysisCache.clear();
   }
-  
-  return invalidatedCount;
+  return count;
 }
 
-/**
- * Get cache statistics
- */
-export function getCacheStats(): {
-  totalEntries: number;
-  entries: Array<{ topic: string; countryCode: string; age: number }>;
-} {
+export function getCacheStats(): { totalEntries: number; entries: Array<{ topic: string; countryCode: string; age: number }> } {
   const now = Date.now();
-  const entries = Array.from(analysisCache.values()).map(entry => ({
-    topic: entry.topic,
-    countryCode: entry.countryCode,
-    age: now - entry.timestamp,
-  }));
-  
   return {
     totalEntries: analysisCache.size,
-    entries,
+    entries: [...analysisCache.values()].map(e => ({ topic: e.topic, countryCode: e.countryCode, age: now - e.timestamp })),
   };
 }
 
 /**
- * Generate topic-specific emotion variations
- * Ensures different topics produce different emotional profiles
+ * Apply topic-specific weight adjustments so different topics produce
+ * measurably different emotional profiles.
  */
-export function generateTopicSpecificVariations(
+export function applyTopicWeights(
   topic: string,
-  baseIndices: { gmi: number; cfi: number; hri: number; aci: number; sdi: number }
+  baseIndices: { gmi: number; cfi: number; hri: number; aci: number; sdi: number },
 ): { gmi: number; cfi: number; hri: number; aci: number; sdi: number } {
-  // Get keywords for this topic
-  const keywords = topicKeywords[topic] || [];
-  
-  // Calculate topic-specific adjustments based on keywords
-  let gmiAdjust = 0;
-  let cfiAdjust = 0;
-  let hriAdjust = 0;
-  let aciAdjust = 0;
-  let sdiAdjust = 0;
-  
-  // Analyze keywords to adjust indices
-  keywords.forEach(keyword => {
-    switch (keyword) {
-      case t('auto.engines_deduplicationEngine.17.6d38c2ea', 'ar'):
-      case t('auto.engines_deduplicationEngine.16.16c73be6', 'ar'):
-      case t('auto.engines_deduplicationEngine.15.2efcd729', 'ar'):
-        gmiAdjust += 15;
-        cfiAdjust -= 10;
-        break;
-      case t('auto.engines_deduplicationEngine.14.450897a5', 'ar'):
-      case t('auto.engines_deduplicationEngine.13.ace42128', 'ar'):
-        cfiAdjust -= 20;
-        hriAdjust += 15;
-        break;
-      case t('auto.engines_deduplicationEngine.12.dcdf69b3', 'ar'):
-      case t('auto.engines_deduplicationEngine.11.a24a5460', 'ar'):
-        cfiAdjust += 20;
-        hriAdjust -= 10;
-        break;
-      case t('auto.engines_deduplicationEngine.10.c81718df', 'ar'):
-      case t('auto.engines_deduplicationEngine.9.e87473b0', 'ar'):
-        hriAdjust += 20;
-        gmiAdjust += 10;
-        break;
-      case t('auto.engines_deduplicationEngine.8.51f4011d', 'ar'):
-      case t('auto.engines_deduplicationEngine.7.aae445ae', 'ar'):
-        cfiAdjust += 25;
-        gmiAdjust -= 20;
-        break;
-      case t('auto.engines_deduplicationEngine.6.5c61c8a0', 'ar'):
-      case t('auto.engines_deduplicationEngine.5.44e1d7f4', 'ar'):
-        hriAdjust += 15;
-        gmiAdjust += 15;
-        break;
-      case t('auto.engines_deduplicationEngine.4.837787a2', 'ar'):
-      case t('auto.engines_deduplicationEngine.3.01146ccf', 'ar'):
-        gmiAdjust += 25;
-        hriAdjust += 20;
-        break;
-      case t('auto.engines_deduplicationEngine.2.ac19a8d6', 'ar'):
-      case t('auto.engines_deduplicationEngine.1.1f88a5b2', 'ar'):
-        cfiAdjust += 15;
-        aciAdjust += 10;
-        break;
-    }
-  });
-  
-  // Apply adjustments with bounds
+  const weight = TOPIC_WEIGHTS[topic.toLowerCase()];
+  if (!weight) return { ...baseIndices };
   return {
-    gmi: Math.max(-100, Math.min(100, baseIndices.gmi + gmiAdjust)),
-    cfi: Math.max(0, Math.min(100, baseIndices.cfi + cfiAdjust)),
-    hri: Math.max(0, Math.min(100, baseIndices.hri + hriAdjust)),
-    aci: Math.max(0, Math.min(100, baseIndices.aci + aciAdjust)),
-    sdi: Math.max(0, Math.min(100, baseIndices.sdi + sdiAdjust)),
+    gmi: clamp(baseIndices.gmi + weight.gmi, -100, 100),
+    cfi: clamp(baseIndices.cfi + weight.cfi, 0, 100),
+    hri: clamp(baseIndices.hri + weight.hri, 0, 100),
+    aci: clamp(baseIndices.aci + weight.aci, 0, 100),
+    sdi: clamp(baseIndices.sdi + weight.sdi, 0, 100),
   };
-}
-
-/**
- * Add a new topic with its keywords
- */
-export function registerTopicKeywords(topic: string, keywords: string[]): void {
-  topicKeywords[topic] = keywords;
-}
-
-/**
- * Get all registered topics
- */
-export function getRegisteredTopics(): string[] {
-  return Object.keys(topicKeywords);
 }
