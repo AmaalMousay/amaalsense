@@ -22,6 +22,7 @@ import { detectCognitivePattern, type CognitiveInput, type CognitivePattern, typ
 import { EvidenceGrounding, type Evidence, type GroundingReport } from '../cognitiveArchitecture/evidenceGrounding';
 import { enforceLanguage } from '../engines/languageEnforcementLayer';
 import { addToLongTermMemory, retrieveFromLongTermMemory, initLongTermMemory, type LongTermMemoryState } from '../cognitiveArchitecture/longTermMemory';
+import { searchAllKnowledge } from '../services/researchService';
 
 export interface ResponseQualityReport {
   consistencyResult: ReturnType<typeof CognitiveConsistencyCheck.checkConsistency>;
@@ -32,6 +33,7 @@ export interface ResponseQualityReport {
   cognitiveOutput?: CognitiveOutput;
   groundingReport?: GroundingReport;
   languageEnforced: boolean;
+  knowledgePapers: Array<{ title: string; source: string; url: string; summary: string }>;
   errors: string[];
   qualityScores: {
     score: number;
@@ -203,6 +205,22 @@ export async function runResponseQualityCheck(
   }
 
   // ================================================================
+  // 8. Knowledge Enrichment (fetch relevant research)
+  // ================================================================
+  let knowledgePapers: any[] = [];
+  try {
+    const papers = await searchAllKnowledge(effectiveQuestion, 3);
+    knowledgePapers = papers.map((p) => ({
+      title: p.title,
+      source: p.source,
+      url: p.url,
+      summary: p.summary.slice(0, 300),
+    }));
+  } catch {
+    // Non-critical
+  }
+
+  // ================================================================
   // Return
   // ================================================================
   return {
@@ -214,6 +232,7 @@ export async function runResponseQualityCheck(
     cognitiveOutput,
     groundingReport,
     languageEnforced,
+    knowledgePapers,
     errors,
     qualityScores: {
       score: Math.round(metacognitiveAssessment.overallConfidence * 100),

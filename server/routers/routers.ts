@@ -23,6 +23,7 @@ import { agentRouter } from './agentRouter';
 import { predictionRouter } from './predictionRouter';
 import { alertsRouter } from './alertsRouter';
 import { calibrationRouter } from './calibrationRouter';
+import { knowledgeRouter } from './knowledgeRouter';
 
 // =========================================================================
 // Conversations Router
@@ -439,6 +440,7 @@ export const appRouter = router({
 
   health: publicProcedure.query(() => ({ ok: true, uptime: process.uptime() })),
   calibration: calibrationRouter,
+  knowledge: knowledgeRouter,
 });
 
 export type AppRouter = typeof appRouter;

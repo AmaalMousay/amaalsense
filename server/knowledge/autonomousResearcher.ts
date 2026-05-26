@@ -7,6 +7,7 @@
  */
 
 import { addEntry, storeKnowledgeObservation } from './vectorStore';
+import { searchArXiv, searchPubMed } from '../services/researchService';
 
 export const researcherState = {
   isReading: false,
@@ -21,6 +22,8 @@ export const researcherState = {
 let continuousInterval: NodeJS.Timeout | null = null;
 
 const DOMAINS = [
+  'Artificial Intelligence',
+  'Machine Learning',
   'Trading',
   'Macroeconomics',
   'Market Microstructure',
@@ -55,52 +58,36 @@ function chunkText(text: string, maxChunkLength: number = 1000): string[] {
   return chunks;
 }
 
-async function fetchWikipediaArticle(): Promise<{ title: string; extract: string; url: string; domain: string } | null> {
+async function fetchFromResearch(): Promise<{ title: string; extract: string; url: string; domain: string } | null> {
   try {
     const domain = DOMAINS[Math.floor(Math.random() * DOMAINS.length)];
-    const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(domain)}&utf8=&format=json&origin=*`;
-    const searchResponse = await fetch(searchUrl);
-    const searchData = await searchResponse.json();
-    const results = searchData.query?.search?.slice(0, 5) || [];
-    if (results.length === 0) return null;
-
-    const selected = results[Math.floor(Math.random() * results.length)];
-    const contentUrl = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro=false&explaintext=true&pageids=${selected.pageid}&origin=*`;
-    const contentResponse = await fetch(contentUrl);
-    const contentData = await contentResponse.json();
-    const page = contentData.query?.pages?.[selected.pageid];
-    if (!page?.extract || page.extract.length < 300) return null;
-    return { title: page.title, extract: page.extract, url: `https://en.wikipedia.org/?curid=${selected.pageid}`, domain };
+    // Try arXiv first (scientific papers)
+    const arxivResults = await searchArXiv(domain, 3);
+    if (arxivResults.length > 0) {
+      const paper = arxivResults[0];
+      return { title: paper.title, extract: paper.summary, url: paper.url, domain };
+    }
+    // Fallback to PubMed
+    const pubmedResults = await searchPubMed(domain, 3);
+    if (pubmedResults.length > 0) {
+      const paper = pubmedResults[0];
+      return { title: paper.title, extract: paper.summary, url: paper.url, domain: 'Medical' };
+    }
+    return null;
   } catch (error) {
-    console.error('[AutonomousResearcher] Wikipedia fetch failed:', error);
+    console.error('[AutonomousResearcher] Research fetch failed:', error);
     return null;
   }
 }
 
 async function fetchArxivArticle(): Promise<{ title: string; extract: string; url: string; domain: string } | null> {
-  try {
-    const category = ARXIV_CATEGORIES[Math.floor(Math.random() * ARXIV_CATEGORIES.length)];
-    const url = `http://export.arxiv.org/api/query?search_query=cat:${category}&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=desc`;
-    const response = await fetch(url);
-    const xml = await response.text();
-    const entries = xml.split('<entry>').slice(1);
-    if (entries.length === 0) return null;
-
-    const entry = entries[Math.floor(Math.random() * entries.length)];
-    const title = entry.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.replace(/\n/g, ' ').trim();
-    const summary = entry.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]?.replace(/\n/g, ' ').trim();
-    const articleUrl = entry.match(/<id>([\s\S]*?)<\/id>/)?.[1]?.trim();
-    if (!title || !summary || !articleUrl || summary.length < 300) return null;
-    return { title, extract: summary, url: articleUrl, domain: category };
-  } catch (error) {
-    console.error('[AutonomousResearcher] arXiv fetch failed:', error);
-    return null;
-  }
+  return fetchFromResearch();
 }
 
 async function fetchTargetedArticle(): Promise<{ title: string; extract: string; url: string; domain: string } | null> {
   if (Math.random() > 0.5) {
-    const arxiv = await fetchArxivArticle();
+    // Use research service directly
+    const arxiv = await fetchFromResearch();
     if (arxiv) {
       researcherState.source = 'arXiv';
       return arxiv;
