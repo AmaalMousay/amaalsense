@@ -1,9 +1,9 @@
 /**
  * Cognitive Answer Gate Layer
  *
- * Internal safety gate that decides whether to answer, search for more data,
- * admit lack of knowledge, ask for clarification, or defer to an expert.
- * This layer is used by the central network engine before composing answers.
+ * Decides whether AmalSense should answer, search for more data, ask for
+ * clarification, admit ignorance, or defer to an expert. This is an internal
+ * safety gate used by the central processing path.
  */
 
 export type AnswerDecision =
@@ -35,7 +35,7 @@ export interface AnswerContext {
 
 class CognitiveAnswerGateClass {
   /**
-   * Decide whether and how to answer the question.
+   * Decide whether and how to answer the user question
    */
   makeDecision(context: AnswerContext): GateDecision {
     const { question, availableData, questionComplexity, domainKnowledge } = context;
@@ -44,7 +44,7 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'clarify_question',
         confidence: 0.9,
-        reasoning: 'The question is ambiguous or too short.',
+        reasoning: 'The question is ambiguous or too short to answer clearly.',
         suggestedAction: 'Ask a focused clarification question.',
       };
     }
@@ -55,7 +55,7 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'answer_directly',
         confidence: dataScore,
-        reasoning: 'The question is simple and available data is sufficient.',
+        reasoning: 'Simple question with sufficient available data.',
       };
     }
 
@@ -63,7 +63,7 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'search_more_data',
         confidence: 0.8,
-        reasoning: 'The question is complex and needs more evidence.',
+        reasoning: 'Complex question needs more evidence before answering.',
         suggestedAction: 'Collect more data before final analysis.',
       };
     }
@@ -72,7 +72,7 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'defer_to_expert',
         confidence: 0.85,
-        reasoning: 'The question requires expert knowledge that is not currently available.',
+        reasoning: 'Question requires expert knowledge not available in current context.',
         suggestedAction: 'Use Knowledge Core or an expert source.',
       };
     }
@@ -81,8 +81,8 @@ class CognitiveAnswerGateClass {
       return {
         decision: 'admit_ignorance',
         confidence: 0.9,
-        reasoning: 'Available data is stale or low quality.',
-        suggestedAction: 'State the limitation clearly.',
+        reasoning: 'Available data is stale or of low quality.',
+        suggestedAction: 'State the limitation clearly in the response.',
       };
     }
 
@@ -94,18 +94,44 @@ class CognitiveAnswerGateClass {
   }
 
   /**
-   * Generate response string for non-answer decisions.
+   * Check if the question is ambiguous
+   */
+  private isAmbiguous(question: string): boolean {
+    const trimmed = question.trim();
+    if (trimmed.split(/\s+/).length < 3) return true;
+    if (/^(it|this|that|same|again|and)$/i.test(trimmed)) return true;
+    if ((trimmed.match(/\?/g) || []).length > 2) return true;
+    return false;
+  }
+
+  /**
+   * Calculate a data-sufficiency score from available-data flags
+   */
+  private calculateDataSufficiency(availableData: AnswerContext['availableData']): number {
+    let score = 0;
+    if (availableData.hasNews) score += 0.2;
+    if (availableData.hasSocialMedia) score += 0.15;
+    if (availableData.hasHistoricalData) score += 0.15;
+    const qualityScores = { high: 0.3, medium: 0.2, low: 0.05 };
+    score += qualityScores[availableData.dataQuality];
+    const recencyScores = { recent: 0.2, stale: 0.1, none: 0 };
+    score += recencyScores[availableData.dataRecency];
+    return Math.min(1, score);
+  }
+
+  /**
+   * Generate a natural-language response that reflects the gate decision
    */
   generateGateResponse(decision: GateDecision): string {
     switch (decision.decision) {
       case 'admit_ignorance':
-        return 'I cannot provide a reliable answer with the available information. The data is limited or outdated.';
+        return 'I do not have enough reliable information to answer this accurately.';
       case 'search_more_data':
-        return 'I need to gather more current information before I can give a meaningful answer.';
+        return 'Let me search for more information on this topic.';
       case 'clarify_question':
-        return 'Could you please clarify your question? It seems ambiguous or too brief.';
+        return 'Could you clarify your question so I can give you a more accurate answer?';
       case 'defer_to_expert':
-        return 'This question requires specialized knowledge that I do not have access to at this moment.';
+        return 'This question may require expert-level knowledge beyond my current reach.';
       case 'answer_directly':
       default:
         return '';
@@ -113,71 +139,36 @@ class CognitiveAnswerGateClass {
   }
 
   /**
-   * Check whether the answer should be blocked (safety check).
+   * Final safety check: block the answer if it appears hallucinated
    */
-  shouldBlockAnswer(question: string, proposedAnswer: string): {
-    shouldBlock: boolean;
-    reason?: string;
-  } {
-    const uncertaintyPattern = /\b(maybe|perhaps|possibly|unknown|unclear|not sure)\b/i;
-    const hasHighUncertainty = uncertaintyPattern.test(proposedAnswer);
-
-    if (hasHighUncertainty && proposedAnswer.split(/\s+/).length < 20) {
-      return {
-        shouldBlock: true,
-        reason: 'The proposed answer is too uncertain and too short.',
-      };
+  shouldBlockAnswer(question: string, proposedAnswer: string): { shouldBlock: boolean; reason?: string } {
+    const answerWords = this.extractKeywords(proposedAnswer);
+    if (answerWords.length < 4 && /maybe|unknown|unclear|not sure/i.test(proposedAnswer)) {
+      return { shouldBlock: true, reason: 'Answer is too uncertain and too short.' };
     }
-
     if (this.answersWrongQuestion(question, proposedAnswer)) {
-      return {
-        shouldBlock: true,
-        reason: 'The proposed answer appears to address a different question.',
-      };
+      return { shouldBlock: true, reason: 'Answer appears weakly related to the question.' };
     }
-
     return { shouldBlock: false };
   }
 
-  private isAmbiguous(question: string): boolean {
-    const trimmed = question.trim();
-    if (trimmed.split(/\s+/).length < 3) return true;
-    if (/^(it|this|that|same|again)$/i.test(trimmed)) return true;
-    if ((trimmed.match(/\?/g) || []).length > 2) return true;
-    return false;
-  }
-
-  private calculateDataSufficiency(data: AnswerContext['availableData']): number {
-    let score = 0;
-    if (data.hasNews) score += 0.15;
-    if (data.hasSocialMedia) score += 0.1;
-    if (data.hasHistoricalData) score += 0.05;
-    const qualityMap = { high: 0.4, medium: 0.25, low: 0.1 };
-    score += qualityMap[data.dataQuality];
-    const recencyMap = { recent: 0.3, stale: 0.15, none: 0 };
-    score += recencyMap[data.dataRecency];
-    return Math.min(1.0, score);
-  }
-
   private answersWrongQuestion(question: string, answer: string): boolean {
-    const qKeywords = this.extractKeywords(question);
-    const aKeywords = this.extractKeywords(answer);
-    if (qKeywords.length < 2) return false;
-    const overlap = qKeywords.filter(kw => aKeywords.includes(kw));
-    return overlap.length / qKeywords.length < 0.2;
+    const questionKeywords = this.extractKeywords(question);
+    if (questionKeywords.length < 3) return false;
+    const answerKeywords = this.extractKeywords(answer);
+    const overlap = questionKeywords.filter((kw) => answerKeywords.includes(kw)).length;
+    return overlap / questionKeywords.length < 0.15;
   }
 
   private extractKeywords(text: string): string[] {
     const stopWords = new Set([
-      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'of', 'with', 'by', 'from', 'as', 'is', 'are', 'was', 'were',
-      'this', 'that', 'it', 'its', 'they', 'them', 'we', 'you',
+      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to',
+      'for', 'of', 'is', 'are', 'was', 'were', 'this', 'that', 'what',
+      'which', 'who', 'when', 'where', 'why', 'how',
     ]);
-    return text
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(word => word.length > 2 && !stopWords.has(word))
-      .slice(0, 10);
+    return (text.toLowerCase().match(/[\p{L}\p{N}_]+/gu) || [])
+      .filter((word) => word.length > 2 && !stopWords.has(word))
+      .slice(0, 12);
   }
 }
 
