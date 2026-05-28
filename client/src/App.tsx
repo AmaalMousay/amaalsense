@@ -67,8 +67,6 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      {/* Analyzer route removed - analysis now works from Home page */}
-      {/* Analyzer route removed - analysis now works from Home page */}
       <Route path={"/system-health"} component={SystemHealth} />
       <Route path={"/source-monitor"} component={SourceMonitor} />
       
@@ -95,7 +93,6 @@ function Router() {
       <Route path={"/notifications"} component={NotificationsPage} />
       <Route path={"/dcft"} component={DCFTPage} />
       <Route path={"/event-vectors"} component={EventVectorPage} />
-      <Route path={"/event-vectors"} component={EventVectorPage} />
       <Route path={"/engine-dashboard"} component={EngineDashboard} />
       <Route path={"/notification-settings"} component={NotificationSettings} />
       <Route path={"/checkout"} component={Checkout} />
@@ -104,7 +101,6 @@ function Router() {
       <Route path={"/use-cases"} component={UseCases} />
       <Route path={"/compare"} component={CompareCountries} />
       <Route path={"/alerts"} component={CustomAlerts} />
-      <Route path={"/api-docs"} component={ApiDocs} />
       <Route path={"/api-docs"} component={ApiDocs} />
       <Route path={"/topic-timeline"} component={TopicTimeline} />
       
@@ -137,7 +133,6 @@ function Router() {
       {/* Advanced Predictions */}
       <Route path={"/historical-events"} component={HistoricalEvents} />
       <Route path={"/event-comparison"} component={EventComparison} />
-      <Route path={"/event-prediction"} component={EventPrediction} />
       <Route path={"/event-prediction"} component={EventPrediction} />
       
       <Route path={"/404"} component={NotFound} />
