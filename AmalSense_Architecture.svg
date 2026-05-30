@@ -1,0 +1,274 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f1a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1a1a3e;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#7b2ff7"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b"/>
+      <stop offset="100%" style="stop-color:#ffa500"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00e676"/>
+      <stop offset="100%" style="stop-color:#00bcd4"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="1600" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="600" y="60" text-anchor="middle" fill="#fff" font-size="32" font-weight="bold" filter="url(#glow)">🧠 AmalSense — Architecture &amp; UI Design</text>
+  <text x="600" y="90" text-anchor="middle" fill="#888" font-size="16">Collective Emotional Intelligence Platform</text>
+
+  <!-- ==================== SECTION 1: CHAT UI ==================== -->
+  <text x="50" y="140" fill="#00d4ff" font-size="20" font-weight="bold">1️⃣  CHAT INTERFACE — AI Model Selector</text>
+  <line x1="50" y1="155" x2="1150" y2="155" stroke="#333" stroke-width="1"/>
+
+  <!-- Chat Window Mockup -->
+  <rect x="50" y="175" width="1100" height="420" rx="16" fill="#1a1a2e" stroke="#333" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Chat Header -->
+  <rect x="50" y="175" width="1100" height="60" rx="16" fill="#16213e"/>
+  <rect x="50" y="215" width="1100" height="20" fill="#16213e"/>
+  <text x="80" y="212" fill="#fff" font-size="16" font-weight="bold">🤖 AmalSense Smart Analysis</text>
+  <text x="950" y="212" fill="#666" font-size="12">chat.amalsense.ai</text>
+
+  <!-- Model Selector Bar -->
+  <rect x="70" y="250" width="1060" height="44" rx="22" fill="#222244" stroke="#444" stroke-width="1"/>
+  
+  <!-- Model Chips -->
+  <rect x="85" y="258" width="100" height="28" rx="14" fill="url(#g1)" opacity="0.9"/>
+  <text x="135" y="277" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">🧑‍💼 عام</text>
+
+  <rect x="195" y="258" width="120" height="28" rx="14" fill="#333366" stroke="#555" stroke-width="1"/>
+  <text x="255" y="277" text-anchor="middle" fill="#aaa" font-size="11">📈 متداول</text>
+
+  <rect x="325" y="258" width="130" height="28" rx="14" fill="#333366" stroke="#555" stroke-width="1"/>
+  <text x="390" y="277" text-anchor="middle" fill="#aaa" font-size="11">📰 صحفي</text>
+
+  <rect x="465" y="258" width="120" height="28" rx="14" fill="#333366" stroke="#555" stroke-width="1"/>
+  <text x="525" y="277" text-anchor="middle" fill="#aaa" font-size="11">🔬 باحث</text>
+
+  <rect x="595" y="258" width="140" height="28" rx="14" fill="#333366" stroke="#555" stroke-width="1"/>
+  <text x="665" y="277" text-anchor="middle" fill="#aaa" font-size="11">🏛️ صانع قرار</text>
+
+  <!-- Chat Messages -->
+  <!-- User Message -->
+  <rect x="700" y="310" width="430" height="50" rx="12" fill="#007bff" opacity="0.85"/>
+  <text x="720" y="332" fill="#fff" font-size="13">ما هي المشاعر السائدة في ليبيا اليوم؟</text>
+  <text x="1080" y="345" fill="#aaa" font-size="10">10:32 ص</text>
+
+  <!-- AI Response -->
+  <rect x="70" y="380" width="620" height="110" rx="12" fill="#2a2a4a"/>
+  <text x="85" y="400" fill="#00d4ff" font-size="12" font-weight="bold">🤖 AmalSense · نموذج: عام</text>
+  <text x="85" y="422" fill="#ccc" font-size="11">📊 GMI: -15 | CFI: 72 | HRI: 45</text>
+  <text x="85" y="442" fill="#bbb" font-size="11">المشاعر السائدة: خوف (45%) + غضب (30%) + أمل (25%)</text>
+  <text x="85" y="462" fill="#888" font-size="11">📰 3 أخبار · 📚 بحث واحد · 🔔 تنبيه</text>
+  <text x="85" y="480" fill="#666" font-size="10">المصادر: GDELT + BBC + Reddit + Twitter + PubMed</text>
+
+  <!-- Calibration Question -->
+  <rect x="70" y="500" width="600" height="50" rx="10" fill="#2d2d1a" stroke="#ffd700" stroke-width="1" stroke-dasharray="4"/>
+  <text x="85" y="522" fill="#ffd700" font-size="11">🤔 هل تشعر بالقلق تجاه الوضع في ليبيا؟</text>
+  <rect x="85" y="534" width="30" height="8" rx="4" fill="#ff4444"/>
+  <rect x="120" y="534" width="30" height="8" rx="4" fill="#ff8844"/>
+  <rect x="155" y="534" width="30" height="8" rx="4" fill="#ffcc44"/>
+  <rect x="190" y="534" width="30" height="8" rx="4" fill="#88cc44"/>
+  <rect x="225" y="534" width="30" height="8" rx="4" fill="#44aa44"/>
+
+  <!-- Chat Input -->
+  <rect x="70" y="560" width="700" height="24" rx="12" fill="#1a1a3e" stroke="#444" stroke-width="1"/>
+  <text x="85" y="576" fill="#666" font-size="12">اكتب سؤالك هنا...</text>
+  <rect x="780" y="558" width="70" height="28" rx="14" fill="url(#g1)"/>
+  <text x="815" y="576" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">إرسال</text>
+
+  <!-- Chat Sidebar -->
+  <rect x="860" y="300" width="0" height="0" fill="none"/>
+
+  <!-- History Panel -->
+  <rect x="870" y="310" width="260" height="265" rx="10" fill="#13132a" stroke="#333" stroke-width="1"/>
+  <text x="890" y="335" fill="#888" font-size="12" font-weight="bold">💬 الدردشات السابقة</text>
+  <line x1="885" y1="345" x2="1115" y2="345" stroke="#333" stroke-width="1"/>
+  
+  <rect x="885" y="355" width="230" height="30" rx="6" fill="#1a1a3e"/>
+  <text x="900" y="374" fill="#aaa" font-size="11">📌 تحليل المشاعر في ليبيا</text>
+  
+  <rect x="885" y="390" width="230" height="30" rx="6" fill="#1a1a3e"/>
+  <text x="900" y="409" fill="#aaa" font-size="11">💰 أسعار الذهب وتأثيرها</text>
+  
+  <rect x="885" y="425" width="230" height="30" rx="6" fill="#1a1a3e"/>
+  <text x="900" y="444" fill="#aaa" font-size="11">🌍 مقارنة مصر والسعودية</text>
+  
+  <rect x="885" y="460" width="230" height="30" rx="6" fill="#1a1a3e"/>
+  <text x="900" y="479" fill="#aaa" font-size="11">📰 تحليل الأخبار الاقتصادية</text>
+  
+  <rect x="885" y="495" width="230" height="30" rx="6" fill="#1a1a3e"/>
+  <text x="900" y="514" fill="#aaa" font-size="11">⚡ توقع اتجاهات السوق</text>
+
+  <rect x="885" y="535" width="230" height="30" rx="6" fill="#2a1a1a" stroke="#ff4444" stroke-width="1"/>
+  <text x="900" y="554" fill="#ff6666" font-size="11">🆕 إبدأ محادثة جديدة</text>
+
+  <!-- ==================== SECTION 2: HOME PAGE ==================== -->
+  <text x="50" y="630" fill="#00e676" font-size="20" font-weight="bold">2️⃣  HOME PAGE — Combined Landing</text>
+  <line x1="50" y1="645" x2="1150" y2="645" stroke="#333" stroke-width="1"/>
+
+  <rect x="50" y="660" width="1100" height="280" rx="16" fill="#1a1a2e" stroke="#333" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Hero Area -->
+  <text x="100" y="700" fill="#fff" font-size="28" font-weight="bold">AmalSense</text>
+  <text x="100" y="730" fill="#888" font-size="16">الذكاء العاطفي الجماعي — حلل مشاعر العالم في الوقت الحقيقي</text>
+
+  <!-- Global Mini-Indices -->
+  <rect x="100" y="755" width="160" height="55" rx="8" fill="#1a2e1a"/>
+  <text x="120" y="778" fill="#00e676" font-size="24" font-weight="bold">+32</text>
+  <text x="120" y="795" fill="#888" font-size="11">GMI ⬆️ إيجابي</text>
+
+  <rect x="280" y="755" width="160" height="55" rx="8" fill="#2e1a1a"/>
+  <text x="300" y="778" fill="#ff6b6b" font-size="24" font-weight="bold">45</text>
+  <text x="300" y="795" fill="#888" font-size="11">CFI ⬇️ منخفض</text>
+
+  <rect x="460" y="755" width="160" height="55" rx="8" fill="#1a1a2e"/>
+  <text x="480" y="778" fill="#00d4ff" font-size="24" font-weight="bold">68</text>
+  <text x="480" y="795" fill="#888" font-size="11">HRI ⬆️ عالي</text>
+
+  <!-- CTA Button -->
+  <rect x="700" y="760" width="200" height="50" rx="25" fill="url(#g1)" filter="url(#glow)"/>
+  <text x="800" y="791" text-anchor="middle" fill="#fff" font-size="15" font-weight="bold">🔍 حلل الآن</text>
+
+  <text x="780" y="830" fill="#666" font-size="11">ثم اكتب سؤالك → ينتقل للدردشة</text>
+
+  <!-- Quick Links -->
+  <rect x="100" y="840" width="480" height="80" rx="10" fill="#13132a" stroke="#333" stroke-width="1"/>
+  <text x="120" y="865" fill="#888" font-size="12">📌 روابط سريعة</text>
+  <text x="120" y="885" fill="#666" font-size="11">من نحن  ·  طريقة الاستخدام  ·  لمن هذا المشروع  ·  نظرية DCFT</text>
+  <text x="120" y="905" fill="#666" font-size="11">التسعير  ·  المدونة  ·  الأسئلة الشائعة  ·  اتصل بنا</text>
+
+  <!-- ==================== SECTION 3: PIPELINE ==================== -->
+  <text x="50" y="980" fill="#ffa500" font-size="20" font-weight="bold">3️⃣  THE PIPELINE — 24 Cognitive Layers</text>
+  <line x1="50" y1="995" x2="1150" y2="995" stroke="#333" stroke-width="1"/>
+
+  <!-- Pipeline Diagram -->
+  <rect x="50" y="1010" width="1100" height="280" rx="16" fill="#1a1a2e" stroke="#333" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Question Input -->
+  <rect x="100" y="1030" width="150" height="36" rx="18" fill="url(#g1)"/>
+  <text x="175" y="1053" text-anchor="middle" fill="#fff" font-size="12">❓ سؤال المستخدم</text>
+  <line x1="250" y1="1048" x2="290" y2="1048" stroke="#555" stroke-width="2"/>
+
+  <!-- Layer Boxes -->
+  <rect x="300" y="1025" width="120" height="46" rx="8" fill="#2a2a4a"/>
+  <text x="360" y="1045" text-anchor="middle" fill="#00d4ff" font-size="10">🧠 فهم السؤال</text>
+  <text x="360" y="1060" text-anchor="middle" fill="#666" font-size="9">Layer 4</text>
+
+  <rect x="435" y="1025" width="120" height="46" rx="8" fill="#2a2a4a"/>
+  <text x="495" y="1045" text-anchor="middle" fill="#00d4ff" font-size="10">🔒 منع تغير السياق</text>
+  <text x="495" y="1060" text-anchor="middle" fill="#666" font-size="9">ContextLock</text>
+
+  <rect x="570" y="1025" width="120" height="46" rx="8" fill="#2a2a4a"/>
+  <text x="630" y="1045" text-anchor="middle" fill="#00d4ff" font-size="10">🚪 بوابة القرار</text>
+  <text x="630" y="1060" text-anchor="middle" fill="#666" font-size="9">Layer 11</text>
+
+  <rect x="705" y="1025" width="120" height="46" rx="8" fill="#2a2a4a"/>
+  <text x="765" y="1045" text-anchor="middle" fill="#00d4ff" font-size="10">⚡ تصنيف سريع</text>
+  <text x="765" y="1060" text-anchor="middle" fill="#666" font-size="9">CognitiveControl</text>
+
+  <rect x="840" y="1025" width="120" height="46" rx="8" fill="#2a2a4a"/>
+  <text x="900" y="1045" text-anchor="middle" fill="#00d4ff" font-size="10">🔍 تحسين البحث</text>
+  <text x="900" y="1060" text-anchor="middle" fill="#666" font-size="9">SmartQuery</text>
+
+  <!-- Data Sources -->
+  <rect x="100" y="1090" width="180" height="70" rx="10" fill="#1a2e1a" stroke="#00e676" stroke-width="1"/>
+  <text x="190" y="1115" text-anchor="middle" fill="#00e676" font-size="14">📡 13 مصدر بيانات</text>
+  <text x="190" y="1135" text-anchor="middle" fill="#888" font-size="10">GDELT · NewsAPI · RSS · Reddit</text>
+  <text x="190" y="1150" text-anchor="middle" fill="#888" font-size="10">Twitter · YouTube · Telegram</text>
+  <line x1="280" y1="1125" x2="320" y2="1125" stroke="#555" stroke-width="2"/>
+
+  <!-- Parallel Branches -->
+  <rect x="330" y="1085" width="130" height="35" rx="8" fill="#4a1a1a"/>
+  <text x="395" y="1108" text-anchor="middle" fill="#ff6b6b" font-size="11">📊 DCFT Engine</text>
+  <text x="395" y="1123" text-anchor="middle" fill="#666" font-size="9">GMI / CFI / HRI</text>
+
+  <rect x="475" y="1085" width="110" height="35" rx="8" fill="#1a1a4a"/>
+  <text x="530" y="1108" text-anchor="middle" fill="#00d4ff" font-size="11">🧠 Emotion</text>
+
+  <rect x="600" y="1085" width="110" height="35" rx="8" fill="#1a1a4a"/>
+  <text x="655" y="1108" text-anchor="middle" fill="#00d4ff" font-size="11">🔗 Causal</text>
+
+  <rect x="725" y="1085" width="110" height="35" rx="8" fill="#1a1a4a"/>
+  <text x="780" y="1108" text-anchor="middle" fill="#00d4ff" font-size="11">📈 Prediction</text>
+
+  <rect x="850" y="1085" width="110" height="35" rx="8" fill="#1a1a4a"/>
+  <text x="905" y="1108" text-anchor="middle" fill="#00d4ff" font-size="11">📚 RAG</text>
+
+  <!-- Post-processing -->
+  <rect x="100" y="1180" width="180" height="50" rx="10" fill="#2a2a1a" stroke="#ffd700" stroke-width="1"/>
+  <text x="190" y="1205" text-anchor="middle" fill="#ffd700" font-size="11">🛡️ تحليل لاحق</text>
+  <text x="190" y="1220" text-anchor="middle" fill="#888" font-size="9">Consistency + Context</text>
+
+  <rect x="310" y="1180" width="180" height="50" rx="10" fill="#2a2a1a" stroke="#ffd700" stroke-width="1"/>
+  <text x="400" y="1205" text-anchor="middle" fill="#ffd700" font-size="11">🧠 معرفة بشرية</text>
+  <text x="400" y="1220" text-anchor="middle" fill="#888" font-size="9">HumanCognitive · Meta</text>
+
+  <rect x="520" y="1180" width="180" height="50" rx="10" fill="#2a2a1a" stroke="#ffd700" stroke-width="1"/>
+  <text x="610" y="1205" text-anchor="middle" fill="#ffd700" font-size="11">📚 أبحاث علمية</text>
+  <text x="610" y="1220" text-anchor="middle" fill="#888" font-size="9">PubMed · arXiv</text>
+
+  <rect x="730" y="1180" width="180" height="50" rx="10" fill="#2a2a1a" stroke="#ffd700" stroke-width="1"/>
+  <text x="820" y="1205" text-anchor="middle" fill="#ffd700" font-size="11">🤔 استبيان تفاعلي</text>
+  <text x="820" y="1220" text-anchor="middle" fill="#888" font-size="9">سؤال واحد فقط</text>
+
+  <!-- Output -->
+  <rect x="950" y="1100" width="160" height="100" rx="16" fill="url(#g1)" opacity="0.9"/>
+  <text x="1030" y="1135" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">✅ الرد</text>
+  <text x="1030" y="1158" text-anchor="middle" fill="#ddd" font-size="11">تحليل + مشاعر</text>
+  <text x="1030" y="1175" text-anchor="middle" fill="#ddd" font-size="11">+ أبحاث</text>
+  <text x="1030" y="1192" text-anchor="middle" fill="#ddd" font-size="11">+ استبيان</text>
+
+  <!-- ==================== SECTION 4: DATA SOURCES ==================== -->
+  <text x="50" y="1330" fill="#ff6b6b" font-size="20" font-weight="bold">4️⃣  13 DATA SOURCES — Parallel Collection</text>
+  <line x1="50" y1="1345" x2="1150" y2="1345" stroke="#333" stroke-width="1"/>
+
+  <rect x="50" y="1355" width="1100" height="210" rx="16" fill="#1a1a2e" stroke="#333" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- News Sources -->
+  <text x="100" y="1385" fill="#ff6b6b" font-size="14" font-weight="bold">📰 NEWS (7)</text>
+  <rect x="100" y="1395" width="90" height="28" rx="6" fill="#2a1a1a"/><text x="145" y="1414" text-anchor="middle" fill="#ff6b6b" font-size="10">GDELT</text>
+  <rect x="200" y="1395" width="90" height="28" rx="6" fill="#2a1a1a"/><text x="245" y="1414" text-anchor="middle" fill="#ff6b6b" font-size="10">NewsAPI</text>
+  <rect x="300" y="1395" width="90" height="28" rx="6" fill="#2a1a1a"/><text x="345" y="1414" text-anchor="middle" fill="#ff6b6b" font-size="10">BBC RSS</text>
+  <rect x="400" y="1395" width="90" height="28" rx="6" fill="#2a1a1a"/><text x="445" y="1414" text-anchor="middle" fill="#ff6b6b" font-size="10">Reuters</text>
+  <rect x="500" y="1395" width="90" height="28" rx="6" fill="#2a1a1a"/><text x="545" y="1414" text-anchor="middle" fill="#ff6b6b" font-size="10">CNN</text>
+  <rect x="600" y="1395" width="100" height="28" rx="6" fill="#2a1a1a"/><text x="650" y="1414" text-anchor="middle" fill="#ff6b6b" font-size="10">AlJazeera</text>
+  <rect x="710" y="1395" width="90" height="28" rx="6" fill="#2a1a1a"/><text x="755" y="1414" text-anchor="middle" fill="#ff6b6b" font-size="10">Scraper</text>
+
+  <!-- Social Sources -->
+  <text x="100" y="1445" fill="#00d4ff" font-size="14" font-weight="bold">💬 SOCIAL (6)</text>
+  <rect x="100" y="1455" width="90" height="28" rx="6" fill="#1a1a4a"/><text x="145" y="1474" text-anchor="middle" fill="#00d4ff" font-size="10">Reddit</text>
+  <rect x="200" y="1455" width="90" height="28" rx="6" fill="#1a1a4a"/><text x="245" y="1474" text-anchor="middle" fill="#00d4ff" font-size="10">Twitter</text>
+  <rect x="300" y="1455" width="90" height="28" rx="6" fill="#1a1a4a"/><text x="345" y="1474" text-anchor="middle" fill="#00d4ff" font-size="10">Mastodon</text>
+  <rect x="400" y="1455" width="90" height="28" rx="6" fill="#1a1a4a"/><text x="445" y="1474" text-anchor="middle" fill="#00d4ff" font-size="10">Bluesky</text>
+  <rect x="500" y="1455" width="90" height="28" rx="6" fill="#1a1a4a"/><text x="545" y="1474" text-anchor="middle" fill="#00d4ff" font-size="10">YouTube</text>
+  <rect x="600" y="1455" width="100" height="28" rx="6" fill="#1a1a4a"/><text x="650" y="1474" text-anchor="middle" fill="#00d4ff" font-size="10">Telegram</text>
+
+  <!-- Attention + Knowledge -->
+  <text x="100" y="1505" fill="#ffd700" font-size="14" font-weight="bold">📊 ATTENTION (2) · 📚 KNOWLEDGE (3)</text>
+  <rect x="100" y="1515" width="110" height="28" rx="6" fill="#2a2a1a"/><text x="155" y="1534" text-anchor="middle" fill="#ffd700" font-size="10">Google Trends</text>
+  <rect x="220" y="1515" width="110" height="28" rx="6" fill="#2a2a1a"/><text x="275" y="1534" text-anchor="middle" fill="#ffd700" font-size="10">Wikipedia</text>
+  <rect x="340" y="1515" width="90" height="28" rx="6" fill="#1a2e1a"/><text x="385" y="1534" text-anchor="middle" fill="#00e676" font-size="10">PubMed</text>
+  <rect x="440" y="1515" width="80" height="28" rx="6" fill="#1a2e1a"/><text x="480" y="1534" text-anchor="middle" fill="#00e676" font-size="10">arXiv</text>
+  <rect x="530" y="1515" width="100" height="28" rx="6" fill="#1a2e1a"/><text x="580" y="1534" text-anchor="middle" fill="#00e676" font-size="10">OpenLibrary</text>
+
+  <!-- Footer -->
+  <rect x="50" y="1560" width="1100" height="30" rx="8" fill="#0a0a15"/>
+  <text x="600" y="1580" text-anchor="middle" fill="#555" font-size="11">AmalSense v2.0 · 137 Server Files · 24 Cognitive Layers · 13 Data Sources · 17 tRPC Routers</text>
+</svg>
