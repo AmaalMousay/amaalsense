@@ -70,7 +70,7 @@ export interface EmotionBreakdown {
 }
 
 export interface EmotionGap {
-  fearGap: number;      =    =  
+  fearGap: number; //      =    =  
   hopeGap: number;
   angerGap: number;
   interpretation: string;
@@ -177,7 +177,7 @@ function getDefaultQuestions(topic: string, domain: string): SurveyQuestion[] {
     },
     {
       id: 'q5',
-      // [cleaned Arabic string]
+      text: 'هل تود إضافة أي تعليق حول الوضع الحالي؟',
       type: 'open',
     },
   ];
@@ -204,7 +204,7 @@ export function analyzeSurveyResponses(responses: SurveyResponse[]): EmotionBrea
         const normalized = (answer.value - 1) / 4; // 0 to 1
         
         if (answer.questionId === 'q1') {
-          : 1= 5=
+          // : 1= 5=
           totalFear += (1 - normalized);
           totalHope += normalized;
         } else if (answer.questionId === 'q3') {
@@ -363,8 +363,8 @@ export function calculateCalibrationGap(
   surveyData: { fear: number; hope: number; anger: number }
 ): { fear: number; hope: number; anger: number } {
   return {
-    fear: surveyData.fear - mediaData.fear,  =  
-    hope: surveyData.hope - mediaData.hope,  =  
+    fear: surveyData.fear - mediaData.fear, // =  
+    hope: surveyData.hope - mediaData.hope, // =  
     anger: surveyData.anger - mediaData.anger,
   };
 }

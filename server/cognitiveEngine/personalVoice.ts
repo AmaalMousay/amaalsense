@@ -29,23 +29,23 @@ export function generateVoiceInstructions(
   // 1. Tone Adjustment based on preference
   if (preferences.tone === 'formal') {
     promptModifier += lang === 'ar' 
-      // [cleaned Arabic string]
+      ? "استخدم لغة رسمية وموضوعية جداً كخبير استراتيجي دولي. تجنب الأسلوب العاطفي. "
       : "Use highly formal, objective language like an international strategic expert. Avoid emotional styling. ";
   } else if (preferences.tone === 'casual') {
     promptModifier += lang === 'ar'
-      // [cleaned Arabic string]
+      ? "استخدم لغة بسيطة ومحادثة مثل مستشار ودود يشرح موضوعاً ببساطة. "
       : "Use simple, conversational language like a friendly advisor explaining a topic simply. ";
   } else {
     // Analytical default
     promptModifier += lang === 'ar'
-      // [cleaned Arabic string]
+      ? "استخدم لغة تحليلية دقيقة مدعومة بالأرقام والاستنتاجات المنطقية. "
       : "Use precise analytical language backed by numbers and logical deductions. ";
   }
 
   // 2. Adjust based on Emotional Intensity (Override preferences if crisis detected)
   if (emotionalIntensity > 0.8 && ['fear', 'anger'].includes(dominantEmotion)) {
     promptModifier += lang === 'ar'
-      // [cleaned Arabic string]
+      ? "هام: الموضوع حساس للغاية وينطوي على مخاطر عالية. كن حذراً وموضوعياً وقدم تطمينات إذا توفرت. "
       : "IMPORTANT: The topic is highly sensitive with high risks. Be cautious, objective, and provide reassurances if available. ";
   }
 

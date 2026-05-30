@@ -16,7 +16,7 @@
  *   → causalInference (build cause-effect chains)
  */
 
-import type { CollectedData } from '../services/unifiedDataCollector';
+import type { CollectedData, RawDataItem } from '../services/unifiedDataCollector';
 
 import type { EventVector as ParallelSignalVector } from '../utils/graphPipeline';
 import type { PredictionReport, EmotionalDataPoint } from './predictionEngine';
@@ -189,7 +189,7 @@ function buildCausalInterpretation(
   try {
     const events = rawData.items.slice(0, 15).map((item) => ({
       id: item.id || `evt_${Date.now()}`,
-      title: item.title,
+      event: item.title,
       description: item.description,
       timestamp: new Date(item.publishedAt || Date.now()).getTime(),
       source: item.source,
@@ -198,7 +198,8 @@ function buildCausalInterpretation(
       intensity: item.intensity ?? 0.5,
     }));
     if (events.length < 2) return [];
-    return buildCausalChain(events, topicKey);
+    const chain = buildCausalChain(events, topicKey);
+    return chain ? [chain] : [];
   } catch {
     return [];
   }

@@ -438,10 +438,10 @@ export const predictionRouter = router({
             actual: { gmi: closest.gmi, cfi: closest.cfi, hri: closest.hri },
             accuracyScore,
             feedback: accuracyScore >= 70 
-              // [cleaned Arabic string]
+              ? "Good prediction"
               : accuracyScore >= 40 
-                // [cleaned Arabic string]
-                // [cleaned Arabic string]
+                ? "Fair prediction"
+                : "Poor prediction"
           },
         };
       } catch (e) {

@@ -93,8 +93,8 @@ async function fetchTargetedArticle(): Promise<{ title: string; extract: string;
       return arxiv;
     }
   }
-  researcherState.source = 'Wikipedia';
-  return fetchWikipediaArticle();
+  researcherState.source = 'None';
+  return null;
 }
 
 export async function triggerAutonomousResearch(): Promise<string> {

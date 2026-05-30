@@ -82,7 +82,7 @@ export async function detectPatterns(): Promise<LearningInsight[]> {
   if (helpfulPercentage < 50) {
     insights.push({
       patternType: 'weakness',
-      // [cleaned Arabic string]
+      description: "معدل الرضا عن التحليلات منخفض (أقل من 50%)",
       evidenceCount: stats.totalFeedback,
       confidence: 80,
       suggestedAction: "translated",

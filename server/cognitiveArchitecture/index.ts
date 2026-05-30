@@ -19,8 +19,6 @@ export * from './evidenceGrounding';
 export * from './humanCognitiveLayer';
 export * from './metacognition';
 export * from './metaLearning';
-export * from './unifiedPipeline';
-
 export interface AmalSenseCognitiveLayerDefinition {
   layer: number;
   name: string;

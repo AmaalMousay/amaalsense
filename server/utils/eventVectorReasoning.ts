@@ -35,7 +35,7 @@ export async function analyzeEventVectorWithUniversalModel(
   } catch (error) {
     console.error('[Reasoning Engine] ❌ Fallback triggered due to error:', error);
     return language === 'ar'
-      // [cleaned Arabic string]
+      ? "نعتذر، المحرك يقوم بتحديث وعيه الرقمي حالياً. يرجى المحاولة لاحقاً."
       : "Apologies, the engine is updating its digital consciousness. Please try again later.";
   }
 }

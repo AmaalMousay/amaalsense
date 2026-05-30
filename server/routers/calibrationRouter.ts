@@ -72,21 +72,18 @@ export const calibrationRouter = router({
       const mood = await getGlobalMood();
 
       const mediaPerception = {
-        fear: mood.cfi / 100,
-        hope: mood.hri / 100,
-        anger: Math.max(0, 1 - mood.cfi / 100),
-        joy: Math.max(0, (mood.gmi + 100) / 200),
-        sadness: Math.max(0, 1 - (mood.gmi + 100) / 200),
-        curiosity: 0.5,
+        fear: mood.cfi,
+        hope: mood.hri,
+        anger: Math.max(0, 100 - mood.cfi),
+        confusion: 20,
+        acceptance: 20,
       };
 
       const { generateCalibrationReport } = await import('../cognitiveArchitecture/calibrationLayer');
       const report = await generateCalibrationReport(
         input.topic,
         mediaPerception,
-        [], // surveyResponses — would need a DB table
-        input.country,
-        input.domain,
+        [] // surveyResponses — would need a DB table
       );
 
       return { success: true, report };

@@ -78,18 +78,18 @@ export async function runResponseQualityCheck(
   if (emotions && dominantEmotion) {
     try {
       const input: CognitiveInput = {
-        emotions,
-        dominantEmotion,
-        intensity: headlineTitles.length > 0 ? Math.min(1, totalItems / 20) : 0.5,
-        fearLevel: emotions.fear ?? 0,
-        hopeLevel: emotions.hope ?? 0,
-        gmi: gmiValue ?? 0,
-        cfi: cfiValue,
-        hri: hriValue ?? 50,
-        newsHeadlines: headlineTitles.slice(0, 10),
+        question: effectiveQuestion,
+        interpretation: {},
+        decision: { dominantEmotion },
+        emotionData: {
+          fear: emotions.fear ?? 0,
+          hope: emotions.hope ?? 0,
+          anger: emotions.anger ?? 0,
+          gmi: gmiValue ?? 0
+        }
       };
-      const result = detectCognitivePattern(input);
-      cognitivePattern = result.pattern;
+      const result = await detectCognitivePattern(input);
+      cognitivePattern = result.primaryPattern;
       cognitiveOutput = result;
     } catch {
       // Non-critical; skip pattern detection on failure
@@ -101,25 +101,23 @@ export async function runResponseQualityCheck(
   // ================================================================
   let groundingReport: GroundingReport | undefined;
   try {
-    const evidenceList: Evidence[] = headlineTitles.map((title, i) => ({
-      id: `ev_${i}`,
+    const evidenceList: Evidence[] = headlineTitles.map((title) => ({
+      type: 'news_headline',
       content: title,
       source: 'news',
       timestamp: new Date(),
-      credibility: 0.7,
       relevance: 0.8,
     }));
 
-    groundingReport = EvidenceGrounding.groundStatements(
-      conversationId,
-      [finalResponse.slice(0, 200)],
-      evidenceList,
-      effectiveQuestion,
+    const result = EvidenceGrounding.groundResponse(
+      finalResponse,
+      evidenceList
     );
+    groundingReport = result.groundingReport;
 
-    if (!groundingReport.isGrounded) {
-      for (const issue of groundingReport.issues.slice(0, 2)) {
-        errors.push(`[Evidence] ${issue}`);
+    if (groundingReport.groundingScore < 0.5) {
+      for (const issue of groundingReport.weaklyGroundedClaims.slice(0, 2)) {
+        errors.push(`[Evidence] Weakly grounded: ${issue}`);
       }
     }
   } catch {
@@ -131,8 +129,8 @@ export async function runResponseQualityCheck(
   // ================================================================
   let languageEnforced = false;
   try {
-    const enforced = enforceLanguage(effectiveQuestion, finalResponse);
-    languageEnforced = enforced.languageEnforced ?? false;
+    const enforced = await enforceLanguage(effectiveQuestion, finalResponse);
+    languageEnforced = enforced.translationNeeded;
   } catch {
     // Non-critical; response already in correct language most of the time
   }
@@ -185,19 +183,19 @@ export async function runResponseQualityCheck(
   // ================================================================
   try {
     longTermMemory = addToLongTermMemory(longTermMemory, {
-      id: `resp_${Date.now()}`,
       domain: countryName,
       content: finalResponse.slice(0, 500),
-      confidence: metacognitiveAssessment.overallConfidence,
-      pattern: cognitivePattern ?? 'general',
+      emotionalVector: {
+        fear: emotions?.fear || 0,
+        hope: emotions?.hope || 0,
+        anger: emotions?.anger || 0,
+        mood: gmiValue || 0,
+      },
       timestamp: Date.now(),
       metadata: {
-        gmi: gmiValue,
-        cfi: cfiValue,
-        hri: hriValue,
-        dominantEmotion,
-        sourceCount,
-        totalItems,
+        topic: effectiveQuestion,
+        confidence: metacognitiveAssessment.overallConfidence,
+        tags: [dominantEmotion || 'neutral']
       },
     });
   } catch {

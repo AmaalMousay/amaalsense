@@ -77,10 +77,10 @@ export async function enforceLanguage(
     const questionLanguage = quickDetectLanguage(question);
     console.log('[LanguageEnforcement] Question language:', questionLanguage);
 
-    //    const responseLanguage = quickDetectLanguage(response);
+    const responseLanguage = quickDetectLanguage(response);
     console.log('[LanguageEnforcement] Response language:', responseLanguage);
 
-    //      let enforcedResponse = response;
+    let enforcedResponse = response;
     let translationNeeded = false;
 
     if (questionLanguage !== responseLanguage) {

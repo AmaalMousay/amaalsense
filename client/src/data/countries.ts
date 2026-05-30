@@ -5,7 +5,7 @@
 export interface Country {
   code: string;
   flag: string;
-  nameAr: string;
+  nameAr?: string;
   nameEn: string;
   region: string;
 }

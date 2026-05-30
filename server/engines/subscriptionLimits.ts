@@ -51,7 +51,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
     price: 0,
     priceLabel: '$0/month',
     description: 'Perfect for individuals exploring collective emotion analysis',
-    // [cleaned Arabic string]
+    descriptionAr: 'مثالي للأفراد لاستكشاف تحليل المشاعر الجماعية',
     limits: {
       dailyAnalyses: 50,
       dailyApiCalls: 0,
@@ -77,7 +77,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTier, TierInfo> = {
     price: 49,
     priceLabel: '$49/month',
     description: 'For researchers and small teams needing deeper insights',
-    // [cleaned Arabic string]
+    descriptionAr: 'للباحثين والفرق الصغيرة التي تحتاج إلى رؤى أعمق',
     popular: true,
     limits: {
       dailyAnalyses: 500,

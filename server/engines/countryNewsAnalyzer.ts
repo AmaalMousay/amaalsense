@@ -49,7 +49,7 @@ export interface CountryAnalysis {
 
 interface CountryMeta {
   nameEn: string;
-  nameAr: string;
+  nameAr?: string;
   searchTerms: string[];
 }
 
@@ -146,7 +146,6 @@ export async function analyzeCountry(countryCode: string): Promise<CountryAnalys
   const result: CountryAnalysis = {
     countryCode,
     countryName: meta.nameEn,
-    countryNameAr: meta.nameAr,
     gmi: ctx.dcft.indices.gmi,
     cfi: ctx.dcft.indices.cfi,
     hri: ctx.dcft.indices.hri,

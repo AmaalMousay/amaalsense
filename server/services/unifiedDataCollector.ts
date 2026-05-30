@@ -22,8 +22,6 @@ import { fetchAllMajorNews } from './majorNewsRssService';
 import { fetchMastodonPosts, fetchBlueskyPosts, fetchYouTubeComments, fetchTelegramPosts } from './socialMediaService';
 import { fetchGlobalTrends, fetchCountryTrends, trendToRawDataItem } from './googleTrendsService';
 import { fetchTopPageViews, wikiToRawDataItems } from './wikipediaService';
-import { fetchAllMajorNews } from './majorNewsRssService';
-import { fetchMastodonPosts, fetchBlueskyPosts, fetchYouTubeComments, fetchTelegramPosts } from './socialMediaService';
 import { searchGDELT, searchGDELTByCountry } from './gdeltService';
 import { searchNewsAPI, getTopHeadlinesByCountry } from './newsApiService';
 
@@ -370,7 +368,7 @@ async function collectFromTelegram(query: string): Promise<RawDataItem[]> {
 
 async function collectFromReddit(query: string): Promise<RawDataItem[]> {
   try {
-    const posts = await fetchRedditPosts(query);
+    const posts = await fetchRedditPosts({ query, limit: 15 });
     return (posts || []).map((p: any) => ({
       id: genId(),
       timestamp: new Date(p.created_utc || Date.now()).getTime(),

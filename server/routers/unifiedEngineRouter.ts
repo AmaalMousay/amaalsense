@@ -120,34 +120,7 @@ export const unifiedEngineRouter = router({
         isRealData: false,
         confidence: 0,
       };
-      /**
-   * GET COUNTRY ANALYSIS: Full analysis for a country (when clicking on map)
-   */
-  getCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await analyzeCountry(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * QUICK COUNTRY ANALYSIS: Lightweight indices for map coloring
-   */
-  getQuickCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await quickCountryAnalysis(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * GET COUNTRY META: Metadata for all countries
-   */
-  getAllCountriesMeta: publicProcedure.query(async () => {
-    const { getAllCountryCodes } = await import('../engines/countryNewsAnalyzer');
-    return getAllCountryCodes();
-  }),
-});
+    });
   }),
 
   /**
@@ -601,34 +574,7 @@ export const unifiedEngineRouter = router({
         await createEmotionIndex({
           gmi: mood.gmi, cfi: mood.cfi, hri: mood.hri,
           confidence: Math.round(mood.confidence),
-          /**
-   * GET COUNTRY ANALYSIS: Full analysis for a country (when clicking on map)
-   */
-  getCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await analyzeCountry(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * QUICK COUNTRY ANALYSIS: Lightweight indices for map coloring
-   */
-  getQuickCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await quickCountryAnalysis(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * GET COUNTRY META: Metadata for all countries
-   */
-  getAllCountriesMeta: publicProcedure.query(async () => {
-    const { getAllCountryCodes } = await import('../engines/countryNewsAnalyzer');
-    return getAllCountryCodes();
-  }),
-});
+        });
         indices = await getLatestEmotionIndices();
       } catch (e) {
         console.error('[Engine] Failed to generate indices:', e);
@@ -866,34 +812,7 @@ export const unifiedEngineRouter = router({
       emotionStats[emotion] = (emotionStats[emotion] || 0) + 1;
       const day = new Date(a.timestamp).toISOString().split('T')[0];
       dailyCounts[day] = (dailyCounts[day] || 0) + 1;
-      /**
-   * GET COUNTRY ANALYSIS: Full analysis for a country (when clicking on map)
-   */
-  getCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await analyzeCountry(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * QUICK COUNTRY ANALYSIS: Lightweight indices for map coloring
-   */
-  getQuickCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await quickCountryAnalysis(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * GET COUNTRY META: Metadata for all countries
-   */
-  getAllCountriesMeta: publicProcedure.query(async () => {
-    const { getAllCountryCodes } = await import('../engines/countryNewsAnalyzer');
-    return getAllCountryCodes();
-  }),
-});
+    });
 
     return {
       totalAnalyses: recentAnalyses.length,
@@ -1021,34 +940,7 @@ export const unifiedEngineRouter = router({
     }))
     .query(async ({ input }) => {
       const { collectCountryData } = await import('../services/unifiedDataCollector');
-      const analyzeEmotions = (text: string): Record<string, number> => ({ joy: Math.random(), fear: Math.random(), anger: Math.random(), sadness: Math.random(), hope: Math.random(), neutral: Math.random()   /**
-   * GET COUNTRY ANALYSIS: Full analysis for a country (when clicking on map)
-   */
-  getCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await analyzeCountry(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * QUICK COUNTRY ANALYSIS: Lightweight indices for map coloring
-   */
-  getQuickCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await quickCountryAnalysis(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * GET COUNTRY META: Metadata for all countries
-   */
-  getAllCountriesMeta: publicProcedure.query(async () => {
-    const { getAllCountryCodes } = await import('../engines/countryNewsAnalyzer');
-    return getAllCountryCodes();
-  }),
-});
+      const analyzeEmotions = (text: string): Record<string, number> => ({ joy: Math.random(), fear: Math.random(), anger: Math.random(), sadness: Math.random(), hope: Math.random(), neutral: Math.random() });
       const targetCountries = input.countryCode === 'all' 
         ? PRIORITY_COUNTRIES.slice(0, 4) 
         : PRIORITY_COUNTRIES.filter(c => c.code === input.countryCode);
@@ -1084,34 +976,7 @@ export const unifiedEngineRouter = router({
             timestamp: news.publishedAt,
             dominantEmotion: dominantEmotion === 'anger' ? "translated" : dominantEmotion === 'fear' ? "translated" : dominantEmotion === 'hope' ? "translated" : dominantEmotion === 'joy' ? "translated" : "translated",
             engagementScore: Math.round(Math.random() * 40) + 60,
-            /**
-   * GET COUNTRY ANALYSIS: Full analysis for a country (when clicking on map)
-   */
-  getCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await analyzeCountry(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * QUICK COUNTRY ANALYSIS: Lightweight indices for map coloring
-   */
-  getQuickCountryAnalysis: publicProcedure
-    .input(z.object({ countryCode: z.string().length(2) }))
-    .query(async ({ input }) => {
-      const result = await quickCountryAnalysis(input.countryCode);
-      return { success: true, data: result };
-    }),
-
-  /**
-   * GET COUNTRY META: Metadata for all countries
-   */
-  getAllCountriesMeta: publicProcedure.query(async () => {
-    const { getAllCountryCodes } = await import('../engines/countryNewsAnalyzer');
-    return getAllCountryCodes();
-  }),
-});
+          });
         }
       }
 

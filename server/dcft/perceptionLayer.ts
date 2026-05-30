@@ -458,18 +458,16 @@ function identifyRootCause(question: string, data: any): string {
  */
 function analyzeCollectiveConsciousness(data: any): string {
   const gmi = data.gmi || 0;
-  const cfi = data.cfi || 50;
-  const hri = data.hri || 50;
   
   if (gmi < -50) {
-    // [cleaned Arabic string]
+    return "سلبية عالية وتشاؤم";
   }
   
   if (gmi > 50) {
-    // [cleaned Arabic string]
+    return "إيجابية عالية وتفاؤل";
   }
   
-  // [cleaned Arabic string]
+  return "محايد";
 }
 
 /**

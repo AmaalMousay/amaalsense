@@ -244,9 +244,7 @@ function earlyResponse(
     analytics: { emotions: {}, dominantEmotion: 'neutral', confidence: 90 },
     dcft: { result: null, indices: { gmi: 0, cfi: 0, hri: 0 }, alertLevel: 'normal' },
     generation: { response, suggestions: [], languageEnforced: true },
-    executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [
-        { layer: 'CognitiveControl', pathway: pathwayDecision.pathway, type: pathwayDecision.type },
-        { layer: 'DialogicalConsciousness', phase: dialogueCtx.conversationPhase, coherence: dialogueCtx.coherenceScore },], parallelGroups: groups, errors },
+    executionMetrics: { totalDurationMs: Date.now() - startTime, layerTraces: [], parallelGroups: groups, errors },
     status: 'completed',
   };
 }
