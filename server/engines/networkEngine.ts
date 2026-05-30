@@ -296,7 +296,11 @@ function saveToLearningMemory(ctx: NetworkContext) {
 export async function analyzeForMap(query: string, userId = 'system') { return executeNetworkEngine(userId, query); }
 export async function analyzeForWeather(code: string, name: string, userId = 'system') { return executeNetworkEngine(userId, `Weather and mood in ${name}`, 'en'); }
 export async function analyzeForCountryDetail(code: string, name: string, _ai = false, lang = 'ar', userId = 'system') { return executeNetworkEngine(userId, `Detailed analysis of ${name}`, lang); }
-export async function analyzeForSmartAnalysis(query: string, userId = 'system') { return executeNetworkEngine(userId, query); }
+export async function analyzeForSmartAnalysis(query: string, userId = 'system', _language = 'ar', model = 'general') { 
+    // Model persona is used in responseBuilder LLM prompt
+    const ctx = await executeNetworkEngine(userId, query, _language);
+    return ctx;
+  }
 export async function analyzeForSmartAnalysisV2(query: string, userId = 'system') { return executeNetworkEngine(userId, query); }
 export async function analyzeCountriesBatch(countries: string[], userId = 'system') { return Promise.all(countries.map((c) => executeNetworkEngine(userId, c))); }
 

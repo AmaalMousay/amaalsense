@@ -192,9 +192,10 @@ export const unifiedEngineRouter = router({
       query: z.string().min(1).max(500),
       language: z.string().default('ar'),
       conversationId: z.string().optional(),
+      model: z.enum(['general', 'trader', 'journalist', 'researcher', 'decision_maker']).default('general'),
     }))
     .mutation(async ({ input }) => {
-      return await analyzeForSmartAnalysis(input.query, 'system');
+      return await analyzeForSmartAnalysis(input.query, 'system', input.language, input.model);
     }),
 
   /**

@@ -170,7 +170,7 @@ export async function analyzeForCountryDetail(
   };
 }
 
-export async function analyzeForSmartAnalysis(query: string, language = 'ar'): Promise<SmartAnalysisResult> {
+export async function analyzeForSmartAnalysis(query: string, language = 'ar', model = 'general'): Promise<SmartAnalysisResult> {
   const ctx = await executeNetworkEngine('system', query, language);
   const ev = ctx.collection.eventVector;
   return {

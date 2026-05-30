@@ -38,6 +38,7 @@ export default function Chat() {
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentConversationId, setCurrentConversationId] = useState<number | undefined>(undefined);
+  const [selectedModel, setSelectedModel] = useState<string>('general');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-trigger if topic is passed in URL (from Omni-Bar)
@@ -156,6 +157,7 @@ export default function Chat() {
         query: userInput,
         language: 'ar',
         conversationId: convId,
+        model: selectedModel,
       });
       const result = resultRaw as any;
 
@@ -371,6 +373,31 @@ export default function Chat() {
               <Download className="w-5 h-5 text-gray-400" />
             </button>
           </div>
+        </div>
+
+        {/* Model Selector */}
+        <div className="flex items-center justify-center gap-2 px-4 py-2 border-b border-white/5 bg-[#0d1520]">
+          <span className="text-xs text-gray-500 mr-1">Model:</span>
+          {[
+            { id: 'general', label: '🧑‍💼 General', desc: 'General analysis' },
+            { id: 'trader', label: '📈 Trader', desc: 'Financial markets' },
+            { id: 'journalist', label: '📰 Journalist', desc: 'Factual reporting' },
+            { id: 'researcher', label: '🔬 Researcher', desc: 'Scientific depth' },
+            { id: 'decision_maker', label: '🏛️ Decision Maker', desc: 'Strategic insights' },
+          ].map((model) => (
+            <button
+              key={model.id}
+              onClick={() => setSelectedModel(model.id)}
+              className={`px-3 py-1.5 text-xs rounded-full transition-all ${
+                selectedModel === model.id
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/20'
+                  : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-gray-200'
+              }`}
+              title={model.desc}
+            >
+              {model.label}
+            </button>
+          ))}
         </div>
 
         {/* Messages */}
