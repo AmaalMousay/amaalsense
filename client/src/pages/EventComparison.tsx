@@ -36,12 +36,12 @@ function ComparisonIndexChart({ data, isRTL }: { data: any[]; isRTL: boolean }) 
 
 function ComparisonEmotionRadar({ data, isRTL }: { data: any[]; isRTL: boolean }) {
   const emotions = [
-    { key: 'joy', label: isRTL ? 'فرح' : 'Joy' },
-    { key: 'fear', label: isRTL ? 'خوف' : 'Fear' },
-    { key: 'anger', label: isRTL ? 'غضب' : 'Anger' },
-    { key: 'sadness', label: isRTL ? 'حزن' : 'Sadness' },
-    { key: 'hope', label: isRTL ? 'أمل' : 'Hope' },
-    { key: 'curiosity', label: isRTL ? 'فضول' : 'Curiosity' },
+    { key: 'joy', label: isRTL ? 'Joy' : 'Joy' },
+    { key: 'fear', label: isRTL ? 'Fear' : 'Fear' },
+    { key: 'anger', label: isRTL ? 'Anger' : 'Anger' },
+    { key: 'sadness', label: isRTL ? 'Sadness' : 'Sadness' },
+    { key: 'hope', label: isRTL ? '' : 'Hope' },
+    { key: 'curiosity', label: isRTL ? '' : 'Curiosity' },
   ];
 
   const radarData = emotions.map(em => {
@@ -139,10 +139,10 @@ export default function EventComparison() {
             <div>
               <h1 className="text-lg font-bold flex items-center gap-2">
                 <Scale className="w-5 h-5 text-primary" />
-                {isRTL ? 'مقارنة الأحداث التاريخية' : 'Historical Event Comparison'}
+                {isRTL ? '  ' : 'Historical Event Comparison'}
               </h1>
               <p className="text-xs text-muted-foreground">
-                {isRTL ? 'قارن بين 2-5 أحداث تاريخية جنباً إلى جنب' : 'Compare 2-5 historical events side by side'}
+                {isRTL ? '  2-5     ' : 'Compare 2-5 historical events side by side'}
               </p>
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function EventComparison() {
         <Card className="p-4">
           <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <Plus className="w-4 h-4" />
-            {isRTL ? 'اختر الأحداث للمقارنة (2-5)' : 'Select Events to Compare (2-5)'}
+            {isRTL ? '   (2-5)' : 'Select Events to Compare (2-5)'}
           </h3>
 
           {/* Selected events chips */}
@@ -181,7 +181,7 @@ export default function EventComparison() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder={isRTL ? 'ابحث عن حدث لإضافته...' : 'Search for an event to add...'}
+                placeholder={isRTL ? '   ...' : 'Search for an event to add...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
@@ -214,7 +214,7 @@ export default function EventComparison() {
           {selectedEvents.length < 2 && (
             <p className="text-xs text-muted-foreground mt-2">
               {isRTL
-                ? `اختر ${2 - selectedEvents.length} حدث/أحداث إضافية على الأقل للبدء بالمقارنة`
+                ? ` ${2 - selectedEvents.length} /     `
                 : `Select at least ${2 - selectedEvents.length} more event(s) to start comparing`}
             </p>
           )}
@@ -238,7 +238,7 @@ export default function EventComparison() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-primary" />
-                {isRTL ? 'مقارنة المؤشرات' : 'Index Comparison'}
+                {isRTL ? ' ' : 'Index Comparison'}
               </h3>
               <ComparisonIndexChart data={indexChartData} isRTL={isRTL} />
             </Card>
@@ -247,7 +247,7 @@ export default function EventComparison() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <Heart className="w-4 h-4 text-pink-500" />
-                {isRTL ? 'مقارنة الأبعاد العاطفية' : 'Emotional Dimensions Comparison'}
+                {isRTL ? '  ' : 'Emotional Dimensions Comparison'}
               </h3>
               <ComparisonEmotionRadar data={comparisonData.comparison.emotions} isRTL={isRTL} />
             </Card>
@@ -256,13 +256,13 @@ export default function EventComparison() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-orange-500" />
-                {isRTL ? 'مقارنة التأثيرات' : 'Impact Comparison'}
+                {isRTL ? ' Impact' : 'Impact Comparison'}
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left p-2 font-semibold">{isRTL ? 'النوع' : 'Type'}</th>
+                      <th className="text-left p-2 font-semibold">{isRTL ? '' : 'Type'}</th>
                       {comparisonData.comparison.impacts.map((imp: any, i: number) => (
                         <th key={imp.name} className="text-left p-2 font-semibold" style={{ color: EVENT_COLORS[i] }}>
                           {imp.name.length > 20 ? imp.name.substring(0, 20) + '...' : imp.name}
@@ -274,7 +274,7 @@ export default function EventComparison() {
                     <tr className="border-b">
                       <td className="p-2 font-medium flex items-center gap-1">
                         <Building2 className="w-3 h-3 text-blue-500" />
-                        {isRTL ? 'سياسي' : 'Political'}
+                        {isRTL ? '' : 'Political'}
                       </td>
                       {comparisonData.comparison.impacts.map((imp: any) => (
                         <td key={imp.name + 'pol'} className="p-2 text-muted-foreground">{imp.political}</td>
@@ -283,7 +283,7 @@ export default function EventComparison() {
                     <tr className="border-b">
                       <td className="p-2 font-medium flex items-center gap-1">
                         <DollarSign className="w-3 h-3 text-orange-500" />
-                        {isRTL ? 'اقتصادي' : 'Economic'}
+                        {isRTL ? '' : 'Economic'}
                       </td>
                       {comparisonData.comparison.impacts.map((imp: any) => (
                         <td key={imp.name + 'eco'} className="p-2 text-muted-foreground">{imp.economic}</td>
@@ -292,7 +292,7 @@ export default function EventComparison() {
                     <tr>
                       <td className="p-2 font-medium flex items-center gap-1">
                         <Users className="w-3 h-3 text-purple-500" />
-                        {isRTL ? 'اجتماعي' : 'Social'}
+                        {isRTL ? '' : 'Social'}
                       </td>
                       {comparisonData.comparison.impacts.map((imp: any) => (
                         <td key={imp.name + 'soc'} className="p-2 text-muted-foreground">{imp.social}</td>
@@ -307,13 +307,13 @@ export default function EventComparison() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-green-500" />
-                {isRTL ? 'مقارنة النتائج' : 'Outcomes Comparison'}
+                {isRTL ? ' ' : 'Outcomes Comparison'}
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left p-2 font-semibold">{isRTL ? 'المدى' : 'Term'}</th>
+                      <th className="text-left p-2 font-semibold">{isRTL ? '' : 'Term'}</th>
                       {comparisonData.comparison.outcomes.map((out: any, i: number) => (
                         <th key={out.name} className="text-left p-2 font-semibold" style={{ color: EVENT_COLORS[i] }}>
                           {out.name.length > 20 ? out.name.substring(0, 20) + '...' : out.name}
@@ -323,19 +323,19 @@ export default function EventComparison() {
                   </thead>
                   <tbody>
                     <tr className="border-b">
-                      <td className="p-2 font-medium text-orange-500">{isRTL ? 'قصير' : 'Short'}</td>
+                      <td className="p-2 font-medium text-orange-500">{isRTL ? '' : 'Short'}</td>
                       {comparisonData.comparison.outcomes.map((out: any) => (
                         <td key={out.name + 'st'} className="p-2 text-muted-foreground">{out.shortTerm}</td>
                       ))}
                     </tr>
                     <tr className="border-b">
-                      <td className="p-2 font-medium text-blue-500">{isRTL ? 'متوسط' : 'Medium'}</td>
+                      <td className="p-2 font-medium text-blue-500">{isRTL ? '' : 'Medium'}</td>
                       {comparisonData.comparison.outcomes.map((out: any) => (
                         <td key={out.name + 'mt'} className="p-2 text-muted-foreground">{out.mediumTerm}</td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="p-2 font-medium text-green-500">{isRTL ? 'طويل' : 'Long'}</td>
+                      <td className="p-2 font-medium text-green-500">{isRTL ? '' : 'Long'}</td>
                       {comparisonData.comparison.outcomes.map((out: any) => (
                         <td key={out.name + 'lt'} className="p-2 text-muted-foreground">{out.longTerm}</td>
                       ))}
@@ -352,10 +352,10 @@ export default function EventComparison() {
           <Card className="p-12 text-center">
             <Scale className="w-12 h-12 mx-auto text-muted-foreground/30 mb-3" />
             <h3 className="text-lg font-semibold mb-2">
-              {isRTL ? 'لم يتم العثور على بيانات كافية' : 'Not Enough Data Found'}
+              {isRTL ? '     ' : 'Not Enough Data Found'}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {isRTL ? 'تأكد من اختيار أحداث موجودة في قاعدة البيانات' : 'Make sure selected events exist in the database'}
+              {isRTL ? '       ' : 'Make sure selected events exist in the database'}
             </p>
           </Card>
         )}

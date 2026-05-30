@@ -1,5 +1,4 @@
 /**
- * مكونات عرض ميزات الذكاء الإنساني
  * Human-like AI Display Components
  */
 
@@ -40,29 +39,29 @@ export function ContextualUnderstandingDisplay({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
           <Brain className="h-4 w-4 text-blue-500" />
-          فهم السياق
+           
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="text-xs text-muted-foreground">
-          <p className="mb-2 font-semibold">رؤى السياق:</p>
+          <p className="mb-2 font-semibold"> :</p>
           <p className="rounded bg-background/50 p-2">{insights}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div>
-            <p className="font-semibold text-foreground">المنطقة</p>
+            <p className="font-semibold text-foreground">Region</p>
             <Badge variant="outline">{context.culturalContext.region}</Badge>
           </div>
           <div>
-            <p className="font-semibold text-foreground">اللغة</p>
+            <p className="font-semibold text-foreground">Language</p>
             <Badge variant="outline">{context.culturalContext.language}</Badge>
           </div>
         </div>
 
         {context.culturalContext.culturalNorms.length > 0 && (
           <div className="text-xs">
-            <p className="mb-1 font-semibold text-foreground">المعايير الثقافية</p>
+            <p className="mb-1 font-semibold text-foreground"> </p>
             <div className="flex flex-wrap gap-1">
               {context.culturalContext.culturalNorms.map((norm) => (
                 <Badge key={norm} variant="secondary" className="text-xs">
@@ -123,7 +122,7 @@ export function EmotionalIntelligenceDisplay({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
           <Heart className="h-4 w-4 text-pink-500" />
-          الذكاء العاطفي
+          Emotional Intelligence
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -149,13 +148,13 @@ export function EmotionalIntelligenceDisplay({
 
         <div className="space-y-2 border-t border-border/50 pt-2 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">النبرة</span>
+            <span className="text-muted-foreground"></span>
             <Badge variant="outline" className="capitalize">
               {adaptation.tone}
             </Badge>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">الطول</span>
+            <span className="text-muted-foreground"></span>
             <Badge variant="outline" className="capitalize">
               {adaptation.length}
             </Badge>
@@ -200,15 +199,15 @@ export function ProactiveSuggestionsDisplay({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
           <Lightbulb className="h-4 w-4 text-amber-500" />
-          اقتراحات ذكية
+           
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* أسئلة المتابعة */}
+        {/*   */}
         {suggestions.followUpQuestions.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground">
-              أسئلة متابعة مقترحة
+                
             </p>
             <div className="space-y-2">
               {suggestions.followUpQuestions.slice(0, 3).map((q, idx) => (
@@ -243,11 +242,11 @@ export function ProactiveSuggestionsDisplay({
           </div>
         )}
 
-        {/* المواضيع ذات الصلة */}
+        {/*    */}
         {suggestions.relatedTopics.length > 0 && (
           <div className="space-y-2 border-t border-border/50 pt-2">
             <p className="text-xs font-semibold text-foreground">
-              مواضيع ذات صلة
+                
             </p>
             <div className="flex flex-wrap gap-1">
               {suggestions.relatedTopics.map((topic) => (
@@ -259,11 +258,11 @@ export function ProactiveSuggestionsDisplay({
           </div>
         )}
 
-        {/* التحذيرات المهمة */}
+        {/*   */}
         {suggestions.importantWarnings.length > 0 && (
           <div className="space-y-2 border-t border-border/50 pt-2">
             <p className="text-xs font-semibold text-foreground">
-              تحذيرات مهمة
+               
             </p>
             <div className="space-y-1">
               {suggestions.importantWarnings.map((warning, idx) => (
@@ -315,7 +314,7 @@ export function UncertaintyAcknowledgmentDisplay({
         <CardTitle className="flex items-center justify-between text-sm">
           <span className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-orange-500" />
-            مستوى الثقة
+             Confidence
           </span>
           <Badge className={confidenceColor}>{confidence}%</Badge>
         </CardTitle>
@@ -330,7 +329,7 @@ export function UncertaintyAcknowledgmentDisplay({
         {alternatives.length > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground">
-              بدائل ممكنة
+               
             </p>
             <ul className="space-y-1 text-xs text-muted-foreground">
               {alternatives.map((alt, idx) => (
@@ -346,7 +345,7 @@ export function UncertaintyAcknowledgmentDisplay({
         {missingInformation.length > 0 && (
           <div className="space-y-2 border-t border-border/50 pt-2">
             <p className="text-xs font-semibold text-foreground">
-              معلومات مفقودة
+               
             </p>
             <ul className="space-y-1 text-xs text-muted-foreground">
               {missingInformation.map((info, idx) => (
@@ -362,7 +361,7 @@ export function UncertaintyAcknowledgmentDisplay({
         {recommendedActions.length > 0 && (
           <div className="space-y-2 border-t border-border/50 pt-2">
             <p className="text-xs font-semibold text-foreground">
-              إجراءات موصى بها
+                
             </p>
             <div className="space-y-1">
               {recommendedActions.map((action, idx) => (
@@ -413,7 +412,7 @@ export function EthicalAssessmentDisplay({
         <CardTitle className="flex items-center justify-between text-sm">
           <span className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-purple-500" />
-            التقييم الأخلاقي
+             
           </span>
           {assessment.isSensitive && (
             <Badge className={riskColors[assessment.riskLevel]}>
@@ -425,13 +424,13 @@ export function EthicalAssessmentDisplay({
       <CardContent className="space-y-3">
         {assessment.isSensitive && (
           <div className="rounded bg-background/50 p-2 text-xs text-muted-foreground">
-            ⚖️ هذا الموضوع يتطلب دراسة أخلاقية متوازنة
+            ⚖️  Topic    
           </div>
         )}
 
         {assessment.disclaimers.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs font-semibold text-foreground">تحذيرات</p>
+            <p className="text-xs font-semibold text-foreground"></p>
             <ul className="space-y-1 text-xs text-muted-foreground">
               {assessment.disclaimers.map((disc, idx) => (
                 <li key={idx} className="flex gap-2">
@@ -446,7 +445,7 @@ export function EthicalAssessmentDisplay({
         {assessment.balancedPerspectives.length > 0 && (
           <div className="space-y-2 border-t border-border/50 pt-2">
             <p className="text-xs font-semibold text-foreground">
-              وجهات نظر متوازنة
+                
             </p>
             <ul className="space-y-1 text-xs text-muted-foreground">
               {assessment.balancedPerspectives.map((persp, idx) => (
@@ -461,7 +460,7 @@ export function EthicalAssessmentDisplay({
 
         {assessment.potentialHarms.length > 0 && (
           <div className="space-y-2 border-t border-border/50 pt-2">
-            <p className="text-xs font-semibold text-red-700">أضرار محتملة</p>
+            <p className="text-xs font-semibold text-red-700"> </p>
             <ul className="space-y-1 text-xs text-red-600">
               {assessment.potentialHarms.map((harm, idx) => (
                 <li key={idx} className="flex gap-2">
@@ -475,7 +474,7 @@ export function EthicalAssessmentDisplay({
 
         {assessment.potentialBenefits.length > 0 && (
           <div className="space-y-2 border-t border-border/50 pt-2">
-            <p className="text-xs font-semibold text-green-700">فوائد محتملة</p>
+            <p className="text-xs font-semibold text-green-700"> </p>
             <ul className="space-y-1 text-xs text-green-600">
               {assessment.potentialBenefits.map((benefit, idx) => (
                 <li key={idx} className="flex gap-2">
@@ -607,11 +606,11 @@ export function ComprehensiveHumanLikeAIDisplay({
       {/* Quality Metrics */}
       <Card className="border-slate-500/20 bg-slate-500/5">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xs">مؤشرات الجودة</CardTitle>
+          <CardTitle className="text-xs"> </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">جودة الإجابة</span>
+            <span className="text-muted-foreground"> </span>
             <div className="flex items-center gap-2">
               <div className="h-2 w-24 rounded-full bg-background/50">
                 <div
@@ -623,7 +622,7 @@ export function ComprehensiveHumanLikeAIDisplay({
             </div>
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">مستوى الثقة</span>
+            <span className="text-muted-foreground"> Confidence</span>
             <div className="flex items-center gap-2">
               <div className="h-2 w-24 rounded-full bg-background/50">
                 <div

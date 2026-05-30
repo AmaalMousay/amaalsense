@@ -1,10 +1,6 @@
 /**
  * HOW IT WORKS COMPONENT
  * 
- * شرح آلية العمل
- * - المحركات الأساسية
- * - خط سير البيانات
- * - المؤشرات والحسابات
  */
 
 import React, { useState } from 'react';
@@ -41,9 +37,9 @@ export function HowItWorks({
     {
       id: 'transformer',
       name: 'Transformer Engine',
-      nameAr: 'محرك المحول',
+      nameAr: ' ',
       description: 'Deep learning model that understands context and semantics from text data',
-      descriptionAr: 'نموذج التعلم العميق الذي يفهم السياق والمعاني من بيانات النصوص',
+      descriptionAr: '         ',
       icon: <Brain className="w-6 h-6" />,
       inputs: ['Raw text data', 'Social media posts', 'News articles'],
       outputs: ['Semantic embeddings', 'Context vectors', 'Topic classification'],
@@ -52,9 +48,9 @@ export function HowItWorks({
     {
       id: 'vader',
       name: 'VADER Sentiment',
-      nameAr: 'تحليل VADER',
+      nameAr: 'Analysis VADER',
       description: 'Lexicon-based sentiment analysis optimized for social media',
-      descriptionAr: 'تحليل المشاعر القائم على القاموس المحسّن لوسائل التواصل الاجتماعي',
+      descriptionAr: 'Analysis Emotions       ',
       icon: <Zap className="w-6 h-6" />,
       inputs: ['Processed text', 'Emotional keywords', 'Context markers'],
       outputs: ['Sentiment scores', 'Emotion labels', 'Intensity levels'],
@@ -63,9 +59,9 @@ export function HowItWorks({
     {
       id: 'temporal',
       name: 'Temporal Analysis',
-      nameAr: 'التحليل الزمني',
+      nameAr: 'Analysis ',
       description: 'Tracks emotion trends over time and predicts future patterns',
-      descriptionAr: 'يتتبع اتجاهات العاطفة عبر الزمن ويتنبأ بالأنماط المستقبلية',
+      descriptionAr: '       ',
       icon: <TrendingUp className="w-6 h-6" />,
       inputs: ['Historical data', 'Time series', 'Event markers'],
       outputs: ['Trend analysis', 'Predictions', 'Anomalies'],
@@ -74,9 +70,9 @@ export function HowItWorks({
     {
       id: 'aggregation',
       name: 'Aggregation Engine',
-      nameAr: 'محرك التجميع',
+      nameAr: ' ',
       description: 'Combines data from multiple sources with weighted credibility scores',
-      descriptionAr: 'يجمع البيانات من مصادر متعددة مع درجات موثوقية مرجحة',
+      descriptionAr: '        ',
       icon: <Layers className="w-6 h-6" />,
       inputs: ['Multiple sources', 'Credibility scores', 'Timestamps'],
       outputs: ['Aggregated metrics', 'Confidence scores', 'Source attribution'],
@@ -85,9 +81,9 @@ export function HowItWorks({
     {
       id: 'filtering',
       name: 'Filtering & Cleaning',
-      nameAr: 'التصفية والتنظيف',
+      nameAr: ' ',
       description: 'Removes noise, spam, and irrelevant data before analysis',
-      descriptionAr: 'يزيل الضوضاء والبريد العشوائي والبيانات غير ذات الصلة قبل التحليل',
+      descriptionAr: '         Analysis',
       icon: <Filter className="w-6 h-6" />,
       inputs: ['Raw data', 'Spam filters', 'Quality metrics'],
       outputs: ['Clean data', 'Quality scores', 'Metadata'],
@@ -96,9 +92,9 @@ export function HowItWorks({
     {
       id: 'database',
       name: 'Data Storage',
-      nameAr: 'تخزين البيانات',
+      nameAr: ' ',
       description: 'Persistent storage with historical tracking and version control',
-      descriptionAr: 'التخزين الدائم مع تتبع تاريخي والتحكم في الإصدارات',
+      descriptionAr: '       ',
       icon: <Database className="w-6 h-6" />,
       inputs: ['Processed data', 'Metadata', 'Timestamps'],
       outputs: ['Historical records', 'Trends', 'Comparisons'],
@@ -110,37 +106,37 @@ export function HowItWorks({
     {
       name: 'GMI',
       fullName: 'General Mood Index',
-      fullNameAr: 'مؤشر المزاج العام',
+      fullNameAr: '  ',
       range: '-100 to +100',
       description: 'Overall emotional state of a population',
-      descriptionAr: 'الحالة العاطفية الإجمالية للسكان',
+      descriptionAr: '   ',
       formula: 'Average of all positive emotions - Average of all negative emotions'
     },
     {
       name: 'CFI',
       fullName: 'Collective Fear Index',
-      fullNameAr: 'مؤشر الخوف الجماعي',
+      fullNameAr: ' Fear ',
       range: '0 to 100',
       description: 'Measures collective anxiety and fear levels',
-      descriptionAr: 'يقيس مستويات القلق والخوف الجماعي',
+      descriptionAr: '   Fear ',
       formula: 'Fear sentiment score × Intensity × Source credibility'
     },
     {
       name: 'HRI',
       fullName: 'Hope & Resilience Index',
-      fullNameAr: 'مؤشر الأمل والمرونة',
+      fullNameAr: '  ',
       range: '0 to 100',
       description: 'Measures hope, optimism, and resilience in population',
-      descriptionAr: 'يقيس الأمل والتفاؤل والمرونة في السكان',
+      descriptionAr: '     ',
       formula: 'Hope sentiment × Resilience markers × Positive momentum'
     },
     {
       name: 'AVI',
       fullName: 'Anger Volatility Index',
-      fullNameAr: 'مؤشر تقلب الغضب',
+      fullNameAr: '  Anger',
       range: '0 to 100',
       description: 'Measures volatility and intensity of anger',
-      descriptionAr: 'يقيس تقلب وشدة الغضب',
+      descriptionAr: '   Anger',
       formula: 'Anger intensity × Change rate × Frequency'
     }
   ];
@@ -149,51 +145,51 @@ export function HowItWorks({
     {
       step: 1,
       title: 'Data Collection',
-      titleAr: 'جمع البيانات',
+      titleAr: ' ',
       description: 'Collect data from news, social media, forums, and APIs',
-      descriptionAr: 'جمع البيانات من الأخبار ووسائل التواصل والمنتديات والواجهات البرمجية'
+      descriptionAr: '        '
     },
     {
       step: 2,
       title: 'Data Cleaning',
-      titleAr: 'تنظيف البيانات',
+      titleAr: ' ',
       description: 'Remove spam, duplicates, and irrelevant content',
-      descriptionAr: 'إزالة البريد العشوائي والنسخ المكررة والمحتوى غير ذي الصلة'
+      descriptionAr: '        '
     },
     {
       step: 3,
       title: 'Processing',
-      titleAr: 'المعالجة',
+      titleAr: '',
       description: 'Apply NLP, sentiment analysis, and feature extraction',
-      descriptionAr: 'تطبيق معالجة اللغة الطبيعية وتحليل المشاعر واستخراج الميزات'
+      descriptionAr: '  Language  Analysis Emotions  Features'
     },
     {
       step: 4,
       title: 'Analysis',
-      titleAr: 'التحليل',
+      titleAr: 'Analysis',
       description: 'Run through all engines for comprehensive analysis',
-      descriptionAr: 'تشغيل جميع المحركات للحصول على تحليل شامل'
+      descriptionAr: '     Analysis '
     },
     {
       step: 5,
       title: 'Aggregation',
-      titleAr: 'التجميع',
+      titleAr: '',
       description: 'Combine results with weighted credibility scores',
-      descriptionAr: 'دمج النتائج مع درجات الموثوقية المرجحة'
+      descriptionAr: '     '
     },
     {
       step: 6,
       title: 'Storage',
-      titleAr: 'التخزين',
+      titleAr: '',
       description: 'Store in database with historical tracking',
-      descriptionAr: 'التخزين في قاعدة البيانات مع التتبع التاريخي'
+      descriptionAr: '      '
     },
     {
       step: 7,
       title: 'Visualization',
-      titleAr: 'التصور',
+      titleAr: '',
       description: 'Display results in maps, charts, and dashboards',
-      descriptionAr: 'عرض النتائج في الخرائط والرسوم البيانية لوحات التحكم'
+      descriptionAr: '       '
     }
   ];
 
@@ -202,11 +198,11 @@ export function HowItWorks({
       {/* Header */}
       <div>
         <h2 className="text-3xl font-bold text-black mb-2">
-          {isArabic ? 'كيف يعمل النظام' : 'How It Works'}
+          {isArabic ? '  ' : 'How It Works'}
         </h2>
         <p className="text-gray-600">
           {isArabic
-            ? 'فهم المحركات والخوارزميات والعمليات الأساسية'
+            ? '    '
             : 'Understand the engines, algorithms, and core processes'}
         </p>
       </div>
@@ -214,9 +210,9 @@ export function HowItWorks({
       {/* Tabs */}
       <div className="flex gap-2 border-b border-gray-200">
         {[
-          { id: 'engines', label: isArabic ? 'المحركات' : 'Engines' },
-          { id: 'flow', label: isArabic ? 'خط سير البيانات' : 'Data Flow' },
-          { id: 'indicators', label: isArabic ? 'المؤشرات' : 'Indicators' }
+          { id: 'engines', label: isArabic ? '' : 'Engines' },
+          { id: 'flow', label: isArabic ? '  ' : 'Data Flow' },
+          { id: 'indicators', label: isArabic ? '' : 'Indicators' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -268,7 +264,7 @@ export function HowItWorks({
                 <div className="mt-4 pt-4 border-t border-gray-300 space-y-3">
                   <div>
                     <p className="text-xs font-semibold text-gray-700 mb-2">
-                      {isArabic ? 'المدخلات' : 'Inputs'}
+                      {isArabic ? '' : 'Inputs'}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {engine.inputs.map((input, idx) => (
@@ -280,7 +276,7 @@ export function HowItWorks({
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-gray-700 mb-2">
-                      {isArabic ? 'المخرجات' : 'Outputs'}
+                      {isArabic ? '' : 'Outputs'}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {engine.outputs.map((output, idx) => (
@@ -344,7 +340,7 @@ export function HowItWorks({
               </p>
               <div className="p-3 bg-gray-50 rounded border border-gray-200">
                 <p className="text-xs font-semibold text-gray-700 mb-1">
-                  {isArabic ? 'الصيغة' : 'Formula'}
+                  {isArabic ? '' : 'Formula'}
                 </p>
                 <p className="text-xs text-gray-600 font-mono">
                   {indicator.formula}
@@ -358,21 +354,21 @@ export function HowItWorks({
       {/* Key Features */}
       <Card className="p-6 border-2 border-black bg-black text-white">
         <h3 className="text-lg font-bold mb-4">
-          {isArabic ? 'الميزات الرئيسية' : 'Key Features'}
+          {isArabic ? 'Features Home' : 'Key Features'}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
             {
-              title: isArabic ? 'دقة عالية' : 'High Accuracy',
-              desc: isArabic ? 'نماذج تعلم عميق متقدمة' : 'Advanced deep learning models'
+              title: isArabic ? ' ' : 'High Accuracy',
+              desc: isArabic ? '   ' : 'Advanced deep learning models'
             },
             {
-              title: isArabic ? 'تحديث فوري' : 'Real-time Updates',
-              desc: isArabic ? 'معالجة البيانات الحية' : 'Live data processing'
+              title: isArabic ? ' ' : 'Real-time Updates',
+              desc: isArabic ? '  ' : 'Live data processing'
             },
             {
-              title: isArabic ? 'موثوقية عالية' : 'High Reliability',
-              desc: isArabic ? 'درجات موثوقية مرجحة' : 'Weighted credibility scores'
+              title: isArabic ? ' ' : 'High Reliability',
+              desc: isArabic ? '  ' : 'Weighted credibility scores'
             }
           ].map((feature, idx) => (
             <div key={idx}>

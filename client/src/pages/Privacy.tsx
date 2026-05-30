@@ -19,7 +19,7 @@ export default function Privacy() {
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-accent" />
             <h1 className="text-2xl font-bold gradient-text">
-              {isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}
+              {isRTL ? ' ' : 'Privacy Policy'}
             </h1>
           </div>
           <div className="w-20" />
@@ -36,98 +36,98 @@ export default function Privacy() {
                 <div>
                   <CardTitle className="text-3xl gradient-text">Amaalsense</CardTitle>
                   <p className="text-muted-foreground">
-                    {isRTL ? 'سياسة الخصوصية وحماية البيانات' : 'Privacy Policy'}
+                    {isRTL ? '   ' : 'Privacy Policy'}
                   </p>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground">
-                {isRTL ? 'آخر تحديث: يناير 2025' : 'Last Updated: January 2025'}
+                {isRTL ? ' :  2025' : 'Last Updated: January 2025'}
               </p>
             </CardHeader>
             <CardContent className="prose prose-invert max-w-none space-y-6">
               {isRTL ? (
                 <>
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">1. مقدمة</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">1. </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      نحن في Amaalsense نلتزم بحماية خصوصيتك. توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية معلوماتك الشخصية عند استخدام منصتنا.
+                        Amaalsense   .             .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">2. المعلومات التي نجمعها</h2>
-                    <p className="text-muted-foreground leading-relaxed mb-3">نجمع الأنواع التالية من المعلومات:</p>
+                    <h2 className="text-xl font-bold text-accent mb-3">2.   </h2>
+                    <p className="text-muted-foreground leading-relaxed mb-3">    :</p>
                     <ul className="list-disc list-inside text-muted-foreground space-y-2">
-                      <li>معلومات الحساب: الاسم، البريد الإلكتروني، كلمة المرور المشفرة</li>
-                      <li>بيانات الاستخدام: النصوص المحللة، سجل البحث، تفضيلات المستخدم</li>
-                      <li>معلومات تقنية: عنوان IP، نوع المتصفح، نظام التشغيل</li>
-                      <li>ملفات تعريف الارتباط: لتحسين تجربة المستخدم</li>
+                      <li> :      </li>
+                      <li> :      </li>
+                      <li> :  IP    </li>
+                      <li>  :   </li>
                     </ul>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">3. كيف نستخدم معلوماتك</h2>
-                    <p className="text-muted-foreground leading-relaxed mb-3">نستخدم معلوماتك للأغراض التالية:</p>
+                    <h2 className="text-xl font-bold text-accent mb-3">3.   </h2>
+                    <p className="text-muted-foreground leading-relaxed mb-3">   :</p>
                     <ul className="list-disc list-inside text-muted-foreground space-y-2">
-                      <li>تقديم وتحسين خدماتنا</li>
-                      <li>تخصيص تجربتك على المنصة</li>
-                      <li>التواصل معك بشأن حسابك وتحديثات الخدمة</li>
-                      <li>تحليل أنماط الاستخدام لتحسين المنصة</li>
-                      <li>ضمان أمان المنصة ومنع الاحتيال</li>
+                      <li>  </li>
+                      <li>   </li>
+                      <li>     </li>
+                      <li>Analysis    </li>
+                      <li>    </li>
                     </ul>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">4. مشاركة البيانات</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">4.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      لا نبيع أو نؤجر معلوماتك الشخصية لأطراف ثالثة. قد نشارك البيانات مع مزودي الخدمات الموثوقين الذين يساعدوننا في تشغيل المنصة، وذلك بموجب اتفاقيات سرية صارمة.
+                             .                 .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">5. أمان البيانات</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">5.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      نستخدم تدابير أمنية متقدمة لحماية بياناتك، بما في ذلك التشفير SSL/TLS، وتخزين كلمات المرور المشفرة، والمراقبة المستمرة للأنظمة.
+                                SSL/TLS       .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">6. حقوقك</h2>
-                    <p className="text-muted-foreground leading-relaxed mb-3">لديك الحقوق التالية:</p>
+                    <h2 className="text-xl font-bold text-accent mb-3">6. </h2>
+                    <p className="text-muted-foreground leading-relaxed mb-3">  :</p>
                     <ul className="list-disc list-inside text-muted-foreground space-y-2">
-                      <li>الوصول إلى بياناتك الشخصية</li>
-                      <li>تصحيح البيانات غير الدقيقة</li>
-                      <li>حذف حسابك وبياناتك</li>
-                      <li>الاعتراض على معالجة بياناتك</li>
-                      <li>نقل بياناتك إلى خدمة أخرى</li>
+                      <li>   </li>
+                      <li>   </li>
+                      <li>Delete  </li>
+                      <li>   </li>
+                      <li>    </li>
                     </ul>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">7. ملفات تعريف الارتباط</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">7.   </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      نستخدم ملفات تعريف الارتباط لتحسين تجربتك. يمكنك التحكم في إعدادات ملفات تعريف الارتباط من خلال متصفحك، لكن تعطيلها قد يؤثر على بعض وظائف المنصة.
+                           .                  .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">8. الاحتفاظ بالبيانات</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">8.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      نحتفظ ببياناتك طالما كان حسابك نشطاً أو حسب الحاجة لتقديم الخدمات. يمكنك طلب حذف بياناتك في أي وقت.
+                                .   Delete    .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">9. التغييرات على السياسة</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">9.   </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. سنخطرك بأي تغييرات جوهرية عبر البريد الإلكتروني أو إشعار على المنصة.
+                              .           .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">10. الاتصال بنا</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">10.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      لأي استفسارات حول الخصوصية، يرجى التواصل معنا عبر: privacy@amaalsense.com
+                             : privacy@amaalsense.com
                     </p>
                   </section>
                 </>

@@ -23,21 +23,21 @@ const SEVERITY_COLORS = {
 };
 
 const CATEGORY_OPTIONS = [
-  { value: 'conflict', label: { en: 'Conflict / War', ar: 'صراع / حرب' } },
-  { value: 'economic', label: { en: 'Economic Crisis', ar: 'أزمة اقتصادية' } },
-  { value: 'political', label: { en: 'Political Change', ar: 'تغيير سياسي' } },
-  { value: 'social', label: { en: 'Social Movement', ar: 'حركة اجتماعية' } },
-  { value: 'environmental', label: { en: 'Environmental Disaster', ar: 'كارثة بيئية' } },
-  { value: 'health', label: { en: 'Health Crisis / Pandemic', ar: 'أزمة صحية / جائحة' } },
-  { value: 'technological', label: { en: 'Technological Breakthrough', ar: 'اختراق تكنولوجي' } },
-  { value: 'humanitarian', label: { en: 'Humanitarian Crisis', ar: 'أزمة إنسانية' } },
+  { value: 'conflict', label: { en: 'Conflict / War', ar: ' / ' } },
+  { value: 'economic', label: { en: 'Economic Crisis', ar: ' ' } },
+  { value: 'political', label: { en: 'Political Change', ar: ' ' } },
+  { value: 'social', label: { en: 'Social Movement', ar: ' ' } },
+  { value: 'environmental', label: { en: 'Environmental Disaster', ar: ' ' } },
+  { value: 'health', label: { en: 'Health Crisis / Pandemic', ar: '  / ' } },
+  { value: 'technological', label: { en: 'Technological Breakthrough', ar: ' ' } },
+  { value: 'humanitarian', label: { en: 'Humanitarian Crisis', ar: ' ' } },
 ];
 
 const SEVERITY_OPTIONS = [
-  { value: 'low', label: { en: 'Low', ar: 'منخفض' } },
-  { value: 'medium', label: { en: 'Medium', ar: 'متوسط' } },
-  { value: 'high', label: { en: 'High', ar: 'مرتفع' } },
-  { value: 'extreme', label: { en: 'Extreme', ar: 'شديد جداً' } },
+  { value: 'low', label: { en: 'Low', ar: '' } },
+  { value: 'medium', label: { en: 'Medium', ar: '' } },
+  { value: 'high', label: { en: 'High', ar: '' } },
+  { value: 'extreme', label: { en: 'Extreme', ar: ' ' } },
 ];
 
 function ConfidenceMeter({ confidence }: { confidence: number }) {
@@ -107,12 +107,12 @@ export default function EventPrediction() {
 
   const emotionRadarData = predictionData?.prediction?.emotionalVector
     ? [
-        { emotion: isRTL ? 'فرح' : 'Joy', value: predictionData.prediction.emotionalVector.joy },
-        { emotion: isRTL ? 'خوف' : 'Fear', value: predictionData.prediction.emotionalVector.fear },
-        { emotion: isRTL ? 'غضب' : 'Anger', value: predictionData.prediction.emotionalVector.anger },
-        { emotion: isRTL ? 'حزن' : 'Sadness', value: predictionData.prediction.emotionalVector.sadness },
-        { emotion: isRTL ? 'أمل' : 'Hope', value: predictionData.prediction.emotionalVector.hope },
-        { emotion: isRTL ? 'فضول' : 'Curiosity', value: predictionData.prediction.emotionalVector.curiosity },
+        { emotion: isRTL ? 'Joy' : 'Joy', value: predictionData.prediction.emotionalVector.joy },
+        { emotion: isRTL ? 'Fear' : 'Fear', value: predictionData.prediction.emotionalVector.fear },
+        { emotion: isRTL ? 'Anger' : 'Anger', value: predictionData.prediction.emotionalVector.anger },
+        { emotion: isRTL ? 'Sadness' : 'Sadness', value: predictionData.prediction.emotionalVector.sadness },
+        { emotion: isRTL ? '' : 'Hope', value: predictionData.prediction.emotionalVector.hope },
+        { emotion: isRTL ? '' : 'Curiosity', value: predictionData.prediction.emotionalVector.curiosity },
       ]
     : [];
 
@@ -128,10 +128,10 @@ export default function EventPrediction() {
             <div>
               <h1 className="text-lg font-bold flex items-center gap-2">
                 <Brain className="w-5 h-5 text-primary" />
-                {isRTL ? 'التنبؤ بناءً على الأنماط التاريخية' : 'Pattern-Based Prediction'}
+                {isRTL ? '    ' : 'Pattern-Based Prediction'}
               </h1>
               <p className="text-xs text-muted-foreground">
-                {isRTL ? 'تنبؤ بالتأثيرات المحتملة بناءً على 202+ حدث تاريخي' : 'Predict potential impacts based on 202+ historical events'}
+                {isRTL ? ' Impact    202+  ' : 'Predict potential impacts based on 202+ historical events'}
               </p>
             </div>
           </div>
@@ -143,21 +143,21 @@ export default function EventPrediction() {
         <Card className="p-5">
           <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
             <Target className="w-4 h-4 text-primary" />
-            {isRTL ? 'وصف الحدث المتوقع' : 'Describe the Expected Event'}
+            {isRTL ? '  ' : 'Describe the Expected Event'}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {/* Event Type */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {isRTL ? 'نوع الحدث' : 'Event Type'}
+                {isRTL ? ' ' : 'Event Type'}
               </label>
               <select
                 value={eventType}
                 onChange={(e) => { setEventType(e.target.value); setShowPrediction(false); }}
                 className="w-full px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">{isRTL ? 'اختر نوع الحدث...' : 'Select event type...'}</option>
+                <option value="">{isRTL ? '  ...' : 'Select event type...'}</option>
                 {CATEGORY_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label[isRTL ? 'ar' : 'en']}
@@ -169,7 +169,7 @@ export default function EventPrediction() {
             {/* Severity */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {isRTL ? 'شدة الحدث' : 'Event Severity'}
+                {isRTL ? ' ' : 'Event Severity'}
               </label>
               <div className="flex gap-2">
                 {SEVERITY_OPTIONS.map(opt => (
@@ -192,13 +192,13 @@ export default function EventPrediction() {
             {/* Region */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {isRTL ? 'المنطقة (اختياري)' : 'Region (optional)'}
+                {isRTL ? 'Region ()' : 'Region (optional)'}
               </label>
               <input
                 type="text"
                 value={region}
                 onChange={(e) => { setRegion(e.target.value); setShowPrediction(false); }}
-                placeholder={isRTL ? 'مثال: Libya, USA, Global...' : 'e.g., Libya, USA, Global...'}
+                placeholder={isRTL ? ': Libya, USA, Global...' : 'e.g., Libya, USA, Global...'}
                 className="w-full px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
@@ -206,13 +206,13 @@ export default function EventPrediction() {
             {/* Description */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                {isRTL ? 'وصف مختصر (اختياري)' : 'Brief Description (optional)'}
+                {isRTL ? '  ()' : 'Brief Description (optional)'}
               </label>
               <input
                 type="text"
                 value={description}
                 onChange={(e) => { setDescription(e.target.value); setShowPrediction(false); }}
-                placeholder={isRTL ? 'وصف مختصر للحدث...' : 'Brief event description...'}
+                placeholder={isRTL ? '  ...' : 'Brief event description...'}
                 className="w-full px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
@@ -225,8 +225,8 @@ export default function EventPrediction() {
           >
             <Sparkles className="w-4 h-4 mr-2" />
             {isLoading
-              ? (isRTL ? 'جاري التحليل...' : 'Analyzing...')
-              : (isRTL ? 'تنبؤ بالتأثيرات' : 'Predict Impacts')}
+              ? (isRTL ? ' Analysis...' : 'Analyzing...')
+              : (isRTL ? ' Impact' : 'Predict Impacts')}
           </Button>
         </Card>
 
@@ -237,12 +237,12 @@ export default function EventPrediction() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                 <Shield className="w-4 h-4 text-primary" />
-                {isRTL ? 'مستوى الثقة' : 'Confidence Level'}
+                {isRTL ? ' Confidence' : 'Confidence Level'}
               </h3>
               <ConfidenceMeter confidence={predictionData.confidence} />
               <p className="text-xs text-muted-foreground mt-2">
                 {isRTL
-                  ? `بناءً على تحليل ${predictionData.sampleSize} حدث تاريخي مشابه`
+                  ? `  Analysis ${predictionData.sampleSize}   `
                   : `Based on analysis of ${predictionData.sampleSize} similar historical events`}
               </p>
             </Card>
@@ -251,7 +251,7 @@ export default function EventPrediction() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-primary" />
-                {isRTL ? 'المؤشرات المتوقعة' : 'Predicted Indices'}
+                {isRTL ? ' ' : 'Predicted Indices'}
               </h3>
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="text-center p-4 rounded-lg bg-muted/30">
@@ -261,8 +261,8 @@ export default function EventPrediction() {
                   <div className="text-xs text-muted-foreground mt-1">GMI</div>
                   <div className="text-xs mt-1">
                     {predictionData.prediction.estimatedGMI >= 50
-                      ? (isRTL ? 'مزاج إيجابي' : 'Positive Mood')
-                      : (isRTL ? 'مزاج سلبي' : 'Negative Mood')}
+                      ? (isRTL ? ' ' : 'Positive Mood')
+                      : (isRTL ? ' ' : 'Negative Mood')}
                   </div>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-muted/30">
@@ -272,8 +272,8 @@ export default function EventPrediction() {
                   <div className="text-xs text-muted-foreground mt-1">CFI</div>
                   <div className="text-xs mt-1">
                     {predictionData.prediction.estimatedCFI >= 70
-                      ? (isRTL ? 'خوف مرتفع' : 'High Fear')
-                      : (isRTL ? 'خوف معتدل' : 'Moderate Fear')}
+                      ? (isRTL ? 'Fear ' : 'High Fear')
+                      : (isRTL ? 'Fear ' : 'Moderate Fear')}
                   </div>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-muted/30">
@@ -283,15 +283,15 @@ export default function EventPrediction() {
                   <div className="text-xs text-muted-foreground mt-1">HRI</div>
                   <div className="text-xs mt-1">
                     {predictionData.prediction.estimatedHRI >= 50
-                      ? (isRTL ? 'أمل مرتفع' : 'High Hope')
-                      : (isRTL ? 'أمل منخفض' : 'Low Hope')}
+                      ? (isRTL ? ' ' : 'High Hope')
+                      : (isRTL ? ' ' : 'Low Hope')}
                   </div>
                 </div>
               </div>
 
               {predictionData.prediction.gdpImpact !== 0 && (
                 <div className="text-center p-3 rounded-lg bg-muted/20 border">
-                  <span className="text-xs text-muted-foreground">{isRTL ? 'تأثير GDP المتوقع: ' : 'Expected GDP Impact: '}</span>
+                  <span className="text-xs text-muted-foreground">{isRTL ? ' GDP : ' : 'Expected GDP Impact: '}</span>
                   <span className={`text-sm font-bold ${predictionData.prediction.gdpImpact > 0 ? 'text-green-500' : 'text-red-500'}`}>
                     {predictionData.prediction.gdpImpact > 0 ? '+' : ''}{predictionData.prediction.gdpImpact}%
                   </span>
@@ -303,14 +303,14 @@ export default function EventPrediction() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <Heart className="w-4 h-4 text-pink-500" />
-                {isRTL ? 'البصمة العاطفية المتوقعة' : 'Predicted Emotional Fingerprint'}
+                {isRTL ? '  ' : 'Predicted Emotional Fingerprint'}
               </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart data={emotionRadarData}>
                   <PolarGrid strokeDasharray="3 3" />
                   <PolarAngleAxis dataKey="emotion" fontSize={11} />
                   <PolarRadiusAxis domain={[0, 100]} fontSize={10} />
-                  <Radar name={isRTL ? 'متوقع' : 'Predicted'} dataKey="value" stroke="#8D5CF6" fill="#8D5CF6" fillOpacity={0.3} strokeWidth={2} />
+                  <Radar name={isRTL ? '' : 'Predicted'} dataKey="value" stroke="#8D5CF6" fill="#8D5CF6" fillOpacity={0.3} strokeWidth={2} />
                   <Tooltip />
                 </RadarChart>
               </ResponsiveContainer>
@@ -320,25 +320,25 @@ export default function EventPrediction() {
             <div>
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-500" />
-                {isRTL ? 'السيناريوهات المحتملة' : 'Possible Scenarios'}
+                {isRTL ? ' ' : 'Possible Scenarios'}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <ScenarioCard
-                  title={isRTL ? 'أفضل سيناريو' : 'Best Case'}
+                  title={isRTL ? ' ' : 'Best Case'}
                   icon={TrendingUp}
                   scenario={predictionData.prediction.scenarios.bestCase}
                   color="#2A9D8F"
                   isRTL={isRTL}
                 />
                 <ScenarioCard
-                  title={isRTL ? 'الأكثر احتمالاً' : 'Most Likely'}
+                  title={isRTL ? ' ' : 'Most Likely'}
                   icon={Target}
                   scenario={predictionData.prediction.scenarios.mostLikely}
                   color="#F4A261"
                   isRTL={isRTL}
                 />
                 <ScenarioCard
-                  title={isRTL ? 'أسوأ سيناريو' : 'Worst Case'}
+                  title={isRTL ? ' ' : 'Worst Case'}
                   icon={TrendingDown}
                   scenario={predictionData.prediction.scenarios.worstCase}
                   color="#E63946"
@@ -351,14 +351,14 @@ export default function EventPrediction() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                 <Activity className="w-4 h-4 text-blue-500" />
-                {isRTL ? 'التأثيرات المتوقعة' : 'Predicted Impacts'}
+                {isRTL ? 'Impact ' : 'Predicted Impacts'}
               </h3>
               <div className="grid gap-4">
                 {predictionData.prediction.predictedImpacts.political.length > 0 && (
                   <div className="p-3 rounded-lg border border-blue-200 bg-blue-50/30">
                     <div className="flex items-center gap-2 mb-2">
                       <Building2 className="w-4 h-4 text-blue-500" />
-                      <span className="text-sm font-semibold text-blue-700">{isRTL ? 'التأثيرات السياسية المتوقعة' : 'Expected Political Impacts'}</span>
+                      <span className="text-sm font-semibold text-blue-700">{isRTL ? 'Impact  ' : 'Expected Political Impacts'}</span>
                     </div>
                     <ul className="space-y-1">
                       {predictionData.prediction.predictedImpacts.political.map((imp: string, i: number) => (
@@ -374,7 +374,7 @@ export default function EventPrediction() {
                   <div className="p-3 rounded-lg border border-orange-200 bg-orange-50/30">
                     <div className="flex items-center gap-2 mb-2">
                       <DollarSign className="w-4 h-4 text-orange-500" />
-                      <span className="text-sm font-semibold text-orange-700">{isRTL ? 'التأثيرات الاقتصادية المتوقعة' : 'Expected Economic Impacts'}</span>
+                      <span className="text-sm font-semibold text-orange-700">{isRTL ? 'Impact  ' : 'Expected Economic Impacts'}</span>
                     </div>
                     <ul className="space-y-1">
                       {predictionData.prediction.predictedImpacts.economic.map((imp: string, i: number) => (
@@ -390,7 +390,7 @@ export default function EventPrediction() {
                   <div className="p-3 rounded-lg border border-purple-200 bg-purple-50/30">
                     <div className="flex items-center gap-2 mb-2">
                       <Users className="w-4 h-4 text-purple-500" />
-                      <span className="text-sm font-semibold text-purple-700">{isRTL ? 'التأثيرات الاجتماعية المتوقعة' : 'Expected Social Impacts'}</span>
+                      <span className="text-sm font-semibold text-purple-700">{isRTL ? 'Impact  ' : 'Expected Social Impacts'}</span>
                     </div>
                     <ul className="space-y-1">
                       {predictionData.prediction.predictedImpacts.social.map((imp: string, i: number) => (
@@ -409,7 +409,7 @@ export default function EventPrediction() {
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-green-500" />
-                {isRTL ? 'بناءً على هذه الأحداث التاريخية' : 'Based on These Historical Events'}
+                {isRTL ? '    ' : 'Based on These Historical Events'}
               </h3>
               <div className="space-y-2">
                 {predictionData.basedOn.map((event: any, i: number) => (
@@ -435,10 +435,10 @@ export default function EventPrediction() {
           <Card className="p-12 text-center">
             <AlertTriangle className="w-12 h-12 mx-auto text-orange-500/50 mb-3" />
             <h3 className="text-lg font-semibold mb-2">
-              {isRTL ? 'لا توجد بيانات كافية' : 'Not Enough Data'}
+              {isRTL ? '   ' : 'Not Enough Data'}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {predictionData.message || (isRTL ? 'جرب تغيير نوع الحدث أو الشدة' : 'Try changing the event type or severity')}
+              {predictionData.message || (isRTL ? '     Severity' : 'Try changing the event type or severity')}
             </p>
           </Card>
         )}

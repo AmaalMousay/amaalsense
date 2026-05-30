@@ -29,15 +29,15 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const CATEGORY_LABELS: Record<string, { en: string; ar: string }> = {
-  conflict: { en: 'Conflict', ar: 'صراع' },
-  economic: { en: 'Economic', ar: 'اقتصادي' },
-  political: { en: 'Political', ar: 'سياسي' },
-  social: { en: 'Social', ar: 'اجتماعي' },
-  environmental: { en: 'Environmental', ar: 'بيئي' },
-  health: { en: 'Health', ar: 'صحي' },
-  technological: { en: 'Technological', ar: 'تكنولوجي' },
-  cultural: { en: 'Cultural', ar: 'ثقافي' },
-  humanitarian: { en: 'Humanitarian', ar: 'إنساني' },
+  conflict: { en: 'Conflict', ar: '' },
+  economic: { en: 'Economic', ar: '' },
+  political: { en: 'Political', ar: '' },
+  social: { en: 'Social', ar: '' },
+  environmental: { en: 'Environmental', ar: '' },
+  health: { en: 'Health', ar: '' },
+  technological: { en: 'Technological', ar: '' },
+  cultural: { en: 'Cultural', ar: '' },
+  humanitarian: { en: 'Humanitarian', ar: '' },
 };
 
 function IndexBadge({ label, value, color }: { label: string; value: number; color: string }) {
@@ -128,9 +128,9 @@ function EventCard({ event, isRTL }: { event: any; isRTL: boolean }) {
           onClick={() => setExpanded(!expanded)}
         >
           {expanded ? (
-            <>{isRTL ? 'إخفاء التفاصيل' : 'Hide Details'} <ChevronUp className="w-3 h-3 ml-1" /></>
+            <>{isRTL ? ' ' : 'Hide Details'} <ChevronUp className="w-3 h-3 ml-1" /></>
           ) : (
-            <>{isRTL ? 'عرض التفاصيل والتأثيرات' : 'Show Details & Impacts'} <ChevronDown className="w-3 h-3 ml-1" /></>
+            <>{isRTL ? '  Impact' : 'Show Details & Impacts'} <ChevronDown className="w-3 h-3 ml-1" /></>
           )}
         </Button>
 
@@ -141,15 +141,15 @@ function EventCard({ event, isRTL }: { event: any; isRTL: boolean }) {
             <div>
               <h4 className="text-sm font-semibold mb-2 flex items-center gap-1.5">
                 <Heart className="w-4 h-4 text-pink-500" />
-                {isRTL ? 'الأبعاد العاطفية' : 'Emotional Dimensions'}
+                {isRTL ? ' ' : 'Emotional Dimensions'}
               </h4>
               <div className="space-y-1.5">
-                <EmotionBar label={isRTL ? 'فرح' : 'Joy'} value={event.emotionalVector?.joy || 0} color="#2A9D8F" />
-                <EmotionBar label={isRTL ? 'خوف' : 'Fear'} value={event.emotionalVector?.fear || 0} color="#F4A261" />
-                <EmotionBar label={isRTL ? 'غضب' : 'Anger'} value={event.emotionalVector?.anger || 0} color="#E63946" />
-                <EmotionBar label={isRTL ? 'حزن' : 'Sadness'} value={event.emotionalVector?.sadness || 0} color="#8D5CF6" />
-                <EmotionBar label={isRTL ? 'أمل' : 'Hope'} value={event.emotionalVector?.hope || 0} color="#10B981" />
-                <EmotionBar label={isRTL ? 'فضول' : 'Curiosity'} value={event.emotionalVector?.curiosity || 0} color="#E9C46A" />
+                <EmotionBar label={isRTL ? 'Joy' : 'Joy'} value={event.emotionalVector?.joy || 0} color="#2A9D8F" />
+                <EmotionBar label={isRTL ? 'Fear' : 'Fear'} value={event.emotionalVector?.fear || 0} color="#F4A261" />
+                <EmotionBar label={isRTL ? 'Anger' : 'Anger'} value={event.emotionalVector?.anger || 0} color="#E63946" />
+                <EmotionBar label={isRTL ? 'Sadness' : 'Sadness'} value={event.emotionalVector?.sadness || 0} color="#8D5CF6" />
+                <EmotionBar label={isRTL ? '' : 'Hope'} value={event.emotionalVector?.hope || 0} color="#10B981" />
+                <EmotionBar label={isRTL ? '' : 'Curiosity'} value={event.emotionalVector?.curiosity || 0} color="#E9C46A" />
               </div>
             </div>
 
@@ -158,13 +158,13 @@ function EventCard({ event, isRTL }: { event: any; isRTL: boolean }) {
               <div>
                 <h4 className="text-sm font-semibold mb-2 flex items-center gap-1.5">
                   <Activity className="w-4 h-4 text-blue-500" />
-                  {isRTL ? 'التأثيرات' : 'Impacts'}
+                  {isRTL ? 'Impact' : 'Impacts'}
                 </h4>
                 <div className="grid gap-2">
                   {event.impacts.political && (
                     <ImpactSection
                       icon={Building2}
-                      title={isRTL ? 'التأثيرات السياسية' : 'Political Impacts'}
+                      title={isRTL ? 'Impact ' : 'Political Impacts'}
                       content={event.impacts.political}
                       color="#457B9D"
                     />
@@ -172,7 +172,7 @@ function EventCard({ event, isRTL }: { event: any; isRTL: boolean }) {
                   {event.impacts.economic && (
                     <ImpactSection
                       icon={DollarSign}
-                      title={isRTL ? 'التأثيرات الاقتصادية' : 'Economic Impacts'}
+                      title={isRTL ? 'Impact ' : 'Economic Impacts'}
                       content={event.impacts.economic}
                       color="#F4A261"
                     />
@@ -180,7 +180,7 @@ function EventCard({ event, isRTL }: { event: any; isRTL: boolean }) {
                   {event.impacts.social && (
                     <ImpactSection
                       icon={Users}
-                      title={isRTL ? 'التأثيرات الاجتماعية' : 'Social Impacts'}
+                      title={isRTL ? 'Impact ' : 'Social Impacts'}
                       content={event.impacts.social}
                       color="#8D5CF6"
                     />
@@ -193,24 +193,24 @@ function EventCard({ event, isRTL }: { event: any; isRTL: boolean }) {
             <div>
               <h4 className="text-sm font-semibold mb-2 flex items-center gap-1.5">
                 <Clock className="w-4 h-4 text-green-500" />
-                {isRTL ? 'النتائج' : 'Outcomes'}
+                {isRTL ? '' : 'Outcomes'}
               </h4>
               <div className="grid gap-2 text-xs">
                 {event.shortTermOutcome && (
                   <div className="p-2 rounded bg-muted/50">
-                    <span className="font-medium text-orange-500">{isRTL ? 'قصير المدى: ' : 'Short-term: '}</span>
+                    <span className="font-medium text-orange-500">{isRTL ? ' : ' : 'Short-term: '}</span>
                     <span className="text-muted-foreground">{event.shortTermOutcome}</span>
                   </div>
                 )}
                 {event.mediumTermOutcome && (
                   <div className="p-2 rounded bg-muted/50">
-                    <span className="font-medium text-blue-500">{isRTL ? 'متوسط المدى: ' : 'Medium-term: '}</span>
+                    <span className="font-medium text-blue-500">{isRTL ? ' : ' : 'Medium-term: '}</span>
                     <span className="text-muted-foreground">{event.mediumTermOutcome}</span>
                   </div>
                 )}
                 {event.longTermOutcome && (
                   <div className="p-2 rounded bg-muted/50">
-                    <span className="font-medium text-green-500">{isRTL ? 'طويل المدى: ' : 'Long-term: '}</span>
+                    <span className="font-medium text-green-500">{isRTL ? ' : ' : 'Long-term: '}</span>
                     <span className="text-muted-foreground">{event.longTermOutcome}</span>
                   </div>
                 )}
@@ -220,7 +220,7 @@ function EventCard({ event, isRTL }: { event: any; isRTL: boolean }) {
             {/* Sources */}
             {event.sources && event.sources.length > 0 && (
               <div className="text-xs text-muted-foreground">
-                <span className="font-medium">{isRTL ? 'المصادر: ' : 'Sources: '}</span>
+                <span className="font-medium">{isRTL ? ': ' : 'Sources: '}</span>
                 {event.sources.join(', ')}
               </div>
             )}
@@ -300,10 +300,10 @@ export default function HistoricalEvents() {
               <div>
                 <h1 className="text-lg font-bold flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-primary" />
-                  {isRTL ? 'الأحداث التاريخية' : 'Historical Events'}
+                  {isRTL ? ' ' : 'Historical Events'}
                 </h1>
                 <p className="text-xs text-muted-foreground">
-                  {isRTL ? `${totalEvents} حدث تاريخي موثق` : `${totalEvents} documented historical events`}
+                  {isRTL ? `${totalEvents}   ` : `${totalEvents} documented historical events`}
                 </p>
               </div>
             </div>
@@ -314,7 +314,7 @@ export default function HistoricalEvents() {
                 onClick={() => navigate('/event-comparison')}
               >
                 <Layers className="w-4 h-4 mr-1" />
-                {isRTL ? 'مقارنة' : 'Compare'}
+                {isRTL ? '' : 'Compare'}
               </Button>
               <Button
                 variant="outline"
@@ -322,7 +322,7 @@ export default function HistoricalEvents() {
                 onClick={() => navigate('/event-prediction')}
               >
                 <Sparkles className="w-4 h-4 mr-1" />
-                {isRTL ? 'تنبؤ' : 'Predict'}
+                {isRTL ? '' : 'Predict'}
               </Button>
               <Button
                 variant={showStats ? 'default' : 'outline'}
@@ -330,7 +330,7 @@ export default function HistoricalEvents() {
                 onClick={() => setShowStats(!showStats)}
               >
                 <BarChart3 className="w-4 h-4 mr-1" />
-                {isRTL ? 'إحصائيات' : 'Statistics'}
+                {isRTL ? '' : 'Statistics'}
               </Button>
             </div>
           </div>
@@ -344,29 +344,29 @@ export default function HistoricalEvents() {
             {/* Total Events */}
             <Card className="p-4">
               <div className="text-2xl font-bold text-primary">{statsData.total}</div>
-              <div className="text-xs text-muted-foreground">{isRTL ? 'إجمالي الأحداث' : 'Total Events'}</div>
+              <div className="text-xs text-muted-foreground">{isRTL ? ' ' : 'Total Events'}</div>
             </Card>
             {/* Average GMI */}
             <Card className="p-4">
               <div className="text-2xl font-bold" style={{ color: statsData.averageIndices.gmi >= 50 ? '#2A9D8F' : '#E63946' }}>
                 {statsData.averageIndices.gmi}
               </div>
-              <div className="text-xs text-muted-foreground">{isRTL ? 'متوسط GMI' : 'Average GMI'}</div>
+              <div className="text-xs text-muted-foreground">{isRTL ? ' GMI' : 'Average GMI'}</div>
             </Card>
             {/* Average CFI */}
             <Card className="p-4">
               <div className="text-2xl font-bold text-orange-500">{statsData.averageIndices.cfi}</div>
-              <div className="text-xs text-muted-foreground">{isRTL ? 'متوسط CFI' : 'Average CFI'}</div>
+              <div className="text-xs text-muted-foreground">{isRTL ? ' CFI' : 'Average CFI'}</div>
             </Card>
             {/* Average HRI */}
             <Card className="p-4">
               <div className="text-2xl font-bold text-green-500">{statsData.averageIndices.hri}</div>
-              <div className="text-xs text-muted-foreground">{isRTL ? 'متوسط HRI' : 'Average HRI'}</div>
+              <div className="text-xs text-muted-foreground">{isRTL ? ' HRI' : 'Average HRI'}</div>
             </Card>
 
             {/* Category Distribution Chart */}
             <Card className="p-4 md:col-span-2">
-              <h3 className="text-sm font-semibold mb-3">{isRTL ? 'توزيع الفئات' : 'Category Distribution'}</h3>
+              <h3 className="text-sm font-semibold mb-3">{isRTL ? ' ' : 'Category Distribution'}</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie data={categoryChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={({ name, value }) => `${name}: ${value}`}>
@@ -381,7 +381,7 @@ export default function HistoricalEvents() {
 
             {/* Decade Distribution Chart */}
             <Card className="p-4 md:col-span-2">
-              <h3 className="text-sm font-semibold mb-3">{isRTL ? 'توزيع العقود' : 'Events by Decade'}</h3>
+              <h3 className="text-sm font-semibold mb-3">{isRTL ? ' ' : 'Events by Decade'}</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={decadeChartData}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -403,7 +403,7 @@ export default function HistoricalEvents() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder={isRTL ? 'ابحث عن حدث تاريخي...' : 'Search historical events...'}
+                placeholder={isRTL ? '   ...' : 'Search historical events...'}
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 className="w-full pl-9 pr-8 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
@@ -421,7 +421,7 @@ export default function HistoricalEvents() {
               onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
               className="px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value="">{isRTL ? 'جميع الفئات' : 'All Categories'}</option>
+              <option value="">{isRTL ? ' ' : 'All Categories'}</option>
               {filtersData?.categories.map(cat => (
                 <option key={cat} value={cat}>
                   {CATEGORY_LABELS[cat]?.[isRTL ? 'ar' : 'en'] || cat}
@@ -435,7 +435,7 @@ export default function HistoricalEvents() {
               onChange={(e) => { setSelectedCountry(e.target.value); setCurrentPage(1); }}
               className="px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 max-w-[200px]"
             >
-              <option value="">{isRTL ? 'جميع الدول' : 'All Countries'}</option>
+              <option value="">{isRTL ? ' ' : 'All Countries'}</option>
               {filtersData?.countries.map(country => (
                 <option key={country} value={country}>{country}</option>
               ))}
@@ -452,13 +452,13 @@ export default function HistoricalEvents() {
               }}
               className="px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value="date-desc">{isRTL ? 'الأحدث أولاً' : 'Newest First'}</option>
-              <option value="date-asc">{isRTL ? 'الأقدم أولاً' : 'Oldest First'}</option>
-              <option value="gmi-desc">{isRTL ? 'أعلى GMI' : 'Highest GMI'}</option>
-              <option value="gmi-asc">{isRTL ? 'أقل GMI' : 'Lowest GMI'}</option>
-              <option value="cfi-desc">{isRTL ? 'أعلى CFI' : 'Highest CFI'}</option>
-              <option value="hri-desc">{isRTL ? 'أعلى HRI' : 'Highest HRI'}</option>
-              <option value="name-asc">{isRTL ? 'أبجدي' : 'Alphabetical'}</option>
+              <option value="date-desc">{isRTL ? ' ' : 'Newest First'}</option>
+              <option value="date-asc">{isRTL ? ' ' : 'Oldest First'}</option>
+              <option value="gmi-desc">{isRTL ? ' GMI' : 'Highest GMI'}</option>
+              <option value="gmi-asc">{isRTL ? ' GMI' : 'Lowest GMI'}</option>
+              <option value="cfi-desc">{isRTL ? ' CFI' : 'Highest CFI'}</option>
+              <option value="hri-desc">{isRTL ? ' HRI' : 'Highest HRI'}</option>
+              <option value="name-asc">{isRTL ? '' : 'Alphabetical'}</option>
             </select>
           </div>
 
@@ -487,7 +487,7 @@ export default function HistoricalEvents() {
                 onClick={() => { setSearchQuery(''); setSelectedCategory(''); setSelectedCountry(''); }}
                 className="text-xs text-muted-foreground hover:text-foreground underline"
               >
-                {isRTL ? 'مسح الكل' : 'Clear all'}
+                {isRTL ? ' ' : 'Clear all'}
               </button>
             </div>
           )}
@@ -511,9 +511,9 @@ export default function HistoricalEvents() {
         ) : events.length === 0 ? (
           <Card className="p-12 text-center">
             <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">{isRTL ? 'لا توجد نتائج' : 'No Results Found'}</h3>
+            <h3 className="text-lg font-semibold mb-2">{isRTL ? '  ' : 'No Results Found'}</h3>
             <p className="text-sm text-muted-foreground">
-              {isRTL ? 'جرب تغيير معايير البحث أو الفلترة' : 'Try changing your search or filter criteria'}
+              {isRTL ? '     ' : 'Try changing your search or filter criteria'}
             </p>
           </Card>
         ) : (
@@ -533,7 +533,7 @@ export default function HistoricalEvents() {
               disabled={currentPage <= 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             >
-              {isRTL ? 'السابق' : 'Previous'}
+              {isRTL ? '' : 'Previous'}
             </Button>
             <div className="flex items-center gap-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -566,7 +566,7 @@ export default function HistoricalEvents() {
               disabled={currentPage >= totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             >
-              {isRTL ? 'التالي' : 'Next'}
+              {isRTL ? '' : 'Next'}
             </Button>
           </div>
         )}

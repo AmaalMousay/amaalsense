@@ -24,7 +24,7 @@ export function DCFTMetricsCard({ gmi, cfi, hri, timestamp }: DCFTMetricsCardPro
       name: 'Global Mood Index',
       value: gmi,
       trend: Math.random() > 0.5 ? 5 : -3,
-      description: 'العاطفة العامة على مستوى العالم',
+      description: '    ',
       color: 'bg-blue-50 border-blue-200',
       icon: <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">G</div>,
     },
@@ -32,7 +32,7 @@ export function DCFTMetricsCard({ gmi, cfi, hri, timestamp }: DCFTMetricsCardPro
       name: 'Collective Feeling Index',
       value: cfi,
       trend: Math.random() > 0.5 ? 8 : -2,
-      description: 'مؤشر المشاعر الجماعية',
+      description: ' Emotions ',
       color: 'bg-purple-50 border-purple-200',
       icon: <div className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-sm font-bold">C</div>,
     },
@@ -40,7 +40,7 @@ export function DCFTMetricsCard({ gmi, cfi, hri, timestamp }: DCFTMetricsCardPro
       name: 'Human Resilience Index',
       value: hri,
       trend: Math.random() > 0.5 ? 12 : -5,
-      description: 'مؤشر صمود الإنسان',
+      description: '  ',
       color: 'bg-green-50 border-green-200',
       icon: <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">H</div>,
     },
@@ -102,10 +102,10 @@ export function DCFTMetricsCard({ gmi, cfi, hri, timestamp }: DCFTMetricsCardPro
               {/* Status */}
               <p className="text-xs text-gray-600">
                 {metric.value > 70
-                  ? '✅ إيجابي جداً'
+                  ? '✅  '
                   : metric.value > 40
-                    ? '⚠️ محايد'
-                    : '❌ سلبي'}
+                    ? '⚠️ Neutral'
+                    : '❌ '}
               </p>
             </div>
           </CardContent>
@@ -114,7 +114,7 @@ export function DCFTMetricsCard({ gmi, cfi, hri, timestamp }: DCFTMetricsCardPro
 
       {/* Updated At */}
       <div className="md:col-span-3 text-center text-xs text-gray-500 mt-2">
-        آخر تحديث: {timestamp.toLocaleString('ar-SA')}
+         : {timestamp.toLocaleString('ar-SA')}
       </div>
     </div>
   );

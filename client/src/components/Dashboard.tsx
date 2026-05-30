@@ -1,6 +1,5 @@
 /**
  * Dashboard Component
- * لوحة المعلومات الرئيسية
  */
 
 import React, { useState } from 'react';
@@ -32,21 +31,21 @@ export function Dashboard({ metrics }: DashboardProps) {
       value: 65,
       previousValue: 62,
       unit: '%',
-      description: 'مؤشر المزاج العالمي'
+      description: '  '
     },
     cfi: {
       label: 'Collective Feeling Index',
       value: 72,
       previousValue: 70,
       unit: '%',
-      description: 'مؤشر الشعور الجماعي'
+      description: '  '
     },
     hri: {
       label: 'Hope Resonance Index',
       value: 58,
       previousValue: 60,
       unit: '%',
-      description: 'مؤشر رنين الأمل'
+      description: '  '
     }
   };
 
@@ -84,7 +83,7 @@ export function Dashboard({ metrics }: DashboardProps) {
                     -{change}%
                   </>
                 )}
-                {trend === 'stable' && 'مستقر'}
+                {trend === 'stable' && ''}
               </Badge>
             </div>
 
@@ -107,7 +106,7 @@ export function Dashboard({ metrics }: DashboardProps) {
             {/* Comparison */}
             <div className="pt-2 border-t border-gray-300">
               <p className="text-xs text-gray-600">
-                السابق: <span className="font-semibold text-black">{metric.previousValue}%</span>
+                : <span className="font-semibold text-black">{metric.previousValue}%</span>
               </p>
             </div>
           </div>
@@ -120,7 +119,7 @@ export function Dashboard({ metrics }: DashboardProps) {
     <div className="space-y-6">
       {/* Main Indicators */}
       <div>
-        <h2 className="text-3xl font-bold mb-4 text-black">لوحة المعلومات</h2>
+        <h2 className="text-3xl font-bold mb-4 text-black"> </h2>
         <div className="grid md:grid-cols-3 gap-4">
           <MetricCard
             metric={displayMetrics.gmi}
@@ -141,28 +140,28 @@ export function Dashboard({ metrics }: DashboardProps) {
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-gray-100 border border-gray-300">
           <TabsTrigger value="overview" className="text-black data-[state=active]:bg-black data-[state=active]:text-white">
-            نظرة عامة
+            Overview
           </TabsTrigger>
           <TabsTrigger value="trends" className="text-black data-[state=active]:bg-black data-[state=active]:text-white">
-            الاتجاهات
+            
           </TabsTrigger>
           <TabsTrigger value="regions" className="text-black data-[state=active]:bg-black data-[state=active]:text-white">
-            المناطق
+            
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
           <Card className="border-gray-300 bg-white">
             <CardHeader>
-              <CardTitle className="text-black">ملخص الأداء</CardTitle>
+              <CardTitle className="text-black"> </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {[
-                  { label: 'إجمالي التحليلات', value: '10,234' },
-                  { label: 'المستخدمون النشطون', value: '5,432' },
-                  { label: 'معدل الدقة', value: '94%' },
-                  { label: 'وقت المعالجة المتوسط', value: '1.2 ثانية' }
+                  { label: ' Analysis', value: '10,234' },
+                  { label: ' ', value: '5,432' },
+                  { label: ' ', value: '94%' },
+                  { label: '  ', value: '1.2 ' }
                 ].map((item, index) => (
                   <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-300">
                     <span className="text-gray-700">{item.label}</span>
@@ -177,15 +176,15 @@ export function Dashboard({ metrics }: DashboardProps) {
         <TabsContent value="trends" className="space-y-4">
           <Card className="border-gray-300 bg-white">
             <CardHeader>
-              <CardTitle className="text-black">الاتجاهات الأخيرة</CardTitle>
+              <CardTitle className="text-black"> </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {[
-                  { trend: 'ارتفاع الأمل', change: '+5%', time: 'في آخر 24 ساعة' },
-                  { trend: 'استقرار الثقة', change: '0%', time: 'في آخر 48 ساعة' },
-                  { trend: 'انخفاض القلق', change: '-3%', time: 'في آخر أسبوع' },
-                  { trend: 'ارتفاع التفاؤل', change: '+7%', time: 'في آخر شهر' }
+                  { trend: ' ', change: '+5%', time: '  24 ' },
+                  { trend: ' Confidence', change: '0%', time: '  48 ' },
+                  { trend: ' ', change: '-3%', time: '  ' },
+                  { trend: ' ', change: '+7%', time: '  ' }
                 ].map((item, index) => (
                   <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-300">
                     <div>
@@ -203,15 +202,15 @@ export function Dashboard({ metrics }: DashboardProps) {
         <TabsContent value="regions" className="space-y-4">
           <Card className="border-gray-300 bg-white">
             <CardHeader>
-              <CardTitle className="text-black">أداء المناطق</CardTitle>
+              <CardTitle className="text-black"> </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {[
-                  { region: 'الشرق الأوسط', gmi: 68, cfi: 75, hri: 62 },
-                  { region: 'أوروبا', gmi: 62, cfi: 70, hri: 55 },
-                  { region: 'آسيا', gmi: 70, cfi: 72, hri: 60 },
-                  { region: 'أمريكا', gmi: 65, cfi: 68, hri: 58 }
+                  { region: ' ', gmi: 68, cfi: 75, hri: 62 },
+                  { region: '', gmi: 62, cfi: 70, hri: 55 },
+                  { region: '', gmi: 70, cfi: 72, hri: 60 },
+                  { region: '', gmi: 65, cfi: 68, hri: 58 }
                 ].map((item, index) => (
                   <div key={index} className="p-3 rounded-lg bg-gray-50 border border-gray-300">
                     <p className="font-medium text-black mb-2">{item.region}</p>

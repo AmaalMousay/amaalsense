@@ -2,10 +2,6 @@
 /**
  * DCFT VISUALIZATION - CONNECTED VERSION
  * 
- * يعرض تصور DCFT (Discrete Collective Fourier Transform) مع بيانات حقيقية
- * - يستخدم analysisDataRouter.getDCFTVisualization للحصول على البيانات
- * - يعرض المتناسقات والموجات
- * - يدعم التحليل الطيفي للعواطف
  */
 
 import React, { useMemo } from 'react';
@@ -71,12 +67,12 @@ export function DCFTVisualizationConnected({
 
   const getEmotionLabel = (emotion: string) => {
     const labels: Record<string, string> = {
-      joy: 'فرح',
-      fear: 'خوف',
-      anger: 'غضب',
-      sadness: 'حزن',
-      hope: 'أمل',
-      curiosity: 'فضول'
+      joy: 'Joy',
+      fear: 'Fear',
+      anger: 'Anger',
+      sadness: 'Sadness',
+      hope: '',
+      curiosity: ''
     };
     return labels[emotion] || emotion;
   };
@@ -86,7 +82,7 @@ export function DCFTVisualizationConnected({
       <Card className="w-full p-8 bg-white border border-gray-200">
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
-          <span className="text-gray-600">جاري تحميل تصور DCFT...</span>
+          <span className="text-gray-600">   DCFT...</span>
         </div>
       </Card>
     );
@@ -97,7 +93,7 @@ export function DCFTVisualizationConnected({
       <Card className="w-full p-8 bg-white border border-red-200">
         <div className="flex items-center gap-2 text-red-600">
           <AlertCircle className="w-5 h-5" />
-          <span>خطأ في تحميل تصور DCFT</span>
+          <span>    DCFT</span>
         </div>
       </Card>
     );
@@ -112,36 +108,36 @@ export function DCFTVisualizationConnected({
       <Card className="w-full p-6 bg-white border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <BarChart3 className="w-5 h-5 text-gray-900" />
-          <h3 className="text-lg font-bold text-gray-900">تحليل DCFT</h3>
+          <h3 className="text-lg font-bold text-gray-900">Analysis DCFT</h3>
         </div>
 
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">التردد المهيمن</p>
+            <p className="text-sm text-gray-600 mb-1"> </p>
             <p className="text-2xl font-bold text-gray-900">{analysis.dominantFrequency.toFixed(2)}</p>
             <p className="text-xs text-gray-500 mt-1">Hz</p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">الطاقة الكلية</p>
+            <p className="text-sm text-gray-600 mb-1"> </p>
             <p className="text-2xl font-bold text-gray-900">{analysis.totalEnergy.toFixed(0)}</p>
-            <p className="text-xs text-gray-500 mt-1">وحدة طاقة</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">التعقيد</p>
+            <p className="text-sm text-gray-600 mb-1"></p>
             <p className="text-2xl font-bold text-gray-900">{analysis.complexity.toFixed(1)}</p>
-            <p className="text-xs text-gray-500 mt-1">درجة</p>
+            <p className="text-xs text-gray-500 mt-1"></p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">الاستقرار</p>
+            <p className="text-sm text-gray-600 mb-1"></p>
             <p className="text-2xl font-bold text-gray-900">{analysis.stability.toFixed(0)}%</p>
-            <p className="text-xs text-gray-500 mt-1">مستقر</p>
+            <p className="text-xs text-gray-500 mt-1"></p>
           </div>
         </div>
       </Card>
 
       {/* Harmonics Visualization */}
       <Card className="w-full p-6 bg-white border border-gray-200">
-        <h4 className="text-lg font-bold text-gray-900 mb-4">المتناسقات (Harmonics)</h4>
+        <h4 className="text-lg font-bold text-gray-900 mb-4"> (Harmonics)</h4>
         
         <div className="space-y-3 mb-6">
           {sortedHarmonics.slice(0, 10).map((harmonic, index) => (
@@ -157,16 +153,16 @@ export function DCFTVisualizationConnected({
               <div className="flex items-center justify-between mb-2">
                 <div>
                   <p className="font-semibold">
-                    المتناسق #{index + 1} - {getEmotionLabel(harmonic.emotion)}
+                     #{index + 1} - {getEmotionLabel(harmonic.emotion)}
                   </p>
                   <p className={`text-xs ${selectedHarmonic?.frequency === harmonic.frequency ? 'text-gray-300' : 'text-gray-600'}`}>
-                    التردد: {harmonic.frequency.toFixed(2)} Hz | الطور: {harmonic.phase.toFixed(1)}°
+                    : {harmonic.frequency.toFixed(2)} Hz | : {harmonic.phase.toFixed(1)}°
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-lg">{harmonic.amplitude.toFixed(1)}</p>
                   <p className={`text-xs ${selectedHarmonic?.frequency === harmonic.frequency ? 'text-gray-300' : 'text-gray-600'}`}>
-                    السعة
+                    
                   </p>
                 </div>
               </div>
@@ -195,35 +191,35 @@ export function DCFTVisualizationConnected({
       {selectedHarmonic && (
         <Card className="w-full p-6 bg-white border border-gray-200">
           <h4 className="text-lg font-bold text-gray-900 mb-4">
-            تفاصيل المتناسق: {getEmotionLabel(selectedHarmonic.emotion)}
+             : {getEmotionLabel(selectedHarmonic.emotion)}
           </h4>
 
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">التردد</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.frequency.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">Hz</p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">السعة</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.amplitude.toFixed(1)}</p>
-              <p className="text-xs text-gray-500 mt-1">وحدة</p>
+              <p className="text-xs text-gray-500 mt-1"></p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">الطور</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.phase.toFixed(1)}</p>
-              <p className="text-xs text-gray-500 mt-1">درجة</p>
+              <p className="text-xs text-gray-500 mt-1"></p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">القوة</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className="text-2xl font-bold text-gray-900">{selectedHarmonic.strength.toFixed(0)}%</p>
-              <p className="text-xs text-gray-500 mt-1">نسبة</p>
+              <p className="text-xs text-gray-500 mt-1"></p>
             </div>
           </div>
 
           {/* Strength Bar */}
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-3">قوة المتناسق</p>
+            <p className="text-sm text-gray-600 mb-3"> </p>
             <div className="flex items-center gap-3">
               <div className="flex-1 bg-gray-200 rounded h-3">
                 <div
@@ -244,7 +240,7 @@ export function DCFTVisualizationConnected({
 
       {/* Frequency Spectrum */}
       <Card className="w-full p-6 bg-white border border-gray-200">
-        <h4 className="text-lg font-bold text-gray-900 mb-4">طيف التردد</h4>
+        <h4 className="text-lg font-bold text-gray-900 mb-4"> </h4>
         
         <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
           <div className="flex items-end justify-between h-40 gap-1">
@@ -261,7 +257,7 @@ export function DCFTVisualizationConnected({
             ))}
           </div>
           <p className="text-xs text-gray-600 mt-2 text-center">
-            أعلى 20 متناسق
+             20 
           </p>
         </div>
       </Card>

@@ -1,8 +1,7 @@
 /**
- * تحليلات وتتبع الأداء
  * Analytics & Performance Tracking
  * 
- * يتضمن:
+ * Includes:
  * - Google Analytics
  * - Mixpanel
  * - Custom Events

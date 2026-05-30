@@ -65,7 +65,7 @@ export default function NotificationSettings() {
   const telegramSubscribeMutation = trpc.telegram.subscribe.useMutation({
     onSuccess: () => {
       setTelegramSubscribed(true);
-      setTelegramMessage({ type: "success", text: "تم الاشتراك في إشعارات Telegram بنجاح!" });
+      setTelegramMessage({ type: "success", text: "    Telegram !" });
     },
     onError: (error) => {
       setTelegramMessage({ type: "error", text: error.message });
@@ -75,9 +75,9 @@ export default function NotificationSettings() {
   const telegramTestMutation = trpc.telegram.sendTestNotification.useMutation({
     onSuccess: (data) => {
       if (data.success) {
-        setTelegramMessage({ type: "success", text: "تم إرسال رسالة تجريبية! تحقق من Telegram." });
+        setTelegramMessage({ type: "success", text: "   !   Telegram." });
       } else {
-        setTelegramMessage({ type: "error", text: "فشل إرسال الرسالة. تحقق من Chat ID." });
+        setTelegramMessage({ type: "error", text: "  .   Chat ID." });
       }
     },
     onError: (error) => {
@@ -88,9 +88,9 @@ export default function NotificationSettings() {
   const telegramDailySummaryMutation = trpc.telegram.sendDailySummary.useMutation({
     onSuccess: (data) => {
       if (data.success) {
-        setTelegramMessage({ type: "success", text: "تم إرسال الملخص اليومي!" });
+        setTelegramMessage({ type: "success", text: "   !" });
       } else {
-        setTelegramMessage({ type: "error", text: "فشل إرسال الملخص." });
+        setTelegramMessage({ type: "error", text: "  ." });
       }
     },
     onError: (error) => {
@@ -142,7 +142,7 @@ export default function NotificationSettings() {
   // Telegram handlers
   const handleTelegramSubscribe = async () => {
     if (!telegramChatId) {
-      setTelegramMessage({ type: "error", text: "الرجاء إدخال Chat ID الخاص بك." });
+      setTelegramMessage({ type: "error", text: "  Chat ID  ." });
       return;
     }
 
@@ -162,7 +162,7 @@ export default function NotificationSettings() {
 
   const handleTelegramTest = async () => {
     if (!telegramChatId) {
-      setTelegramMessage({ type: "error", text: "الرجاء إدخال Chat ID الخاص بك." });
+      setTelegramMessage({ type: "error", text: "  Chat ID  ." });
       return;
     }
 
@@ -173,7 +173,7 @@ export default function NotificationSettings() {
 
   const handleTelegramDailySummary = async () => {
     if (!telegramChatId) {
-      setTelegramMessage({ type: "error", text: "الرجاء إدخال Chat ID الخاص بك." });
+      setTelegramMessage({ type: "error", text: "  Chat ID  ." });
       return;
     }
 
@@ -242,13 +242,13 @@ export default function NotificationSettings() {
               <CardContent className="p-4">
                 <h3 className="font-semibold mb-2 flex items-center gap-2">
                   <MessageCircle className="w-5 h-5 text-blue-400" />
-                  كيفية الحصول على Chat ID
+                     Chat ID
                 </h3>
                 <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
-                  <li>افتح Telegram وابحث عن <code className="bg-muted px-1 rounded">@userinfobot</code></li>
-                  <li>أرسل أي رسالة للبوت</li>
-                  <li>سيرسل لك الـ Chat ID الخاص بك</li>
-                  <li>انسخ الرقم والصقه هنا</li>
+                  <li> Telegram   <code className="bg-muted px-1 rounded">@userinfobot</code></li>
+                  <li>   </li>
+                  <li>   Chat ID  </li>
+                  <li>   </li>
                 </ol>
               </CardContent>
             </Card>
@@ -258,10 +258,10 @@ export default function NotificationSettings() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Send className="w-5 h-5 text-blue-400" />
-                  إشعارات Telegram
+                   Telegram
                 </CardTitle>
                 <CardDescription>
-                  احصل على تنبيهات فورية عبر Telegram عند تغير المزاج العام
+                       Telegram    
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -270,7 +270,7 @@ export default function NotificationSettings() {
                   <Label htmlFor="chatId">Chat ID *</Label>
                   <Input
                     id="chatId"
-                    placeholder="مثال: 123456789"
+                    placeholder=": 123456789"
                     value={telegramChatId}
                     onChange={(e) => setTelegramChatId(e.target.value)}
                   />
@@ -278,10 +278,10 @@ export default function NotificationSettings() {
 
                 {/* Country Filter (Optional) */}
                 <div className="space-y-2">
-                  <Label htmlFor="country">رمز الدولة (اختياري)</Label>
+                  <Label htmlFor="country">  ()</Label>
                   <Input
                     id="country"
-                    placeholder="مثال: LY للتركيز على ليبيا"
+                    placeholder=": LY   "
                     value={telegramCountry}
                     onChange={(e) => setTelegramCountry(e.target.value.toUpperCase())}
                     maxLength={2}
@@ -290,26 +290,26 @@ export default function NotificationSettings() {
 
                 {/* Topics (Optional) */}
                 <div className="space-y-2">
-                  <Label htmlFor="topics">المواضيع (اختياري)</Label>
+                  <Label htmlFor="topics"> ()</Label>
                   <Input
                     id="topics"
-                    placeholder="مثال: أسعار الوقود, الانتخابات"
+                    placeholder=":  , "
                     value={telegramTopics}
                     onChange={(e) => setTelegramTopics(e.target.value)}
                   />
-                  <p className="text-xs text-muted-foreground">افصل بين المواضيع بفاصلة</p>
+                  <p className="text-xs text-muted-foreground">   </p>
                 </div>
 
                 {/* Alert Types */}
                 <div className="space-y-3">
-                  <Label>أنواع التنبيهات</Label>
+                  <Label> </Label>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <Bell className="w-5 h-5 text-purple-400" />
                         <div>
-                          <p className="font-medium">تغير المزاج</p>
-                          <p className="text-sm text-muted-foreground">عند تغير GMI بشكل كبير</p>
+                          <p className="font-medium"> </p>
+                          <p className="text-sm text-muted-foreground">  GMI  </p>
                         </div>
                       </div>
                       <Switch
@@ -322,8 +322,8 @@ export default function NotificationSettings() {
                       <div className="flex items-center gap-3">
                         <AlertTriangle className="w-5 h-5 text-red-400" />
                         <div>
-                          <p className="font-medium">ارتفاع الخوف</p>
-                          <p className="text-sm text-muted-foreground">عند ارتفاع CFI فوق 70</p>
+                          <p className="font-medium"> Fear</p>
+                          <p className="text-sm text-muted-foreground">  CFI  70</p>
                         </div>
                       </div>
                       <Switch
@@ -336,8 +336,8 @@ export default function NotificationSettings() {
                       <div className="flex items-center gap-3">
                         <CheckCircle className="w-5 h-5 text-green-400" />
                         <div>
-                          <p className="font-medium">ارتفاع الأمل</p>
-                          <p className="text-sm text-muted-foreground">عند ارتفاع HRI فوق 70</p>
+                          <p className="font-medium"> </p>
+                          <p className="text-sm text-muted-foreground">  HRI  70</p>
                         </div>
                       </div>
                       <Switch
@@ -350,8 +350,8 @@ export default function NotificationSettings() {
                       <div className="flex items-center gap-3">
                         <FileText className="w-5 h-5 text-cyan-400" />
                         <div>
-                          <p className="font-medium">الملخص اليومي</p>
-                          <p className="text-sm text-muted-foreground">تقرير يومي بالمؤشرات</p>
+                          <p className="font-medium"> </p>
+                          <p className="text-sm text-muted-foreground">  </p>
                         </div>
                       </div>
                       <Switch
@@ -370,14 +370,14 @@ export default function NotificationSettings() {
                       disabled={telegramLoading || telegramSubscribed}
                       className="flex-1"
                     >
-                      {telegramLoading ? "جاري المعالجة..." : telegramSubscribed ? "تم الاشتراك ✓" : "اشتراك"}
+                      {telegramLoading ? " ..." : telegramSubscribed ? "  ✓" : ""}
                     </Button>
                     <Button
                       variant="outline"
                       onClick={handleTelegramTest}
                       disabled={telegramLoading || !telegramChatId}
                     >
-                      إرسال تجريبي
+                       
                     </Button>
                   </div>
                   <Button
@@ -387,7 +387,7 @@ export default function NotificationSettings() {
                     className="w-full"
                   >
                     <FileText className="w-4 h-4 mr-2" />
-                    إرسال الملخص اليومي الآن
+                       
                   </Button>
                 </div>
               </CardContent>
@@ -549,23 +549,23 @@ export default function NotificationSettings() {
         {/* Info Card */}
         <Card className="bg-muted/30 mt-6">
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">ما ستحصل عليه:</h3>
+            <h3 className="font-semibold mb-2">  :</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                تقارير يومية بمؤشرات GMI و CFI و HRI
+                   GMI  CFI  HRI
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                تنبيهات فورية عند تغير المزاج العام بشكل كبير
+                       
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                ملخصات أسبوعية لمقارنة الاتجاهات
+                   
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                إلغاء الاشتراك في أي وقت بنقرة واحدة
+                Cancel      
               </li>
             </ul>
           </CardContent>

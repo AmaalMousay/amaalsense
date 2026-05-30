@@ -1,10 +1,6 @@
 /**
  * TEMPORAL COMPARISON COMPONENT
  * 
- * المقارنة الزمنية
- * - مقارنة البيانات عبر الفترات الزمنية المختلفة
- * - تحليل الاتجاهات التاريخية
- * - التنبؤ بالتطورات المستقبلية
  */
 
 import React, { useState, useMemo } from 'react';
@@ -156,14 +152,14 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
       {/* Period Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-black">اختر الفترات الزمنية للمقارنة</CardTitle>
-          <CardDescription>اختر فترتين لتحليل الاتجاهات العاطفية</CardDescription>
+          <CardTitle className="text-black">   </CardTitle>
+          <CardDescription>  Analysis  </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Period 1 */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-black">الفترة 1</label>
+              <label className="text-sm font-semibold text-black"> 1</label>
               <div className="flex flex-wrap gap-2">
                 {dateRangeOptions.map((range) => (
                   <Button
@@ -183,7 +179,7 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
 
             {/* Period 2 */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-black">الفترة 2</label>
+              <label className="text-sm font-semibold text-black"> 2</label>
               <div className="flex flex-wrap gap-2">
                 {dateRangeOptions.map((range) => (
                   <Button
@@ -204,7 +200,7 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
 
           {/* Comparison Type */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-black">نوع العرض</label>
+            <label className="text-sm font-semibold text-black"> </label>
             <div className="flex gap-2">
               <Button
                 variant={comparisonType === 'overlay' ? 'default' : 'outline'}
@@ -227,9 +223,9 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
       {period1 && period2 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-black">نتائج المقارنة</CardTitle>
+            <CardTitle className="text-black"> </CardTitle>
             <CardDescription>
-              {period1.label} مقابل {period2.label}
+              {period1.label}  {period2.label}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -238,14 +234,14 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
               <Card className="bg-blue-50 dark:bg-blue-900/20">
                 <CardContent className="pt-4">
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-gray-600">مؤشر المزاج العالمي (GMI)</p>
+                    <p className="text-sm font-semibold text-gray-600">   (GMI)</p>
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-xs text-gray-600">الفترة 1</p>
+                        <p className="text-xs text-gray-600"> 1</p>
                         <p className="text-lg font-bold">{stats1.avgGmi.toFixed(1)}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600">الفترة 2</p>
+                        <p className="text-xs text-gray-600"> 2</p>
                         <p className="text-lg font-bold">{stats2.avgGmi.toFixed(1)}</p>
                       </div>
                     </div>
@@ -260,14 +256,14 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
               <Card className="bg-orange-50 dark:bg-orange-900/20">
                 <CardContent className="pt-4">
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-gray-600">مؤشر الخوف الجماعي (CFI)</p>
+                    <p className="text-sm font-semibold text-gray-600"> Fear  (CFI)</p>
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-xs text-gray-600">الفترة 1</p>
+                        <p className="text-xs text-gray-600"> 1</p>
                         <p className="text-lg font-bold">{stats1.avgCfi.toFixed(1)}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600">الفترة 2</p>
+                        <p className="text-xs text-gray-600"> 2</p>
                         <p className="text-lg font-bold">{stats2.avgCfi.toFixed(1)}</p>
                       </div>
                     </div>
@@ -282,14 +278,14 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
               <Card className="bg-green-50 dark:bg-green-900/20">
                 <CardContent className="pt-4">
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-gray-600">مؤشر الأمل والمرونة (HRI)</p>
+                    <p className="text-sm font-semibold text-gray-600">   (HRI)</p>
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-xs text-gray-600">الفترة 1</p>
+                        <p className="text-xs text-gray-600"> 1</p>
                         <p className="text-lg font-bold">{stats1.avgHri.toFixed(1)}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600">الفترة 2</p>
+                        <p className="text-xs text-gray-600"> 2</p>
                         <p className="text-lg font-bold">{stats2.avgHri.toFixed(1)}</p>
                       </div>
                     </div>
@@ -308,7 +304,7 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
       {period1 && period2 && overlayData.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-black">مقارنة الاتجاهات</CardTitle>
+            <CardTitle className="text-black"> </CardTitle>
           </CardHeader>
           <CardContent>
             {comparisonType === 'overlay' ? (
@@ -319,10 +315,10 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="period1_gmi" stroke="#000000" name="الفترة 1 - GMI" />
-                  <Line type="monotone" dataKey="period2_gmi" stroke="#666666" name="الفترة 2 - GMI" />
-                  <Line type="monotone" dataKey="period1_cfi" stroke="#999999" name="الفترة 1 - CFI" />
-                  <Line type="monotone" dataKey="period2_cfi" stroke="#cccccc" name="الفترة 2 - CFI" />
+                  <Line type="monotone" dataKey="period1_gmi" stroke="#000000" name=" 1 - GMI" />
+                  <Line type="monotone" dataKey="period2_gmi" stroke="#666666" name=" 2 - GMI" />
+                  <Line type="monotone" dataKey="period1_cfi" stroke="#999999" name=" 1 - CFI" />
+                  <Line type="monotone" dataKey="period2_cfi" stroke="#cccccc" name=" 2 - CFI" />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
@@ -363,7 +359,7 @@ export const TemporalComparison: React.FC<TemporalComparisonProps> = ({ data, on
         <Card className="bg-yellow-50 dark:bg-yellow-900/20">
           <CardContent className="pt-4">
             <p className="text-gray-700">
-              اختر فترتين زمنيتين لرؤية المقارنة
+                  
             </p>
           </CardContent>
         </Card>

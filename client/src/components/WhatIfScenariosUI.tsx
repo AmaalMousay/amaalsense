@@ -1,10 +1,6 @@
 /**
  * WHAT-IF SCENARIOS UI COMPONENT
  * 
- * سيناريوهات "ماذا لو"
- * - محاكاة السيناريوهات الافتراضية
- * - تحليل التأثيرات المحتملة
- * - التنبؤ بالنتائج
  */
 
 import { useState } from 'react';
@@ -44,145 +40,145 @@ interface WhatIfScenariosUIProps {
 const defaultScenarios: Scenario[] = [
   {
     id: 'scenario-1',
-    title: 'نمو اقتصادي إيجابي',
-    condition: 'إذا تحسنت المؤشرات الاقتصادية بنسبة 15%',
-    description: 'نمو اقتصادي قوي مدفوع بزيادة الاستثمار وفرص العمل',
+    title: '  ',
+    condition: '     15%',
+    description: '       ',
     probability: 0.65,
     impact: 'positive',
     outcomes: {
       shortTerm: [
-        'زيادة ثقة المستهلك',
-        'ارتفاع معدلات التوظيف',
-        'تحسن معنويات الأعمال'
+        '  ',
+        '  ',
+        '  '
       ],
       mediumTerm: [
-        'أجور أعلى والقوة الشرائية',
-        'توسع استثمارات الأعمال',
-        'تحسن الخدمات العامة'
+        '   ',
+        '  ',
+        '  '
       ],
       longTerm: [
-        'تنمية اقتصادية مستدامة',
-        'تقليل معدلات الفقر',
-        'تحسن جودة الحياة'
+        '  ',
+        '  ',
+        '  '
       ]
     },
-    indicators: ['نمو الناتج المحلي', 'معدل التوظيف', 'الإنفاق الاستهلاكي', 'استثمارات الأعمال'],
-    timeline: '6-12 شهر',
-    affectedAreas: ['الاقتصاد', 'التوظيف', 'معنويات المستهلك', 'بيئة الأعمال']
+    indicators: ['  ', ' ', ' ', ' '],
+    timeline: '6-12 ',
+    affectedAreas: ['', '', ' ', ' ']
   },
   {
     id: 'scenario-2',
-    title: 'عدم الاستقرار السياسي',
-    condition: 'إذا تصعدت التوترات السياسية بشكل كبير',
-    description: 'زيادة عدم اليقين السياسي مما يؤدي إلى تحديات مؤسسية',
+    title: '  ',
+    condition: '     ',
+    description: '        ',
     probability: 0.35,
     impact: 'negative',
     outcomes: {
       shortTerm: [
-        'تقلبات السوق',
-        'عدم يقين المستثمرين',
-        'زيادة القلق العام'
+        ' ',
+        '  ',
+        '  '
       ],
       mediumTerm: [
-        'هروب رأس المال',
-        'تباطؤ اقتصادي',
-        'تأخير السياسات'
+        '  ',
+        ' ',
+        ' '
       ],
       longTerm: [
-        'ضعف المؤسسات',
-        'ركود اقتصادي طويل الأجل',
-        'تفكك اجتماعي'
+        ' ',
+        '   ',
+        ' '
       ]
     },
-    indicators: ['مؤشر التوتر السياسي', 'تقلبات السوق', 'ثقة المستثمرين', 'الثقة العامة'],
-    timeline: '3-6 أشهر',
-    affectedAreas: ['السياسة', 'الاقتصاد', 'معنويات الجمهور', 'المؤسسات'],
+    indicators: ['  ', ' ', ' ', 'Confidence '],
+    timeline: '3-6 ',
+    affectedAreas: ['', '', ' ', ''],
     mitigation: [
-      'تعزيز المؤسسات الديمقراطية',
-      'زيادة الحوار السياسي',
-      'ضمان الحكم الشفاف',
-      'حماية ثقة المستثمرين'
+      '  ',
+      '  ',
+      '  ',
+      '  '
     ]
   },
   {
     id: 'scenario-3',
-    title: 'نقطة تحول في التعاون الإقليمي',
-    condition: 'إذا تم توقيع اتفاقيات التعاون الإقليمي',
-    description: 'تعزيز التكامل الإقليمي يؤدي إلى الازدهار المشترك',
+    title: '    ',
+    condition: '     ',
+    description: '      ',
     probability: 0.45,
     impact: 'positive',
     outcomes: {
       shortTerm: [
-        'زيادة تدفقات التجارة',
-        'مشاريع البنية التحتية المشتركة',
-        'تحسن العلاقات الدبلوماسية'
+        '  ',
+        '   ',
+        '  '
       ],
       mediumTerm: [
-        'فوائد التكامل الاقتصادي',
-        'ترتيبات الأمن المشترك',
-        'نمو التبادل الثقافي'
+        '  ',
+        '  ',
+        '  '
       ],
       longTerm: [
-        'الاستقرار الإقليمي',
-        'الازدهار الجماعي',
-        'تقليل النزاعات'
+        ' ',
+        ' ',
+        ' '
       ]
     },
-    indicators: ['حجم التجارة', 'العلاقات الدبلوماسية', 'تدفقات الاستثمار', 'الاستقرار الإقليمي'],
-    timeline: '12-24 شهر',
-    affectedAreas: ['العلاقات الدولية', 'التجارة', 'الاقتصاد', 'الأمن']
+    indicators: [' ', ' ', ' ', ' '],
+    timeline: '12-24 ',
+    affectedAreas: [' ', '', '', '']
   },
   {
     id: 'scenario-4',
-    title: 'تأثير أزمة المناخ',
-    condition: 'إذا زادت الكوارث المرتبطة بالمناخ',
-    description: 'التحديات البيئية تخلق ضغوطاً اقتصادية واجتماعية',
+    title: '  ',
+    condition: '    ',
+    description: '     ',
     probability: 0.55,
     impact: 'negative',
     outcomes: {
       shortTerm: [
-        'زيادة تكاليف الاستجابة للكوارث',
-        'تعطيل القطاع الزراعي',
-        'أضرار البنية التحتية'
+        '   ',
+        '  ',
+        '  '
       ],
       mediumTerm: [
-        'ضغوط الهجرة',
-        'ندرة الموارد',
-        'الخسائر الاقتصادية'
+        ' ',
+        ' ',
+        ' '
       ],
       longTerm: [
-        'التحولات الديموغرافية',
-        'التأثيرات الاقتصادية الدائمة',
-        'عدم الاستقرار الاجتماعي'
+        ' ',
+        'Impact  ',
+        '  '
       ]
     },
-    indicators: ['أحداث المناخ', 'الإنتاج الزراعي', 'تكاليف الكوارث', 'تدفقات الهجرة'],
-    timeline: 'مستمر',
-    affectedAreas: ['البيئة', 'الزراعة', 'الاقتصاد', 'الاستقرار الاجتماعي'],
+    indicators: [' ', ' ', ' ', ' '],
+    timeline: '',
+    affectedAreas: ['', '', '', ' '],
     mitigation: [
-      'الاستثمار في المرونة المناخية',
-      'تطوير استراتيجيات التكيف',
-      'دعم المجتمعات المتضررة',
-      'الانتقال إلى الطاقة المتجددة'
+      '   ',
+      '  ',
+      '  ',
+      '   '
     ]
   }
 ];
 
 const baselineScenario: Scenario = {
   id: 'baseline',
-  title: 'السيناريو الأساسي',
-  condition: 'استمرار الاتجاهات الحالية',
-  description: 'استمرار المسار الحالي مع تقلبات طفيفة',
+  title: ' ',
+  condition: '  ',
+  description: '     ',
   probability: 1.0,
   impact: 'neutral',
   outcomes: {
-    shortTerm: ['معنويات مستقرة', 'نمو معتدل', 'نتائج متوقعة'],
-    mediumTerm: ['تحسنات تدريجية', 'تغييرات تدريجية', 'الحفاظ على الوضع الراهن'],
-    longTerm: ['استقرار طويل الأجل', 'نمو مستدام', 'تعزيز المؤسسات']
+    shortTerm: [' ', ' ', ' '],
+    mediumTerm: [' ', ' ', '   '],
+    longTerm: ['  ', ' ', ' ']
   },
-  indicators: ['الاتجاهات الحالية', 'الأنماط التاريخية', 'مقاييس الأساس'],
-  timeline: 'مستمر',
-  affectedAreas: ['جميع القطاعات']
+  indicators: [' ', ' ', ' '],
+  timeline: '',
+  affectedAreas: [' ']
 };
 
 export function WhatIfScenariosUI({
@@ -247,10 +243,10 @@ export function WhatIfScenariosUI({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5" />
-            سيناريوهات "ماذا لو"
+             " "
           </CardTitle>
           <CardDescription>
-            استكشف المستقبليات البديلة وتأثيراتها المحتملة
+                
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -314,7 +310,7 @@ export function WhatIfScenariosUI({
           {/* Probability Adjustment */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold text-black">الاحتمالية</label>
+              <label className="text-sm font-semibold text-black"></label>
               <span className="text-sm font-semibold text-black">
                 {Math.round(adjustedProbability * 100)}%
               </span>
@@ -339,13 +335,13 @@ export function WhatIfScenariosUI({
 
           {/* Timeline */}
           <div>
-            <p className="text-sm font-semibold mb-1 text-black">الجدول الزمني</p>
+            <p className="text-sm font-semibold mb-1 text-black"> </p>
             <p className="text-sm text-gray-600">{currentScenario.timeline}</p>
           </div>
 
           {/* Affected Areas */}
           <div>
-            <p className="text-sm font-semibold mb-2 text-black">المناطق المتأثرة</p>
+            <p className="text-sm font-semibold mb-2 text-black"> </p>
             <div className="flex flex-wrap gap-2">
               {currentScenario.affectedAreas.map((area, i) => (
                 <Badge key={i} variant="secondary">
@@ -357,7 +353,7 @@ export function WhatIfScenariosUI({
 
           {/* Key Indicators */}
           <div>
-            <p className="text-sm font-semibold mb-2 text-black">المؤشرات الرئيسية للمراقبة</p>
+            <p className="text-sm font-semibold mb-2 text-black"> Home </p>
             <ul className="space-y-1">
               {currentScenario.indicators.map((indicator, i) => (
                 <li key={i} className="text-sm flex items-center gap-2">
@@ -373,14 +369,14 @@ export function WhatIfScenariosUI({
       {/* Outcomes by Timeframe */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-black">النتائج المحتملة</CardTitle>
+          <CardTitle className="text-black"> </CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="short-term" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="short-term">قصير الأجل (0-6 أشهر)</TabsTrigger>
-              <TabsTrigger value="medium-term">متوسط الأجل (6-18 شهر)</TabsTrigger>
-              <TabsTrigger value="long-term">طويل الأجل (18+ شهر)</TabsTrigger>
+              <TabsTrigger value="short-term">  (0-6 )</TabsTrigger>
+              <TabsTrigger value="medium-term">  (6-18 )</TabsTrigger>
+              <TabsTrigger value="long-term">  (18+ )</TabsTrigger>
             </TabsList>
 
             <TabsContent value="short-term" className="space-y-2 mt-4">
@@ -417,9 +413,9 @@ export function WhatIfScenariosUI({
       {currentScenario.mitigation && currentScenario.mitigation.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-black">استراتيجيات التخفيف</CardTitle>
+            <CardTitle className="text-black"> </CardTitle>
             <CardDescription>
-              إجراءات لتقليل التأثيرات السلبية أو تعزيز النتائج الإيجابية
+                Impact     
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -438,7 +434,7 @@ export function WhatIfScenariosUI({
       {/* Scenario Comparison Summary */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base text-black">مقارنة سريعة</CardTitle>
+          <CardTitle className="text-base text-black"> </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

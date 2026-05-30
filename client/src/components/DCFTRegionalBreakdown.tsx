@@ -47,22 +47,22 @@ export function DCFTRegionalBreakdown({
         {/* Global Averages */}
         <div className="grid grid-cols-3 gap-4">
           <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-xs text-gray-600">المتوسط العالمي - GMI</p>
+            <p className="text-xs text-gray-600">  - GMI</p>
             <p className="text-2xl font-bold text-blue-600">{globalAverages.gmi}</p>
           </div>
           <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
-            <p className="text-xs text-gray-600">المتوسط العالمي - CFI</p>
+            <p className="text-xs text-gray-600">  - CFI</p>
             <p className="text-2xl font-bold text-purple-600">{globalAverages.cfi}</p>
           </div>
           <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-xs text-gray-600">المتوسط العالمي - HRI</p>
+            <p className="text-xs text-gray-600">  - HRI</p>
             <p className="text-2xl font-bold text-green-600">{globalAverages.hri}</p>
           </div>
         </div>
 
         {/* Regional Comparison Bar Chart */}
         <div>
-          <h4 className="font-semibold mb-3">مقارنة المناطق - مؤشر المزاج العام (GMI)</h4>
+          <h4 className="font-semibold mb-3">  -    (GMI)</h4>
           <div className="w-full h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={sortedData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
@@ -87,7 +87,7 @@ export function DCFTRegionalBreakdown({
 
         {/* Population Distribution Pie Chart */}
         <div>
-          <h4 className="font-semibold mb-3">توزيع السكان حسب المنطقة</h4>
+          <h4 className="font-semibold mb-3">   Region</h4>
           <div className="w-full h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -113,17 +113,17 @@ export function DCFTRegionalBreakdown({
 
         {/* Detailed Regional Table */}
         <div>
-          <h4 className="font-semibold mb-3">تفاصيل المناطق</h4>
+          <h4 className="font-semibold mb-3"> </h4>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b-2 border-gray-300">
-                  <th className="text-right py-2 px-3">المنطقة</th>
+                  <th className="text-right py-2 px-3">Region</th>
                   <th className="text-center py-2 px-3">GMI</th>
                   <th className="text-center py-2 px-3">CFI</th>
                   <th className="text-center py-2 px-3">HRI</th>
-                  <th className="text-center py-2 px-3">السكان</th>
-                  <th className="text-center py-2 px-3">الاتجاه</th>
+                  <th className="text-center py-2 px-3"></th>
+                  <th className="text-center py-2 px-3"></th>
                 </tr>
               </thead>
               <tbody>
@@ -162,12 +162,12 @@ export function DCFTRegionalBreakdown({
 
         {/* Insights */}
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="font-semibold text-blue-900 mb-2">💡 الرؤى الرئيسية</h4>
+          <h4 className="font-semibold text-blue-900 mb-2">💡  Home</h4>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>• أعلى مؤشر مزاج: <strong>{sortedData[0]?.region}</strong> ({sortedData[0]?.gmi.toFixed(1)})</li>
-            <li>• أقل مؤشر مزاج: <strong>{sortedData[sortedData.length - 1]?.region}</strong> ({sortedData[sortedData.length - 1]?.gmi.toFixed(1)})</li>
-            <li>• أكبر منطقة سكانية: <strong>{data.sort((a, b) => b.population - a.population)[0]?.region}</strong></li>
-            <li>• أسرع نمو عاطفي: <strong>{data.sort((a, b) => b.trend - a.trend)[0]?.region}</strong> (+{data.sort((a, b) => b.trend - a.trend)[0]?.trend.toFixed(1)}%)</li>
+            <li>•   : <strong>{sortedData[0]?.region}</strong> ({sortedData[0]?.gmi.toFixed(1)})</li>
+            <li>•   : <strong>{sortedData[sortedData.length - 1]?.region}</strong> ({sortedData[sortedData.length - 1]?.gmi.toFixed(1)})</li>
+            <li>•   : <strong>{data.sort((a, b) => b.population - a.population)[0]?.region}</strong></li>
+            <li>•   : <strong>{data.sort((a, b) => b.trend - a.trend)[0]?.region}</strong> (+{data.sort((a, b) => b.trend - a.trend)[0]?.trend.toFixed(1)}%)</li>
           </ul>
         </div>
       </CardContent>

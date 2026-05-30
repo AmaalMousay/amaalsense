@@ -95,7 +95,7 @@ const ENDPOINTS: Record<string, Endpoint[]> = {
       example: `curl -X POST "${API_BASE_URL}/analyze/text" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"text": "الأوضاع الاقتصادية تثير قلق المواطنين"}'`,
+  -d '{"text": "    "}'`,
     },
     {
       method: "POST",
@@ -107,7 +107,7 @@ const ENDPOINTS: Record<string, Endpoint[]> = {
         { name: "timeRange", type: "string", required: false, description: "Time range: day, week, month (default: week)" },
       ],
       response: `{
-  "topic": "الانتخابات",
+  "topic": "",
   "country": "LY",
   "support": 45.2,
   "opposition": 32.8,
@@ -118,14 +118,14 @@ const ENDPOINTS: Record<string, Endpoint[]> = {
     "seniors": { "support": 38.9, "opposition": 38.1 }
   },
   "regions": [
-    { "name": "طرابلس", "support": 48.2, "opposition": 30.1 },
-    { "name": "بنغازي", "support": 42.8, "opposition": 35.6 }
+    { "name": "", "support": 48.2, "opposition": 30.1 },
+    { "name": "", "support": 42.8, "opposition": 35.6 }
   ]
 }`,
       example: `curl -X POST "${API_BASE_URL}/analyze/topic" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"topic": "الانتخابات", "countryCode": "LY", "timeRange": "week"}'`,
+  -d '{"topic": "", "countryCode": "LY", "timeRange": "week"}'`,
     },
   ],
   trends: [
@@ -207,7 +207,7 @@ function CodeBlock({ code, language = "bash" }: { code: string; language?: strin
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
     setCopied(true);
-    toast.success("تم نسخ الكود");
+    toast.success("  ");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -292,7 +292,7 @@ export default function ApiDocs() {
             Amaalsense API
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            دمج تحليل المشاعر الجماعية في تطبيقاتك باستخدام واجهة برمجة التطبيقات RESTful
+             Analysis Emotions        RESTful
           </p>
         </div>
 
@@ -301,7 +301,7 @@ export default function ApiDocs() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-yellow-500" />
-              البداية السريعة
+               
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -309,28 +309,28 @@ export default function ApiDocs() {
               <div className="p-4 rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">1</div>
-                  <h4 className="font-semibold">احصل على مفتاح API</h4>
+                  <h4 className="font-semibold">   API</h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  سجل للحصول على حساب واحصل على مفتاح API الخاص بك من لوحة التحكم
+                         API    Dashboard
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">2</div>
-                  <h4 className="font-semibold">أضف المفتاح للطلبات</h4>
+                  <h4 className="font-semibold">  </h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  أضف مفتاح API في header كـ Bearer token
+                    API  header  Bearer token
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">3</div>
-                  <h4 className="font-semibold">ابدأ الاستخدام</h4>
+                  <h4 className="font-semibold"> </h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  استخدم نقاط النهاية للحصول على بيانات المشاعر
+                        Emotions
                 </p>
               </div>
             </div>
@@ -353,7 +353,7 @@ export default function ApiDocs() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-orange-500" />
-              حدود الاستخدام
+               
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -393,7 +393,7 @@ export default function ApiDocs() {
           <TabsContent value="indices">
             <h2 className="text-xl font-bold mb-4">Emotion Indices</h2>
             <p className="text-muted-foreground mb-6">
-              احصل على المؤشرات العاطفية الحالية (GMI, CFI, HRI) على المستوى العالمي أو لدولة محددة
+                   (GMI, CFI, HRI)      
             </p>
             {ENDPOINTS.indices.map((endpoint, i) => (
               <EndpointCard key={i} endpoint={endpoint} />
@@ -403,7 +403,7 @@ export default function ApiDocs() {
           <TabsContent value="analysis">
             <h2 className="text-xl font-bold mb-4">Text & Topic Analysis</h2>
             <p className="text-muted-foreground mb-6">
-              حلل النصوص والمواضيع باستخدام المحرك الهجين DCFT-AI
+                    DCFT-AI
             </p>
             {ENDPOINTS.analysis.map((endpoint, i) => (
               <EndpointCard key={i} endpoint={endpoint} />
@@ -413,7 +413,7 @@ export default function ApiDocs() {
           <TabsContent value="trends">
             <h2 className="text-xl font-bold mb-4">Historical Trends</h2>
             <p className="text-muted-foreground mb-6">
-              احصل على البيانات التاريخية للمؤشرات العاطفية
+                   
             </p>
             {ENDPOINTS.trends.map((endpoint, i) => (
               <EndpointCard key={i} endpoint={endpoint} />
@@ -423,7 +423,7 @@ export default function ApiDocs() {
           <TabsContent value="alerts">
             <h2 className="text-xl font-bold mb-4">Custom Alerts</h2>
             <p className="text-muted-foreground mb-6">
-              أنشئ تنبيهات مخصصة لمراقبة المؤشرات العاطفية
+                   
             </p>
             {ENDPOINTS.alerts.map((endpoint, i) => (
               <EndpointCard key={i} endpoint={endpoint} />
@@ -439,7 +439,7 @@ export default function ApiDocs() {
               SDKs & Libraries
             </CardTitle>
             <CardDescription>
-              مكتبات جاهزة للاستخدام في لغات البرمجة المختلفة
+                    
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -458,7 +458,7 @@ export default function ApiDocs() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground mt-4 text-center">
-              SDKs قادمة قريباً - استخدم REST API مباشرة في الوقت الحالي
+              SDKs   -  REST API    
             </p>
           </CardContent>
         </Card>

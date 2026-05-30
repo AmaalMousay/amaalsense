@@ -382,7 +382,7 @@ export const de = {
     realTimeDataDesc: "Live-Updates aus mehreren Quellen",
     scientificPaper: "Wissenschaftliche Arbeit",
     paperTitle: "Die Geburt des digitalen Bewusstseins",
-    paperTitleAr: "ولادة الوعي الرقمي",
+    paperTitleAr: "  ",
     foundationalResearch: "Die grundlegende Forschung hinter der Amaalsense Engine",
     aiResearcher: "KI-Forscherin und Theoretikerin des digitalen Bewusstseins",
     location: "Standort",

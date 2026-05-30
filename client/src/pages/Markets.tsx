@@ -44,7 +44,7 @@ const MARKET_ASSETS: MarketAsset[] = [
   {
     id: 'gold',
     name: 'Gold',
-    nameAr: 'الذهب',
+    nameAr: '',
     symbol: 'XAU/USD',
     icon: <DollarSign className="w-6 h-6 text-yellow-400" />,
     sentimentScore: 72,
@@ -56,14 +56,14 @@ const MARKET_ASSETS: MarketAsset[] = [
     hypeChange: 12,
     momentum: 'bullish',
     signal: 'Fear rising rapidly (+24% in 24h) with "safe haven" mentions increasing. Historically precedes gold price surge.',
-    signalAr: 'الخوف يرتفع بسرعة (+24% خلال 24 ساعة) مع زيادة ذكر "الملاذ الآمن". تاريخياً هذا يسبق ارتفاع سعر الذهب.',
+    signalAr: 'Fear   (+24%  24 )    " ".      .',
     signalType: 'opportunity',
     lastUpdate: '3 min ago'
   },
   {
     id: 'bitcoin',
     name: 'Bitcoin',
-    nameAr: 'بيتكوين',
+    nameAr: '',
     symbol: 'BTC/USD',
     icon: <Bitcoin className="w-6 h-6 text-orange-400" />,
     sentimentScore: 78,
@@ -75,14 +75,14 @@ const MARKET_ASSETS: MarketAsset[] = [
     hypeChange: 32,
     momentum: 'bullish',
     signal: 'CAUTION: Hype Index at 85% - extreme media amplification. Potential psychological bubble forming.',
-    signalAr: 'تحذير: مؤشر التضخيم عند 85% - تضخيم إعلامي شديد. احتمال تشكل فقاعة نفسية.',
+    signalAr: ':    85% -   .    .',
     signalType: 'warning',
     lastUpdate: '1 min ago'
   },
   {
     id: 'tech',
     name: 'Tech Stocks',
-    nameAr: 'أسهم التكنولوجيا',
+    nameAr: ' ',
     symbol: 'NASDAQ',
     icon: <Cpu className="w-6 h-6 text-blue-400" />,
     sentimentScore: 38,
@@ -94,14 +94,14 @@ const MARKET_ASSETS: MarketAsset[] = [
     hypeChange: -8,
     momentum: 'bearish',
     signal: 'ALERT: Fear Spike at 72% - collective anxiety at 6-month high. Sentiment momentum reversing downward.',
-    signalAr: 'تنبيه: مؤشر الذعر عند 72% - القلق الجماعي في أعلى نقطة منذ 6 أشهر. زخم المشاعر ينقلب نزولاً.',
+    signalAr: ':    72% -       6 .  Emotions  .',
     signalType: 'danger',
     lastUpdate: '5 min ago'
   },
   {
     id: 'oil',
     name: 'Crude Oil',
-    nameAr: 'النفط الخام',
+    nameAr: ' ',
     symbol: 'WTI',
     icon: <Fuel className="w-6 h-6 text-emerald-400" />,
     sentimentScore: 52,
@@ -113,14 +113,14 @@ const MARKET_ASSETS: MarketAsset[] = [
     hypeChange: -3,
     momentum: 'neutral',
     signal: 'Sentiment stable. No significant emotional signals detected. Market in equilibrium.',
-    signalAr: 'المشاعر مستقرة. لا توجد إشارات عاطفية مهمة. السوق في حالة توازن.',
+    signalAr: 'Emotions .     .    .',
     signalType: 'neutral',
     lastUpdate: '8 min ago'
   },
   {
     id: 'sp500',
     name: 'S&P 500',
-    nameAr: 'إس آند بي 500',
+    nameAr: '   500',
     symbol: 'SPX',
     icon: <LineChart className="w-6 h-6 text-indigo-400" />,
     sentimentScore: 55,
@@ -132,14 +132,14 @@ const MARKET_ASSETS: MarketAsset[] = [
     hypeChange: 5,
     momentum: 'neutral',
     signal: 'Sentiment momentum reversing. Watch for potential trend change in next 48-72 hours.',
-    signalAr: 'زخم المشاعر ينقلب. راقب احتمال تغير الاتجاه خلال 48-72 ساعة القادمة.',
+    signalAr: ' Emotions .      48-72  .',
     signalType: 'warning',
     lastUpdate: '4 min ago'
   },
   {
     id: 'euro',
     name: 'EUR/USD',
-    nameAr: 'اليورو/دولار',
+    nameAr: '/',
     symbol: 'EUR/USD',
     icon: <Globe className="w-6 h-6 text-blue-300" />,
     sentimentScore: 48,
@@ -151,7 +151,7 @@ const MARKET_ASSETS: MarketAsset[] = [
     hypeChange: -2,
     momentum: 'bearish',
     signal: 'Mild bearish sentiment. Fear slightly elevated due to economic uncertainty discussions.',
-    signalAr: 'مشاعر سلبية خفيفة. الخوف مرتفع قليلاً بسبب نقاشات عدم اليقين الاقتصادي.',
+    signalAr: '  . Fear       .',
     signalType: 'neutral',
     lastUpdate: '6 min ago'
   }
@@ -163,11 +163,11 @@ const calculateMarketMood = () => {
   const avgFear = MARKET_ASSETS.reduce((acc, a) => acc + a.fearSpike, 0) / MARKET_ASSETS.length;
   const avgHype = MARKET_ASSETS.reduce((acc, a) => acc + a.hypeIndex, 0) / MARKET_ASSETS.length;
   
-  if (avgFear > 60) return { mood: 'tense', moodAr: 'متوتر', color: 'text-red-400', bg: 'bg-red-500/20' };
-  if (avgHype > 70) return { mood: 'euphoric', moodAr: 'مبتهج بشكل مفرط', color: 'text-purple-400', bg: 'bg-purple-500/20' };
-  if (avgSentiment > 60) return { mood: 'optimistic', moodAr: 'متفائل', color: 'text-green-400', bg: 'bg-green-500/20' };
-  if (avgSentiment < 40) return { mood: 'pessimistic', moodAr: 'متشائم', color: 'text-orange-400', bg: 'bg-orange-500/20' };
-  return { mood: 'neutral', moodAr: 'محايد', color: 'text-gray-400', bg: 'bg-gray-500/20' };
+  if (avgFear > 60) return { mood: 'tense', moodAr: '', color: 'text-red-400', bg: 'bg-red-500/20' };
+  if (avgHype > 70) return { mood: 'euphoric', moodAr: '  ', color: 'text-purple-400', bg: 'bg-purple-500/20' };
+  if (avgSentiment > 60) return { mood: 'optimistic', moodAr: '', color: 'text-green-400', bg: 'bg-green-500/20' };
+  if (avgSentiment < 40) return { mood: 'pessimistic', moodAr: '', color: 'text-orange-400', bg: 'bg-orange-500/20' };
+  return { mood: 'neutral', moodAr: 'Neutral', color: 'text-gray-400', bg: 'bg-gray-500/20' };
 };
 
 // Helper functions
@@ -189,9 +189,9 @@ const getMomentumIcon = (momentum: string) => {
 
 const getMomentumLabel = (momentum: string, isArabic: boolean) => {
   switch (momentum) {
-    case 'bullish': return isArabic ? 'صاعد' : 'Bullish';
-    case 'bearish': return isArabic ? 'هابط' : 'Bearish';
-    default: return isArabic ? 'محايد' : 'Neutral';
+    case 'bullish': return isArabic ? '' : 'Bullish';
+    case 'bearish': return isArabic ? '' : 'Bearish';
+    default: return isArabic ? 'Neutral' : 'Neutral';
   }
 };
 
@@ -206,10 +206,10 @@ const getTrendIcon = (trend: string) => {
 
 const getTrendLabel = (trend: string, isArabic: boolean) => {
   switch (trend) {
-    case 'rising': return isArabic ? 'صاعد' : 'Rising';
-    case 'falling': return isArabic ? 'هابط' : 'Falling';
-    case 'reversing': return isArabic ? 'ينقلب' : 'Reversing';
-    default: return isArabic ? 'مستقر' : 'Stable';
+    case 'rising': return isArabic ? '' : 'Rising';
+    case 'falling': return isArabic ? '' : 'Falling';
+    case 'reversing': return isArabic ? '' : 'Reversing';
+    default: return isArabic ? '' : 'Stable';
   }
 };
 
@@ -223,17 +223,17 @@ const getSignalStyle = (type: string) => {
 };
 
 const getFearLevel = (fear: number, isArabic: boolean) => {
-  if (fear >= 70) return { label: isArabic ? 'ذعر شديد' : 'Extreme Fear', color: 'text-red-500', bg: 'bg-red-500' };
-  if (fear >= 50) return { label: isArabic ? 'خوف مرتفع' : 'High Fear', color: 'text-orange-400', bg: 'bg-orange-500' };
-  if (fear >= 30) return { label: isArabic ? 'معتدل' : 'Moderate', color: 'text-yellow-400', bg: 'bg-yellow-500' };
-  return { label: isArabic ? 'خوف منخفض' : 'Low Fear', color: 'text-green-400', bg: 'bg-green-500' };
+  if (fear >= 70) return { label: isArabic ? ' ' : 'Extreme Fear', color: 'text-red-500', bg: 'bg-red-500' };
+  if (fear >= 50) return { label: isArabic ? 'Fear ' : 'High Fear', color: 'text-orange-400', bg: 'bg-orange-500' };
+  if (fear >= 30) return { label: isArabic ? '' : 'Moderate', color: 'text-yellow-400', bg: 'bg-yellow-500' };
+  return { label: isArabic ? 'Fear ' : 'Low Fear', color: 'text-green-400', bg: 'bg-green-500' };
 };
 
 const getHypeLevel = (hype: number, isArabic: boolean) => {
-  if (hype >= 75) return { label: isArabic ? 'فقاعة محتملة!' : 'Potential Bubble!', color: 'text-purple-500', bg: 'bg-purple-500', warning: true };
-  if (hype >= 60) return { label: isArabic ? 'تضخيم شديد' : 'Extreme Hype', color: 'text-purple-400', bg: 'bg-purple-500', warning: true };
-  if (hype >= 40) return { label: isArabic ? 'تضخيم مرتفع' : 'High Hype', color: 'text-blue-400', bg: 'bg-blue-500', warning: false };
-  return { label: isArabic ? 'طبيعي' : 'Normal', color: 'text-gray-400', bg: 'bg-gray-500', warning: false };
+  if (hype >= 75) return { label: isArabic ? ' !' : 'Potential Bubble!', color: 'text-purple-500', bg: 'bg-purple-500', warning: true };
+  if (hype >= 60) return { label: isArabic ? ' ' : 'Extreme Hype', color: 'text-purple-400', bg: 'bg-purple-500', warning: true };
+  if (hype >= 40) return { label: isArabic ? ' ' : 'High Hype', color: 'text-blue-400', bg: 'bg-blue-500', warning: false };
+  return { label: isArabic ? '' : 'Normal', color: 'text-gray-400', bg: 'bg-gray-500', warning: false };
 };
 
 export default function Markets() {
@@ -296,7 +296,7 @@ export default function Markets() {
               size="sm"
               onClick={() => setIsArabic(!isArabic)}
             >
-              {isArabic ? 'EN' : 'عربي'}
+              {isArabic ? 'EN' : ''}
             </Button>
             <ThemeToggle />
             {isAuthenticated ? (
@@ -315,14 +315,14 @@ export default function Markets() {
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             {isArabic ? (
-              <>نقيس <span className="text-green-400">مزاج السوق</span> قبل أن يتحرك</>
+              <> <span className="text-green-400"> </span>   </>
             ) : (
               <>We Measure <span className="text-green-400">Market Mood</span> Before It Moves</>
             )}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-6">
             {isArabic 
-              ? 'رادار نفسي للسوق - إشارات عاطفية للتداول الذكي'
+              ? '   -    '
               : 'Psychological Radar for Markets - Emotional Signals for Smarter Trading'
             }
           </p>
@@ -337,7 +337,7 @@ export default function Markets() {
                   <Gauge className="w-8 h-8" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{isArabic ? 'مزاج السوق الآن' : 'Current Market Mood'}</p>
+                  <p className="text-sm text-muted-foreground">{isArabic ? '  ' : 'Current Market Mood'}</p>
                   <p className={`text-2xl font-bold ${marketMood.color}`}>
                     {isArabic ? marketMood.moodAr : marketMood.mood.toUpperCase()}
                   </p>
@@ -345,15 +345,15 @@ export default function Markets() {
               </div>
               <div className="flex items-center gap-6 text-sm">
                 <div className="text-center">
-                  <p className="text-muted-foreground">{isArabic ? 'صاعد' : 'Bullish'}</p>
+                  <p className="text-muted-foreground">{isArabic ? '' : 'Bullish'}</p>
                   <p className="text-xl font-bold text-green-400">{marketStats.bullishCount}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-muted-foreground">{isArabic ? 'هابط' : 'Bearish'}</p>
+                  <p className="text-muted-foreground">{isArabic ? '' : 'Bearish'}</p>
                   <p className="text-xl font-bold text-red-400">{marketStats.bearishCount}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-muted-foreground">{isArabic ? 'تحذيرات' : 'Warnings'}</p>
+                  <p className="text-muted-foreground">{isArabic ? '' : 'Warnings'}</p>
                   <p className="text-xl font-bold text-yellow-400">{marketStats.warningCount}</p>
                 </div>
               </div>
@@ -373,28 +373,28 @@ export default function Markets() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">Sentiment Momentum</h3>
-                    <p className="text-xs text-muted-foreground">{isArabic ? 'زخم المشاعر' : 'Emotion Direction'}</p>
+                    <p className="text-xs text-muted-foreground">{isArabic ? ' Emotions' : 'Emotion Direction'}</p>
                   </div>
                 </div>
               </div>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{isArabic ? 'المتوسط العام' : 'Average Score'}</span>
+                  <span className="text-sm text-muted-foreground">{isArabic ? ' ' : 'Average Score'}</span>
                   <span className="text-2xl font-bold text-foreground">{marketStats.avgSentiment}%</span>
                 </div>
                 <Progress value={marketStats.avgSentiment} className="h-3" />
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="p-2 bg-green-500/10 rounded">
                     <TrendingUp className="w-4 h-4 mx-auto text-green-400 mb-1" />
-                    <span className="text-muted-foreground">{isArabic ? 'صاعد' : 'Rising'}</span>
+                    <span className="text-muted-foreground">{isArabic ? '' : 'Rising'}</span>
                   </div>
                   <div className="p-2 bg-yellow-500/10 rounded">
                     <RefreshCw className="w-4 h-4 mx-auto text-yellow-400 mb-1" />
-                    <span className="text-muted-foreground">{isArabic ? 'ينقلب' : 'Reversing'}</span>
+                    <span className="text-muted-foreground">{isArabic ? '' : 'Reversing'}</span>
                   </div>
                   <div className="p-2 bg-red-500/10 rounded">
                     <TrendingDown className="w-4 h-4 mx-auto text-red-400 mb-1" />
-                    <span className="text-muted-foreground">{isArabic ? 'هابط' : 'Falling'}</span>
+                    <span className="text-muted-foreground">{isArabic ? '' : 'Falling'}</span>
                   </div>
                 </div>
               </div>
@@ -411,18 +411,18 @@ export default function Markets() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">Fear Spike Index</h3>
-                    <p className="text-xs text-muted-foreground">{isArabic ? 'مؤشر الذعر' : 'Panic Detection'}</p>
+                    <p className="text-xs text-muted-foreground">{isArabic ? ' ' : 'Panic Detection'}</p>
                   </div>
                 </div>
                 {marketStats.avgFear >= 60 && (
                   <Badge className="bg-red-500 text-white animate-pulse">
-                    {isArabic ? 'تحذير!' : 'ALERT!'}
+                    {isArabic ? '!' : 'ALERT!'}
                   </Badge>
                 )}
               </div>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{isArabic ? 'المستوى الحالي' : 'Current Level'}</span>
+                  <span className="text-sm text-muted-foreground">{isArabic ? ' ' : 'Current Level'}</span>
                   <span className={`text-2xl font-bold ${getFearLevel(marketStats.avgFear, isArabic).color}`}>
                     {marketStats.avgFear}%
                   </span>
@@ -452,18 +452,18 @@ export default function Markets() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">Hype Index</h3>
-                    <p className="text-xs text-muted-foreground">{isArabic ? 'مؤشر التضخيم' : 'Media Bubble'}</p>
+                    <p className="text-xs text-muted-foreground">{isArabic ? ' ' : 'Media Bubble'}</p>
                   </div>
                 </div>
                 {getHypeLevel(marketStats.avgHype, isArabic).warning && (
                   <Badge className="bg-purple-500 text-white">
-                    {isArabic ? 'راقب!' : 'WATCH!'}
+                    {isArabic ? '!' : 'WATCH!'}
                   </Badge>
                 )}
               </div>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{isArabic ? 'التضخيم الإعلامي' : 'Media Amplification'}</span>
+                  <span className="text-sm text-muted-foreground">{isArabic ? ' ' : 'Media Amplification'}</span>
                   <span className={`text-2xl font-bold ${getHypeLevel(marketStats.avgHype, isArabic).color}`}>
                     {marketStats.avgHype}%
                   </span>
@@ -490,10 +490,10 @@ export default function Markets() {
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-foreground">
-                {isArabic ? 'إشارات الأصول' : 'Asset Signals'}
+                {isArabic ? ' ' : 'Asset Signals'}
               </h2>
               <Badge variant="outline" className="text-muted-foreground">
-                {isArabic ? 'آخر تحديث: منذ دقيقة' : 'Updated: 1 min ago'}
+                {isArabic ? ' :  ' : 'Updated: 1 min ago'}
               </Badge>
             </div>
 
@@ -532,7 +532,7 @@ export default function Markets() {
                           {/* Mini Indicators Row */}
                           <div className="grid grid-cols-3 gap-2 mb-3">
                             <div className="text-center p-2 bg-muted/50 rounded">
-                              <p className="text-xs text-muted-foreground">{isArabic ? 'المشاعر' : 'Sentiment'}</p>
+                              <p className="text-xs text-muted-foreground">{isArabic ? 'Emotions' : 'Sentiment'}</p>
                               <p className="font-bold text-foreground">{asset.sentimentScore}%</p>
                               <div className="flex items-center justify-center gap-1 text-xs">
                                 {getTrendIcon(asset.sentimentTrend)}
@@ -542,14 +542,14 @@ export default function Markets() {
                               </div>
                             </div>
                             <div className="text-center p-2 bg-muted/50 rounded">
-                              <p className="text-xs text-muted-foreground">{isArabic ? 'الخوف' : 'Fear'}</p>
+                              <p className="text-xs text-muted-foreground">{isArabic ? 'Fear' : 'Fear'}</p>
                               <p className={`font-bold ${fearLevel.color}`}>{asset.fearSpike}%</p>
                               <span className={`text-xs ${asset.fearChange > 0 ? 'text-red-400' : 'text-green-400'}`}>
                                 {asset.fearChange > 0 ? '+' : ''}{asset.fearChange}%
                               </span>
                             </div>
                             <div className="text-center p-2 bg-muted/50 rounded">
-                              <p className="text-xs text-muted-foreground">{isArabic ? 'التضخيم' : 'Hype'}</p>
+                              <p className="text-xs text-muted-foreground">{isArabic ? '' : 'Hype'}</p>
                               <p className={`font-bold ${hypeLevel.color}`}>{asset.hypeIndex}%</p>
                               <span className={`text-xs ${asset.hypeChange > 0 ? 'text-purple-400' : 'text-gray-400'}`}>
                                 {asset.hypeChange > 0 ? '+' : ''}{asset.hypeChange}%
@@ -594,16 +594,16 @@ export default function Markets() {
                     <div>
                       <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
                         <Activity className="w-4 h-4" />
-                        {isArabic ? 'تحليل المشاعر' : 'Sentiment Analysis'}
+                        {isArabic ? 'Analysis Emotions' : 'Sentiment Analysis'}
                       </h4>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">{isArabic ? 'النقاط' : 'Score'}</span>
+                          <span className="text-sm text-muted-foreground">{isArabic ? '' : 'Score'}</span>
                           <span className="text-xl font-bold text-foreground">{selectedAsset.sentimentScore}%</span>
                         </div>
                         <Progress value={selectedAsset.sentimentScore} className="h-2" />
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">{isArabic ? 'الاتجاه' : 'Trend'}</span>
+                          <span className="text-muted-foreground">{isArabic ? '' : 'Trend'}</span>
                           <span className="flex items-center gap-1">
                             {getTrendIcon(selectedAsset.sentimentTrend)}
                             {getTrendLabel(selectedAsset.sentimentTrend, isArabic)}
@@ -616,7 +616,7 @@ export default function Markets() {
                     <div>
                       <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-orange-400" />
-                        {isArabic ? 'مؤشر الخوف' : 'Fear Index'}
+                        {isArabic ? ' Fear' : 'Fear Index'}
                       </h4>
                       <div className={`p-3 rounded-lg ${selectedAsset.fearSpike >= 60 ? 'bg-red-500/10 border border-red-500/30' : 'bg-muted/50'}`}>
                         <div className="flex items-center justify-between mb-2">
@@ -628,7 +628,7 @@ export default function Markets() {
                         <Progress value={selectedAsset.fearSpike} className="h-2" />
                         {selectedAsset.fearSpike >= 60 && (
                           <p className="text-xs text-red-400 mt-2">
-                            {isArabic ? 'تحذير: مستوى الخوف مرتفع - احتمال تصحيح قادم' : 'Warning: High fear level - potential correction ahead'}
+                            {isArabic ? ':  Fear  -   ' : 'Warning: High fear level - potential correction ahead'}
                           </p>
                         )}
                       </div>
@@ -638,7 +638,7 @@ export default function Markets() {
                     <div>
                       <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
                         <Zap className="w-4 h-4 text-purple-400" />
-                        {isArabic ? 'مؤشر التضخيم' : 'Hype Index'}
+                        {isArabic ? ' ' : 'Hype Index'}
                       </h4>
                       <div className={`p-3 rounded-lg ${selectedAsset.hypeIndex >= 70 ? 'bg-purple-500/10 border border-purple-500/30' : 'bg-muted/50'}`}>
                         <div className="flex items-center justify-between mb-2">
@@ -650,7 +650,7 @@ export default function Markets() {
                         <Progress value={selectedAsset.hypeIndex} className="h-2" />
                         {selectedAsset.hypeIndex >= 70 && (
                           <p className="text-xs text-purple-400 mt-2">
-                            {isArabic ? 'تحذير: فقاعة نفسية محتملة - راقب التصحيح' : 'Warning: Potential psychological bubble - watch for correction'}
+                            {isArabic ? ':    -  ' : 'Warning: Potential psychological bubble - watch for correction'}
                           </p>
                         )}
                       </div>
@@ -660,7 +660,7 @@ export default function Markets() {
                     <div>
                       <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
                         <Target className="w-4 h-4 text-yellow-400" />
-                        {isArabic ? 'رؤية المتداول' : 'Trader Insight'}
+                        {isArabic ? ' ' : 'Trader Insight'}
                       </h4>
                       <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                         <p className="text-sm text-foreground">
@@ -673,7 +673,7 @@ export default function Markets() {
                     <div className="flex gap-2">
                       <Button className="flex-1 bg-foreground text-background hover:bg-foreground/90">
                         <Bell className="w-4 h-4 ml-2" />
-                        {isArabic ? 'تنبيه' : 'Alert'}
+                        {isArabic ? '' : 'Alert'}
                       </Button>
                       <Button variant="outline">
                         <LineChart className="w-4 h-4" />
@@ -686,9 +686,9 @@ export default function Markets() {
               <Card className="bg-card border-border">
                 <CardContent className="p-8 text-center">
                   <Eye className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="font-bold text-foreground mb-2">{isArabic ? 'اختر أصل' : 'Select an Asset'}</h3>
+                  <h3 className="font-bold text-foreground mb-2">{isArabic ? ' ' : 'Select an Asset'}</h3>
                   <p className="text-muted-foreground">
-                    {isArabic ? 'اضغط على أي أصل لعرض التحليل المفصل' : 'Click any asset to view detailed analysis'}
+                    {isArabic ? '     Analysis ' : 'Click any asset to view detailed analysis'}
                   </p>
                 </CardContent>
               </Card>
@@ -701,7 +701,7 @@ export default function Markets() {
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
               <BarChart3 className="w-5 h-5" />
-              {isArabic ? 'مقارنة الأصول' : 'Asset Comparison'}
+              {isArabic ? ' ' : 'Asset Comparison'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -709,12 +709,12 @@ export default function Markets() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="text-right p-3 text-muted-foreground font-medium">{isArabic ? 'الأصل' : 'Asset'}</th>
-                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? 'المشاعر' : 'Sentiment'}</th>
-                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? 'الخوف' : 'Fear'}</th>
-                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? 'التضخيم' : 'Hype'}</th>
-                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? 'الاتجاه' : 'Momentum'}</th>
-                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? 'الإشارة' : 'Signal'}</th>
+                    <th className="text-right p-3 text-muted-foreground font-medium">{isArabic ? '' : 'Asset'}</th>
+                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? 'Emotions' : 'Sentiment'}</th>
+                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? 'Fear' : 'Fear'}</th>
+                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? '' : 'Hype'}</th>
+                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? '' : 'Momentum'}</th>
+                    <th className="text-center p-3 text-muted-foreground font-medium">{isArabic ? '' : 'Signal'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -760,7 +760,7 @@ export default function Markets() {
         {/* Pricing Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-center text-foreground mb-8">
-            {isArabic ? 'خطط الاشتراك' : 'Subscription Plans'}
+            {isArabic ? ' ' : 'Subscription Plans'}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -769,57 +769,57 @@ export default function Markets() {
               <div className="text-center mb-6">
                 <h3 className="text-lg font-bold text-foreground mb-1">Free</h3>
                 <p className="text-3xl font-bold text-foreground">$0</p>
-                <p className="text-xs text-muted-foreground">{isArabic ? 'مجاني للأبد' : 'Forever free'}</p>
+                <p className="text-xs text-muted-foreground">{isArabic ? ' ' : 'Forever free'}</p>
               </div>
               <ul className="space-y-2 mb-6 text-sm">
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'إشارات عامة' : 'General signals'}
+                  {isArabic ? ' ' : 'General signals'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? '4 أصول' : '4 assets'}
+                  {isArabic ? '4 ' : '4 assets'}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Lock className="w-3 h-3" />
-                  {isArabic ? 'تحديث كل ساعة' : 'Hourly updates'}
+                  {isArabic ? '  ' : 'Hourly updates'}
                 </li>
               </ul>
               <Button variant="outline" className="w-full">
-                {isArabic ? 'ابدأ مجاناً' : 'Start Free'}
+                {isArabic ? ' ' : 'Start Free'}
               </Button>
             </Card>
 
             {/* Pro Trader */}
             <Card className="bg-card border-border p-6 ring-2 ring-green-500 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full">
-                {isArabic ? 'الأكثر شعبية' : 'Most Popular'}
+                {isArabic ? ' ' : 'Most Popular'}
               </div>
               <div className="text-center mb-6">
                 <h3 className="text-lg font-bold text-foreground mb-1">Pro Trader</h3>
                 <p className="text-3xl font-bold text-foreground">$29<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-                <p className="text-xs text-muted-foreground">{isArabic ? 'للمتداولين الأفراد' : 'For individual traders'}</p>
+                <p className="text-xs text-muted-foreground">{isArabic ? ' ' : 'For individual traders'}</p>
               </div>
               <ul className="space-y-2 mb-6 text-sm">
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'جميع الأصول' : 'All assets'}
+                  {isArabic ? ' ' : 'All assets'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'تحديث كل 5 دقائق' : '5-min updates'}
+                  {isArabic ? '  5 ' : '5-min updates'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'تنبيهات فورية' : 'Instant alerts'}
+                  {isArabic ? ' ' : 'Instant alerts'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'تقارير PDF' : 'PDF reports'}
+                  {isArabic ? ' PDF' : 'PDF reports'}
                 </li>
               </ul>
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                {isArabic ? 'اشترك الآن' : 'Subscribe Now'}
+                {isArabic ? ' ' : 'Subscribe Now'}
               </Button>
             </Card>
 
@@ -828,28 +828,28 @@ export default function Markets() {
               <div className="text-center mb-6">
                 <h3 className="text-lg font-bold text-foreground mb-1">Fund</h3>
                 <p className="text-3xl font-bold text-foreground">$199<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-                <p className="text-xs text-muted-foreground">{isArabic ? 'للصناديق والمؤسسات' : 'For funds & institutions'}</p>
+                <p className="text-xs text-muted-foreground">{isArabic ? ' ' : 'For funds & institutions'}</p>
               </div>
               <ul className="space-y-2 mb-6 text-sm">
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'كل مميزات Pro' : 'All Pro features'}
+                  {isArabic ? '  Pro' : 'All Pro features'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'بيانات تاريخية' : 'Historical data'}
+                  {isArabic ? ' ' : 'Historical data'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'تحليل مخصص' : 'Custom analysis'}
+                  {isArabic ? 'Analysis ' : 'Custom analysis'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'دعم مخصص' : 'Priority support'}
+                  {isArabic ? ' ' : 'Priority support'}
                 </li>
               </ul>
               <Button variant="outline" className="w-full">
-                {isArabic ? 'تواصل معنا' : 'Contact Sales'}
+                {isArabic ? ' ' : 'Contact Sales'}
               </Button>
             </Card>
 
@@ -857,13 +857,13 @@ export default function Markets() {
             <Card className="bg-card border-border p-6">
               <div className="text-center mb-6">
                 <h3 className="text-lg font-bold text-foreground mb-1">API</h3>
-                <p className="text-3xl font-bold text-foreground">{isArabic ? 'مخصص' : 'Custom'}</p>
-                <p className="text-xs text-muted-foreground">{isArabic ? 'حسب الاستخدام' : 'Usage-based pricing'}</p>
+                <p className="text-3xl font-bold text-foreground">{isArabic ? '' : 'Custom'}</p>
+                <p className="text-xs text-muted-foreground">{isArabic ? ' ' : 'Usage-based pricing'}</p>
               </div>
               <ul className="space-y-2 mb-6 text-sm">
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'REST API كامل' : 'Full REST API'}
+                  {isArabic ? 'REST API ' : 'Full REST API'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
@@ -871,15 +871,15 @@ export default function Markets() {
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'بيانات خام' : 'Raw data access'}
+                  {isArabic ? ' ' : 'Raw data access'}
                 </li>
                 <li className="flex items-center gap-2 text-foreground">
                   <span className="text-green-400">✓</span>
-                  {isArabic ? 'SLA مضمون' : 'SLA guarantee'}
+                  {isArabic ? 'SLA ' : 'SLA guarantee'}
                 </li>
               </ul>
               <Button variant="outline" className="w-full">
-                {isArabic ? 'طلب API' : 'Request API'}
+                {isArabic ? ' API' : 'Request API'}
               </Button>
             </Card>
           </div>
@@ -893,17 +893,17 @@ export default function Markets() {
             </div>
             <div>
               <h3 className="font-semibold text-yellow-400 mb-2">
-                {isArabic ? 'إخلاء مسؤولية مهم' : 'Important Disclaimer'}
+                {isArabic ? '  ' : 'Important Disclaimer'}
               </h3>
               <p className="text-sm text-muted-foreground mb-3">
                 {isArabic 
-                  ? 'AmalSense يقدم مؤشرات عاطفية وليس نصائح مالية. المعلومات المقدمة هي لأغراض تعليمية وبحثية فقط. لا ينبغي اعتبار أي محتوى على هذه المنصة توصية بشراء أو بيع أو الاحتفاظ بأي أصل مالي.'
+                  ? 'AmalSense      .       .                 .'
                   : 'AmalSense provides emotional indicators, not financial advice. The information provided is for educational and research purposes only. No content on this platform should be considered a recommendation to buy, sell, or hold any financial asset.'
                 }
               </p>
               <p className="text-xs text-yellow-400/80">
                 {isArabic 
-                  ? 'استشر مستشاراً مالياً مرخصاً قبل اتخاذ أي قرارات استثمارية.'
+                  ? '        .'
                   : 'Consult a licensed financial advisor before making any investment decisions.'
                 }
               </p>
@@ -916,11 +916,11 @@ export default function Markets() {
       <footer className="border-t border-border/50 py-8 mt-12">
         <div className="container text-center">
           <p className="text-sm text-muted-foreground">
-            © 2026 AmalSense Markets. {isArabic ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}
+            © 2026 AmalSense Markets. {isArabic ? '  .' : 'All rights reserved.'}
           </p>
           <p className="text-xs text-muted-foreground mt-2">
             {isArabic 
-              ? 'مؤشرات عاطفية للأسواق - ليست نصيحة مالية'
+              ? '   -   '
               : 'Emotional Market Indicators - Not Financial Advice'
             }
           </p>

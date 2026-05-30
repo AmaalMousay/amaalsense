@@ -1,10 +1,6 @@
 /**
  * CUSTOM ALERTS COMPONENT
  * 
- * مكون التنبيهات المخصصة
- * - عرض تنبيهات مخصصة حسب نوعها وأولويتها
- * - دعم تنبيهات متعددة الأنواع (critical, warning, info, success)
- * - إمكانية الإغلاق والتفاعل مع التنبيهات
  */
 
 import React, { useState, useEffect } from 'react';
@@ -133,7 +129,7 @@ export function CustomAlerts({
               <button
                 onClick={() => handleDismiss(alert.id)}
                 className="flex-shrink-0 p-1 hover:opacity-75 transition-opacity"
-                aria-label="إغلاق"
+                aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -144,7 +140,7 @@ export function CustomAlerts({
 
       {alerts.length > maxVisible && (
         <div className="text-center text-xs text-gray-500">
-          و {alerts.length - maxVisible} تنبيه آخر
+          and {alerts.length - maxVisible} more alerts
         </div>
       )}
     </div>
@@ -152,7 +148,6 @@ export function CustomAlerts({
 }
 
 /**
- * Alert Manager Hook - لإدارة التنبيهات
  */
 export function useAlertManager() {
   const [alerts, setAlerts] = useState<CustomAlert[]>([]);

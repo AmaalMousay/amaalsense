@@ -1,6 +1,5 @@
 /**
  * Related Events Panel Component
- * لوحة الأحداث ذات الصلة
  */
 
 import React from 'react';
@@ -34,10 +33,10 @@ export function RelatedEventsPanel({
   const displayEvents: RelatedEvent[] = events.length > 0 ? events : [
     {
       id: '1',
-      title: 'قمة المناخ العالمية 2026',
-      description: 'اجتماع قادة العالم لمناقشة التغير المناخي والحلول المستدامة',
+      title: '   2026',
+      description: '       ',
       date: new Date('2026-03-15'),
-      location: 'دبي، الإمارات',
+      location: ' ',
       relevance: 95,
       category: 'environment',
       source: 'UN Climate',
@@ -45,10 +44,10 @@ export function RelatedEventsPanel({
     },
     {
       id: '2',
-      title: 'إطلاق مبادرة الطاقة النظيفة',
-      description: 'إعلان عن مشروع عالمي للطاقة المتجددة بقيمة 500 مليار دولار',
+      title: '   ',
+      description: '       500  ',
       date: new Date('2026-02-28'),
-      location: 'عالمي',
+      location: '',
       relevance: 88,
       category: 'economy',
       source: 'World Bank',
@@ -56,10 +55,10 @@ export function RelatedEventsPanel({
     },
     {
       id: '3',
-      title: 'مؤتمر التكنولوجيا والابتكار',
-      description: 'عرض أحدث التقنيات في الذكاء الاصطناعي والروبوتات',
+      title: '  ',
+      description: '      ',
       date: new Date('2026-04-10'),
-      location: 'سان فرانسيسكو، الولايات المتحدة',
+      location: '   ',
       relevance: 82,
       category: 'tech',
       source: 'Tech Summit',
@@ -67,10 +66,10 @@ export function RelatedEventsPanel({
     },
     {
       id: '4',
-      title: 'منتدى الصحة العالمية',
-      description: 'مناقشة التحديات الصحية العالمية وسبل التعاون الدولي',
+      title: '  ',
+      description: '      ',
       date: new Date('2026-05-20'),
-      location: 'جنيف، سويسرا',
+      location: ' ',
       relevance: 75,
       category: 'health',
       source: 'WHO',
@@ -97,13 +96,13 @@ export function RelatedEventsPanel({
 
   const getCategoryLabel = (category: string) => {
     const labels: Record<string, string> = {
-      environment: 'بيئة',
-      economy: 'اقتصاد',
-      tech: 'تكنولوجيا',
-      health: 'صحة',
-      politics: 'سياسة',
-      sports: 'رياضة',
-      education: 'تعليم'
+      environment: '',
+      economy: '',
+      tech: '',
+      health: '',
+      politics: '',
+      sports: '',
+      education: ''
     };
     return labels[category] || category;
   };
@@ -121,7 +120,7 @@ export function RelatedEventsPanel({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Link2 className="h-5 w-5 text-orange-500" />
-          الأحداث ذات الصلة
+            
         </CardTitle>
       </CardHeader>
 
@@ -166,11 +165,11 @@ export function RelatedEventsPanel({
               <div className="flex items-center gap-4">
                 {event.source && (
                   <span className="text-xs text-muted-foreground">
-                    المصدر: {event.source}
+                    : {event.source}
                   </span>
                 )}
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-muted-foreground">الصلة:</span>
+                  <span className="text-xs text-muted-foreground">:</span>
                   <div className="flex items-center gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <div
@@ -199,7 +198,7 @@ export function RelatedEventsPanel({
                   }}
                 >
                   <ExternalLink className="h-3 w-3 ml-1" />
-                  المزيد
+                  
                 </Button>
               )}
             </div>
@@ -213,7 +212,7 @@ export function RelatedEventsPanel({
             className="w-full"
             onClick={() => console.log('Load more events')}
           >
-            عرض المزيد من الأحداث
+               
           </Button>
         )}
 
@@ -222,7 +221,7 @@ export function RelatedEventsPanel({
           <div className="text-center py-8">
             <Link2 className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
             <p className="text-sm text-muted-foreground">
-              لا توجد أحداث ذات صلة في الوقت الحالي
+                     
             </p>
           </div>
         )}

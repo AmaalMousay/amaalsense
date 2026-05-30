@@ -20,12 +20,12 @@ import {
 import { LogoIcon } from '@/components/Logo';
 
 const organizationTypes = [
-  { value: 'government', label: 'Government Agency', labelAr: 'جهة حكومية' },
-  { value: 'ngo', label: 'NGO / Non-Profit', labelAr: 'منظمة غير ربحية' },
-  { value: 'media', label: 'Media / News Organization', labelAr: 'مؤسسة إعلامية' },
-  { value: 'enterprise', label: 'Enterprise / Corporation', labelAr: 'شركة / مؤسسة' },
-  { value: 'academic', label: 'Academic / Research', labelAr: 'أكاديمي / بحثي' },
-  { value: 'other', label: 'Other', labelAr: 'أخرى' },
+  { value: 'government', label: 'Government Agency', labelAr: ' ' },
+  { value: 'ngo', label: 'NGO / Non-Profit', labelAr: '  ' },
+  { value: 'media', label: 'Media / News Organization', labelAr: ' ' },
+  { value: 'enterprise', label: 'Enterprise / Corporation', labelAr: ' / ' },
+  { value: 'academic', label: 'Academic / Research', labelAr: ' / ' },
+  { value: 'other', label: 'Other', labelAr: '' },
 ];
 
 const interestedTiers = [

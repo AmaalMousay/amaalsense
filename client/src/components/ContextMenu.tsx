@@ -158,7 +158,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             <MousePointerClick className="w-4 h-4" />
-            <span>تحديد الكل</span>
+            <span> </span>
             <span className="ml-auto text-xs text-muted-foreground">Ctrl+A</span>
           </button>
           
@@ -175,7 +175,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             ) : (
               <Copy className="w-4 h-4" />
             )}
-            <span>{copied ? 'تم النسخ!' : 'نسخ'}</span>
+            <span>{copied ? ' !' : ''}</span>
             <span className="ml-auto text-xs text-muted-foreground">Ctrl+C</span>
           </button>
           
@@ -185,7 +185,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             <ClipboardPaste className="w-4 h-4" />
-            <span>لصق</span>
+            <span></span>
             <span className="ml-auto text-xs text-muted-foreground">Ctrl+V</span>
           </button>
         </div>
@@ -204,7 +204,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
           {/* Header */}
           <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border flex items-center gap-2">
             <Check className="w-3 h-3 text-green-500" />
-            <span>تم تحديد النص</span>
+            <span>  </span>
           </div>
           
           {/* Copy - Main action */}
@@ -217,7 +217,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             ) : (
               <Copy className="w-5 h-5 text-primary" />
             )}
-            <span className="font-medium">{copied ? 'تم النسخ!' : 'نسخ النص المحدد'}</span>
+            <span className="font-medium">{copied ? ' !' : '  '}</span>
             <span className="ml-auto text-xs text-muted-foreground">Ctrl+C</span>
           </button>
           
@@ -229,7 +229,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             onClick={handleBack}
             className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors text-muted-foreground"
           >
-            <span>← رجوع</span>
+            <span>← </span>
           </button>
           
           {/* Cancel */}
@@ -237,7 +237,7 @@ export function ContextMenu({ children, className = '' }: ContextMenuProps) {
             onClick={() => setMenuState('closed')}
             className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 hover:bg-accent hover:text-accent-foreground transition-colors text-muted-foreground"
           >
-            <span>إلغاء</span>
+            <span>Cancel</span>
           </button>
         </div>
       )}

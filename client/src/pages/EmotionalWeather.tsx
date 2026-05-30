@@ -32,13 +32,13 @@ export default function EmotionalWeather() {
     });
 
     const emotionNames: Record<string, { ar: string; en: string; color: string }> = {
-      fear: { ar: 'خوف', en: 'Fear', color: '#F4A261' },
-      hope: { ar: 'أمل', en: 'Hope', color: '#2A9D8F' },
-      anger: { ar: 'غضب', en: 'Anger', color: '#E63946' },
-      sadness: { ar: 'حزن', en: 'Sadness', color: '#8D5CF6' },
-      joy: { ar: 'فرح', en: 'Joy', color: '#06D6A0' },
-      curiosity: { ar: 'فضول', en: 'Curiosity', color: '#E9C46A' },
-      neutral: { ar: 'محايد', en: 'Neutral', color: '#94A3B8' },
+      fear: { ar: 'Fear', en: 'Fear', color: '#F4A261' },
+      hope: { ar: '', en: 'Hope', color: '#2A9D8F' },
+      anger: { ar: 'Anger', en: 'Anger', color: '#E63946' },
+      sadness: { ar: 'Sadness', en: 'Sadness', color: '#8D5CF6' },
+      joy: { ar: 'Joy', en: 'Joy', color: '#06D6A0' },
+      curiosity: { ar: '', en: 'Curiosity', color: '#E9C46A' },
+      neutral: { ar: 'Neutral', en: 'Neutral', color: '#94A3B8' },
     };
 
     const emotions = Object.entries(emotionCounts)
@@ -88,10 +88,10 @@ export default function EmotionalWeather() {
   };
 
   const getMoodText = (index: number) => {
-    if (index > 70) return isAr ? 'متفائل' : 'Optimistic';
-    if (index > 50) return isAr ? 'معتدل' : 'Moderate';
-    if (index > 30) return isAr ? 'قلق' : 'Concerned';
-    return isAr ? 'قلق عالي' : 'High Concern';
+    if (index > 70) return isAr ? '' : 'Optimistic';
+    if (index > 50) return isAr ? '' : 'Moderate';
+    if (index > 30) return isAr ? '' : 'Concerned';
+    return isAr ? ' ' : 'High Concern';
   };
 
   const getMoodEmoji = (index: number) => {
@@ -124,13 +124,13 @@ export default function EmotionalWeather() {
         <Card className="bg-slate-800 border-slate-600 p-8 text-center max-w-md">
           <div className="text-4xl mb-4">⚠️</div>
           <h2 className="text-xl font-bold text-white mb-2">
-            {isAr ? 'تعذر تحميل البيانات' : 'Failed to load data'}
+            {isAr ? '  ' : 'Failed to load data'}
           </h2>
           <p className="text-slate-400 mb-4">
-            {isAr ? 'يرجى المحاولة مرة أخرى لاحقاً' : 'Please try again later'}
+            {isAr ? '    ' : 'Please try again later'}
           </p>
           <Button onClick={() => window.location.reload()}>
-            {isAr ? 'إعادة المحاولة' : 'Retry'}
+            {isAr ? ' ' : 'Retry'}
           </Button>
         </Card>
       </div>
@@ -144,16 +144,16 @@ export default function EmotionalWeather() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">
-              {getMoodEmoji(globalStats.moodIndex)} {isAr ? 'الطقس العاطفي العالمي' : 'Global Emotional Weather'}
+              {getMoodEmoji(globalStats.moodIndex)} {isAr ? '  ' : 'Global Emotional Weather'}
             </h1>
             <p className="text-slate-400">
               {isAr 
-                ? `بيانات حقيقية من ${globalStats.realCountries} دولة - آخر تحديث الآن`
+                ? `   ${globalStats.realCountries}  -   `
                 : `Real data from ${globalStats.realCountries} countries - updated now`}
             </p>
           </div>
           <Button variant="outline" className="border-slate-600 text-slate-300" onClick={() => navigate('/')}>
-            {isAr ? '← العودة' : '← Back'}
+            {isAr ? '← ' : '← Back'}
           </Button>
         </div>
 
@@ -161,7 +161,7 @@ export default function EmotionalWeather() {
         <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 mb-6 p-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-white">
-              {isAr ? 'المزاج العالمي الآن' : 'Current Global Mood'}
+              {isAr ? '  ' : 'Current Global Mood'}
             </h2>
             <span className="text-5xl">{getMoodEmoji(globalStats.moodIndex)}</span>
           </div>
@@ -172,17 +172,17 @@ export default function EmotionalWeather() {
                 {getMoodText(globalStats.moodIndex)}
               </div>
               <div className="text-slate-400 text-lg mt-2">
-                {isAr ? 'مؤشر المزاج العام: ' : 'Global Mood Index: '} 
+                {isAr ? '  : ' : 'Global Mood Index: '} 
                 <span className="text-white font-bold">{globalStats.avgGmi}</span>
-                <span className="text-slate-500"> (-100 {isAr ? 'إلى' : 'to'} +100)</span>
+                <span className="text-slate-500"> (-100 {isAr ? '' : 'to'} +100)</span>
               </div>
               <div className="flex gap-6 mt-4">
                 <div>
-                  <span className="text-red-400 text-sm">{isAr ? 'مؤشر الخوف' : 'Fear Index'}</span>
+                  <span className="text-red-400 text-sm">{isAr ? ' Fear' : 'Fear Index'}</span>
                   <div className="text-white font-bold text-xl">{globalStats.avgCfi}%</div>
                 </div>
                 <div>
-                  <span className="text-green-400 text-sm">{isAr ? 'مؤشر الأمل' : 'Hope Index'}</span>
+                  <span className="text-green-400 text-sm">{isAr ? ' ' : 'Hope Index'}</span>
                   <div className="text-white font-bold text-xl">{globalStats.avgHri}%</div>
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function EmotionalWeather() {
           {/* Emotion Distribution - REAL DATA */}
           <Card className="bg-slate-800 border-slate-600 p-6">
             <h3 className="text-xl font-bold text-white mb-4">
-              {isAr ? 'توزيع المشاعر العالمية' : 'Global Emotion Distribution'}
+              {isAr ? ' Emotions ' : 'Global Emotion Distribution'}
             </h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -229,7 +229,7 @@ export default function EmotionalWeather() {
           {/* Top Concerned Countries - REAL DATA */}
           <Card className="bg-slate-800 border-slate-600 p-6">
             <h3 className="text-xl font-bold text-white mb-4">
-              {isAr ? '🔴 أكثر الدول قلقاً' : '🔴 Most Concerned Countries'}
+              {isAr ? '🔴   ' : '🔴 Most Concerned Countries'}
             </h3>
             <div className="space-y-3">
               {globalStats.topConcerned.map((country: any, idx: number) => (
@@ -246,7 +246,7 @@ export default function EmotionalWeather() {
                   </div>
                   <div className="text-right">
                     <div className="text-red-400 font-bold">{country.cfi}%</div>
-                    <div className="text-xs text-slate-500">{isAr ? 'مؤشر الخوف' : 'Fear'}</div>
+                    <div className="text-xs text-slate-500">{isAr ? ' Fear' : 'Fear'}</div>
                   </div>
                 </div>
               ))}
@@ -257,7 +257,7 @@ export default function EmotionalWeather() {
         {/* Most Hopeful Countries */}
         <Card className="bg-slate-800 border-slate-600 p-6 mb-6">
           <h3 className="text-xl font-bold text-white mb-4">
-            {isAr ? '🟢 أكثر الدول تفاؤلاً' : '🟢 Most Hopeful Countries'}
+            {isAr ? '🟢   ' : '🟢 Most Hopeful Countries'}
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={globalStats.topHopeful.map((c: any) => ({
@@ -272,7 +272,7 @@ export default function EmotionalWeather() {
                 contentStyle={{ backgroundColor: '#1E293B', border: '1px solid #475569' }}
                 labelStyle={{ color: '#fff' }}
               />
-              <Bar dataKey="hri" fill="#2A9D8F" radius={[4, 4, 0, 0]} name={isAr ? 'مؤشر الأمل' : 'Hope Index'} />
+              <Bar dataKey="hri" fill="#2A9D8F" radius={[4, 4, 0, 0]} name={isAr ? ' ' : 'Hope Index'} />
             </BarChart>
           </ResponsiveContainer>
         </Card>
@@ -280,7 +280,7 @@ export default function EmotionalWeather() {
         {/* Stability Indicator - REAL DATA */}
         <Card className="bg-slate-800 border-slate-600 p-6 mb-6">
           <h3 className="text-xl font-bold text-white mb-4">
-            {isAr ? 'مؤشر الاستقرار العاطفي' : 'Emotional Stability Index'}
+            {isAr ? '  ' : 'Emotional Stability Index'}
           </h3>
           <div className="flex items-center gap-4">
             <div className="flex-1">
@@ -298,7 +298,7 @@ export default function EmotionalWeather() {
           </div>
           <p className="text-slate-400 text-sm mt-4">
             {isAr 
-              ? `يقيس مدى تقارب المشاعر بين ${globalStats.realCountries} دولة. كلما ارتفع المؤشر، كان المزاج العالمي أكثر استقراراً.`
+              ? `   Emotions  ${globalStats.realCountries} .        .`
               : `Measures emotional convergence across ${globalStats.realCountries} countries. Higher values indicate more stable global mood.`
             }
           </p>
@@ -308,12 +308,12 @@ export default function EmotionalWeather() {
         <div className="mt-8 p-4 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-700/50 flex items-center justify-between">
           <p className="text-slate-300 text-sm">
             {isAr
-              ? `📡 بيانات حقيقية من ${globalStats.realCountries} دولة عبر Google News و NewsAPI - تحليل المشاعر بالذكاء الاصطناعي`
+              ? `📡    ${globalStats.realCountries}   Google News  NewsAPI - Analysis Emotions  `
               : `📡 Real data from ${globalStats.realCountries} countries via Google News & NewsAPI - AI sentiment analysis`
             }
           </p>
           <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs rounded-full font-medium">
-            {isAr ? 'بيانات حقيقية' : 'REAL DATA'}
+            {isAr ? ' ' : 'REAL DATA'}
           </span>
         </div>
       </div>

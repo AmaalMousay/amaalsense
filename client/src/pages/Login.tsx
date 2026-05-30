@@ -49,7 +49,7 @@ export default function Login() {
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="w-4 h-4" />
-              {isRTL ? 'العودة للرئيسية' : 'Back to Home'}
+              {isRTL ? ' ' : 'Back to Home'}
             </Button>
           </Link>
         </div>
@@ -61,10 +61,10 @@ export default function Login() {
           {/* Title */}
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold cosmic-text mb-2">
-              {isRTL ? 'تسجيل الدخول' : 'Sign In'}
+              {isRTL ? ' ' : 'Sign In'}
             </h2>
             <p className="text-muted-foreground">
-              {isRTL ? 'مرحباً بعودتك! أدخل بياناتك للمتابعة' : 'Welcome back! Enter your credentials to continue'}
+              {isRTL ? ' !   ' : 'Welcome back! Enter your credentials to continue'}
             </p>
           </div>
 
@@ -73,7 +73,7 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">
-                  {isRTL ? 'البريد الإلكتروني' : 'Email Address'}
+                  {isRTL ? ' ' : 'Email Address'}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -81,7 +81,7 @@ export default function Login() {
                     id="email"
                     name="email"
                     type="email"
-                    placeholder={isRTL ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
+                    placeholder={isRTL ? '  ' : 'Enter your email'}
                     className="pl-10"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -93,11 +93,11 @@ export default function Login() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">
-                    {isRTL ? 'كلمة المرور' : 'Password'}
+                    {isRTL ? ' ' : 'Password'}
                   </Label>
                   <Link href="/forgot-password">
                     <span className="text-xs text-accent hover:underline cursor-pointer">
-                      {isRTL ? 'نسيت كلمة المرور؟' : 'Forgot password?'}
+                      {isRTL ? '  ' : 'Forgot password?'}
                     </span>
                   </Link>
                 </div>
@@ -107,7 +107,7 @@ export default function Login() {
                     id="password"
                     name="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder={isRTL ? 'أدخل كلمة المرور' : 'Enter password'}
+                    placeholder={isRTL ? '  ' : 'Enter password'}
                     className="pl-10 pr-10"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -125,7 +125,7 @@ export default function Login() {
 
               {/* Submit Button */}
               <Button type="submit" className="w-full glow-button text-white mt-6">
-                {isRTL ? 'تسجيل الدخول' : 'Sign In'}
+                {isRTL ? ' ' : 'Sign In'}
               </Button>
 
               {/* Divider */}
@@ -135,7 +135,7 @@ export default function Login() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-card px-2 text-muted-foreground">
-                    {isRTL ? 'أو' : 'Or'}
+                    {isRTL ? '' : 'Or'}
                   </span>
                 </div>
               </div>
@@ -150,16 +150,16 @@ export default function Login() {
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
                 </svg>
-                {isRTL ? 'تسجيل الدخول باستخدام Manus' : 'Continue with Manus'}
+                {isRTL ? '   Manus' : 'Continue with Manus'}
               </Button>
             </form>
 
             {/* Register Link */}
             <p className="text-center text-sm text-muted-foreground mt-6">
-              {isRTL ? 'ليس لديك حساب؟' : "Don't have an account?"}{' '}
+              {isRTL ? '  ' : "Don't have an account?"}{' '}
               <Link href="/register">
                 <span className="text-accent hover:underline cursor-pointer font-medium">
-                  {isRTL ? 'إنشاء حساب' : 'Sign Up'}
+                  {isRTL ? ' ' : 'Sign Up'}
                 </span>
               </Link>
             </p>

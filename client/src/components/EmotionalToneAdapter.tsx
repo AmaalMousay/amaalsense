@@ -22,18 +22,18 @@ export const EmotionalToneAdapter: React.FC<EmotionalToneAdapterProps> = ({
     let adaptedText = responseText;
     let supportMessage = '';
 
-    // تحديد النبرة بناءً على العاطفة
+    // 
     if (emotion.primary === 'sadness' || emotion.primary === 'fear') {
       tone = 'empathetic';
-      supportMessage = 'نحن هنا لدعمك وفهم مشاعرك. هذا الموقف يستحق اهتماماً جاداً.';
-      adaptedText = adaptedText.replace(/\./g, '.\n\nنحن نفهم أن هذا قد يكون صعباً.');
+      supportMessage = '    .     .';
+      adaptedText = adaptedText.replace(/\./g, '.\n\n      .');
     } else if (emotion.primary === 'anger') {
       tone = 'empathetic';
-      supportMessage = 'غضبك مشروع تماماً. دعنا نعمل معاً على حل هذه المشكلة.';
-      adaptedText = adaptedText.replace(/\./g, '.\n\nهذا يتطلب إجراءً حاسماً.');
+      supportMessage = 'Anger  .       .';
+      adaptedText = adaptedText.replace(/\./g, '.\n\n   .');
     } else if (emotion.primary === 'joy' || emotion.primary === 'surprise') {
       tone = 'encouraging';
-      supportMessage = 'هذا رائع! دعنا نستفيد من هذه الطاقة الإيجابية.';
+      supportMessage = ' !      .';
     } else {
       tone = 'casual';
       supportMessage = '';
@@ -64,10 +64,10 @@ export const EmotionalToneAdapter: React.FC<EmotionalToneAdapterProps> = ({
 
   const getToneLabel = (tone: string) => {
     const labels: Record<string, string> = {
-      empathetic: 'تعاطفي',
-      encouraging: 'محفز',
-      casual: 'ودي',
-      formal: 'رسمي',
+      empathetic: '',
+      encouraging: '',
+      casual: '',
+      formal: '',
     };
     return labels[tone] || tone;
   };
@@ -79,7 +79,7 @@ export const EmotionalToneAdapter: React.FC<EmotionalToneAdapterProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {getToneIcon(adaptedResponse.tone)}
-            <span className="text-sm font-medium">نبرة الإجابة المقترحة</span>
+            <span className="text-sm font-medium">  </span>
           </div>
           <Badge variant="outline" className="bg-purple-500/20 text-purple-200">
             {getToneLabel(adaptedResponse.tone)}
@@ -97,7 +97,7 @@ export const EmotionalToneAdapter: React.FC<EmotionalToneAdapterProps> = ({
       {/* Adapted Response */}
       <Card className="p-4 bg-gray-900/40 border-gray-700/50">
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold text-gray-200">الإجابة المكيفة</h4>
+          <h4 className="text-sm font-semibold text-gray-200"> </h4>
           <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
             {adaptedResponse.adaptedText}
           </p>
@@ -108,7 +108,7 @@ export const EmotionalToneAdapter: React.FC<EmotionalToneAdapterProps> = ({
       {adaptedResponse.shouldBeVerbose && (
         <Card className="p-3 bg-amber-900/20 border-amber-500/30">
           <p className="text-xs text-amber-100">
-            ⚠️ نظراً لكثافة العاطفة، قد تحتاج الإجابة إلى تفاصيل أكثر.
+            ⚠️         .
           </p>
         </Card>
       )}

@@ -21,10 +21,10 @@ export function DCFTTrendChart({
   timeRange = '7d' 
 }: DCFTTrendChartProps) {
   const timeRangeLabels = {
-    '24h': 'آخر 24 ساعة',
-    '7d': 'آخر 7 أيام',
-    '30d': 'آخر 30 يوم',
-    '90d': 'آخر 90 يوم',
+    '24h': ' 24 ',
+    '7d': ' 7 ',
+    '30d': ' 30 ',
+    '90d': ' 90 ',
   };
 
   // Calculate statistics
@@ -90,15 +90,15 @@ export function DCFTTrendChart({
               />
               <Tooltip 
                 formatter={(value) => typeof value === 'number' ? value.toFixed(2) : String(value)}
-                labelFormatter={(label) => `الوقت: ${label}`}
+                labelFormatter={(label) => `: ${label}`}
               />
               <Legend 
                 wrapperStyle={{ paddingTop: '20px' }}
                 formatter={(value) => {
                   const labels = {
-                    gmi: 'مؤشر المزاج العام (GMI)',
-                    cfi: 'مؤشر المشاعر الجماعية (CFI)',
-                    hri: 'مؤشر صمود الإنسان (HRI)',
+                    gmi: '   (GMI)',
+                    cfi: ' Emotions  (CFI)',
+                    hri: '   (HRI)',
                   };
                   return labels[value as keyof typeof labels] || value;
                 }}
@@ -135,22 +135,22 @@ export function DCFTTrendChart({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* GMI Stats */}
           <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h4 className="font-semibold text-blue-900 mb-2">مؤشر المزاج العام</h4>
+            <h4 className="font-semibold text-blue-900 mb-2">  </h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">الحالي:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold">{Number(stats.gmi.current).toFixed(1)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">المتوسط:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold">{stats.gmi.average}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">الأقصى:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold text-green-600">{stats.gmi.max}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">الأدنى:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold text-red-600">{stats.gmi.min}</span>
               </div>
             </div>
@@ -158,22 +158,22 @@ export function DCFTTrendChart({
 
           {/* CFI Stats */}
           <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-            <h4 className="font-semibold text-purple-900 mb-2">مؤشر المشاعر الجماعية</h4>
+            <h4 className="font-semibold text-purple-900 mb-2"> Emotions </h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">الحالي:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold">{stats.cfi.current.toFixed(1)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">المتوسط:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold">{stats.cfi.average}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">الأقصى:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold text-green-600">{stats.cfi.max}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">الأدنى:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold text-red-600">{stats.cfi.min}</span>
               </div>
             </div>
@@ -181,22 +181,22 @@ export function DCFTTrendChart({
 
           {/* HRI Stats */}
           <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <h4 className="font-semibold text-green-900 mb-2">مؤشر صمود الإنسان</h4>
+            <h4 className="font-semibold text-green-900 mb-2">  </h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">الحالي:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold">{stats.hri.current.toFixed(1)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">المتوسط:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold">{stats.hri.average}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">الأقصى:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold text-green-600">{stats.hri.max}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">الأدنى:</span>
+                <span className="text-gray-600">:</span>
                 <span className="font-semibold text-red-600">{stats.hri.min}</span>
               </div>
             </div>

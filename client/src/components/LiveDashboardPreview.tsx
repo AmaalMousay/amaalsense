@@ -1,6 +1,5 @@
 /**
  * Live Dashboard Preview Component
- * معاينة لوحة المعلومات المباشرة
  */
 
 import React from 'react';
@@ -97,7 +96,7 @@ export function LiveDashboardPreview({ metrics }: LiveDashboardPreviewProps) {
                           -{metric.trendValue}%
                         </>
                       )}
-                      {metric.trend === 'stable' && 'مستقر'}
+                      {metric.trend === 'stable' && ''}
                     </Badge>
                   )}
                 </div>
@@ -136,15 +135,15 @@ export function LiveDashboardPreview({ metrics }: LiveDashboardPreviewProps) {
       {/* Live Activity Feed */}
       <Card className="border-slate-700/50">
         <CardHeader>
-          <CardTitle className="text-lg">النشاط المباشر</CardTitle>
+          <CardTitle className="text-lg"> </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[
-              { time: 'منذ 2 دقيقة', event: 'تحليل جديد: المشاعر العالمية', region: 'عالمي' },
-              { time: 'منذ 5 دقائق', event: 'ارتفاع في مؤشر الأمل', region: 'الشرق الأوسط' },
-              { time: 'منذ 8 دقائق', event: 'تحديث البيانات الإقليمية', region: 'أوروبا' },
-              { time: 'منذ 12 دقيقة', event: 'اكتشاف اتجاه جديد', region: 'آسيا' },
+              { time: ' 2 ', event: 'Analysis : Emotions ', region: '' },
+              { time: ' 5 ', event: '   ', region: ' ' },
+              { time: ' 8 ', event: '  ', region: '' },
+              { time: ' 12 ', event: '  ', region: '' },
             ].map((item, index) => (
               <div
                 key={index}

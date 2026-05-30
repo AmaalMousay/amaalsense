@@ -33,39 +33,39 @@ import {
 
 // Country list for selection
 const COUNTRIES = [
-  { code: "", name: "عالمي (جميع الدول)" },
-  { code: "LY", name: "ليبيا" },
-  { code: "EG", name: "مصر" },
-  { code: "SA", name: "السعودية" },
-  { code: "AE", name: "الإمارات" },
-  { code: "US", name: "أمريكا" },
-  { code: "GB", name: "بريطانيا" },
-  { code: "FR", name: "فرنسا" },
-  { code: "DE", name: "ألمانيا" },
-  { code: "JP", name: "اليابان" },
-  { code: "CN", name: "الصين" },
-  { code: "BR", name: "البرازيل" },
-  { code: "IN", name: "الهند" },
-  { code: "RU", name: "روسيا" },
-  { code: "TR", name: "تركيا" },
+  { code: "", name: " ( )" },
+  { code: "LY", name: "" },
+  { code: "EG", name: "" },
+  { code: "SA", name: "" },
+  { code: "AE", name: "" },
+  { code: "US", name: "" },
+  { code: "GB", name: "" },
+  { code: "FR", name: "" },
+  { code: "DE", name: "" },
+  { code: "JP", name: "" },
+  { code: "CN", name: "" },
+  { code: "BR", name: "" },
+  { code: "IN", name: "" },
+  { code: "RU", name: "" },
+  { code: "TR", name: "" },
 ];
 
 const METRICS = [
-  { value: "gmi", label: "مؤشر المزاج العام (GMI)", icon: <Activity className="h-4 w-4" /> },
-  { value: "cfi", label: "مؤشر الخوف الجماعي (CFI)", icon: <AlertTriangle className="h-4 w-4" /> },
-  { value: "hri", label: "مؤشر الأمل والمرونة (HRI)", icon: <TrendingUp className="h-4 w-4" /> },
+  { value: "gmi", label: "   (GMI)", icon: <Activity className="h-4 w-4" /> },
+  { value: "cfi", label: " Fear  (CFI)", icon: <AlertTriangle className="h-4 w-4" /> },
+  { value: "hri", label: "   (HRI)", icon: <TrendingUp className="h-4 w-4" /> },
 ];
 
 const CONDITIONS = [
-  { value: "above", label: "أعلى من", icon: <TrendingUp className="h-4 w-4 text-green-500" /> },
-  { value: "below", label: "أقل من", icon: <TrendingDown className="h-4 w-4 text-red-500" /> },
-  { value: "change", label: "تغير بنسبة", icon: <Activity className="h-4 w-4 text-yellow-500" /> },
+  { value: "above", label: " ", icon: <TrendingUp className="h-4 w-4 text-green-500" /> },
+  { value: "below", label: " ", icon: <TrendingDown className="h-4 w-4 text-red-500" /> },
+  { value: "change", label: " ", icon: <Activity className="h-4 w-4 text-yellow-500" /> },
 ];
 
 const NOTIFY_METHODS = [
-  { value: "email", label: "بريد إلكتروني", icon: <Mail className="h-4 w-4" /> },
-  { value: "telegram", label: "تيليجرام", icon: <MessageCircle className="h-4 w-4" /> },
-  { value: "both", label: "كلاهما", icon: <Bell className="h-4 w-4" /> },
+  { value: "email", label: " ", icon: <Mail className="h-4 w-4" /> },
+  { value: "telegram", label: "", icon: <MessageCircle className="h-4 w-4" /> },
+  { value: "both", label: "", icon: <Bell className="h-4 w-4" /> },
 ];
 
 interface AlertFormData {
@@ -98,36 +98,36 @@ export default function CustomAlerts() {
   // Mutations
   const createAlertMutation = trpc.alerts.createAlert.useMutation({
     onSuccess: () => {
-      toast.success("تم إنشاء التنبيه بنجاح");
+      toast.success("   ");
       setIsDialogOpen(false);
       resetForm();
       alertsQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error.message || "فشل في إنشاء التنبيه");
+      toast.error(error.message || "   ");
     },
   });
 
   const updateAlertMutation = trpc.alerts.updateAlert.useMutation({
     onSuccess: () => {
-      toast.success("تم تحديث التنبيه بنجاح");
+      toast.success("   ");
       setIsDialogOpen(false);
       setEditingAlert(null);
       resetForm();
       alertsQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error.message || "فشل في تحديث التنبيه");
+      toast.error(error.message || "   ");
     },
   });
 
   const deleteAlertMutation = trpc.alerts.deleteAlert.useMutation({
     onSuccess: () => {
-      toast.success("تم حذف التنبيه");
+      toast.success(" Delete ");
       alertsQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error.message || "فشل في حذف التنبيه");
+      toast.error(error.message || "  Delete ");
     },
   });
 
@@ -150,11 +150,11 @@ export default function CustomAlerts() {
 
   const handleSubmit = () => {
     if (!formData.name.trim()) {
-      toast.error("يرجى إدخال اسم للتنبيه");
+      toast.error("   ");
       return;
     }
 
-    const countryName = COUNTRIES.find(c => c.code === formData.countryCode)?.name || "عالمي";
+    const countryName = COUNTRIES.find(c => c.code === formData.countryCode)?.name || "";
 
     if (editingAlert) {
       updateAlertMutation.mutate({
@@ -184,7 +184,7 @@ export default function CustomAlerts() {
   };
 
   const handleDelete = (id: number) => {
-    if (confirm("هل أنت متأكد من حذف هذا التنبيه؟")) {
+    if (confirm("    Delete  ")) {
       deleteAlertMutation.mutate({ id });
     }
   };
@@ -202,12 +202,12 @@ export default function CustomAlerts() {
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         <div className="container py-16 text-center">
           <Bell className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h1 className="text-2xl font-bold mb-2">التنبيهات المخصصة</h1>
+          <h1 className="text-2xl font-bold mb-2"> </h1>
           <p className="text-muted-foreground mb-4">
-            يجب تسجيل الدخول لإنشاء تنبيهات مخصصة
+                 
           </p>
           <Button onClick={() => window.location.href = "/api/oauth/login"}>
-            تسجيل الدخول
+             
           </Button>
         </div>
       </div>
@@ -222,10 +222,10 @@ export default function CustomAlerts() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Bell className="h-8 w-8 text-primary" />
-              التنبيهات المخصصة
+               
             </h1>
             <p className="text-muted-foreground mt-1">
-              أنشئ تنبيهات مخصصة لمراقبة المؤشرات العاطفية
+                   
             </p>
           </div>
           
@@ -239,34 +239,34 @@ export default function CustomAlerts() {
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 ml-2" />
-                تنبيه جديد
+                 
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>
-                  {editingAlert ? "تعديل التنبيه" : "إنشاء تنبيه جديد"}
+                  {editingAlert ? "Edit " : "  "}
                 </DialogTitle>
               </DialogHeader>
               
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label>اسم التنبيه</Label>
+                  <Label> </Label>
                   <Input
-                    placeholder="مثال: تنبيه ارتفاع الخوف في ليبيا"
+                    placeholder="e.g., Alert for high fear in Libya"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>الدولة</Label>
+                  <Label></Label>
                   <Select
                     value={formData.countryCode}
                     onValueChange={(value) => setFormData({ ...formData, countryCode: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="اختر الدولة" />
+                      <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
                       {COUNTRIES.map((country) => (
@@ -279,7 +279,7 @@ export default function CustomAlerts() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>المؤشر</Label>
+                  <Label></Label>
                   <Select
                     value={formData.metric}
                     onValueChange={(value) => setFormData({ ...formData, metric: value as "gmi" | "cfi" | "hri" })}
@@ -302,7 +302,7 @@ export default function CustomAlerts() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>الشرط</Label>
+                    <Label></Label>
                     <Select
                       value={formData.condition}
                       onValueChange={(value) => setFormData({ ...formData, condition: value as "above" | "below" | "change" })}
@@ -324,7 +324,7 @@ export default function CustomAlerts() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>القيمة {formData.condition === "change" ? "(%)" : ""}</Label>
+                    <Label> {formData.condition === "change" ? "(%)" : ""}</Label>
                     <Input
                       type="number"
                       min={0}
@@ -336,7 +336,7 @@ export default function CustomAlerts() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>طريقة الإشعار</Label>
+                  <Label> </Label>
                   <Select
                     value={formData.notifyMethod}
                     onValueChange={(value) => setFormData({ ...formData, notifyMethod: value as "email" | "telegram" | "both" })}
@@ -361,11 +361,11 @@ export default function CustomAlerts() {
                 <Card className="bg-muted/50">
                   <CardContent className="pt-4">
                     <p className="text-sm">
-                      <strong>ملخص:</strong> سيتم إرسال تنبيه عندما يكون{" "}
+                      <strong>:</strong>     {" "}
                       <Badge variant="outline">{getMetricLabel(formData.metric)}</Badge>{" "}
                       {getConditionLabel(formData.condition)}{" "}
                       <Badge>{formData.threshold}{formData.condition === "change" ? "%" : ""}</Badge>{" "}
-                      {formData.countryCode ? `في ${COUNTRIES.find(c => c.code === formData.countryCode)?.name}` : "عالمياً"}
+                      {formData.countryCode ? ` ${COUNTRIES.find(c => c.code === formData.countryCode)?.name}` : ""}
                     </p>
                   </CardContent>
                 </Card>
@@ -373,10 +373,10 @@ export default function CustomAlerts() {
 
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  إلغاء
+                  Cancel
                 </Button>
                 <Button onClick={handleSubmit} disabled={createAlertMutation.isPending || updateAlertMutation.isPending}>
-                  {editingAlert ? "تحديث" : "إنشاء"}
+                  {editingAlert ? "" : ""}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -388,42 +388,42 @@ export default function CustomAlerts() {
           <Card>
             <CardContent className="py-8 text-center">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
-              <p className="text-muted-foreground mt-4">جاري تحميل التنبيهات...</p>
+              <p className="text-muted-foreground mt-4">  ...</p>
             </CardContent>
           </Card>
         ) : alertsQuery.data?.length === 0 ? (
           <Card>
             <CardContent className="py-16 text-center">
               <Bell className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold mb-2">لا توجد تنبيهات</h3>
+              <h3 className="text-xl font-semibold mb-2">  </h3>
               <p className="text-muted-foreground mb-4">
-                أنشئ تنبيهك الأول لمراقبة المؤشرات العاطفية
+                     
               </p>
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="h-4 w-4 ml-2" />
-                إنشاء تنبيه
+                 
               </Button>
             </CardContent>
           </Card>
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>تنبيهاتك ({alertsQuery.data?.length})</CardTitle>
+              <CardTitle> ({alertsQuery.data?.length})</CardTitle>
               <CardDescription>
-                إدارة التنبيهات المخصصة لمراقبة المؤشرات العاطفية
+                     
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>الاسم</TableHead>
-                    <TableHead>الدولة</TableHead>
-                    <TableHead>المؤشر</TableHead>
-                    <TableHead>الشرط</TableHead>
-                    <TableHead>الإشعار</TableHead>
-                    <TableHead>الحالة</TableHead>
-                    <TableHead>الإجراءات</TableHead>
+                    <TableHead></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -433,7 +433,7 @@ export default function CustomAlerts() {
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <Globe className="h-4 w-4 text-muted-foreground" />
-                          {alert.countryName || "عالمي"}
+                          {alert.countryName || ""}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -486,12 +486,12 @@ export default function CustomAlerts() {
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">
                 <Activity className="h-4 w-4 text-blue-500" />
-                GMI - مؤشر المزاج العام
+                GMI -   
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                يقيس المزاج العام للمجتمع. قيمة عالية تعني مزاج إيجابي، وقيمة منخفضة تعني مزاج سلبي.
+                   .          .
               </p>
             </CardContent>
           </Card>
@@ -499,12 +499,12 @@ export default function CustomAlerts() {
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-orange-500" />
-                CFI - مؤشر الخوف الجماعي
+                CFI -  Fear 
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                يقيس مستوى الخوف والقلق الجماعي. قيمة عالية تشير إلى توتر وقلق مرتفع.
+                  Fear  .       .
               </p>
             </CardContent>
           </Card>
@@ -512,12 +512,12 @@ export default function CustomAlerts() {
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-green-500" />
-                HRI - مؤشر الأمل والمرونة
+                HRI -   
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                يقيس مستوى الأمل والقدرة على التعافي. قيمة عالية تعني مجتمع متفائل ومرن.
+                     .      .
               </p>
             </CardContent>
           </Card>

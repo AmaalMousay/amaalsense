@@ -24,7 +24,7 @@ export default function Terms() {
           <div className="flex items-center gap-2">
             <FileText className="w-6 h-6 text-accent" />
             <h1 className="text-2xl font-bold gradient-text">
-              {isRTL ? 'شروط الخدمة' : 'Terms of Service'}
+              {isRTL ? ' ' : 'Terms of Service'}
             </h1>
           </div>
           <div className="w-20" />
@@ -41,71 +41,71 @@ export default function Terms() {
                 <div>
                   <CardTitle className="text-3xl gradient-text">Amaalsense</CardTitle>
                   <p className="text-muted-foreground">
-                    {isRTL ? 'شروط الخدمة والاستخدام' : 'Terms of Service'}
+                    {isRTL ? '  ' : 'Terms of Service'}
                   </p>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground">
-                {isRTL ? 'آخر تحديث: يناير 2025' : 'Last Updated: January 2025'}
+                {isRTL ? ' :  2025' : 'Last Updated: January 2025'}
               </p>
             </CardHeader>
             <CardContent className="prose prose-invert max-w-none space-y-6">
               {isRTL ? (
                 <>
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">1. قبول الشروط</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">1.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      باستخدامك لمنصة Amaalsense، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، يرجى عدم استخدام خدماتنا.
+                        Amaalsense       .              .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">2. وصف الخدمة</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">2.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      Amaalsense هي منصة لتحليل المشاعر الجماعية الرقمية تستخدم الذكاء الاصطناعي لتحليل النصوص والأخبار ومنشورات وسائل التواصل الاجتماعي. نقدم مؤشرات عاطفية وتحليلات وتوقعات بناءً على البيانات المتاحة للعموم.
+                      Amaalsense   Analysis Emotions      Analysis      .    Analysis      .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">3. حسابات المستخدمين</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">3.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      أنت مسؤول عن الحفاظ على سرية حسابك وكلمة المرور. يجب عليك إخطارنا فوراً بأي استخدام غير مصرح به لحسابك.
+                              .          .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">4. الاستخدام المقبول</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">4.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      توافق على استخدام المنصة فقط للأغراض المشروعة. يُحظر استخدام الخدمة لأي نشاط غير قانوني أو ضار أو مسيء.
+                            .           .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">5. الملكية الفكرية</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">5.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      جميع المحتويات والعلامات التجارية والشعارات والبرمجيات على المنصة مملوكة لـ Amaalsense أو مرخصيها. لا يجوز نسخ أو توزيع أي محتوى دون إذن كتابي مسبق.
+                                Amaalsense  .           .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">6. إخلاء المسؤولية</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">6.  </h2>
                     <div className="p-4 bg-orange-500/20 border border-orange-500/50 rounded-lg mb-4">
                       <div className="flex items-start gap-3">
                         <AlertTriangle className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
                         <p className="text-orange-800 dark:text-orange-300 font-semibold">
-                          AmalSense لا يقدم تشخيص طبي ولا توصيات سياسية، بل تحليل إحصائي لمشاعر جماعية.
+                          AmalSense         Analysis   .
                         </p>
                       </div>
                     </div>
                     <p className="text-muted-foreground leading-relaxed">
-                      تُقدم الخدمة "كما هي" دون أي ضمانات. لا نضمن دقة أو اكتمال أو موثوقية أي تحليل أو توقع. لا ينبغي استخدام نتائجنا كأساس وحيد لاتخاذ القرارات المالية أو الاستثمارية.
+                        " "   .         Analysis  .           .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">نظام تصنيف المحتوى</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">  </h2>
                     <p className="text-muted-foreground leading-relaxed mb-4">
-                      يستخدم AmalSense نظام تصنيف متقدم لتحديد نوع المحتوى ومستوى حساسيته:
+                       AmalSense        :
                     </p>
                     <div className="grid grid-cols-2 gap-2 mb-4">
                       {CONTENT_DOMAINS.map((domain) => {
@@ -124,7 +124,7 @@ export default function Terms() {
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">مستويات الحساسية</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3"> </h2>
                     <div className="space-y-2">
                       {SENSITIVITY_LEVELS.map((level) => (
                         <div 
@@ -144,23 +144,23 @@ export default function Terms() {
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">7. حدود المسؤولية</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">7.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      لن تكون Amaalsense مسؤولة عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو تبعية ناتجة عن استخدام أو عدم القدرة على استخدام خدماتنا.
+                        Amaalsense                     .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">8. التعديلات</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">8. Edit</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سيتم نشر التغييرات على هذه الصفحة مع تاريخ التحديث.
+                         Edit     .         .
                     </p>
                   </section>
 
                   <section>
-                    <h2 className="text-xl font-bold text-accent mb-3">9. الاتصال بنا</h2>
+                    <h2 className="text-xl font-bold text-accent mb-3">9.  </h2>
                     <p className="text-muted-foreground leading-relaxed">
-                      لأي استفسارات حول هذه الشروط، يرجى التواصل معنا عبر صفحة الاتصال أو البريد الإلكتروني: support@amalsense.com
+                                   : support@amalsense.com
                     </p>
                   </section>
                 </>

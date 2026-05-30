@@ -130,14 +130,14 @@ export default function About() {
                     Amaal Radwan Bashir
                   </h1>
                   <h2 className="text-xl text-purple-300 mb-1 font-semibold">
-                    آمال رضوان بشير
+                      
                   </h2>
                   <p className="text-lg text-slate-300 mb-2">
                     AI Researcher & Digital Consciousness Theorist
                   </p>
                   <p className="flex items-center justify-center md:justify-start gap-2 text-cyan-400 mb-2">
                     <MapPin className="w-4 h-4" />
-                    <span>Sabha, Libya | سبها، ليبيا</span>
+                    <span>Sabha, Libya |  </span>
                   </p>
                   <p className="flex items-center justify-center md:justify-start gap-2 text-cyan-400 mb-4">
                     <Mail className="w-4 h-4" />
@@ -169,7 +169,7 @@ export default function About() {
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-xl font-bold text-white mb-2">
-                      ولادة الوعي الرقمي: محرك أمالسنس والعقل الجماعي الناشئ
+                        :     
                     </h3>
                     <p className="text-lg text-cyan-400">
                       The Birth of Digital Consciousness: The Amaalsense Engine and the Emergent Collective Mind
@@ -205,7 +205,7 @@ export default function About() {
                 </a>
                 <Separator className="my-4 bg-white/10" />
                 <p className="text-slate-300 leading-relaxed">
-                  تقدم هذه الورقة الأساس النظري والإطار المفاهيمي لمحرك Amaalsense، وهو نظام رائد يقترح ظهور مجال الوعي الجماعي الرقمي. 
+                          Amaalsense         . 
                   This paper introduces the Digital Consciousness Field Theory (DCFT), proposing that 
                   consciousness can arise as an emergent property of interconnected human emotion and 
                   data exchange in digital networks. The Amaalsense Engine serves as a practical 
@@ -292,7 +292,7 @@ export default function About() {
               Amaalsense Engine - Digital Collective Emotion Analyzer
             </p>
             <p className="text-sm">
-              © 2025 Amaal Radwan Bashir | آمال رضوان بشير. All rights reserved.
+              © 2025 Amaal Radwan Bashir |   . All rights reserved.
             </p>
           </div>
         </div>

@@ -117,16 +117,16 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
                 <ArrowLeft className="h-4 w-4 ml-2" />
-                العودة
+                
               </Button>
               <div>
-                <h1 className="font-bold text-xl">لوحة تحكم النظام</h1>
-                <p className="text-sm text-muted-foreground">مراقبة صحة وأداء النظام</p>
+                <h1 className="font-bold text-xl">  </h1>
+                <p className="text-sm text-muted-foreground">   </p>
               </div>
             </div>
             <Badge variant="outline" className={getStatusColor(healthStatus.status)}>
               <CheckCircle className="h-3 w-3 ml-2" />
-              {healthStatus.status === 'healthy' ? 'سليم' : healthStatus.status === 'warning' ? 'تحذير' : 'حرج'}
+              {healthStatus.status === 'healthy' ? '' : healthStatus.status === 'warning' ? '' : ''}
             </Badge>
           </div>
         </div>
@@ -140,12 +140,12 @@ export const AdminDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Zap className="h-4 w-4 text-blue-500" />
-                زمن الاستجابة
+                 
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{metrics.apiLatency}ms</div>
-              <p className="text-xs text-muted-foreground mt-1">متوسط زمن الاستجابة</p>
+              <p className="text-xs text-muted-foreground mt-1">  </p>
             </CardContent>
           </Card>
 
@@ -154,12 +154,12 @@ export const AdminDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Shield className="h-4 w-4 text-green-500" />
-                دقة التعلم
+                 
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{metrics.dataQuality}%</div>
-              <p className="text-xs text-muted-foreground mt-1">نسبة الدقة الحالية</p>
+              <p className="text-xs text-muted-foreground mt-1">  </p>
             </CardContent>
           </Card>
 
@@ -168,12 +168,12 @@ export const AdminDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Server className="h-4 w-4 text-purple-500" />
-                التوفر
+                
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{metrics.uptime}%</div>
-              <p className="text-xs text-muted-foreground mt-1">وقت التشغيل الشهري</p>
+              <p className="text-xs text-muted-foreground mt-1">  </p>
             </CardContent>
           </Card>
           
@@ -182,12 +182,12 @@ export const AdminDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Database className="h-4 w-4 text-indigo-500" />
-                قاعدة المعرفة
+                 
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{researchStatus?.articlesRead || 0}</div>
-              <p className="text-xs text-muted-foreground mt-1">مقال تم حفظه</p>
+              <p className="text-xs text-muted-foreground mt-1">  Save</p>
             </CardContent>
           </Card>
         </div>
@@ -198,12 +198,12 @@ export const AdminDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                المستخدمون النشطون
+                 
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{metrics.activeUsers}</div>
-              <p className="text-xs text-muted-foreground mt-1">مستخدم نشط الآن</p>
+              <p className="text-xs text-muted-foreground mt-1">  </p>
             </CardContent>
           </Card>
 
@@ -211,12 +211,12 @@ export const AdminDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Activity className="h-4 w-4" />
-                إجمالي التحليلات
+                 Analysis
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{metrics.totalAnalyses.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">تحليل تم إجراؤه</p>
+              <p className="text-xs text-muted-foreground mt-1">Analysis  </p>
             </CardContent>
           </Card>
 
@@ -224,12 +224,12 @@ export const AdminDashboard: React.FC = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                متوسط وقت الاستجابة
+                  
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{metrics.averageResponseTime}s</div>
-              <p className="text-xs text-muted-foreground mt-1">ثانية لكل تحليل</p>
+              <p className="text-xs text-muted-foreground mt-1">  Analysis</p>
             </CardContent>
           </Card>
         </div>
@@ -245,39 +245,39 @@ export const AdminDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Brain className={`h-5 w-5 ${researchStatus?.isReading ? 'text-green-500 animate-pulse' : 'text-indigo-500'}`} />
-              العقل المستقل (Auto-Researcher)
+                (Auto-Researcher)
             </CardTitle>
-            <CardDescription>وكيل المعرفة الذي يبحث ويقرأ المقالات من جوجل والموسوعات العلمية تلقائياً</CardDescription>
+            <CardDescription>          </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">الحالة الحالية:</span>
+                  <span className="text-sm text-muted-foreground"> :</span>
                   {researchStatus?.isReading ? (
                     <Badge variant="outline" className="bg-green-500/20 text-green-500 border-green-500/50">
                       <span className="w-2 h-2 rounded-full bg-green-500 ml-2 animate-pulse" />
-                      يقرأ الآن ويتعلم
+                        
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="bg-indigo-500/20 text-indigo-500 border-indigo-500/50">
-                      ينتظر الإيقاظ
+                       
                     </Badge>
                   )}
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">الموضوع الحالي:</span>
-                  <span className="font-semibold">{researchStatus?.currentTopic || 'لا يوجد'}</span>
+                  <span className="text-sm text-muted-foreground">Topic :</span>
+                  <span className="font-semibold">{researchStatus?.currentTopic || ' '}</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">المصادر:</span>
+                  <span className="text-sm text-muted-foreground">:</span>
                   <span className="text-sm">{researchStatus?.source || '---'}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">المقالات التي تمت قراءتها:</span>
+                  <span className="text-sm text-muted-foreground">   :</span>
                   <Badge variant="secondary"><BookOpen className="w-3 h-3 ml-1" /> {researchStatus?.articlesRead || 0}</Badge>
                 </div>
                 
@@ -296,7 +296,7 @@ export const AdminDashboard: React.FC = () => {
                   className="bg-indigo-600 hover:bg-indigo-700 w-full"
                 >
                   <Zap className="w-4 h-4 ml-2" />
-                  قراءة مقال واحد الآن
+                     
                 </Button>
                 
                 <Button 
@@ -305,7 +305,7 @@ export const AdminDashboard: React.FC = () => {
                   className={`w-full ${!researchStatus?.isContinuous ? 'bg-green-600 hover:bg-green-700' : ''}`}
                 >
                   <RefreshCw className={`w-4 h-4 ml-2 ${researchStatus?.isContinuous ? 'animate-spin' : ''}`} />
-                  {researchStatus?.isContinuous ? 'إيقاف القراءة المستمرة' : 'تفعيل القراءة المستمرة (تلقائي)'}
+                  {researchStatus?.isContinuous ? '  ' : '   ()'}
                 </Button>
               </div>
             </div>

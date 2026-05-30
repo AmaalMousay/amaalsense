@@ -1,7 +1,6 @@
 /**
  * INTELLIGENT CACHING HOOK
  * 
- * يوفر نظام تخزين مؤقت ذكي مع localStorage
  * Provides intelligent caching system with localStorage
  */
 

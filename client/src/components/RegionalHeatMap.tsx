@@ -2,10 +2,6 @@
 /**
  * REGIONAL HEAT MAP - CONNECTED VERSION
  * 
- * يعرض خريطة حرارية إقليمية مع بيانات حقيقية من الخادم
- * - يستخدم mapDataRouter.getRegionalHeatMapData للحصول على البيانات
- * - يعرض شدة العواطف على مستوى المناطق
- * - يسمح بالتفاعل والتحليل المقارن
  */
 
 import React, { useMemo } from 'react';
@@ -75,12 +71,12 @@ export function RegionalHeatMapConnected({
 
   const getEmotionLabel = (emotion: string) => {
     const labels: Record<string, string> = {
-      joy: 'فرح',
-      fear: 'خوف',
-      anger: 'غضب',
-      sadness: 'حزن',
-      hope: 'أمل',
-      curiosity: 'فضول'
+      joy: 'Joy',
+      fear: 'Fear',
+      anger: 'Anger',
+      sadness: 'Sadness',
+      hope: '',
+      curiosity: ''
     };
     return labels[emotion] || emotion;
   };
@@ -90,7 +86,7 @@ export function RegionalHeatMapConnected({
       <Card className="w-full p-8 bg-white border border-gray-200">
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
-          <span className="text-gray-600">جاري تحميل الخريطة الحرارية الإقليمية...</span>
+          <span className="text-gray-600">    ...</span>
         </div>
       </Card>
     );
@@ -101,7 +97,7 @@ export function RegionalHeatMapConnected({
       <Card className="w-full p-8 bg-white border border-red-200">
         <div className="flex items-center gap-2 text-red-600">
           <AlertCircle className="w-5 h-5" />
-          <span>خطأ في تحميل الخريطة الحرارية</span>
+          <span>    </span>
         </div>
       </Card>
     );
@@ -113,9 +109,9 @@ export function RegionalHeatMapConnected({
     <div className="w-full space-y-4">
       <Card className="w-full p-6 bg-white border border-gray-200">
         <div className="mb-4">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">الخريطة الحرارية الإقليمية</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">  </h3>
           <p className="text-sm text-gray-600">
-            عدد المناطق: {regions.length} | أعلى شدة: {Math.max(...regions.map(r => r.intensity), 0).toFixed(0)}%
+             : {regions.length} |  : {Math.max(...regions.map(r => r.intensity), 0).toFixed(0)}%
           </p>
         </div>
 
@@ -140,7 +136,7 @@ export function RegionalHeatMapConnected({
         </div>
 
         <div className="flex items-center justify-between text-xs mb-4 px-2">
-          <span className="text-gray-600">منخفضة</span>
+          <span className="text-gray-600"></span>
           <div className="flex gap-1">
             {[0, 20, 40, 60, 80].map(intensity => (
               <div
@@ -151,12 +147,12 @@ export function RegionalHeatMapConnected({
               />
             ))}
           </div>
-          <span className="text-gray-600">عالية جداً</span>
+          <span className="text-gray-600"> </span>
         </div>
       </Card>
 
       <Card className="w-full p-6 bg-white border border-gray-200">
-        <h4 className="text-lg font-bold text-gray-900 mb-4">تفاصيل المناطق</h4>
+        <h4 className="text-lg font-bold text-gray-900 mb-4"> </h4>
         
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {sortedRegions.map((region, index) => (
@@ -215,25 +211,25 @@ export function RegionalHeatMapConnected({
       {selectedRegion && (
         <Card className="w-full p-6 bg-white border border-gray-200">
           <h4 className="text-lg font-bold text-gray-900 mb-4">
-            تحليل: {selectedRegion.region}
+            Analysis: {selectedRegion.region}
           </h4>
 
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">الشدة الكلية</p>
+              <p className="text-sm text-gray-600 mb-1">Severity </p>
               <p className="text-2xl font-bold text-gray-900">{selectedRegion.intensity.toFixed(0)}%</p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">الاتجاه</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <div className={`flex items-center gap-2 ${getTrendColor(selectedRegion.trend)}`}>
                 {getTrendIcon(selectedRegion.trend)}
                 <span className="font-semibold">
-                  {selectedRegion.trend === 'increasing' ? 'تصاعدي' : selectedRegion.trend === 'decreasing' ? 'تنازلي' : 'مستقر'}
+                  {selectedRegion.trend === 'increasing' ? '' : selectedRegion.trend === 'decreasing' ? '' : ''}
                 </span>
               </div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">التغير</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className={`text-2xl font-bold ${selectedRegion.change > 0 ? 'text-red-600' : 'text-green-600'}`}>
                 {selectedRegion.change > 0 ? '+' : ''}{selectedRegion.change.toFixed(1)}%
               </p>
@@ -241,7 +237,7 @@ export function RegionalHeatMapConnected({
           </div>
 
           <div className="space-y-3">
-            <h5 className="font-semibold text-gray-900">توزيع العواطف</h5>
+            <h5 className="font-semibold text-gray-900"> </h5>
             {Object.entries(selectedRegion.emotionBreakdown).map(([emotion, value]) => (
               <div key={emotion} className="flex items-center gap-3">
                 <span className="w-20 text-sm text-gray-600">
@@ -265,10 +261,10 @@ export function RegionalHeatMapConnected({
 
           <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
             <p className="text-gray-600">
-              <span className="font-semibold">السكان:</span> {(selectedRegion.population / 1000000).toFixed(1)}M
+              <span className="font-semibold">:</span> {(selectedRegion.population / 1000000).toFixed(1)}M
             </p>
             <p className="text-gray-600 mt-1">
-              <span className="font-semibold">العاطفة المهيمنة:</span> {getEmotionLabel(selectedRegion.dominantEmotion)}
+              <span className="font-semibold"> :</span> {getEmotionLabel(selectedRegion.dominantEmotion)}
             </p>
           </div>
         </Card>

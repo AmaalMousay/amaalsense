@@ -17,32 +17,32 @@ export function EmotionLegend({ variant = 'compact', showIndices = false }: Emot
   const emotionItems = [
     { 
       color: EMOTION_COLORS.anger, 
-      label: language === 'ar' ? 'غضب / توتر' : 'Anger / Tension',
+      label: language === 'ar' ? 'Anger / ' : 'Anger / Tension',
       keywords: ['anger', 'crisis', 'conflict']
     },
     { 
       color: EMOTION_COLORS.fear, 
-      label: language === 'ar' ? 'خوف / قلق' : 'Fear / Anxiety',
+      label: language === 'ar' ? 'Fear / ' : 'Fear / Anxiety',
       keywords: ['fear', 'anxiety']
     },
     { 
       color: EMOTION_COLORS.curiosity, 
-      label: language === 'ar' ? 'فضول / ترقب' : 'Curiosity / Uncertainty',
+      label: language === 'ar' ? ' / ' : 'Curiosity / Uncertainty',
       keywords: ['curiosity', 'uncertainty']
     },
     { 
       color: EMOTION_COLORS.hope, 
-      label: language === 'ar' ? 'أمل / توازن' : 'Hope / Balance',
+      label: language === 'ar' ? ' / ' : 'Hope / Balance',
       keywords: ['hope', 'resilience', 'balance']
     },
     { 
       color: EMOTION_COLORS.calm, 
-      label: language === 'ar' ? 'هدوء / استقرار' : 'Calm / Stability',
+      label: language === 'ar' ? ' / ' : 'Calm / Stability',
       keywords: ['calm', 'neutrality']
     },
     { 
       color: EMOTION_COLORS.sadness, 
-      label: language === 'ar' ? 'حزن / فقدان' : 'Sadness / Grief',
+      label: language === 'ar' ? 'Sadness / ' : 'Sadness / Grief',
       keywords: ['sadness', 'grief']
     },
   ];
@@ -50,29 +50,29 @@ export function EmotionLegend({ variant = 'compact', showIndices = false }: Emot
   const indexItems = [
     {
       name: 'GMI',
-      fullName: language === 'ar' ? 'مؤشر المزاج العام' : 'Global Mood Index',
+      fullName: language === 'ar' ? '  ' : 'Global Mood Index',
       colors: [
-        { color: GMI_COLORS.negative, label: language === 'ar' ? 'سلبي' : 'Negative' },
-        { color: GMI_COLORS.neutral, label: language === 'ar' ? 'محايد' : 'Neutral' },
-        { color: GMI_COLORS.positive, label: language === 'ar' ? 'إيجابي' : 'Positive' },
+        { color: GMI_COLORS.negative, label: language === 'ar' ? '' : 'Negative' },
+        { color: GMI_COLORS.neutral, label: language === 'ar' ? 'Neutral' : 'Neutral' },
+        { color: GMI_COLORS.positive, label: language === 'ar' ? '' : 'Positive' },
       ]
     },
     {
       name: 'CFI',
-      fullName: language === 'ar' ? 'مؤشر الخوف الجماعي' : 'Collective Fear Index',
+      fullName: language === 'ar' ? ' Fear ' : 'Collective Fear Index',
       colors: [
-        { color: CFI_COLORS.low, label: language === 'ar' ? 'منخفض' : 'Low' },
-        { color: CFI_COLORS.medium, label: language === 'ar' ? 'متوسط' : 'Medium' },
-        { color: CFI_COLORS.high, label: language === 'ar' ? 'مرتفع' : 'High' },
+        { color: CFI_COLORS.low, label: language === 'ar' ? '' : 'Low' },
+        { color: CFI_COLORS.medium, label: language === 'ar' ? '' : 'Medium' },
+        { color: CFI_COLORS.high, label: language === 'ar' ? '' : 'High' },
       ]
     },
     {
       name: 'HRI',
-      fullName: language === 'ar' ? 'مؤشر الأمل والمرونة' : 'Hope & Resilience Index',
+      fullName: language === 'ar' ? '  ' : 'Hope & Resilience Index',
       colors: [
-        { color: HRI_COLORS.low, label: language === 'ar' ? 'ضعيف' : 'Low' },
-        { color: HRI_COLORS.medium, label: language === 'ar' ? 'جيد' : 'Good' },
-        { color: HRI_COLORS.high, label: language === 'ar' ? 'قوي' : 'Strong' },
+        { color: HRI_COLORS.low, label: language === 'ar' ? '' : 'Low' },
+        { color: HRI_COLORS.medium, label: language === 'ar' ? '' : 'Good' },
+        { color: HRI_COLORS.high, label: language === 'ar' ? '' : 'Strong' },
       ]
     },
   ];
@@ -81,7 +81,7 @@ export function EmotionLegend({ variant = 'compact', showIndices = false }: Emot
     return (
       <div className="flex flex-wrap items-center justify-center gap-4 py-4 text-xs text-muted-foreground">
         <span className="font-medium">
-          {language === 'ar' ? 'دليل الألوان:' : 'Color Guide:'}
+          {language === 'ar' ? ' :' : 'Color Guide:'}
         </span>
         {emotionItems.map((item) => (
           <div key={item.label} className="flex items-center gap-1.5">
@@ -99,13 +99,13 @@ export function EmotionLegend({ variant = 'compact', showIndices = false }: Emot
   return (
     <div className="p-6 rounded-lg bg-card/50 border border-border/50">
       <h4 className="text-lg font-semibold mb-4">
-        {language === 'ar' ? 'دليل الألوان العاطفية' : 'Emotion Color Guide'}
+        {language === 'ar' ? '  ' : 'Emotion Color Guide'}
       </h4>
       
       {/* Emotion Colors */}
       <div className="mb-6">
         <h5 className="text-sm font-medium text-muted-foreground mb-3">
-          {language === 'ar' ? 'المشاعر الأساسية' : 'Core Emotions'}
+          {language === 'ar' ? 'Emotions ' : 'Core Emotions'}
         </h5>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {emotionItems.map((item) => (
@@ -130,7 +130,7 @@ export function EmotionLegend({ variant = 'compact', showIndices = false }: Emot
       {showIndices && (
         <div>
           <h5 className="text-sm font-medium text-muted-foreground mb-3">
-            {language === 'ar' ? 'المؤشرات الثلاثة' : 'Key Indicators'}
+            {language === 'ar' ? ' ' : 'Key Indicators'}
           </h5>
           <div className="space-y-4">
             {indexItems.map((index) => (
@@ -181,7 +181,7 @@ export function FooterLegend() {
       <EmotionLegend variant="compact" />
       <p className="text-center text-xs text-muted-foreground/60 mt-2">
         {language === 'ar' 
-          ? 'الألوان تعكس المعاني النفسية للمشاعر الجماعية'
+          ? '     '
           : 'Colors reflect the psychological meaning of collective emotions'}
       </p>
     </div>

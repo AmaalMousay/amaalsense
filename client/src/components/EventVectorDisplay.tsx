@@ -2,10 +2,6 @@
 /**
  * EVENT VECTOR DISPLAY - CONNECTED VERSION
  * 
- * يعرض متجهات الأحداث مع بيانات حقيقية من الخادم
- * - يستخدم analysisDataRouter.getEventVectors للحصول على البيانات
- * - يعرض الأحداث الرئيسية والعلاقات بينها
- * - يدعم تحليل تأثير الأحداث
  */
 
 import React, { useMemo } from 'react';
@@ -37,7 +33,7 @@ interface EventVectorDisplayProps {
 
 export function EventVectorDisplay({
   vectors,
-  title = "الأحداث المكتشفة",
+  title = " ",
   onEventSelect
 }: EventVectorDisplayProps) {
   const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
@@ -59,12 +55,12 @@ export function EventVectorDisplay({
             <div className="flex justify-between text-xs text-gray-500 mb-2">
               <span>{new Date(event.timestamp).toLocaleDateString('ar-SA')}</span>
               <Badge variant="outline" className={event.sentiment === 'positive' ? 'text-green-600' : event.sentiment === 'negative' ? 'text-red-600' : 'text-gray-600'}>
-                {event.sentiment === 'positive' ? 'إيجابي' : event.sentiment === 'negative' ? 'سلبي' : 'محايد'}
+                {event.sentiment === 'positive' ? '' : event.sentiment === 'negative' ? '' : 'Neutral'}
               </Badge>
             </div>
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
-                <span>القوة</span>
+                <span></span>
                 <span>{event.magnitude}%</span>
               </div>
               <div className="w-full bg-gray-200 h-1 rounded">
@@ -121,21 +117,21 @@ export function EventVectorDisplayConnected({
   };
 
   const getSentimentLabel = (sentiment: number) => {
-    if (sentiment >= 70) return 'إيجابي';
-    if (sentiment >= 40) return 'محايد';
-    return 'سلبي';
+    if (sentiment >= 70) return '';
+    if (sentiment >= 40) return 'Neutral';
+    return '';
   };
 
   const getCategoryLabel = (category: string) => {
     const labels: Record<string, string> = {
-      political: 'سياسي',
-      economic: 'اقتصادي',
-      social: 'اجتماعي',
-      cultural: 'ثقافي',
-      environmental: 'بيئي',
-      health: 'صحي',
-      security: 'أمني',
-      technology: 'تكنولوجي'
+      political: '',
+      economic: '',
+      social: '',
+      cultural: '',
+      environmental: '',
+      health: '',
+      security: '',
+      technology: ''
     };
     return labels[category] || category;
   };
@@ -145,7 +141,7 @@ export function EventVectorDisplayConnected({
       <Card className="w-full p-8 bg-white border border-gray-200">
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
-          <span className="text-gray-600">جاري تحميل متجهات الأحداث...</span>
+          <span className="text-gray-600">   ...</span>
         </div>
       </Card>
     );
@@ -156,7 +152,7 @@ export function EventVectorDisplayConnected({
       <Card className="w-full p-8 bg-white border border-red-200">
         <div className="flex items-center gap-2 text-red-600">
           <AlertCircle className="w-5 h-5" />
-          <span>خطأ في تحميل متجهات الأحداث</span>
+          <span>    </span>
         </div>
       </Card>
     );
@@ -171,24 +167,24 @@ export function EventVectorDisplayConnected({
       <Card className="w-full p-6 bg-white border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Network className="w-5 h-5 text-gray-900" />
-          <h3 className="text-lg font-bold text-gray-900">متجهات الأحداث</h3>
+          <h3 className="text-lg font-bold text-gray-900"> </h3>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">عدد الأحداث</p>
+            <p className="text-sm text-gray-600 mb-1"> </p>
             <p className="text-3xl font-bold text-gray-900">{events.length}</p>
-            <p className="text-xs text-gray-500 mt-1">حدث مهم</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">متوسط التأثير</p>
+            <p className="text-sm text-gray-600 mb-1"> Impact</p>
             <p className="text-3xl font-bold text-gray-900">{avgImpact}</p>
-            <p className="text-xs text-gray-500 mt-1">درجة التأثير</p>
+            <p className="text-xs text-gray-500 mt-1"> Impact</p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">متوسط الوصول</p>
+            <p className="text-sm text-gray-600 mb-1"> </p>
             <p className="text-3xl font-bold text-gray-900">{avgReach}</p>
-            <p className="text-xs text-gray-500 mt-1">درجة الوصول</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
         </div>
       </Card>
@@ -204,7 +200,7 @@ export function EventVectorDisplayConnected({
                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            ترتيب حسب التأثير
+              Impact
           </button>
           <button
             onClick={() => setSortBy('reach')}
@@ -214,7 +210,7 @@ export function EventVectorDisplayConnected({
                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            ترتيب حسب الوصول
+              
           </button>
           <button
             onClick={() => setSortBy('sentiment')}
@@ -224,14 +220,14 @@ export function EventVectorDisplayConnected({
                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            ترتيب حسب المشاعر
+              Emotions
           </button>
         </div>
       </Card>
 
       {/* Events List */}
       <Card className="w-full p-6 bg-white border border-gray-200">
-        <h4 className="text-lg font-bold text-gray-900 mb-4">الأحداث الرئيسية</h4>
+        <h4 className="text-lg font-bold text-gray-900 mb-4"> Home</h4>
         
         <div className="space-y-3 max-h-96 overflow-y-auto">
           {sortedEvents.map((event, index) => (
@@ -253,7 +249,7 @@ export function EventVectorDisplayConnected({
                 </div>
                 <div className="text-right">
                   <p className={`text-xs font-semibold ${selectedEvent?.id === event.id ? 'text-gray-300' : 'text-gray-600'}`}>
-                    الموثوقية: {event.confidence.toFixed(0)}%
+                    : {event.confidence.toFixed(0)}%
                   </p>
                 </div>
               </div>
@@ -261,15 +257,15 @@ export function EventVectorDisplayConnected({
               {/* Metrics */}
               <div className="grid grid-cols-3 gap-2 mb-3">
                 <div className="p-2 bg-gray-50 rounded text-center">
-                  <p className="text-xs text-gray-600 mb-1">التأثير</p>
+                  <p className="text-xs text-gray-600 mb-1">Impact</p>
                   <p className="font-bold text-sm text-gray-900">{event.impact.toFixed(0)}</p>
                 </div>
                 <div className="p-2 bg-gray-50 rounded text-center">
-                  <p className="text-xs text-gray-600 mb-1">الوصول</p>
+                  <p className="text-xs text-gray-600 mb-1"></p>
                   <p className="font-bold text-sm text-gray-900">{event.reach.toFixed(0)}</p>
                 </div>
                 <div className="p-2 bg-gray-50 rounded text-center">
-                  <p className="text-xs text-gray-600 mb-1">المشاعر</p>
+                  <p className="text-xs text-gray-600 mb-1">Emotions</p>
                   <p className="font-bold text-sm text-gray-900">{event.sentiment.toFixed(0)}</p>
                 </div>
               </div>
@@ -297,7 +293,7 @@ export function EventVectorDisplayConnected({
       {/* Selected Event Details */}
       {selectedEvent && (
         <Card className="w-full p-6 bg-white border border-gray-200">
-          <h4 className="text-lg font-bold text-gray-900 mb-4">تفاصيل الحدث</h4>
+          <h4 className="text-lg font-bold text-gray-900 mb-4"> </h4>
 
           <div className="mb-6">
             <h5 className="font-semibold text-gray-900 mb-2">{selectedEvent.title}</h5>
@@ -305,19 +301,19 @@ export function EventVectorDisplayConnected({
 
             <div className="grid grid-cols-4 gap-3 mb-4">
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600 mb-1">التأثير</p>
+                <p className="text-xs text-gray-600 mb-1">Impact</p>
                 <p className="text-2xl font-bold text-gray-900">{selectedEvent.impact.toFixed(0)}</p>
               </div>
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600 mb-1">الوصول</p>
+                <p className="text-xs text-gray-600 mb-1"></p>
                 <p className="text-2xl font-bold text-gray-900">{selectedEvent.reach.toFixed(0)}</p>
               </div>
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600 mb-1">المشاعر</p>
+                <p className="text-xs text-gray-600 mb-1">Emotions</p>
                 <p className="text-2xl font-bold text-gray-900">{selectedEvent.sentiment.toFixed(0)}</p>
               </div>
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600 mb-1">الموثوقية</p>
+                <p className="text-xs text-gray-600 mb-1"></p>
                 <p className="text-2xl font-bold text-gray-900">{selectedEvent.confidence.toFixed(0)}%</p>
               </div>
             </div>
@@ -326,7 +322,7 @@ export function EventVectorDisplayConnected({
           {/* Emotional Shift */}
           {Object.keys(selectedEvent.emotionalShift).length > 0 && (
             <div className="mb-6">
-              <h5 className="font-semibold text-gray-900 mb-3">التحول العاطفي</h5>
+              <h5 className="font-semibold text-gray-900 mb-3"> </h5>
               <div className="space-y-2">
                 {Object.entries(selectedEvent.emotionalShift).map(([emotion, shift]) => (
                   <div key={emotion} className="flex items-center gap-3">
@@ -352,7 +348,7 @@ export function EventVectorDisplayConnected({
           {/* Related Events */}
           {selectedEvent.relatedEvents.length > 0 && (
             <div>
-              <h5 className="font-semibold text-gray-900 mb-2">أحداث ذات صلة</h5>
+              <h5 className="font-semibold text-gray-900 mb-2">  </h5>
               <div className="flex flex-wrap gap-2">
                 {selectedEvent.relatedEvents.map((relatedId, index) => (
                   <span

@@ -1,6 +1,5 @@
 /**
  * Trend Chart Component
- * مخطط الاتجاهات
  */
 
 import React from 'react';
@@ -20,12 +19,12 @@ interface TrendChartProps {
 
 export function TrendChart({ title, data, height = 300 }: TrendChartProps) {
   const defaultData: TrendDataPoint[] = [
-    { date: '1 يناير', value: 55, label: 'يناير' },
-    { date: '1 فبراير', value: 62, label: 'فبراير' },
-    { date: '1 مارس', value: 58, label: 'مارس' },
-    { date: '1 أبريل', value: 68, label: 'أبريل' },
-    { date: '1 مايو', value: 72, label: 'مايو' },
-    { date: '1 يونيو', value: 65, label: 'يونيو' },
+    { date: '1 ', value: 55, label: '' },
+    { date: '1 ', value: 62, label: '' },
+    { date: '1 ', value: 58, label: '' },
+    { date: '1 ', value: 68, label: '' },
+    { date: '1 ', value: 72, label: '' },
+    { date: '1 ', value: 65, label: '' },
   ];
 
   const displayData = data || defaultData;
@@ -110,17 +109,17 @@ export function TrendChart({ title, data, height = 300 }: TrendChartProps) {
         {/* Legend and stats */}
         <div className="mt-12 pt-4 border-t border-gray-300 grid grid-cols-3 gap-4">
           <div className="text-center">
-            <p className="text-xs text-gray-600">أعلى قيمة</p>
+            <p className="text-xs text-gray-600"> </p>
             <p className="text-lg font-bold text-black">{Math.round(maxValue)}</p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-gray-600">المتوسط</p>
+            <p className="text-xs text-gray-600"></p>
             <p className="text-lg font-bold text-black">
               {Math.round(displayData.reduce((sum, d) => sum + d.value, 0) / displayData.length)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-gray-600">أقل قيمة</p>
+            <p className="text-xs text-gray-600"> </p>
             <p className="text-lg font-bold text-black">{Math.round(minValue)}</p>
           </div>
         </div>

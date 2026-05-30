@@ -1,6 +1,4 @@
 /**
- * PageErrorBoundary - مكون حماية من الأخطاء مخصص لكل صفحة
- * يعرض رسائل ودية بالعربية والإنجليزية مع خيارات إعادة المحاولة
  */
 import { Component, ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -30,9 +28,9 @@ function getErrorDetails(error: Error | null) {
     return {
       type: 'llm_exhausted' as const,
       icon: Brain,
-      titleAr: 'تم استنفاد حصة الذكاء الاصطناعي',
+      titleAr: '    ',
       titleEn: 'AI Usage Limit Reached',
-      descAr: 'تم الوصول للحد الأقصى من استخدام نموذج الذكاء الاصطناعي. يرجى المحاولة لاحقاً أو التواصل مع المسؤول.',
+      descAr: '        .       .',
       descEn: 'The AI model usage limit has been reached. Please try again later or contact the administrator.',
       color: 'text-amber-500',
       bgColor: 'bg-amber-500/10',
@@ -45,9 +43,9 @@ function getErrorDetails(error: Error | null) {
     return {
       type: 'timeout' as const,
       icon: Clock,
-      titleAr: 'انتهت مهلة الطلب',
+      titleAr: '  ',
       titleEn: 'Request Timed Out',
-      descAr: 'استغرق التحليل وقتاً أطول من المتوقع. يرجى المحاولة مرة أخرى بموضوع أبسط.',
+      descAr: ' Analysis    .      .',
       descEn: 'The analysis took longer than expected. Please try again with a simpler topic.',
       color: 'text-orange-500',
       bgColor: 'bg-orange-500/10',
@@ -60,9 +58,9 @@ function getErrorDetails(error: Error | null) {
     return {
       type: 'network' as const,
       icon: WifiOff,
-      titleAr: 'خطأ في الاتصال',
+      titleAr: '  ',
       titleEn: 'Connection Error',
-      descAr: 'تعذر الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.',
+      descAr: '  .        .',
       descEn: 'Could not connect to the server. Please check your internet connection and try again.',
       color: 'text-blue-500',
       bgColor: 'bg-blue-500/10',
@@ -75,9 +73,9 @@ function getErrorDetails(error: Error | null) {
     return {
       type: 'server' as const,
       icon: ServerCrash,
-      titleAr: 'خطأ في الخادم',
+      titleAr: '  ',
       titleEn: 'Server Error',
-      descAr: 'حدث خطأ داخلي في الخادم. فريقنا يعمل على حل المشكلة.',
+      descAr: 'Error   .     .',
       descEn: 'An internal server error occurred. Our team is working on resolving it.',
       color: 'text-red-500',
       bgColor: 'bg-red-500/10',
@@ -90,9 +88,9 @@ function getErrorDetails(error: Error | null) {
     return {
       type: 'data' as const,
       icon: AlertTriangle,
-      titleAr: 'خطأ في البيانات',
+      titleAr: '  ',
       titleEn: 'Data Error',
-      descAr: 'حدث خطأ أثناء معالجة البيانات. يرجى المحاولة مرة أخرى.',
+      descAr: 'Error   .    .',
       descEn: 'An error occurred while processing data. Please try again.',
       color: 'text-yellow-500',
       bgColor: 'bg-yellow-500/10',
@@ -104,9 +102,9 @@ function getErrorDetails(error: Error | null) {
   return {
     type: 'unknown' as const,
     icon: AlertTriangle,
-    titleAr: 'حدث خطأ غير متوقع',
+    titleAr: 'Error  ',
     titleEn: 'An Unexpected Error Occurred',
-    descAr: 'نعتذر عن هذا الخطأ. يرجى المحاولة مرة أخرى.',
+    descAr: '   .    .',
     descEn: 'We apologize for this error. Please try again.',
     color: 'text-destructive',
     bgColor: 'bg-destructive/10',
@@ -183,7 +181,7 @@ class PageErrorBoundary extends Component<Props, State> {
                 {this.state.error && (
                   <details className="w-full">
                     <summary className="text-xs text-muted-foreground/60 cursor-pointer hover:text-muted-foreground transition-colors">
-                      {rtl ? 'تفاصيل تقنية' : 'Technical Details'}
+                      {rtl ? ' ' : 'Technical Details'}
                     </summary>
                     <div className="mt-2 p-3 rounded-md bg-muted/50 text-xs text-muted-foreground font-mono text-left overflow-auto max-h-32" dir="ltr">
                       {this.state.error.message}
@@ -200,7 +198,7 @@ class PageErrorBoundary extends Component<Props, State> {
                       variant="default"
                     >
                       <RefreshCw className="w-4 h-4" />
-                      {rtl ? 'إعادة المحاولة' : 'Try Again'}
+                      {rtl ? ' ' : 'Try Again'}
                     </Button>
                   )}
                   <Button
@@ -209,7 +207,7 @@ class PageErrorBoundary extends Component<Props, State> {
                     className="gap-2"
                   >
                     <Home className="w-4 h-4" />
-                    {rtl ? 'الصفحة الرئيسية' : 'Go Home'}
+                    {rtl ? ' Home' : 'Go Home'}
                   </Button>
                   <Button
                     onClick={this.handleReload}
@@ -218,7 +216,7 @@ class PageErrorBoundary extends Component<Props, State> {
                     size="sm"
                   >
                     <RotateCcw className="w-4 h-4" />
-                    {rtl ? 'تحديث الصفحة' : 'Reload Page'}
+                    {rtl ? ' ' : 'Reload Page'}
                   </Button>
                 </div>
               </div>

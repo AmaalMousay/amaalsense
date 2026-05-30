@@ -1,6 +1,5 @@
 /**
  * Advanced Filters Component
- * مكون الفلاتر المتقدمة
  */
 
 import React, { useState } from 'react';
@@ -36,9 +35,9 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
 
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const regions = ['الشرق الأوسط', 'أوروبا', 'آسيا', 'أمريكا', 'أفريقيا', 'أوقيانوسيا'];
-  const emotions = ['فرح', 'حزن', 'غضب', 'خوف', 'أمل', 'هدوء'];
-  const sources = ['وسائل التواصل', 'الأخبار', 'المنتديات', 'المدونات', 'التطبيقات'];
+  const regions = [' ', '', '', '', '', ''];
+  const emotions = ['Joy', 'Sadness', 'Anger', 'Fear', '', ''];
+  const sources = [' ', '', '', '', ''];
 
   const handleRegionToggle = (region: string) => {
     setFilters(prev => ({
@@ -88,7 +87,7 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Filter className="h-5 w-5 text-black" />
-            <CardTitle className="text-black">الفلاتر المتقدمة</CardTitle>
+            <CardTitle className="text-black"> </CardTitle>
           </div>
           <Button
             variant="ghost"
@@ -105,7 +104,7 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
         <CardContent className="space-y-6 border-t border-gray-300 pt-6">
           {/* Date Range */}
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-black">نطاق التاريخ</label>
+            <label className="text-sm font-semibold text-black"> </label>
             <div className="grid grid-cols-2 gap-3">
               <Input
                 type="date"
@@ -130,7 +129,7 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
 
           {/* Regions */}
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-black">المناطق الجغرافية</label>
+            <label className="text-sm font-semibold text-black"> </label>
             <div className="grid grid-cols-2 gap-3">
               {regions.map(region => (
                 <div key={region} className="flex items-center gap-2">
@@ -147,7 +146,7 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
 
           {/* Emotions */}
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-black">أنواع العواطف</label>
+            <label className="text-sm font-semibold text-black"> </label>
             <div className="grid grid-cols-2 gap-3">
               {emotions.map(emotion => (
                 <div key={emotion} className="flex items-center gap-2">
@@ -165,7 +164,7 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
           {/* Confidence Range */}
           <div className="space-y-3">
             <label className="text-sm font-semibold text-black">
-              نطاق الثقة: {filters.confidenceRange[0]}% - {filters.confidenceRange[1]}%
+               Confidence: {filters.confidenceRange[0]}% - {filters.confidenceRange[1]}%
             </label>
             <Slider
               value={filters.confidenceRange}
@@ -182,7 +181,7 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
 
           {/* Sources */}
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-black">مصادر البيانات</label>
+            <label className="text-sm font-semibold text-black"> </label>
             <div className="grid grid-cols-2 gap-3">
               {sources.map(source => (
                 <div key={source} className="flex items-center gap-2">
@@ -203,14 +202,14 @@ export function AdvancedFilters({ onApplyFilters, onClearFilters }: AdvancedFilt
               onClick={handleApply}
               className="flex-1 bg-black text-white hover:bg-gray-800"
             >
-              تطبيق الفلاتر
+               
             </Button>
             <Button
               onClick={handleClear}
               variant="outline"
               className="flex-1 border-gray-300 text-black hover:bg-gray-100"
             >
-              مسح الفلاتر
+               
             </Button>
           </div>
         </CardContent>

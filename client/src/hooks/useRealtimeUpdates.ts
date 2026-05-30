@@ -2,7 +2,6 @@
 /**
  * REAL-TIME UPDATES HOOK
  * 
- * يوفر تحديثات فورية عبر WebSocket
  * Provides real-time updates via WebSocket connection
  */
 

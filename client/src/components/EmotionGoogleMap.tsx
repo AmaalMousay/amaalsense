@@ -46,87 +46,87 @@ function loadMapScript() {
 // Country coordinates (lat, lng)
 const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string; nameEn: string }> = {
   // Middle East & North Africa
-  'LY': { lat: 26.3351, lng: 17.2283, name: 'ليبيا', nameEn: 'Libya' },
-  'EG': { lat: 26.8206, lng: 30.8025, name: 'مصر', nameEn: 'Egypt' },
-  'SA': { lat: 23.8859, lng: 45.0792, name: 'السعودية', nameEn: 'Saudi Arabia' },
-  'AE': { lat: 23.4241, lng: 53.8478, name: 'الإمارات', nameEn: 'UAE' },
-  'IQ': { lat: 33.2232, lng: 43.6793, name: 'العراق', nameEn: 'Iraq' },
-  'SY': { lat: 34.8021, lng: 38.9968, name: 'سوريا', nameEn: 'Syria' },
-  'JO': { lat: 30.5852, lng: 36.2384, name: 'الأردن', nameEn: 'Jordan' },
-  'LB': { lat: 33.8547, lng: 35.8623, name: 'لبنان', nameEn: 'Lebanon' },
-  'PS': { lat: 31.9522, lng: 35.2332, name: 'فلسطين', nameEn: 'Palestine' },
-  'KW': { lat: 29.3117, lng: 47.4818, name: 'الكويت', nameEn: 'Kuwait' },
-  'QA': { lat: 25.3548, lng: 51.1839, name: 'قطر', nameEn: 'Qatar' },
-  'BH': { lat: 26.0667, lng: 50.5577, name: 'البحرين', nameEn: 'Bahrain' },
-  'OM': { lat: 21.4735, lng: 55.9754, name: 'عمان', nameEn: 'Oman' },
-  'YE': { lat: 15.5527, lng: 48.5164, name: 'اليمن', nameEn: 'Yemen' },
-  'MA': { lat: 31.7917, lng: -7.0926, name: 'المغرب', nameEn: 'Morocco' },
-  'DZ': { lat: 28.0339, lng: 1.6596, name: 'الجزائر', nameEn: 'Algeria' },
-  'TN': { lat: 33.8869, lng: 9.5375, name: 'تونس', nameEn: 'Tunisia' },
-  'SD': { lat: 12.8628, lng: 30.2176, name: 'السودان', nameEn: 'Sudan' },
+  'LY': { lat: 26.3351, lng: 17.2283, name: '', nameEn: 'Libya' },
+  'EG': { lat: 26.8206, lng: 30.8025, name: '', nameEn: 'Egypt' },
+  'SA': { lat: 23.8859, lng: 45.0792, name: '', nameEn: 'Saudi Arabia' },
+  'AE': { lat: 23.4241, lng: 53.8478, name: '', nameEn: 'UAE' },
+  'IQ': { lat: 33.2232, lng: 43.6793, name: '', nameEn: 'Iraq' },
+  'SY': { lat: 34.8021, lng: 38.9968, name: '', nameEn: 'Syria' },
+  'JO': { lat: 30.5852, lng: 36.2384, name: '', nameEn: 'Jordan' },
+  'LB': { lat: 33.8547, lng: 35.8623, name: '', nameEn: 'Lebanon' },
+  'PS': { lat: 31.9522, lng: 35.2332, name: '', nameEn: 'Palestine' },
+  'KW': { lat: 29.3117, lng: 47.4818, name: '', nameEn: 'Kuwait' },
+  'QA': { lat: 25.3548, lng: 51.1839, name: '', nameEn: 'Qatar' },
+  'BH': { lat: 26.0667, lng: 50.5577, name: '', nameEn: 'Bahrain' },
+  'OM': { lat: 21.4735, lng: 55.9754, name: '', nameEn: 'Oman' },
+  'YE': { lat: 15.5527, lng: 48.5164, name: '', nameEn: 'Yemen' },
+  'MA': { lat: 31.7917, lng: -7.0926, name: '', nameEn: 'Morocco' },
+  'DZ': { lat: 28.0339, lng: 1.6596, name: '', nameEn: 'Algeria' },
+  'TN': { lat: 33.8869, lng: 9.5375, name: '', nameEn: 'Tunisia' },
+  'SD': { lat: 12.8628, lng: 30.2176, name: '', nameEn: 'Sudan' },
   
   // Europe
-  'GB': { lat: 55.3781, lng: -3.4360, name: 'بريطانيا', nameEn: 'UK' },
-  'FR': { lat: 46.2276, lng: 2.2137, name: 'فرنسا', nameEn: 'France' },
-  'DE': { lat: 51.1657, lng: 10.4515, name: 'ألمانيا', nameEn: 'Germany' },
-  'IT': { lat: 41.8719, lng: 12.5674, name: 'إيطاليا', nameEn: 'Italy' },
-  'ES': { lat: 40.4637, lng: -3.7492, name: 'إسبانيا', nameEn: 'Spain' },
-  'NL': { lat: 52.1326, lng: 5.2913, name: 'هولندا', nameEn: 'Netherlands' },
-  'BE': { lat: 50.5039, lng: 4.4699, name: 'بلجيكا', nameEn: 'Belgium' },
-  'SE': { lat: 60.1282, lng: 18.6435, name: 'السويد', nameEn: 'Sweden' },
-  'NO': { lat: 60.4720, lng: 8.4689, name: 'النرويج', nameEn: 'Norway' },
-  'PL': { lat: 51.9194, lng: 19.1451, name: 'بولندا', nameEn: 'Poland' },
-  'UA': { lat: 48.3794, lng: 31.1656, name: 'أوكرانيا', nameEn: 'Ukraine' },
-  'RU': { lat: 61.5240, lng: 105.3188, name: 'روسيا', nameEn: 'Russia' },
-  'TR': { lat: 38.9637, lng: 35.2433, name: 'تركيا', nameEn: 'Turkey' },
-  'GR': { lat: 39.0742, lng: 21.8243, name: 'اليونان', nameEn: 'Greece' },
-  'CH': { lat: 46.8182, lng: 8.2275, name: 'سويسرا', nameEn: 'Switzerland' },
-  'AT': { lat: 47.5162, lng: 14.5501, name: 'النمسا', nameEn: 'Austria' },
-  'PT': { lat: 39.3999, lng: -8.2245, name: 'البرتغال', nameEn: 'Portugal' },
-  'IE': { lat: 53.1424, lng: -7.6921, name: 'أيرلندا', nameEn: 'Ireland' },
-  'DK': { lat: 56.2639, lng: 9.5018, name: 'الدنمارك', nameEn: 'Denmark' },
-  'FI': { lat: 61.9241, lng: 25.7482, name: 'فنلندا', nameEn: 'Finland' },
+  'GB': { lat: 55.3781, lng: -3.4360, name: '', nameEn: 'UK' },
+  'FR': { lat: 46.2276, lng: 2.2137, name: '', nameEn: 'France' },
+  'DE': { lat: 51.1657, lng: 10.4515, name: '', nameEn: 'Germany' },
+  'IT': { lat: 41.8719, lng: 12.5674, name: '', nameEn: 'Italy' },
+  'ES': { lat: 40.4637, lng: -3.7492, name: '', nameEn: 'Spain' },
+  'NL': { lat: 52.1326, lng: 5.2913, name: '', nameEn: 'Netherlands' },
+  'BE': { lat: 50.5039, lng: 4.4699, name: '', nameEn: 'Belgium' },
+  'SE': { lat: 60.1282, lng: 18.6435, name: '', nameEn: 'Sweden' },
+  'NO': { lat: 60.4720, lng: 8.4689, name: '', nameEn: 'Norway' },
+  'PL': { lat: 51.9194, lng: 19.1451, name: '', nameEn: 'Poland' },
+  'UA': { lat: 48.3794, lng: 31.1656, name: '', nameEn: 'Ukraine' },
+  'RU': { lat: 61.5240, lng: 105.3188, name: '', nameEn: 'Russia' },
+  'TR': { lat: 38.9637, lng: 35.2433, name: '', nameEn: 'Turkey' },
+  'GR': { lat: 39.0742, lng: 21.8243, name: '', nameEn: 'Greece' },
+  'CH': { lat: 46.8182, lng: 8.2275, name: '', nameEn: 'Switzerland' },
+  'AT': { lat: 47.5162, lng: 14.5501, name: '', nameEn: 'Austria' },
+  'PT': { lat: 39.3999, lng: -8.2245, name: '', nameEn: 'Portugal' },
+  'IE': { lat: 53.1424, lng: -7.6921, name: '', nameEn: 'Ireland' },
+  'DK': { lat: 56.2639, lng: 9.5018, name: '', nameEn: 'Denmark' },
+  'FI': { lat: 61.9241, lng: 25.7482, name: '', nameEn: 'Finland' },
   
   // Americas
-  'US': { lat: 37.0902, lng: -95.7129, name: 'أمريكا', nameEn: 'USA' },
-  'CA': { lat: 56.1304, lng: -106.3468, name: 'كندا', nameEn: 'Canada' },
-  'MX': { lat: 23.6345, lng: -102.5528, name: 'المكسيك', nameEn: 'Mexico' },
-  'BR': { lat: -14.2350, lng: -51.9253, name: 'البرازيل', nameEn: 'Brazil' },
-  'AR': { lat: -38.4161, lng: -63.6167, name: 'الأرجنتين', nameEn: 'Argentina' },
-  'CO': { lat: 4.5709, lng: -74.2973, name: 'كولومبيا', nameEn: 'Colombia' },
-  'CL': { lat: -35.6751, lng: -71.5430, name: 'تشيلي', nameEn: 'Chile' },
-  'PE': { lat: -9.1900, lng: -75.0152, name: 'بيرو', nameEn: 'Peru' },
-  'VE': { lat: 6.4238, lng: -66.5897, name: 'فنزويلا', nameEn: 'Venezuela' },
+  'US': { lat: 37.0902, lng: -95.7129, name: '', nameEn: 'USA' },
+  'CA': { lat: 56.1304, lng: -106.3468, name: '', nameEn: 'Canada' },
+  'MX': { lat: 23.6345, lng: -102.5528, name: '', nameEn: 'Mexico' },
+  'BR': { lat: -14.2350, lng: -51.9253, name: '', nameEn: 'Brazil' },
+  'AR': { lat: -38.4161, lng: -63.6167, name: '', nameEn: 'Argentina' },
+  'CO': { lat: 4.5709, lng: -74.2973, name: '', nameEn: 'Colombia' },
+  'CL': { lat: -35.6751, lng: -71.5430, name: '', nameEn: 'Chile' },
+  'PE': { lat: -9.1900, lng: -75.0152, name: '', nameEn: 'Peru' },
+  'VE': { lat: 6.4238, lng: -66.5897, name: '', nameEn: 'Venezuela' },
   
   // Asia
-  'CN': { lat: 35.8617, lng: 104.1954, name: 'الصين', nameEn: 'China' },
-  'JP': { lat: 36.2048, lng: 138.2529, name: 'اليابان', nameEn: 'Japan' },
-  'KR': { lat: 35.9078, lng: 127.7669, name: 'كوريا الجنوبية', nameEn: 'South Korea' },
-  'IN': { lat: 20.5937, lng: 78.9629, name: 'الهند', nameEn: 'India' },
-  'PK': { lat: 30.3753, lng: 69.3451, name: 'باكستان', nameEn: 'Pakistan' },
-  'ID': { lat: -0.7893, lng: 113.9213, name: 'إندونيسيا', nameEn: 'Indonesia' },
-  'TH': { lat: 15.8700, lng: 100.9925, name: 'تايلاند', nameEn: 'Thailand' },
-  'VN': { lat: 14.0583, lng: 108.2772, name: 'فيتنام', nameEn: 'Vietnam' },
-  'MY': { lat: 4.2105, lng: 101.9758, name: 'ماليزيا', nameEn: 'Malaysia' },
-  'SG': { lat: 1.3521, lng: 103.8198, name: 'سنغافورة', nameEn: 'Singapore' },
-  'PH': { lat: 12.8797, lng: 121.7740, name: 'الفلبين', nameEn: 'Philippines' },
-  'BD': { lat: 23.6850, lng: 90.3563, name: 'بنغلاديش', nameEn: 'Bangladesh' },
-  'IR': { lat: 32.4279, lng: 53.6880, name: 'إيران', nameEn: 'Iran' },
-  'AF': { lat: 33.9391, lng: 67.7100, name: 'أفغانستان', nameEn: 'Afghanistan' },
+  'CN': { lat: 35.8617, lng: 104.1954, name: '', nameEn: 'China' },
+  'JP': { lat: 36.2048, lng: 138.2529, name: '', nameEn: 'Japan' },
+  'KR': { lat: 35.9078, lng: 127.7669, name: ' ', nameEn: 'South Korea' },
+  'IN': { lat: 20.5937, lng: 78.9629, name: '', nameEn: 'India' },
+  'PK': { lat: 30.3753, lng: 69.3451, name: '', nameEn: 'Pakistan' },
+  'ID': { lat: -0.7893, lng: 113.9213, name: '', nameEn: 'Indonesia' },
+  'TH': { lat: 15.8700, lng: 100.9925, name: '', nameEn: 'Thailand' },
+  'VN': { lat: 14.0583, lng: 108.2772, name: '', nameEn: 'Vietnam' },
+  'MY': { lat: 4.2105, lng: 101.9758, name: '', nameEn: 'Malaysia' },
+  'SG': { lat: 1.3521, lng: 103.8198, name: '', nameEn: 'Singapore' },
+  'PH': { lat: 12.8797, lng: 121.7740, name: '', nameEn: 'Philippines' },
+  'BD': { lat: 23.6850, lng: 90.3563, name: '', nameEn: 'Bangladesh' },
+  'IR': { lat: 32.4279, lng: 53.6880, name: '', nameEn: 'Iran' },
+  'AF': { lat: 33.9391, lng: 67.7100, name: '', nameEn: 'Afghanistan' },
   
   // Africa
-  'NG': { lat: 9.0820, lng: 8.6753, name: 'نيجيريا', nameEn: 'Nigeria' },
-  'ZA': { lat: -30.5595, lng: 22.9375, name: 'جنوب أفريقيا', nameEn: 'South Africa' },
-  'KE': { lat: -0.0236, lng: 37.9062, name: 'كينيا', nameEn: 'Kenya' },
-  'ET': { lat: 9.1450, lng: 40.4897, name: 'إثيوبيا', nameEn: 'Ethiopia' },
-  'GH': { lat: 7.9465, lng: -1.0232, name: 'غانا', nameEn: 'Ghana' },
-  'TZ': { lat: -6.3690, lng: 34.8888, name: 'تنزانيا', nameEn: 'Tanzania' },
-  'UG': { lat: 1.3733, lng: 32.2903, name: 'أوغندا', nameEn: 'Uganda' },
-  'SN': { lat: 14.4974, lng: -14.4524, name: 'السنغال', nameEn: 'Senegal' },
+  'NG': { lat: 9.0820, lng: 8.6753, name: '', nameEn: 'Nigeria' },
+  'ZA': { lat: -30.5595, lng: 22.9375, name: ' ', nameEn: 'South Africa' },
+  'KE': { lat: -0.0236, lng: 37.9062, name: '', nameEn: 'Kenya' },
+  'ET': { lat: 9.1450, lng: 40.4897, name: '', nameEn: 'Ethiopia' },
+  'GH': { lat: 7.9465, lng: -1.0232, name: '', nameEn: 'Ghana' },
+  'TZ': { lat: -6.3690, lng: 34.8888, name: '', nameEn: 'Tanzania' },
+  'UG': { lat: 1.3733, lng: 32.2903, name: '', nameEn: 'Uganda' },
+  'SN': { lat: 14.4974, lng: -14.4524, name: '', nameEn: 'Senegal' },
   
   // Oceania
-  'AU': { lat: -25.2744, lng: 133.7751, name: 'أستراليا', nameEn: 'Australia' },
-  'NZ': { lat: -40.9006, lng: 174.8860, name: 'نيوزيلندا', nameEn: 'New Zealand' },
+  'AU': { lat: -25.2744, lng: 133.7751, name: '', nameEn: 'Australia' },
+  'NZ': { lat: -40.9006, lng: 174.8860, name: '', nameEn: 'New Zealand' },
 };
 
 // Mood colors
@@ -317,7 +317,7 @@ export function EmotionGoogleMap({
             </div>`
           : `<div style="padding: 8px; color: #1a1a2e;">
               <strong>${coords.name} (${coords.nameEn})</strong>
-              <div style="color: #666; margin-top: 4px;">لا توجد بيانات</div>
+              <div style="color: #666; margin-top: 4px;">  </div>
             </div>`;
         
         infoWindow.current.setContent(content);
@@ -380,7 +380,7 @@ export function EmotionGoogleMap({
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>جاري تحميل الخريطة...</span>
+            <span>  ...</span>
           </div>
         </div>
       )}

@@ -382,7 +382,7 @@ export const zh = {
     realTimeDataDesc: "来自多个源的实时更新",
     scientificPaper: "科学论文",
     paperTitle: "数字意识的诞生",
-    paperTitleAr: "ولادة الوعي الرقمي",
+    paperTitleAr: "  ",
     foundationalResearch: "Amaalsense引擎背后的基础研究",
     aiResearcher: "AI研究员和数字意识理论家",
     location: "位置",

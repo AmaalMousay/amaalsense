@@ -1,8 +1,6 @@
 /**
- * مزود التحليلات
  * Analytics Provider Component
  * 
- * يتم تهيئة جميع خدمات التحليلات هنا
  */
 
 import React, { useEffect } from "react";

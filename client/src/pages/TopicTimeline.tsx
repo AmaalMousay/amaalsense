@@ -27,12 +27,12 @@ import {
 
 // Sample countries
 const COUNTRIES = [
-  { code: "LY", name: "ليبيا" },
-  { code: "EG", name: "مصر" },
-  { code: "SA", name: "السعودية" },
-  { code: "AE", name: "الإمارات" },
-  { code: "US", name: "أمريكا" },
-  { code: "GB", name: "بريطانيا" },
+  { code: "LY", name: "" },
+  { code: "EG", name: "" },
+  { code: "SA", name: "" },
+  { code: "AE", name: "" },
+  { code: "US", name: "" },
+  { code: "GB", name: "" },
 ];
 
 interface TimelinePoint {
@@ -83,7 +83,7 @@ export default function TopicTimeline() {
 
   const handleAnalyze = async () => {
     if (!topic.trim()) {
-      toast.error("الرجاء إدخال موضوع للتحليل");
+      toast.error("   Analysis");
       return;
     }
 
@@ -95,7 +95,7 @@ export default function TopicTimeline() {
     const data = generateTimelineData(parseInt(timeRange));
     setTimelineData(data);
     setIsAnalyzing(false);
-    toast.success("تم تحليل الموضوع بنجاح");
+    toast.success(" Analysis Topic ");
   };
 
   const getCountryName = (code: string) => {
@@ -126,8 +126,8 @@ export default function TopicTimeline() {
               <Clock className="h-3 w-3 ml-1" />
               Topic Timeline
             </Badge>
-            <h1 className="text-2xl font-bold">تحليل موضوع عبر الزمن</h1>
-            <p className="text-muted-foreground">تتبع تطور المشاعر تجاه موضوع معين على مدار الأيام</p>
+            <h1 className="text-2xl font-bold">Analysis   </h1>
+            <p className="text-muted-foreground">  Emotions      </p>
           </div>
         </div>
 
@@ -136,15 +136,15 @@ export default function TopicTimeline() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" />
-              إعدادات التحليل
+               Analysis
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="md:col-span-2 space-y-2">
-                <Label>الموضوع</Label>
+                <Label>Topic</Label>
                 <Input
-                  placeholder="أدخل الموضوع للتحليل (مثل: الانتخابات، الاقتصاد)"
+                  placeholder=" Topic Analysis (:  )"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
@@ -152,7 +152,7 @@ export default function TopicTimeline() {
               </div>
 
               <div className="space-y-2">
-                <Label>الدولة</Label>
+                <Label></Label>
                 <Select value={country} onValueChange={setCountry}>
                   <SelectTrigger>
                     <SelectValue />
@@ -168,15 +168,15 @@ export default function TopicTimeline() {
               </div>
 
               <div className="space-y-2">
-                <Label>الفترة الزمنية</Label>
+                <Label> </Label>
                 <Select value={timeRange} onValueChange={(v) => setTimeRange(v as "7" | "14" | "30")}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="7">آخر 7 أيام</SelectItem>
-                    <SelectItem value="14">آخر 14 يوم</SelectItem>
-                    <SelectItem value="30">آخر 30 يوم</SelectItem>
+                    <SelectItem value="7"> 7 </SelectItem>
+                    <SelectItem value="14"> 14 </SelectItem>
+                    <SelectItem value="30"> 30 </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -187,12 +187,12 @@ export default function TopicTimeline() {
                 {isAnalyzing ? (
                   <>
                     <RefreshCw className="h-4 w-4 ml-2 animate-spin" />
-                    جاري التحليل...
+                     Analysis...
                   </>
                 ) : (
                   <>
                     <BarChart3 className="h-4 w-4 ml-2" />
-                    تحليل الموضوع
+                    Analysis Topic
                   </>
                 )}
               </Button>
@@ -209,7 +209,7 @@ export default function TopicTimeline() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">متوسط التأييد</p>
+                      <p className="text-sm text-muted-foreground"> </p>
                       <p className="text-2xl font-bold text-green-500">
                         {(timelineData.reduce((a, b) => a + b.support, 0) / timelineData.length).toFixed(1)}%
                       </p>
@@ -223,7 +223,7 @@ export default function TopicTimeline() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">متوسط المعارضة</p>
+                      <p className="text-sm text-muted-foreground"> </p>
                       <p className="text-2xl font-bold text-red-500">
                         {(timelineData.reduce((a, b) => a + b.opposition, 0) / timelineData.length).toFixed(1)}%
                       </p>
@@ -237,7 +237,7 @@ export default function TopicTimeline() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">الاتجاه العام</p>
+                      <p className="text-sm text-muted-foreground"> </p>
                       <p className={`text-2xl font-bold ${trend && trend >= 0 ? "text-green-500" : "text-red-500"}`}>
                         {trend ? (trend >= 0 ? "+" : "") + trend.toFixed(1) : "--"}%
                       </p>
@@ -255,7 +255,7 @@ export default function TopicTimeline() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">نقاط البيانات</p>
+                      <p className="text-sm text-muted-foreground"> </p>
                       <p className="text-2xl font-bold">{timelineData.length}</p>
                     </div>
                     <Calendar className="h-8 w-8 text-primary/20" />
@@ -267,9 +267,9 @@ export default function TopicTimeline() {
             {/* Timeline Chart */}
             <Card className="mb-8">
               <CardHeader>
-                <CardTitle>تطور المشاعر عبر الزمن</CardTitle>
+                <CardTitle> Emotions  </CardTitle>
                 <CardDescription>
-                  تحليل "{topic}" في {getCountryName(country)} - آخر {timeRange} أيام
+                  Analysis "{topic}"  {getCountryName(country)} -  {timeRange} 
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -285,17 +285,17 @@ export default function TopicTimeline() {
                         <div
                           className="bg-green-500 transition-all duration-300"
                           style={{ width: `${point.support}%` }}
-                          title={`تأييد: ${point.support}%`}
+                          title={`: ${point.support}%`}
                         />
                         <div
                           className="bg-red-500 transition-all duration-300"
                           style={{ width: `${point.opposition}%` }}
-                          title={`معارضة: ${point.opposition}%`}
+                          title={`: ${point.opposition}%`}
                         />
                         <div
                           className="bg-gray-400 transition-all duration-300"
                           style={{ width: `${point.neutral}%` }}
-                          title={`محايد: ${point.neutral}%`}
+                          title={`Neutral: ${point.neutral}%`}
                         />
                       </div>
                     </div>
@@ -306,15 +306,15 @@ export default function TopicTimeline() {
                 <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded bg-green-500" />
-                    <span className="text-sm">تأييد</span>
+                    <span className="text-sm"></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded bg-red-500" />
-                    <span className="text-sm">معارضة</span>
+                    <span className="text-sm"></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded bg-gray-400" />
-                    <span className="text-sm">محايد</span>
+                    <span className="text-sm">Neutral</span>
                   </div>
                 </div>
               </CardContent>
@@ -325,23 +325,23 @@ export default function TopicTimeline() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Info className="h-5 w-5" />
-                  رؤى وتحليلات
+                   Analysis
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="p-4 rounded-lg bg-muted/50">
-                    <h4 className="font-semibold mb-2">ملخص التحليل</h4>
+                    <h4 className="font-semibold mb-2"> Analysis</h4>
                     <p className="text-muted-foreground">
-                      {trend && trend >= 5 && `يُظهر التحليل اتجاهاً إيجابياً واضحاً في المشاعر تجاه "${topic}" خلال الفترة المحددة، مع ارتفاع بنسبة ${trend.toFixed(1)}%.`}
-                      {trend && trend <= -5 && `يُظهر التحليل اتجاهاً سلبياً في المشاعر تجاه "${topic}" خلال الفترة المحددة، مع انخفاض بنسبة ${Math.abs(trend).toFixed(1)}%.`}
-                      {trend && trend > -5 && trend < 5 && `المشاعر تجاه "${topic}" مستقرة نسبياً خلال الفترة المحددة، مع تغير طفيف بنسبة ${trend.toFixed(1)}%.`}
+                      {trend && trend >= 5 && ` Analysis     Emotions  "${topic}"       ${trend.toFixed(1)}%.`}
+                      {trend && trend <= -5 && ` Analysis    Emotions  "${topic}"       ${Math.abs(trend).toFixed(1)}%.`}
+                      {trend && trend > -5 && trend < 5 && `Emotions  "${topic}"          ${trend.toFixed(1)}%.`}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-lg border">
-                      <h4 className="font-semibold mb-2">أعلى يوم تأييد</h4>
+                      <h4 className="font-semibold mb-2">  </h4>
                       <p className="text-muted-foreground">
                         {timelineData.reduce((max, p) => p.support > max.support ? p : max).date}
                         {" - "}
@@ -349,7 +349,7 @@ export default function TopicTimeline() {
                       </p>
                     </div>
                     <div className="p-4 rounded-lg border">
-                      <h4 className="font-semibold mb-2">أعلى يوم معارضة</h4>
+                      <h4 className="font-semibold mb-2">  </h4>
                       <p className="text-muted-foreground">
                         {timelineData.reduce((max, p) => p.opposition > max.opposition ? p : max).date}
                         {" - "}
@@ -368,9 +368,9 @@ export default function TopicTimeline() {
           <Card className="text-center py-12">
             <CardContent>
               <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">ابدأ التحليل</h3>
+              <h3 className="text-lg font-semibold mb-2"> Analysis</h3>
               <p className="text-muted-foreground mb-4">
-                أدخل موضوعاً واختر الدولة والفترة الزمنية لرؤية تطور المشاعر عبر الزمن
+                        Emotions  
               </p>
             </CardContent>
           </Card>

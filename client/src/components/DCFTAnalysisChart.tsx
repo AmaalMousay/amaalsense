@@ -1,6 +1,5 @@
 /**
  * DCFT Analysis Chart Component
- * عرض تحليل DCFT مع الرسوم البيانية التفاعلية
  */
 
 import React from 'react';
@@ -41,7 +40,7 @@ export function DCFTAnalysisChart({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-purple-500" />
-          تحليل DCFT (Digital Collective Feeling Tracker)
+          Analysis DCFT (Digital Collective Feeling Tracker)
         </CardTitle>
       </CardHeader>
 
@@ -49,7 +48,7 @@ export function DCFTAnalysisChart({
         {/* Current Score Display */}
         <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20">
           <div>
-            <p className="text-sm text-muted-foreground">النتيجة الحالية</p>
+            <p className="text-sm text-muted-foreground"> </p>
             <p className="text-4xl font-bold text-purple-400 mt-1">{currentScore}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -68,7 +67,7 @@ export function DCFTAnalysisChart({
             {trend === 'stable' && (
               <>
                 <Activity className="h-6 w-6 text-gray-500" />
-                <span className="text-gray-500 font-semibold">مستقر</span>
+                <span className="text-gray-500 font-semibold"></span>
               </>
             )}
           </div>
@@ -76,7 +75,7 @@ export function DCFTAnalysisChart({
 
         {/* Chart Visualization */}
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">الاتجاه الزمني (آخر 7 أيام)</p>
+          <p className="text-sm font-semibold text-muted-foreground">  ( 7 )</p>
           <div className="relative h-48 flex items-end gap-2">
             {chartData.map((item, index) => {
               const height = (item.dcftScore / 100) * 100;
@@ -114,15 +113,15 @@ export function DCFTAnalysisChart({
         {/* Metrics Grid */}
         <div className="grid grid-cols-3 gap-4">
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">أعلى قيمة</p>
+            <p className="text-xs text-muted-foreground"> </p>
             <p className="text-lg font-bold text-green-400 mt-1">{maxScore.toFixed(1)}</p>
           </div>
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">أقل قيمة</p>
+            <p className="text-xs text-muted-foreground"> </p>
             <p className="text-lg font-bold text-red-400 mt-1">{minScore.toFixed(1)}</p>
           </div>
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">المتوسط</p>
+            <p className="text-xs text-muted-foreground"></p>
             <p className="text-lg font-bold text-blue-400 mt-1">
               {(chartData.reduce((sum, d) => sum + d.dcftScore, 0) / chartData.length).toFixed(1)}
             </p>
@@ -131,12 +130,12 @@ export function DCFTAnalysisChart({
 
         {/* Formula Explanation */}
         <div className="p-4 rounded-lg bg-slate-800/30 border border-slate-700/50">
-          <p className="text-xs font-semibold mb-2">معادلة DCFT:</p>
+          <p className="text-xs font-semibold mb-2"> DCFT:</p>
           <code className="text-xs text-purple-400 font-mono">
             D(t) = Σ [Eᵢ × Wᵢ × ΔTᵢ]
           </code>
           <p className="text-xs text-muted-foreground mt-2">
-            حيث: E = شدة العاطفة، W = الوزن، ΔT = التغير الزمني
+            : E =   W =  ΔT =  
           </p>
         </div>
       </CardContent>

@@ -35,14 +35,14 @@ import {
 
 // Domain labels
 const DOMAIN_LABELS: Record<string, { ar: string; en: string }> = {
-  politics: { ar: 'سياسة', en: 'Politics' },
-  economy: { ar: 'اقتصاد', en: 'Economy' },
-  mental_health: { ar: 'صحة نفسية', en: 'Mental Health' },
-  medical: { ar: 'طب', en: 'Medical' },
-  education: { ar: 'تعليم', en: 'Education' },
-  society: { ar: 'مجتمع', en: 'Society' },
-  entertainment: { ar: 'ترفيه', en: 'Entertainment' },
-  general: { ar: 'عام', en: 'General' },
+  politics: { ar: '', en: 'Politics' },
+  economy: { ar: '', en: 'Economy' },
+  mental_health: { ar: ' ', en: 'Mental Health' },
+  medical: { ar: '', en: 'Medical' },
+  education: { ar: '', en: 'Education' },
+  society: { ar: '', en: 'Society' },
+  entertainment: { ar: '', en: 'Entertainment' },
+  general: { ar: '', en: 'General' },
 };
 
 export default function UserDashboard() {
@@ -129,19 +129,19 @@ export default function UserDashboard() {
             <Link href="/">
               <Button variant="ghost" size="sm" className="gap-2">
                 <Home className="w-4 h-4" />
-                {isRTL ? 'الرئيسية' : 'Home'}
+                {isRTL ? 'Home' : 'Home'}
               </Button>
             </Link>
             <Link href="/chat">
               <Button variant="ghost" size="sm" className="gap-2">
                 <Brain className="w-4 h-4" />
-                {isRTL ? 'المحلل' : 'Analyzer'}
+                {isRTL ? '' : 'Analyzer'}
               </Button>
             </Link>
             <Link href="/map">
               <Button variant="ghost" size="sm" className="gap-2">
                 <Globe className="w-4 h-4" />
-                {isRTL ? 'الخريطة' : 'Map'}
+                {isRTL ? '' : 'Map'}
               </Button>
             </Link>
             <ThemeToggle />
@@ -165,19 +165,19 @@ export default function UserDashboard() {
               <Link href="/">
                 <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
                   <Home className="w-4 h-4" />
-                  {isRTL ? 'الرئيسية' : 'Home'}
+                  {isRTL ? 'Home' : 'Home'}
                 </Button>
               </Link>
               <Link href="/chat">
                 <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
                   <Brain className="w-4 h-4" />
-                  {isRTL ? 'المحلل' : 'Analyzer'}
+                  {isRTL ? '' : 'Analyzer'}
                 </Button>
               </Link>
               <Link href="/map">
                 <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
                   <Globe className="w-4 h-4" />
-                  {isRTL ? 'الخريطة' : 'Map'}
+                  {isRTL ? '' : 'Map'}
                 </Button>
               </Link>
               <div className="flex items-center gap-4 pt-2">
@@ -194,11 +194,11 @@ export default function UserDashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold cosmic-text mb-2">
-            {isRTL ? `مرحباً، ${user.name}!` : `Welcome back, ${user.name}!`}
+            {isRTL ? ` ${user.name}!` : `Welcome back, ${user.name}!`}
           </h1>
           <p className="text-muted-foreground">
             {isRTL 
-              ? 'إليك نظرة عامة على نشاطك وتحليلاتك'
+              ? ' Overview   Analysis'
               : 'Here\'s an overview of your activity and analyses'}
           </p>
         </div>
@@ -210,7 +210,7 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'التحليلات' : 'Analyses'}
+                    {isRTL ? 'Analysis' : 'Analyses'}
                   </p>
                   <p className="text-2xl font-bold">{stats?.totalAnalyses || 0}</p>
                 </div>
@@ -220,8 +220,8 @@ export default function UserDashboard() {
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 {stats?.totalAnalyses === 0 
-                  ? (isRTL ? 'ابدأ بتحليل أول عنوان' : 'Start by analyzing your first headline')
-                  : (isRTL ? 'إجمالي تحليلاتك' : 'Your total analyses')}
+                  ? (isRTL ? ' Analysis  ' : 'Start by analyzing your first headline')
+                  : (isRTL ? ' Analysis' : 'Your total analyses')}
               </p>
             </CardContent>
           </Card>
@@ -231,7 +231,7 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'التنبيهات النشطة' : 'Active Alerts'}
+                    {isRTL ? ' ' : 'Active Alerts'}
                   </p>
                   <p className="text-2xl font-bold">{stats?.activeAlerts || 0}</p>
                 </div>
@@ -241,8 +241,8 @@ export default function UserDashboard() {
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 {stats?.activeAlerts === 0 
-                  ? (isRTL ? 'أنشئ تنبيهاً مخصصاً' : 'Create a custom alert')
-                  : (isRTL ? 'تنبيهات مفعلة' : 'Active alerts')}
+                  ? (isRTL ? '  ' : 'Create a custom alert')
+                  : (isRTL ? ' ' : 'Active alerts')}
               </p>
             </CardContent>
           </Card>
@@ -252,7 +252,7 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'المواضيع المتابعة' : 'Followed Topics'}
+                    {isRTL ? ' ' : 'Followed Topics'}
                   </p>
                   <p className="text-2xl font-bold">{stats?.followedTopics || 0}</p>
                 </div>
@@ -262,8 +262,8 @@ export default function UserDashboard() {
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 {stats?.followedTopics === 0 
-                  ? (isRTL ? 'تابع موضوعاً للحصول على تنبيهات' : 'Follow a topic for alerts')
-                  : (isRTL ? 'مواضيع تتابعها' : 'Topics you follow')}
+                  ? (isRTL ? '    ' : 'Follow a topic for alerts')
+                  : (isRTL ? ' ' : 'Topics you follow')}
               </p>
             </CardContent>
           </Card>
@@ -273,7 +273,7 @@ export default function UserDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'التصنيفات المحللة' : 'Domains Analyzed'}
+                    {isRTL ? ' ' : 'Domains Analyzed'}
                   </p>
                   <p className="text-2xl font-bold">{stats?.countriesAnalyzed || 0}</p>
                 </div>
@@ -283,8 +283,8 @@ export default function UserDashboard() {
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 {stats?.countriesAnalyzed === 0 
-                  ? (isRTL ? 'جرب تصنيفات مختلفة' : 'Try different domains')
-                  : (isRTL ? 'تصنيفات مختلفة' : 'Different domains')}
+                  ? (isRTL ? '  ' : 'Try different domains')
+                  : (isRTL ? ' ' : 'Different domains')}
               </p>
             </CardContent>
           </Card>
@@ -299,9 +299,9 @@ export default function UserDashboard() {
                   <Brain className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">{isRTL ? 'تحليل جديد' : 'New Analysis'}</h3>
+                  <h3 className="font-semibold">{isRTL ? 'Analysis ' : 'New Analysis'}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'تحليل نص أو عنوان' : 'Analyze text or headline'}
+                    {isRTL ? 'Analysis   ' : 'Analyze text or headline'}
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-muted-foreground" />
@@ -316,9 +316,9 @@ export default function UserDashboard() {
                   <Globe className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">{isRTL ? 'خريطة المشاعر' : 'Emotion Map'}</h3>
+                  <h3 className="font-semibold">{isRTL ? ' Emotions' : 'Emotion Map'}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'استكشاف المشاعر العالمية' : 'Explore global emotions'}
+                    {isRTL ? ' Emotions ' : 'Explore global emotions'}
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-muted-foreground" />
@@ -333,9 +333,9 @@ export default function UserDashboard() {
                   <Bell className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">{isRTL ? 'متابعة موضوع' : 'Follow Topic'}</h3>
+                  <h3 className="font-semibold">{isRTL ? ' ' : 'Follow Topic'}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {isRTL ? 'تنبيهات مخصصة' : 'Custom notifications'}
+                    {isRTL ? ' ' : 'Custom notifications'}
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-muted-foreground" />
@@ -351,10 +351,10 @@ export default function UserDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="w-5 h-5" />
-                {isRTL ? 'التحليلات الأخيرة' : 'Recent Analyses'}
+                {isRTL ? 'Analysis ' : 'Recent Analyses'}
               </CardTitle>
               <CardDescription>
-                {isRTL ? 'آخر تحليلاتك' : 'Your latest analyses'}
+                {isRTL ? ' Analysis' : 'Your latest analyses'}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -383,10 +383,10 @@ export default function UserDashboard() {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <Brain className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>{isRTL ? 'لا توجد تحليلات بعد' : 'No analyses yet'}</p>
+                  <p>{isRTL ? '  Analysis ' : 'No analyses yet'}</p>
                   <Link href="/analyzer">
                     <Button variant="outline" className="mt-4">
-                      {isRTL ? 'ابدأ التحليل' : 'Start Analyzing'}
+                      {isRTL ? ' Analysis' : 'Start Analyzing'}
                     </Button>
                   </Link>
                 </div>
@@ -394,7 +394,7 @@ export default function UserDashboard() {
               {stats?.recentAnalyses && stats.recentAnalyses.length > 0 && (
                 <Link href="/reports">
                   <Button variant="ghost" className="w-full mt-4 gap-2">
-                    {isRTL ? 'عرض الكل' : 'View All'}
+                    {isRTL ? ' ' : 'View All'}
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
@@ -407,10 +407,10 @@ export default function UserDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="w-5 h-5" />
-                {isRTL ? 'التنبيهات النشطة' : 'Active Alerts'}
+                {isRTL ? ' ' : 'Active Alerts'}
               </CardTitle>
               <CardDescription>
-                {isRTL ? 'تنبيهاتك المخصصة' : 'Your custom alerts'}
+                {isRTL ? ' ' : 'Your custom alerts'}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -436,8 +436,8 @@ export default function UserDashboard() {
                           : 'bg-yellow-500/20 text-yellow-500'
                       }`}>
                         {alert.isActive 
-                          ? (isRTL ? 'نشط' : 'Active') 
-                          : (isRTL ? 'متوقف' : 'Paused')}
+                          ? (isRTL ? '' : 'Active') 
+                          : (isRTL ? '' : 'Paused')}
                       </span>
                     </div>
                   ))}
@@ -445,10 +445,10 @@ export default function UserDashboard() {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>{isRTL ? 'لا توجد تنبيهات بعد' : 'No alerts yet'}</p>
+                  <p>{isRTL ? '   ' : 'No alerts yet'}</p>
                   <Link href="/alerts">
                     <Button variant="outline" className="mt-4">
-                      {isRTL ? 'إنشاء تنبيه' : 'Create Alert'}
+                      {isRTL ? ' ' : 'Create Alert'}
                     </Button>
                   </Link>
                 </div>
@@ -456,7 +456,7 @@ export default function UserDashboard() {
               {stats?.recentAlerts && stats.recentAlerts.length > 0 && (
                 <Link href="/alerts">
                   <Button variant="ghost" className="w-full mt-4 gap-2">
-                    {isRTL ? 'إدارة التنبيهات' : 'Manage Alerts'}
+                    {isRTL ? ' ' : 'Manage Alerts'}
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
@@ -476,7 +476,7 @@ export default function UserDashboard() {
                   </div>
                   <div>
                     <h3 className="font-semibold">
-                      {isRTL ? 'عضو منذ' : 'Member Since'}
+                      {isRTL ? ' ' : 'Member Since'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {formatDate(stats.createdAt)}
@@ -486,7 +486,7 @@ export default function UserDashboard() {
                 <Link href="/subscription">
                   <Button className="gap-2">
                     <Sparkles className="w-4 h-4" />
-                    {isRTL ? 'ترقية الاشتراك' : 'Upgrade Plan'}
+                    {isRTL ? ' ' : 'Upgrade Plan'}
                   </Button>
                 </Link>
               </div>

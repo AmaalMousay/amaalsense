@@ -1,10 +1,6 @@
 /**
  * SMART ALERTS COMPONENT
  * 
- * التنبيهات الذكية
- * - تنبيهات مخصصة بناءً على الأنماط
- * - توقعات ذكية
- * - إدارة قواعد التنبيهات
  */
 
 import React, { useState, useMemo } from 'react';
@@ -57,8 +53,8 @@ export function SmartAlerts({
     {
       id: 'alert-1',
       ruleId: 'rule-1',
-      title: 'ارتفاع حاد في مؤشر الخوف الجماعي',
-      message: 'ارتفع مؤشر الخوف الجماعي (CFI) بنسبة 15% في آخر ساعة',
+      title: '    Fear ',
+      message: '  Fear  (CFI)  15%   ',
       severity: 'critical',
       metric: 'CFI',
       value: 62.5,
@@ -71,8 +67,8 @@ export function SmartAlerts({
     {
       id: 'alert-2',
       ruleId: 'rule-2',
-      title: 'تحسن في مؤشر الأمل والمرونة',
-      message: 'ارتفع مؤشر الأمل والمرونة (HRI) بنسبة 8% في المنطقة الخليجية',
+      title: '    ',
+      message: '    (HRI)  8%  Region ',
       severity: 'info',
       metric: 'HRI',
       value: 75.2,
@@ -85,8 +81,8 @@ export function SmartAlerts({
     {
       id: 'alert-3',
       ruleId: 'rule-3',
-      title: 'موضوع جديد يكتسب زخماً',
-      message: 'موضوع "التطورات التكنولوجية" يتصدر المحادثات مع زيادة 120% في الذكر',
+      title: '   ',
+      message: ' " "     120%  ',
       severity: 'warning',
       metric: 'Topic Momentum',
       value: 120,
@@ -100,8 +96,8 @@ export function SmartAlerts({
   const [rules, setRules] = useState<AlertRule[]>([
     {
       id: 'rule-1',
-      name: 'ارتفاع الخوف الجماعي',
-      condition: 'CFI يرتفع بأكثر من 10%',
+      name: ' Fear ',
+      condition: 'CFI    10%',
       threshold: 10,
       metric: 'cfi',
       operator: '>',
@@ -115,13 +111,13 @@ export function SmartAlerts({
     },
     {
       id: 'rule-2',
-      name: 'تحسن الأمل والمرونة',
-      condition: 'HRI يرتفع بأكثر من 5%',
+      name: '  ',
+      condition: 'HRI    5%',
       threshold: 5,
       metric: 'hri',
       operator: '>',
       topics: [],
-      regions: ['الخليج'],
+      regions: [''],
       isActive: true,
       frequency: 'daily',
       createdDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
@@ -130,8 +126,8 @@ export function SmartAlerts({
     },
     {
       id: 'rule-3',
-      name: 'موضوع جديد يكتسب زخماً',
-      condition: 'موضوع يحصل على 100+ زيادة في الذكر',
+      name: '   ',
+      condition: '   100+   ',
       threshold: 100,
       metric: 'volatility',
       operator: '>',
@@ -209,21 +205,21 @@ export function SmartAlerts({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-black">التنبيهات الذكية</h2>
+          <h2 className="text-2xl font-bold text-black"> </h2>
           <p className="text-sm text-gray-600 mt-1">
-            {unreadCount} تنبيهات جديدة {criticalCount > 0 && `(${criticalCount} حرجة)`}
+            {unreadCount}   {criticalCount > 0 && `(${criticalCount} )`}
           </p>
         </div>
         <Button className="gap-2 bg-black text-white hover:bg-gray-800">
           <Plus className="w-4 h-4" />
-          قاعدة جديدة
+           
         </Button>
       </div>
 
       {/* Alerts Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-black">التنبيهات الأخيرة</h3>
+          <h3 className="font-semibold text-black"> </h3>
           <div className="flex gap-2">
             {['critical', 'warning', 'info'].map(severity => (
               <button
@@ -235,9 +231,9 @@ export function SmartAlerts({
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {severity === 'critical' && 'حرجة'}
-                {severity === 'warning' && 'تحذير'}
-                {severity === 'info' && 'معلومات'}
+                {severity === 'critical' && ''}
+                {severity === 'warning' && ''}
+                {severity === 'info' && ''}
               </button>
             ))}
           </div>
@@ -268,7 +264,7 @@ export function SmartAlerts({
                       <div className="flex items-center gap-4 mt-2 text-xs text-gray-600">
                         <span>📊 {alert.metric}: {alert.value}</span>
                         <span>📈 {alert.change > 0 ? '+' : ''}{alert.change}%</span>
-                        <span>⏱️ {Math.floor((Date.now() - alert.timestamp.getTime()) / (1000 * 60))} دقيقة</span>
+                        <span>⏱️ {Math.floor((Date.now() - alert.timestamp.getTime()) / (1000 * 60))} </span>
                       </div>
                     </div>
                   </div>
@@ -282,7 +278,7 @@ export function SmartAlerts({
                           handleMarkAsRead(alert.id);
                         }}
                         className="p-2 rounded bg-black text-white hover:bg-gray-800 transition"
-                        title="تحديد كمقروء"
+                        title=" "
                       >
                         <CheckCircle className="w-4 h-4" />
                       </button>
@@ -293,7 +289,7 @@ export function SmartAlerts({
                         handleDeleteAlert(alert.id);
                       }}
                       className="p-2 rounded bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 transition"
-                      title="حذف"
+                      title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -304,7 +300,7 @@ export function SmartAlerts({
           ) : (
             <Card className="p-8 border border-gray-200 text-center">
               <Bell className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600">لا توجد تنبيهات حالياً</p>
+              <p className="text-gray-600">   </p>
             </Card>
           )}
         </div>
@@ -312,7 +308,7 @@ export function SmartAlerts({
 
       {/* Alert Rules Section */}
       <div className="space-y-4">
-        <h3 className="font-semibold text-black">قواعد التنبيهات</h3>
+        <h3 className="font-semibold text-black"> </h3>
 
         <div className="space-y-3">
           {rules.map(rule => (
@@ -322,15 +318,15 @@ export function SmartAlerts({
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-semibold text-black">{rule.name}</h4>
                     <Badge className={`text-xs ${rule.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                      {rule.isActive ? 'مفعّلة' : 'معطّلة'}
+                      {rule.isActive ? '' : ''}
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{rule.condition}</p>
                   <div className="flex items-center gap-4 text-xs text-gray-600">
-                    <span>🔄 {rule.frequency === 'instant' ? 'فوري' : rule.frequency === 'daily' ? 'يومي' : 'أسبوعي'}</span>
-                    <span>⚡ تم التشغيل {rule.triggerCount} مرة</span>
+                    <span>🔄 {rule.frequency === 'instant' ? '' : rule.frequency === 'daily' ? '' : ''}</span>
+                    <span>⚡   {rule.triggerCount} </span>
                     {rule.lastTriggered && (
-                      <span>⏱️ آخر تشغيل: {Math.floor((Date.now() - rule.lastTriggered.getTime()) / (1000 * 60))} دقيقة</span>
+                      <span>⏱️  : {Math.floor((Date.now() - rule.lastTriggered.getTime()) / (1000 * 60))} </span>
                     )}
                   </div>
                 </div>
@@ -345,18 +341,18 @@ export function SmartAlerts({
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
-                    {rule.isActive ? 'تعطيل' : 'تفعيل'}
+                    {rule.isActive ? '' : ''}
                   </button>
                   <button
                     className="p-2 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
-                    title="تعديل"
+                    title="Edit"
                   >
                     <Settings className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteRule(rule.id)}
                     className="p-2 rounded bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 transition"
-                    title="حذف"
+                    title="Delete"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -369,24 +365,24 @@ export function SmartAlerts({
 
       {/* Statistics */}
       <Card className="p-6 border border-gray-200 bg-gray-50">
-        <h3 className="font-semibold text-black mb-4">الإحصائيات</h3>
+        <h3 className="font-semibold text-black mb-4"></h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <p className="text-sm text-gray-600">إجمالي التنبيهات</p>
+            <p className="text-sm text-gray-600"> </p>
             <p className="text-2xl font-bold text-black mt-1">{alerts.length}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">غير مقروءة</p>
+            <p className="text-sm text-gray-600"> </p>
             <p className="text-2xl font-bold text-red-600 mt-1">{unreadCount}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">القواعس النشطة</p>
+            <p className="text-sm text-gray-600"> </p>
             <p className="text-2xl font-bold text-black mt-1">
               {rules.filter(r => r.isActive).length}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">إجمالي التشغيلات</p>
+            <p className="text-sm text-gray-600"> </p>
             <p className="text-2xl font-bold text-black mt-1">
               {rules.reduce((sum, r) => sum + r.triggerCount, 0)}
             </p>

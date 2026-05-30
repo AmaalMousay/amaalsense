@@ -46,7 +46,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: 'free',
     name: 'Free',
-    nameAr: 'مجاني',
+    nameAr: '',
     price: 0,
     priceLabel: '$0',
     description: 'Perfect for individuals exploring collective emotion analysis',
@@ -75,7 +75,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: 'pro',
     name: 'Professional',
-    nameAr: 'احترافي',
+    nameAr: '',
     price: 49,
     priceLabel: '$49',
     description: 'For researchers and small teams needing deeper insights',
@@ -105,7 +105,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    nameAr: 'مؤسسي',
+    nameAr: '',
     price: 299,
     priceLabel: '$299',
     description: 'Full-featured solution for organizations and enterprises',
@@ -134,7 +134,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: 'government',
     name: 'Government & NGO',
-    nameAr: 'حكومي ومنظمات',
+    nameAr: ' ',
     price: -1,
     priceLabel: 'Custom',
     description: 'Tailored solutions for governments and international organizations',

@@ -1,6 +1,5 @@
 /**
  * Search History Component
- * مكون سجل البحث
  */
 
 import React, { useState } from 'react';
@@ -28,36 +27,36 @@ export function SearchHistory({ items, onSelectSearch, onDeleteSearch, onToggleS
   const defaultItems: SearchHistoryItem[] = [
     {
       id: '1',
-      query: 'المشاعر العالمية في الشرق الأوسط',
-      timestamp: 'منذ ساعة',
+      query: 'Emotions    ',
+      timestamp: ' ',
       resultsCount: 342,
       isSaved: true
     },
     {
       id: '2',
-      query: 'تحليل الأمل والتفاؤل',
-      timestamp: 'منذ 3 ساعات',
+      query: 'Analysis  ',
+      timestamp: ' 3 ',
       resultsCount: 856,
       isSaved: false
     },
     {
       id: '3',
-      query: 'الاتجاهات الاقتصادية',
-      timestamp: 'منذ يوم',
+      query: ' ',
+      timestamp: ' ',
       resultsCount: 1243,
       isSaved: true
     },
     {
       id: '4',
-      query: 'تحليل الأزمات والتوترات',
-      timestamp: 'منذ يومين',
+      query: 'Analysis  ',
+      timestamp: ' ',
       resultsCount: 567,
       isSaved: false
     },
     {
       id: '5',
-      query: 'المؤشرات الاجتماعية',
-      timestamp: 'منذ 3 أيام',
+      query: ' ',
+      timestamp: ' 3 ',
       resultsCount: 2341,
       isSaved: false
     }
@@ -86,10 +85,10 @@ export function SearchHistory({ items, onSelectSearch, onDeleteSearch, onToggleS
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-black" />
-              <CardTitle className="text-black">سجل البحث</CardTitle>
+              <CardTitle className="text-black"> </CardTitle>
             </div>
             <Badge variant="outline" className="border-gray-300 text-gray-700 bg-white">
-              {displayItems.length} عمليات بحث
+              {displayItems.length}  
             </Badge>
           </div>
         </CardHeader>
@@ -109,7 +108,7 @@ export function SearchHistory({ items, onSelectSearch, onDeleteSearch, onToggleS
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-xs text-gray-600">{item.timestamp}</span>
                       <span className="text-xs text-gray-600">
-                        {item.resultsCount} نتيجة
+                        {item.resultsCount} 
                       </span>
                     </div>
                   </div>
@@ -148,7 +147,7 @@ export function SearchHistory({ items, onSelectSearch, onDeleteSearch, onToggleS
       {/* Saved Searches Section */}
       <Card className="border-gray-300 bg-white">
         <CardHeader>
-          <CardTitle className="text-black">البحوث المحفوظة</CardTitle>
+          <CardTitle className="text-black"> </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -165,12 +164,12 @@ export function SearchHistory({ items, onSelectSearch, onDeleteSearch, onToggleS
                       <Star className="h-4 w-4 fill-black text-black" />
                       <p className="font-medium text-black">{item.query}</p>
                     </div>
-                    <span className="text-xs text-gray-600">{item.resultsCount} نتيجة</span>
+                    <span className="text-xs text-gray-600">{item.resultsCount} </span>
                   </div>
                 </div>
               ))}
             {displayItems.filter(item => localSaved[item.id]).length === 0 && (
-              <p className="text-center text-gray-600 py-4">لا توجد بحوث محفوظة</p>
+              <p className="text-center text-gray-600 py-4">   </p>
             )}
           </div>
         </CardContent>

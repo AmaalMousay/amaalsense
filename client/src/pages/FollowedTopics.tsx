@@ -41,14 +41,14 @@ import {
 
 // Domain configuration
 const DOMAINS = [
-  { id: 'politics', name: 'سياسة', nameEn: 'Politics', icon: Landmark, color: '#ef4444' },
-  { id: 'economy', name: 'اقتصاد', nameEn: 'Economy', icon: DollarSign, color: '#f59e0b' },
-  { id: 'mental_health', name: 'صحة نفسية', nameEn: 'Mental Health', icon: Brain, color: '#8b5cf6' },
-  { id: 'medical', name: 'طب', nameEn: 'Medical', icon: Stethoscope, color: '#ec4899' },
-  { id: 'education', name: 'تعليم', nameEn: 'Education', icon: GraduationCap, color: '#3b82f6' },
-  { id: 'society', name: 'مجتمع', nameEn: 'Society', icon: Users, color: '#10b981' },
-  { id: 'entertainment', name: 'ترفيه', nameEn: 'Entertainment', icon: Gamepad2, color: '#06b6d4' },
-  { id: 'general', name: 'أخبار عامة', nameEn: 'General', icon: Newspaper, color: '#6b7280' },
+  { id: 'politics', name: '', nameEn: 'Politics', icon: Landmark, color: '#ef4444' },
+  { id: 'economy', name: '', nameEn: 'Economy', icon: DollarSign, color: '#f59e0b' },
+  { id: 'mental_health', name: ' ', nameEn: 'Mental Health', icon: Brain, color: '#8b5cf6' },
+  { id: 'medical', name: '', nameEn: 'Medical', icon: Stethoscope, color: '#ec4899' },
+  { id: 'education', name: '', nameEn: 'Education', icon: GraduationCap, color: '#3b82f6' },
+  { id: 'society', name: '', nameEn: 'Society', icon: Users, color: '#10b981' },
+  { id: 'entertainment', name: '', nameEn: 'Entertainment', icon: Gamepad2, color: '#06b6d4' },
+  { id: 'general', name: ' ', nameEn: 'General', icon: Newspaper, color: '#6b7280' },
 ];
 
 export default function FollowedTopics() {
@@ -79,23 +79,23 @@ export default function FollowedTopics() {
   // Mutations
   const followTopicMutation = trpc.topics.follow.useMutation({
     onSuccess: () => {
-      toast.success("تم متابعة الموضوع بنجاح");
+      toast.success("  Topic ");
       setIsDialogOpen(false);
       resetForm();
       followedTopicsQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error.message || "فشل في متابعة الموضوع");
+      toast.error(error.message || "   Topic");
     },
   });
 
   const unfollowTopicMutation = trpc.topics.unfollow.useMutation({
     onSuccess: () => {
-      toast.success("تم إلغاء المتابعة");
+      toast.success(" Cancel ");
       followedTopicsQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error.message || "فشل في إلغاء المتابعة");
+      toast.error(error.message || "  Cancel ");
     },
   });
 
@@ -114,7 +114,7 @@ export default function FollowedTopics() {
 
   const markAllReadMutation = trpc.topicAlerts.markAllRead.useMutation({
     onSuccess: () => {
-      toast.success("تم تعليم جميع التنبيهات كمقروءة");
+      toast.success("    ");
       alertsQuery.refetch();
       unreadCountQuery.refetch();
     },
@@ -131,7 +131,7 @@ export default function FollowedTopics() {
 
   const handleSubmit = () => {
     if (!formData.topic.trim()) {
-      toast.error("يرجى إدخال موضوع");
+      toast.error("  ");
       return;
     }
 
@@ -169,10 +169,10 @@ export default function FollowedTopics() {
 
   const getAlertTypeName = (alertType: string) => {
     switch (alertType) {
-      case 'risk_increase': return 'ارتفاع المخاطر';
-      case 'risk_decrease': return 'انخفاض المخاطر';
-      case 'threshold_exceeded': return 'تجاوز الحد';
-      default: return 'تحليل جديد';
+      case 'risk_increase': return ' ';
+      case 'risk_decrease': return ' ';
+      case 'threshold_exceeded': return ' ';
+      default: return 'Analysis ';
     }
   };
 
@@ -189,9 +189,9 @@ export default function FollowedTopics() {
       <div className="min-h-screen bg-background">
         <div className="container py-16 text-center">
           <Bell className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">تسجيل الدخول مطلوب</h1>
-          <p className="text-muted-foreground mb-4">يجب تسجيل الدخول لمتابعة المواضيع والحصول على التنبيهات</p>
-          <Button onClick={() => window.location.href = '/login'}>تسجيل الدخول</Button>
+          <h1 className="text-2xl font-bold text-foreground mb-2">  </h1>
+          <p className="text-muted-foreground mb-4">       </p>
+          <Button onClick={() => window.location.href = '/login'}> </Button>
         </div>
       </div>
     );
@@ -206,43 +206,43 @@ export default function FollowedTopics() {
             <div>
               <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
                 <Bell className="h-8 w-8 text-purple-400" />
-                المواضيع المتابعة
+                 
               </h1>
               <p className="text-muted-foreground mt-2">
-                تابع المواضيع واحصل على تنبيهات عند تغير مستوى المخاطر العاطفية
+                         
               </p>
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="gap-2">
                   <Plus className="h-4 w-4" />
-                  متابعة موضوع جديد
+                    
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>متابعة موضوع جديد</DialogTitle>
+                  <DialogTitle>  </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label>الموضوع</Label>
+                    <Label>Topic</Label>
                     <Input
-                      placeholder="مثال: الانتخابات في ليبيا"
+                      placeholder=":   "
                       value={formData.topic}
                       onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>التصنيف (اختياري)</Label>
+                    <Label> ()</Label>
                     <Select
                       value={formData.domain}
                       onValueChange={(value) => setFormData({ ...formData, domain: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="جميع التصنيفات" />
+                        <SelectValue placeholder=" " />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">جميع التصنيفات</SelectItem>
+                        <SelectItem value="all"> </SelectItem>
                         {DOMAINS.map((domain) => (
                           <SelectItem key={domain.id} value={domain.id}>
                             {domain.name}
@@ -252,7 +252,7 @@ export default function FollowedTopics() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>حد المخاطر للتنبيه ({formData.riskThreshold}%)</Label>
+                    <Label>   ({formData.riskThreshold}%)</Label>
                     <input
                       type="range"
                       min="0"
@@ -263,7 +263,7 @@ export default function FollowedTopics() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>نوع التنبيه</Label>
+                    <Label> </Label>
                     <Select
                       value={formData.alertDirection}
                       onValueChange={(value: 'increase' | 'decrease' | 'both') => 
@@ -274,19 +274,19 @@ export default function FollowedTopics() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="both">عند أي تغير</SelectItem>
-                        <SelectItem value="increase">عند الارتفاع فقط</SelectItem>
-                        <SelectItem value="decrease">عند الانخفاض فقط</SelectItem>
+                        <SelectItem value="both">  </SelectItem>
+                        <SelectItem value="increase">  </SelectItem>
+                        <SelectItem value="decrease">  </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    إلغاء
+                    Cancel
                   </Button>
                   <Button onClick={handleSubmit} disabled={followTopicMutation.isPending}>
-                    {followTopicMutation.isPending ? 'جاري الحفظ...' : 'متابعة'}
+                    {followTopicMutation.isPending ? ' Save...' : ''}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -298,9 +298,9 @@ export default function FollowedTopics() {
       <div className="container py-8">
         <Tabs defaultValue="topics" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="topics">المواضيع المتابعة</TabsTrigger>
+            <TabsTrigger value="topics"> </TabsTrigger>
             <TabsTrigger value="alerts" className="relative">
-              التنبيهات
+              
               {(unreadCountQuery.data || 0) > 0 && (
                 <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
                   {unreadCountQuery.data}
@@ -315,10 +315,10 @@ export default function FollowedTopics() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Eye className="h-5 w-5 text-purple-400" />
-                  المواضيع التي تتابعها
+                    
                 </CardTitle>
                 <CardDescription>
-                  ستحصل على تنبيهات عند تغير مستوى المخاطر العاطفية لهذه المواضيع
+                           
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -356,7 +356,7 @@ export default function FollowedTopics() {
                                     </Badge>
                                   )}
                                   <span className="text-sm text-muted-foreground">
-                                    حد التنبيه: {topic.riskThreshold || 'أي تغير'}%
+                                     : {topic.riskThreshold || ' '}%
                                   </span>
                                 </div>
                               </div>
@@ -384,8 +384,8 @@ export default function FollowedTopics() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
                     <Eye className="h-12 w-12 mb-2 opacity-50" />
-                    <p>لا توجد مواضيع متابعة</p>
-                    <p className="text-sm">اضغط على "متابعة موضوع جديد" للبدء</p>
+                    <p>   </p>
+                    <p className="text-sm">  "  " </p>
                   </div>
                 )}
               </CardContent>
@@ -400,10 +400,10 @@ export default function FollowedTopics() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <Bell className="h-5 w-5 text-amber-400" />
-                      التنبيهات
+                      
                     </CardTitle>
                     <CardDescription>
-                      تنبيهات حول تغيرات المخاطر العاطفية للمواضيع المتابعة
+                            
                     </CardDescription>
                   </div>
                   {(unreadCountQuery.data || 0) > 0 && (
@@ -413,7 +413,7 @@ export default function FollowedTopics() {
                       onClick={() => markAllReadMutation.mutate()}
                     >
                       <CheckCircle className="h-4 w-4 mr-2" />
-                      تعليم الكل كمقروء
+                        
                     </Button>
                   )}
                 </div>
@@ -471,8 +471,8 @@ export default function FollowedTopics() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
                     <Bell className="h-12 w-12 mb-2 opacity-50" />
-                    <p>لا توجد تنبيهات</p>
-                    <p className="text-sm">ستظهر التنبيهات هنا عند تغير مستوى المخاطر</p>
+                    <p>  </p>
+                    <p className="text-sm">      </p>
                   </div>
                 )}
               </CardContent>

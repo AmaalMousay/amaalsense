@@ -8,12 +8,12 @@ interface DataSource {
 }
 
 const DATA_SOURCES: DataSource[] = [
-  { name: 'News API', nameAr: 'الأخبار', icon: '📰', color: '#E63946' },
-  { name: 'Reddit', nameAr: 'ريديت', icon: '🔴', color: '#FF4500' },
-  { name: 'Mastodon', nameAr: 'ماستودون', icon: '🐘', color: '#6364FF' },
-  { name: 'Bluesky', nameAr: 'بلوسكاي', icon: '🦋', color: '#0085FF' },
-  { name: 'Telegram', nameAr: 'تيليجرام', icon: '✈️', color: '#0088CC' },
-  { name: 'YouTube', nameAr: 'يوتيوب', icon: '▶️', color: '#FF0000' },
+  { name: 'News API', nameAr: '', icon: '📰', color: '#E63946' },
+  { name: 'Reddit', nameAr: '', icon: '🔴', color: '#FF4500' },
+  { name: 'Mastodon', nameAr: '', icon: '🐘', color: '#6364FF' },
+  { name: 'Bluesky', nameAr: '', icon: '🦋', color: '#0085FF' },
+  { name: 'Telegram', nameAr: '', icon: '✈️', color: '#0088CC' },
+  { name: 'YouTube', nameAr: '', icon: '▶️', color: '#FF0000' },
 ];
 
 interface DataSourcesFooterProps {
@@ -27,7 +27,7 @@ export function DataSourcesFooter({ className = '', compact = false }: DataSourc
   if (compact) {
     return (
       <div className={`flex items-center justify-center gap-2 text-xs text-muted-foreground ${className}`}>
-        <span>{isRTL ? 'مصادر البيانات:' : 'Data Sources:'}</span>
+        <span>{isRTL ? ' :' : 'Data Sources:'}</span>
         <div className="flex items-center gap-1">
           {DATA_SOURCES.map((source, index) => (
             <span
@@ -48,7 +48,7 @@ export function DataSourcesFooter({ className = '', compact = false }: DataSourc
     <div className={`border-t border-border/30 pt-6 mt-8 ${className}`}>
       <div className="text-center">
         <p className="text-sm text-muted-foreground mb-4">
-          {isRTL ? 'مصادر البيانات المستخدمة في التحليل' : 'Data Sources Used in Analysis'}
+          {isRTL ? '    Analysis' : 'Data Sources Used in Analysis'}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           {DATA_SOURCES.map((source) => (
@@ -65,7 +65,7 @@ export function DataSourcesFooter({ className = '', compact = false }: DataSourc
         </div>
         <p className="text-xs text-muted-foreground/60 mt-4">
           {isRTL 
-            ? 'يتم جلب البيانات وتحليلها في الوقت الفعلي باستخدام محرك DCFT الهجين'
+            ? '   Analysis      DCFT '
             : 'Data is fetched and analyzed in real-time using the Hybrid DCFT Engine'
           }
         </p>

@@ -1,6 +1,5 @@
 /**
  * Statistics Section Component
- * قسم الإحصائيات
  */
 
 import React from 'react';
@@ -22,30 +21,30 @@ interface StatisticsSectionProps {
 export function StatisticsSection({ statistics }: StatisticsSectionProps) {
   const defaultStatistics: StatisticItem[] = [
     {
-      label: 'دول مراقبة',
+      label: ' ',
       value: 195,
-      description: 'دول حول العالم',
+      description: '  ',
       icon: <Globe className="h-6 w-6" />,
       color: 'text-blue-400'
     },
     {
-      label: 'مستخدمين نشطين',
+      label: ' ',
       value: '50K+',
-      description: 'في آخر 30 يوم',
+      description: '  30 ',
       icon: <Users className="h-6 w-6" />,
       color: 'text-green-400'
     },
     {
-      label: 'تحليلات يومية',
+      label: 'Analysis ',
       value: '10K+',
-      description: 'تحليل يومي',
+      description: 'Analysis ',
       icon: <BarChart3 className="h-6 w-6" />,
       color: 'text-purple-400'
     },
     {
-      label: 'دقة التنبؤ',
+      label: ' ',
       value: '94%',
-      description: 'معدل الدقة',
+      description: ' ',
       icon: <TrendingUp className="h-6 w-6" />,
       color: 'text-orange-400'
     }
@@ -56,8 +55,8 @@ export function StatisticsSection({ statistics }: StatisticsSectionProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold mb-2">إحصائيات AmalSense</h2>
-        <p className="text-muted-foreground">معلومات حول نطاق وتأثير منصتنا</p>
+        <h2 className="text-3xl font-bold mb-2"> AmalSense</h2>
+        <p className="text-muted-foreground">    </p>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -85,26 +84,26 @@ export function StatisticsSection({ statistics }: StatisticsSectionProps) {
       {/* Key Achievements */}
       <Card className="border-slate-700/50">
         <CardHeader>
-          <CardTitle>الإنجازات الرئيسية</CardTitle>
+          <CardTitle> Home</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
             {[
               {
-                title: 'أكبر قاعدة بيانات عاطفية',
-                description: 'أكثر من 500 مليون نقطة بيانات عاطفية مجمعة'
+                title: '   ',
+                description: '  500     '
               },
               {
-                title: 'تحليل فوري',
-                description: 'معالجة البيانات والتحليل في أقل من 2 ثانية'
+                title: 'Analysis ',
+                description: '  Analysis    2 '
               },
               {
-                title: 'دقة عالية',
-                description: 'معدل دقة 94% في التنبؤ بالاتجاهات'
+                title: ' ',
+                description: '  94%   '
               },
               {
-                title: 'تغطية عالمية',
-                description: 'مراقبة 195 دولة بلغات متعددة'
+                title: ' ',
+                description: ' 195   '
               }
             ].map((achievement, index) => (
               <div

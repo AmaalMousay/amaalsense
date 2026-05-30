@@ -21,7 +21,7 @@ import {
 const caseStudies = [
   {
     title: "Crisis Monitoring for International NGO",
-    titleAr: "مراقبة الأزمات لمنظمة دولية",
+    titleAr: "   ",
     organization: "Global Humanitarian Watch",
     type: "NGO",
     challenge: "Needed real-time emotional monitoring across 15 conflict zones to prioritize resource allocation and anticipate humanitarian needs.",
@@ -36,7 +36,7 @@ const caseStudies = [
   },
   {
     title: "Public Sentiment Analysis for Government",
-    titleAr: "تحليل الرأي العام للحكومة",
+    titleAr: "Analysis   ",
     organization: "Ministry of Digital Affairs",
     type: "Government",
     challenge: "Required understanding of public emotional response to new policies before and after implementation.",
@@ -51,7 +51,7 @@ const caseStudies = [
   },
   {
     title: "Market Sentiment for Media Company",
-    titleAr: "تحليل السوق لشركة إعلامية",
+    titleAr: "Analysis   ",
     organization: "Global News Network",
     type: "Media",
     challenge: "Wanted to understand emotional impact of their coverage and optimize content strategy.",

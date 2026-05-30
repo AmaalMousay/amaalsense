@@ -382,7 +382,7 @@ export const ja = {
     realTimeDataDesc: "Live updates from multiple sources",
     scientificPaper: "Scientific Paper",
     paperTitle: "The Birth of Digital Consciousness: The Amaalsense Engine and the Emergent Collective Mind",
-    paperTitleAr: "ولادة الوعي الرقمي: محرك أمالسنس والعقل الجماعي الناشئ",
+    paperTitleAr: "  :     ",
     foundationalResearch: "The foundational research behind Amaalsense Engine",
     aiResearcher: "AI Researcher & Digital Consciousness Theorist",
     location: "Location",

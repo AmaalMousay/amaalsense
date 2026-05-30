@@ -32,7 +32,7 @@ export default function ForgotPassword() {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError(isRTL ? 'البريد الإلكتروني غير صالح' : 'Invalid email address');
+      setError(isRTL ? '   ' : 'Invalid email address');
       return;
     }
 
@@ -51,7 +51,7 @@ export default function ForgotPassword() {
           <Link href="/login">
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="w-4 h-4" />
-              {isRTL ? 'العودة لتسجيل الدخول' : 'Back to Login'}
+              {isRTL ? '  ' : 'Back to Login'}
             </Button>
           </Link>
         </div>
@@ -63,11 +63,11 @@ export default function ForgotPassword() {
           {/* Title */}
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold cosmic-text mb-2">
-              {isRTL ? 'نسيت كلمة المرور؟' : 'Forgot Password?'}
+              {isRTL ? '  ' : 'Forgot Password?'}
             </h2>
             <p className="text-muted-foreground">
               {isRTL 
-                ? 'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين'
+                ? '       '
                 : 'Enter your email and we\'ll send you a reset link'}
             </p>
           </div>
@@ -79,16 +79,16 @@ export default function ForgotPassword() {
                   <CheckCircle className="w-8 h-8 text-green-500" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">
-                  {isRTL ? 'تم إرسال الرابط!' : 'Reset Link Sent!'}
+                  {isRTL ? '  !' : 'Reset Link Sent!'}
                 </h3>
                 <p className="text-muted-foreground mb-6">
                   {isRTL 
-                    ? 'إذا كان البريد الإلكتروني مسجلاً، ستتلقى رابط إعادة التعيين قريباً.'
+                    ? '         .'
                     : 'If your email is registered, you\'ll receive a reset link shortly.'}
                 </p>
                 <Link href="/login">
                   <Button className="glow-button text-white">
-                    {isRTL ? 'العودة لتسجيل الدخول' : 'Back to Login'}
+                    {isRTL ? '  ' : 'Back to Login'}
                   </Button>
                 </Link>
               </div>
@@ -104,7 +104,7 @@ export default function ForgotPassword() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email">
-                    {isRTL ? 'البريد الإلكتروني' : 'Email Address'}
+                    {isRTL ? ' ' : 'Email Address'}
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -112,7 +112,7 @@ export default function ForgotPassword() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder={isRTL ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
+                      placeholder={isRTL ? '  ' : 'Enter your email'}
                       className="pl-10"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -130,10 +130,10 @@ export default function ForgotPassword() {
                   {resetMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {isRTL ? 'جاري الإرسال...' : 'Sending...'}
+                      {isRTL ? ' ...' : 'Sending...'}
                     </>
                   ) : (
-                    isRTL ? 'إرسال رابط إعادة التعيين' : 'Send Reset Link'
+                    isRTL ? '   ' : 'Send Reset Link'
                   )}
                 </Button>
               </form>
@@ -142,10 +142,10 @@ export default function ForgotPassword() {
             {/* Login Link */}
             {!success && (
               <p className="text-center text-sm text-muted-foreground mt-6">
-                {isRTL ? 'تذكرت كلمة المرور؟' : 'Remember your password?'}{' '}
+                {isRTL ? '  ' : 'Remember your password?'}{' '}
                 <Link href="/login">
                   <span className="text-accent hover:underline cursor-pointer font-medium">
-                    {isRTL ? 'تسجيل الدخول' : 'Sign In'}
+                    {isRTL ? ' ' : 'Sign In'}
                   </span>
                 </Link>
               </p>

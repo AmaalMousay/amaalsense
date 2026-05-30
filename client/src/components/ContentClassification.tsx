@@ -43,88 +43,88 @@ export const CONTENT_DOMAINS: {
     id: 'politics',
     icon: Building2,
     labelEn: 'Politics',
-    labelAr: 'سياسة',
+    labelAr: '',
     sensitivity: 'high',
     color: '#E63946',
     examples: [
-      { en: 'Elections, laws, governments', ar: 'انتخابات، قوانين، حكومات' }
+      { en: 'Elections, laws, governments', ar: '  ' }
     ]
   },
   {
     id: 'economy',
     icon: TrendingUp,
     labelEn: 'Economy',
-    labelAr: 'اقتصاد',
+    labelAr: '',
     sensitivity: 'medium',
     color: '#F4A261',
     examples: [
-      { en: 'Inflation, markets, jobs', ar: 'تضخم، أسواق، وظائف' }
+      { en: 'Inflation, markets, jobs', ar: '  ' }
     ]
   },
   {
     id: 'mental_health',
     icon: Brain,
     labelEn: 'Mental Health',
-    labelAr: 'صحة نفسية',
+    labelAr: ' ',
     sensitivity: 'high',
     color: '#8D5CF6',
     examples: [
-      { en: 'Depression, anxiety', ar: 'اكتئاب، قلق' }
+      { en: 'Depression, anxiety', ar: ' ' }
     ]
   },
   {
     id: 'medical',
     icon: Stethoscope,
     labelEn: 'Medical',
-    labelAr: 'طب',
+    labelAr: '',
     sensitivity: 'critical',
     color: '#DC2626',
     examples: [
-      { en: 'Diseases, medications', ar: 'أمراض، أدوية' }
+      { en: 'Diseases, medications', ar: ' ' }
     ]
   },
   {
     id: 'education',
     icon: GraduationCap,
     labelEn: 'Education',
-    labelAr: 'تعليم',
+    labelAr: '',
     sensitivity: 'medium',
     color: '#2A9D8F',
     examples: [
-      { en: 'Curricula, students', ar: 'مناهج، طلاب' }
+      { en: 'Curricula, students', ar: ' ' }
     ]
   },
   {
     id: 'society',
     icon: Users,
     labelEn: 'Society',
-    labelAr: 'مجتمع',
+    labelAr: '',
     sensitivity: 'medium',
     color: '#457B9D',
     examples: [
-      { en: 'Public opinion issues', ar: 'قضايا رأي عام' }
+      { en: 'Public opinion issues', ar: '  ' }
     ]
   },
   {
     id: 'entertainment',
     icon: Gamepad2,
     labelEn: 'Entertainment',
-    labelAr: 'ترفيه',
+    labelAr: '',
     sensitivity: 'low',
     color: '#10B981',
     examples: [
-      { en: 'Movies, celebrities', ar: 'أفلام، مشاهير' }
+      { en: 'Movies, celebrities', ar: ' ' }
     ]
   },
   {
     id: 'general',
     icon: Newspaper,
     labelEn: 'General News',
-    labelAr: 'أخبار عامة',
+    labelAr: ' ',
     sensitivity: 'medium',
     color: '#6B7280',
     examples: [
-      { en: 'Disasters, events', ar: 'كوارث، أحداث' }
+      { en: 'Disasters, events', ar: ' ' }
     ]
   }
 ];
@@ -141,45 +141,45 @@ export const SENSITIVITY_LEVELS: {
   {
     level: 'low',
     labelEn: 'Low',
-    labelAr: 'منخفض',
+    labelAr: '',
     color: '#10B981',
     bgColor: 'rgba(16, 185, 129, 0.2)',
     description: { 
       en: 'Entertainment, celebrities', 
-      ar: 'ترفيه، مشاهير' 
+      ar: ' ' 
     }
   },
   {
     level: 'medium',
     labelEn: 'Medium',
-    labelAr: 'متوسط',
+    labelAr: '',
     color: '#F59E0B',
     bgColor: 'rgba(245, 158, 11, 0.2)',
     description: { 
       en: 'Economy, education', 
-      ar: 'اقتصاد، تعليم' 
+      ar: ' ' 
     }
   },
   {
     level: 'high',
     labelEn: 'High',
-    labelAr: 'عالي',
+    labelAr: '',
     color: '#EF4444',
     bgColor: 'rgba(239, 68, 68, 0.2)',
     description: { 
       en: 'Politics, mental health', 
-      ar: 'سياسة، صحة نفسية' 
+      ar: '  ' 
     }
   },
   {
     level: 'critical',
     labelEn: 'Critical',
-    labelAr: 'حرج',
+    labelAr: '',
     color: '#DC2626',
     bgColor: 'rgba(220, 38, 38, 0.3)',
     description: { 
       en: 'Medical, epidemics', 
-      ar: 'طب، أوبئة' 
+      ar: ' ' 
     }
   }
 ];
@@ -207,7 +207,7 @@ export function ContentDomainSelector({ value, onChange, disabled }: ContentDoma
   return (
     <div className="space-y-3">
       <label className="text-sm font-medium cosmic-text block">
-        {language === 'ar' ? 'نوع الموضوع' : 'Topic Type'}
+        {language === 'ar' ? ' Topic' : 'Topic Type'}
       </label>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {CONTENT_DOMAINS.map((domain) => {
@@ -312,10 +312,10 @@ export function EmotionalRiskMeter({ domain, emotionIntensity = 50, showDetails 
     const intensityFactor = emotionIntensity / 100;
     const totalRisk = baseRisk * (0.5 + intensityFactor * 0.5);
     
-    if (totalRisk <= 1.5) return { level: 'low', color: '#10B981', labelEn: 'Low Risk', labelAr: 'خطر منخفض' };
-    if (totalRisk <= 2.5) return { level: 'medium', color: '#F59E0B', labelEn: 'Medium Risk', labelAr: 'خطر متوسط' };
-    if (totalRisk <= 3.5) return { level: 'high', color: '#EF4444', labelEn: 'High Risk', labelAr: 'خطر عالي' };
-    return { level: 'critical', color: '#DC2626', labelEn: 'Critical Risk', labelAr: 'خطر حرج' };
+    if (totalRisk <= 1.5) return { level: 'low', color: '#10B981', labelEn: 'Low Risk', labelAr: ' ' };
+    if (totalRisk <= 2.5) return { level: 'medium', color: '#F59E0B', labelEn: 'Medium Risk', labelAr: ' ' };
+    if (totalRisk <= 3.5) return { level: 'high', color: '#EF4444', labelEn: 'High Risk', labelAr: ' ' };
+    return { level: 'critical', color: '#DC2626', labelEn: 'Critical Risk', labelAr: ' ' };
   };
   
   const risk = getRiskLevel();
@@ -325,7 +325,7 @@ export function EmotionalRiskMeter({ domain, emotionIntensity = 50, showDetails 
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-sm font-medium cosmic-text flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" />
-          {language === 'ar' ? 'مقياس المخاطر العاطفية' : 'Emotional Risk Meter'}
+          {language === 'ar' ? '  ' : 'Emotional Risk Meter'}
         </h4>
         <SensitivityIndicator level={domainConfig.sensitivity} size="sm" />
       </div>
@@ -368,7 +368,7 @@ export function EmotionalRiskMeter({ domain, emotionIntensity = 50, showDetails 
         <div className="mt-3 pt-3 border-t border-border/50">
           <p className="text-xs text-muted-foreground">
             {language === 'ar' 
-              ? `التصنيف: ${domainConfig.labelAr} | الحساسية: ${sensitivity.labelAr}`
+              ? `: ${domainConfig.labelAr} | : ${sensitivity.labelAr}`
               : `Domain: ${domainConfig.labelEn} | Sensitivity: ${sensitivity.labelEn}`
             }
           </p>
@@ -391,9 +391,9 @@ export function Disclaimer({ domain, compact = false }: DisclaimerProps) {
   const getDisclaimerText = () => {
     if (language === 'ar') {
       if (domainConfig?.sensitivity === 'critical' || domainConfig?.sensitivity === 'high') {
-        return 'تنبيه: هذا التحليل إحصائي فقط ولا يُعد تشخيصاً طبياً أو توصية سياسية. يرجى استشارة المختصين.';
+        return ':  Analysis         .   .';
       }
-      return 'AmalSense لا يقدم تشخيص طبي ولا توصيات سياسية، بل تحليل إحصائي لمشاعر جماعية.';
+      return 'AmalSense         Analysis   .';
     }
     
     if (domainConfig?.sensitivity === 'critical' || domainConfig?.sensitivity === 'high') {
@@ -428,7 +428,7 @@ export function Disclaimer({ domain, compact = false }: DisclaimerProps) {
           {showWarning && (
             <p className="text-xs text-orange-300/70 mt-2">
               {language === 'ar' 
-                ? 'المحتوى المحلل يتعلق بموضوع حساس. النتائج للأغراض المعلوماتية فقط.'
+                ? '    .    .'
                 : 'The analyzed content relates to a sensitive topic. Results are for informational purposes only.'
               }
             </p>

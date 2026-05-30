@@ -13,15 +13,15 @@ interface CurrentDateTimeProps {
 
 // Format date in Arabic
 function formatDateArabic(date: Date): string {
-  const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-  const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  const days = ['', '', '', '', '', '', ''];
+  const months = ['', '', '', '', '', '', '', '', '', '', '', ''];
   
   const dayName = days[date.getDay()];
   const day = date.getDate();
   const month = months[date.getMonth()];
   const year = date.getFullYear();
   
-  return `${dayName}، ${day} ${month} ${year}`;
+  return `${dayName} ${day} ${month} ${year}`;
 }
 
 // Format date in English
@@ -54,7 +54,7 @@ function formatTimeArabic(date: Date, showSeconds: boolean = false): string {
   const hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, '0');
   const seconds = date.getSeconds().toString().padStart(2, '0');
-  const ampm = hours >= 12 ? 'مساءً' : 'صباحاً';
+  const ampm = hours >= 12 ? '' : '';
   const displayHours = hours % 12 || 12;
   
   if (showSeconds) {
@@ -63,7 +63,7 @@ function formatTimeArabic(date: Date, showSeconds: boolean = false): string {
   return `${displayHours}:${minutes} ${ampm}`;
 }
 
-// Get relative time (e.g., "منذ 5 دقائق")
+// Get relative time (e.g., " 5 ")
 export function getRelativeTime(timestamp: number, isRTL: boolean = false): string {
   const now = Date.now();
   const diff = now - timestamp;
@@ -73,10 +73,10 @@ export function getRelativeTime(timestamp: number, isRTL: boolean = false): stri
   const days = Math.floor(hours / 24);
   
   if (isRTL) {
-    if (seconds < 60) return 'الآن';
-    if (minutes < 60) return `منذ ${minutes} ${minutes === 1 ? 'دقيقة' : 'دقائق'}`;
-    if (hours < 24) return `منذ ${hours} ${hours === 1 ? 'ساعة' : 'ساعات'}`;
-    return `منذ ${days} ${days === 1 ? 'يوم' : 'أيام'}`;
+    if (seconds < 60) return '';
+    if (minutes < 60) return ` ${minutes} ${minutes === 1 ? '' : ''}`;
+    if (hours < 24) return ` ${hours} ${hours === 1 ? '' : ''}`;
+    return ` ${days} ${days === 1 ? '' : ''}`;
   } else {
     if (seconds < 60) return 'Just now';
     if (minutes < 60) return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
@@ -106,7 +106,7 @@ export function CurrentDateTime({
   
   const dateStr = isRTL ? formatDateArabic(currentTime) : formatDateEnglish(currentTime);
   const timeStr = isRTL ? formatTimeArabic(currentTime, showSeconds) : formatTime(currentTime, showSeconds);
-  const timezone = showTimezone ? (isRTL ? '(توقيت ليبيا GMT+2)' : '(Libya Time GMT+2)') : '';
+  const timezone = showTimezone ? (isRTL ? '(  GMT+2)' : '(Libya Time GMT+2)') : '';
   
   if (variant === 'compact') {
     return (
@@ -191,14 +191,14 @@ export function LastUpdated({
   return (
     <div className={`flex items-center gap-2 text-xs text-muted-foreground ${className}`}>
       {showIcon && <Clock className="w-3 h-3" />}
-      <span>{isRTL ? 'آخر تحديث:' : 'Last updated:'}</span>
+      <span>{isRTL ? ' :' : 'Last updated:'}</span>
       <span className="font-medium">{relativeTime}</span>
       {onRefresh && (
         <button 
           onClick={onRefresh}
           disabled={isRefreshing}
           className="p-1 hover:bg-accent/20 rounded transition-colors disabled:opacity-50"
-          title={isRTL ? 'تحديث' : 'Refresh'}
+          title={isRTL ? '' : 'Refresh'}
         >
           <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
         </button>
@@ -216,7 +216,7 @@ export function RealTimePulse({ isRTL = false }: { isRTL?: boolean }) {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
       </span>
       <span className="text-xs text-green-500 font-medium">
-        {isRTL ? 'مباشر' : 'LIVE'}
+        {isRTL ? '' : 'LIVE'}
       </span>
     </div>
   );

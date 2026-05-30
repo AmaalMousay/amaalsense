@@ -1,10 +1,6 @@
 /**
  * API DOCUMENTATION COMPONENT
  * 
- * توثيق API
- * - نقاط النهاية المتاحة
- * - أمثلة الطلبات والاستجابات
- * - معاملات وخيارات
  */
 
 import React, { useState } from 'react';
@@ -52,30 +48,30 @@ export function ApiDocs({
       method: 'POST',
       path: '/api/analyze',
       title: 'Analyze Topic',
-      titleAr: 'تحليل موضوع',
+      titleAr: 'Analysis ',
       description: 'Analyze emotions and indicators for a specific topic or country',
-      descriptionAr: 'تحليل العواطف والمؤشرات لموضوع أو دولة معينة',
+      descriptionAr: 'Analysis      ',
       parameters: [
         {
           name: 'query',
           type: 'string',
           required: true,
           description: 'Topic or country to analyze',
-          descriptionAr: 'الموضوع أو الدولة المراد تحليلها'
+          descriptionAr: 'Topic    Analysis'
         },
         {
           name: 'timeframe',
           type: 'string',
           required: false,
           description: 'Time period (day, week, month, year)',
-          descriptionAr: 'الفترة الزمنية (يوم، أسبوع، شهر، سنة)'
+          descriptionAr: '  (   )'
         },
         {
           name: 'sources',
           type: 'array',
           required: false,
           description: 'Data sources to include',
-          descriptionAr: 'مصادر البيانات المراد تضمينها'
+          descriptionAr: '   '
         }
       ],
       requestExample: JSON.stringify({
@@ -105,23 +101,23 @@ export function ApiDocs({
       method: 'POST',
       path: '/api/compare',
       title: 'Compare Countries',
-      titleAr: 'مقارنة الدول',
+      titleAr: ' ',
       description: 'Compare emotional indicators between multiple countries',
-      descriptionAr: 'مقارنة المؤشرات العاطفية بين دول متعددة',
+      descriptionAr: '     ',
       parameters: [
         {
           name: 'countries',
           type: 'array',
           required: true,
           description: 'List of country codes',
-          descriptionAr: 'قائمة رموز الدول'
+          descriptionAr: '  '
         },
         {
           name: 'metric',
           type: 'string',
           required: false,
           description: 'Metric to compare (gmi, cfi, hri, etc)',
-          descriptionAr: 'المقياس المراد مقارنته'
+          descriptionAr: '  '
         }
       ],
       requestExample: JSON.stringify({
@@ -142,23 +138,23 @@ export function ApiDocs({
       method: 'GET',
       path: '/api/trends',
       title: 'Get Trends',
-      titleAr: 'الحصول على الاتجاهات',
+      titleAr: '  ',
       description: 'Get historical trends and predictions for a topic',
-      descriptionAr: 'الحصول على الاتجاهات التاريخية والتنبؤات لموضوع',
+      descriptionAr: '     ',
       parameters: [
         {
           name: 'topic',
           type: 'string',
           required: true,
           description: 'Topic to get trends for',
-          descriptionAr: 'الموضوع المراد الحصول على اتجاهاته'
+          descriptionAr: 'Topic    '
         },
         {
           name: 'days',
           type: 'number',
           required: false,
           description: 'Number of days to look back',
-          descriptionAr: 'عدد الأيام للنظر للخلف'
+          descriptionAr: '   '
         }
       ],
       requestExample: JSON.stringify({
@@ -180,16 +176,16 @@ export function ApiDocs({
       method: 'GET',
       path: '/api/map',
       title: 'Get Map Data',
-      titleAr: 'الحصول على بيانات الخريطة',
+      titleAr: '   ',
       description: 'Get emotional data for world map visualization',
-      descriptionAr: 'الحصول على البيانات العاطفية لتصور الخريطة العالمية',
+      descriptionAr: '      ',
       parameters: [
         {
           name: 'metric',
           type: 'string',
           required: false,
           description: 'Metric to display (gmi, cfi, hri)',
-          descriptionAr: 'المقياس المراد عرضه'
+          descriptionAr: '  '
         }
       ],
       requestExample: JSON.stringify({
@@ -230,11 +226,11 @@ export function ApiDocs({
       {/* Header */}
       <div>
         <h2 className="text-3xl font-bold text-black mb-2">
-          {isArabic ? 'توثيق API' : 'API Documentation'}
+          {isArabic ? ' API' : 'API Documentation'}
         </h2>
         <p className="text-gray-600">
           {isArabic
-            ? 'نقاط النهاية والمعاملات والأمثلة'
+            ? '   '
             : 'Endpoints, parameters, and examples'}
         </p>
       </div>
@@ -242,7 +238,7 @@ export function ApiDocs({
       {/* Base URL */}
       <Card className="p-4 border-2 border-black bg-black text-white">
         <p className="text-sm font-semibold mb-2">
-          {isArabic ? 'عنوان URL الأساسي' : 'Base URL'}
+          {isArabic ? ' URL ' : 'Base URL'}
         </p>
         <div className="flex items-center justify-between bg-gray-900 p-3 rounded font-mono text-sm">
           <span>https://api.amalsense.com/v1</span>
@@ -262,11 +258,11 @@ export function ApiDocs({
       {/* Authentication */}
       <Card className="p-4 border-2 border-gray-200">
         <h3 className="font-bold text-black mb-3">
-          {isArabic ? 'المصادقة' : 'Authentication'}
+          {isArabic ? '' : 'Authentication'}
         </h3>
         <p className="text-sm text-gray-700 mb-3">
           {isArabic
-            ? 'استخدم مفتاح API الخاص بك في رأس الطلب'
+            ? '  API     '
             : 'Include your API key in the request header'}
         </p>
         <div className="bg-gray-50 p-3 rounded font-mono text-sm overflow-x-auto">
@@ -277,7 +273,7 @@ export function ApiDocs({
       {/* Endpoints */}
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-black">
-          {isArabic ? 'نقاط النهاية' : 'Endpoints'}
+          {isArabic ? ' ' : 'Endpoints'}
         </h3>
 
         {endpoints.map(endpoint => (
@@ -330,7 +326,7 @@ export function ApiDocs({
                 {endpoint.parameters && endpoint.parameters.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-black mb-2">
-                      {isArabic ? 'المعاملات' : 'Parameters'}
+                      {isArabic ? '' : 'Parameters'}
                     </h4>
                     <div className="space-y-2">
                       {endpoint.parameters.map((param, idx) => (
@@ -347,7 +343,7 @@ export function ApiDocs({
                             </Badge>
                             {param.required && (
                               <Badge className="text-xs bg-red-100 text-red-800">
-                                {isArabic ? 'مطلوب' : 'Required'}
+                                {isArabic ? '' : 'Required'}
                               </Badge>
                             )}
                           </div>
@@ -367,7 +363,7 @@ export function ApiDocs({
                   <div>
                     <h4 className="font-semibold text-black mb-2 flex items-center gap-2">
                       <Code className="w-4 h-4" />
-                      {isArabic ? 'مثال الطلب' : 'Request Example'}
+                      {isArabic ? ' ' : 'Request Example'}
                     </h4>
                     <div className="bg-gray-900 text-gray-100 p-3 rounded font-mono text-xs overflow-x-auto relative">
                       <pre>{endpoint.requestExample}</pre>
@@ -392,7 +388,7 @@ export function ApiDocs({
                   <div>
                     <h4 className="font-semibold text-black mb-2 flex items-center gap-2">
                       <Code className="w-4 h-4" />
-                      {isArabic ? 'مثال الاستجابة' : 'Response Example'}
+                      {isArabic ? ' ' : 'Response Example'}
                     </h4>
                     <div className="bg-gray-900 text-gray-100 p-3 rounded font-mono text-xs overflow-x-auto relative">
                       <pre>{endpoint.responseExample}</pre>
@@ -415,7 +411,7 @@ export function ApiDocs({
                 {/* Try Button */}
                 <Button className="w-full gap-2 bg-black text-white hover:bg-gray-800">
                   <Play className="w-4 h-4" />
-                  {isArabic ? 'جرب الآن' : 'Try Now'}
+                  {isArabic ? ' ' : 'Try Now'}
                 </Button>
               </div>
             )}
@@ -426,16 +422,16 @@ export function ApiDocs({
       {/* Error Codes */}
       <Card className="p-4 border-2 border-gray-200">
         <h3 className="font-bold text-black mb-3">
-          {isArabic ? 'رموز الخطأ' : 'Error Codes'}
+          {isArabic ? ' ' : 'Error Codes'}
         </h3>
         <div className="space-y-2">
           {[
-            { code: 400, message: isArabic ? 'طلب سيء' : 'Bad Request' },
-            { code: 401, message: isArabic ? 'غير مصرح' : 'Unauthorized' },
-            { code: 403, message: isArabic ? 'محظور' : 'Forbidden' },
-            { code: 404, message: isArabic ? 'غير موجود' : 'Not Found' },
-            { code: 429, message: isArabic ? 'حد الطلبات' : 'Rate Limited' },
-            { code: 500, message: isArabic ? 'خطأ الخادم' : 'Server Error' }
+            { code: 400, message: isArabic ? ' ' : 'Bad Request' },
+            { code: 401, message: isArabic ? ' ' : 'Unauthorized' },
+            { code: 403, message: isArabic ? '' : 'Forbidden' },
+            { code: 404, message: isArabic ? ' ' : 'Not Found' },
+            { code: 429, message: isArabic ? ' ' : 'Rate Limited' },
+            { code: 500, message: isArabic ? ' ' : 'Server Error' }
           ].map((error, idx) => (
             <div key={idx} className="flex items-center gap-3 p-2">
               <Badge className="bg-red-100 text-red-800 font-mono">

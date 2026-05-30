@@ -12,7 +12,7 @@ export function DCFTPage() {
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | '90d'>('7d');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock data - في الواقع ستأتي من API
+  // 
   const currentMetrics = {
     gmi: 72.5,
     cfi: 68.3,
@@ -31,28 +31,28 @@ export function DCFTPage() {
   ];
 
   const regionalData = [
-    { region: 'الشرق الأوسط', gmi: 75.2, cfi: 70.1, hri: 78.3, population: 400000000, trend: 5.2 },
-    { region: 'آسيا', gmi: 71.8, cfi: 68.5, hri: 74.2, population: 4600000000, trend: 3.1 },
-    { region: 'أوروبا', gmi: 68.5, cfi: 65.2, hri: 71.5, population: 750000000, trend: -1.2 },
-    { region: 'أفريقيا', gmi: 73.1, cfi: 69.8, hri: 76.1, population: 1400000000, trend: 4.5 },
-    { region: 'الأمريكتان', gmi: 70.2, cfi: 67.1, hri: 72.8, population: 1000000000, trend: 2.3 },
+    { region: ' ', gmi: 75.2, cfi: 70.1, hri: 78.3, population: 400000000, trend: 5.2 },
+    { region: '', gmi: 71.8, cfi: 68.5, hri: 74.2, population: 4600000000, trend: 3.1 },
+    { region: '', gmi: 68.5, cfi: 65.2, hri: 71.5, population: 750000000, trend: -1.2 },
+    { region: '', gmi: 73.1, cfi: 69.8, hri: 76.1, population: 1400000000, trend: 4.5 },
+    { region: '', gmi: 70.2, cfi: 67.1, hri: 72.8, population: 1000000000, trend: 2.3 },
   ];
 
   const handleRefresh = async () => {
     setIsLoading(true);
-    // محاكاة جلب البيانات
+    // 
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsLoading(false);
   };
 
   const handleDownload = () => {
-    // تحميل التقرير
-    alert('جاري تحميل التقرير...');
+    // 
+    alert('  ...');
   };
 
   const handleShare = () => {
-    // مشاركة النتائج
-    alert('جاري مشاركة النتائج...');
+    // 
+    alert('  ...');
   };
 
   return (
@@ -60,7 +60,7 @@ export function DCFTPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">محرك تحليل المشاعر الجماعية</h1>
+          <h1 className="text-3xl font-bold"> Analysis Emotions </h1>
           <p className="text-gray-600 mt-1">Digital Collective Feeling Theory (DCFT) Engine</p>
         </div>
         <div className="flex gap-2">
@@ -71,22 +71,22 @@ export function DCFTPage() {
             className="gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            تحديث
+            
           </Button>
           <Button onClick={handleDownload} variant="outline" className="gap-2">
             <Download className="w-4 h-4" />
-            تحميل
+            
           </Button>
           <Button onClick={handleShare} variant="outline" className="gap-2">
             <Share2 className="w-4 h-4" />
-            مشاركة
+            
           </Button>
         </div>
       </div>
 
       {/* Current Metrics */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">المؤشرات الحالية</h2>
+        <h2 className="text-xl font-semibold mb-4"> </h2>
         <DCFTMetricsCard
           gmi={currentMetrics.gmi}
           cfi={currentMetrics.cfi}
@@ -97,56 +97,56 @@ export function DCFTPage() {
 
       {/* Trend Chart */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">الاتجاهات والتنبؤات</h2>
+        <h2 className="text-xl font-semibold mb-4"> </h2>
         <DCFTTrendChart
           data={trendData}
-          title="اتجاهات المؤشرات عبر الزمن"
+          title="   "
           timeRange={timeRange}
         />
       </div>
 
       {/* Regional Breakdown */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">التحليل الإقليمي</h2>
+        <h2 className="text-xl font-semibold mb-4">Analysis </h2>
         <DCFTRegionalBreakdown
           data={regionalData}
-          title="توزيع المؤشرات حسب المنطقة الجغرافية"
+          title="   Region "
         />
       </div>
 
       {/* Insights & Recommendations */}
       <Card>
         <CardHeader>
-          <CardTitle>💡 الرؤى والتوصيات</CardTitle>
+          <CardTitle>💡  </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <h4 className="font-semibold text-green-900 mb-2">✅ النقاط الإيجابية</h4>
+              <h4 className="font-semibold text-green-900 mb-2">✅  </h4>
               <ul className="text-sm text-green-800 space-y-1">
-                <li>• مؤشر المزاج العام في ارتفاع مستمر (+5.2% في الأسبوع)</li>
-                <li>• صمود الإنسان يتحسن في معظم المناطق</li>
-                <li>• المشاعر الجماعية تتجه نحو الاستقرار</li>
+                <li>•       (+5.2%  )</li>
+                <li>•      </li>
+                <li>• Emotions    </li>
               </ul>
             </div>
 
             <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <h4 className="font-semibold text-yellow-900 mb-2">⚠️ نقاط تحتاج انتباه</h4>
+              <h4 className="font-semibold text-yellow-900 mb-2">⚠️   </h4>
               <ul className="text-sm text-yellow-800 space-y-1">
-                <li>• أوروبا تسجل أقل مؤشرات (-1.2% اتجاه سلبي)</li>
-                <li>• بعض المناطق تحتاج دعم نفسي إضافي</li>
-                <li>• التقلبات العاطفية تزداد في بعض القطاعات</li>
+                <li>•     (-1.2%  )</li>
+                <li>•      </li>
+                <li>•      </li>
               </ul>
             </div>
           </div>
 
           <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h4 className="font-semibold text-blue-900 mb-2">🎯 التوصيات</h4>
+            <h4 className="font-semibold text-blue-900 mb-2">🎯 </h4>
             <ul className="text-sm text-blue-800 space-y-1">
-              <li>1. تعزيز المبادرات الإيجابية في المناطق ذات المؤشرات العالية</li>
-              <li>2. توفير الدعم النفسي والاجتماعي للمناطق التي تحتاج</li>
-              <li>3. مراقبة التطورات في أوروبا بشكل أكثر دقة</li>
-              <li>4. تعزيز التواصل والتفاهم بين المجتمعات المختلفة</li>
+              <li>1.        </li>
+              <li>2.       </li>
+              <li>3.       </li>
+              <li>4.      </li>
             </ul>
           </div>
         </CardContent>
@@ -176,8 +176,8 @@ export function DCFTPage() {
 
       {/* Footer */}
       <div className="text-center text-sm text-gray-500 border-t pt-4">
-        <p>آخر تحديث: {new Date().toLocaleString('ar-SA')}</p>
-        <p>البيانات مأخوذة من آلاف المصادر الرقمية حول العالم</p>
+        <p> : {new Date().toLocaleString('ar-SA')}</p>
+        <p>       </p>
       </div>
     </div>
   );

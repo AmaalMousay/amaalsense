@@ -2,7 +2,6 @@
 /**
  * UNIFIED ANALYSIS DATA HOOK
  * 
- * يوفر واجهة موحدة للوصول إلى بيانات التحليل
  * Provides unified interface for accessing analysis data
  */
 
@@ -119,8 +118,8 @@ export function useAnalysisData(options: UseAnalysisDataOptions = {}) {
           socialMedia: 35,
           forums: 20,
         },
-        relatedTopics: ['موضوع 1', 'موضوع 2', 'موضوع 3'],
-        recommendations: ['توصية 1', 'توصية 2', 'توصية 3']
+        relatedTopics: [' 1', ' 2', ' 3'],
+        recommendations: [' 1', ' 2', ' 3']
       };
 
       setData(analysisData);

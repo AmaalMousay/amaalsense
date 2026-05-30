@@ -33,22 +33,22 @@ import {
 
 // Domain configuration
 const DOMAINS = [
-  { id: 'politics', name: 'سياسة', nameEn: 'Politics', icon: Landmark, color: '#ef4444' },
-  { id: 'economy', name: 'اقتصاد', nameEn: 'Economy', icon: DollarSign, color: '#f59e0b' },
-  { id: 'mental_health', name: 'صحة نفسية', nameEn: 'Mental Health', icon: Brain, color: '#8b5cf6' },
-  { id: 'medical', name: 'طب', nameEn: 'Medical', icon: Stethoscope, color: '#ec4899' },
-  { id: 'education', name: 'تعليم', nameEn: 'Education', icon: GraduationCap, color: '#3b82f6' },
-  { id: 'society', name: 'مجتمع', nameEn: 'Society', icon: Users, color: '#10b981' },
-  { id: 'entertainment', name: 'ترفيه', nameEn: 'Entertainment', icon: Gamepad2, color: '#06b6d4' },
-  { id: 'general', name: 'أخبار عامة', nameEn: 'General News', icon: Newspaper, color: '#6b7280' },
+  { id: 'politics', name: '', nameEn: 'Politics', icon: Landmark, color: '#ef4444' },
+  { id: 'economy', name: '', nameEn: 'Economy', icon: DollarSign, color: '#f59e0b' },
+  { id: 'mental_health', name: ' ', nameEn: 'Mental Health', icon: Brain, color: '#8b5cf6' },
+  { id: 'medical', name: '', nameEn: 'Medical', icon: Stethoscope, color: '#ec4899' },
+  { id: 'education', name: '', nameEn: 'Education', icon: GraduationCap, color: '#3b82f6' },
+  { id: 'society', name: '', nameEn: 'Society', icon: Users, color: '#10b981' },
+  { id: 'entertainment', name: '', nameEn: 'Entertainment', icon: Gamepad2, color: '#06b6d4' },
+  { id: 'general', name: ' ', nameEn: 'General News', icon: Newspaper, color: '#6b7280' },
 ];
 
 // Sensitivity configuration
 const SENSITIVITIES = [
-  { id: 'low', name: 'منخفض', nameEn: 'Low', color: '#22c55e' },
-  { id: 'medium', name: 'متوسط', nameEn: 'Medium', color: '#f59e0b' },
-  { id: 'high', name: 'عالي', nameEn: 'High', color: '#f97316' },
-  { id: 'critical', name: 'حرج', nameEn: 'Critical', color: '#ef4444' },
+  { id: 'low', name: '', nameEn: 'Low', color: '#22c55e' },
+  { id: 'medium', name: '', nameEn: 'Medium', color: '#f59e0b' },
+  { id: 'high', name: '', nameEn: 'High', color: '#f97316' },
+  { id: 'critical', name: '', nameEn: 'Critical', color: '#ef4444' },
 ];
 
 export default function Reports() {
@@ -132,26 +132,26 @@ export default function Reports() {
             <div>
               <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
                 <BarChart3 className="h-8 w-8 text-purple-400" />
-                تقارير التحليلات
+                 Analysis
               </h1>
               <p className="text-muted-foreground mt-2">
-                إحصائيات وتقارير شاملة عن التحليلات المصنفة
+                    Analysis 
               </p>
             </div>
             <div className="flex items-center gap-4">
               <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger className="w-40">
-                  <SelectValue placeholder="الفترة الزمنية" />
+                  <SelectValue placeholder=" " />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="7">آخر 7 أيام</SelectItem>
-                  <SelectItem value="30">آخر 30 يوم</SelectItem>
-                  <SelectItem value="90">آخر 90 يوم</SelectItem>
+                  <SelectItem value="7"> 7 </SelectItem>
+                  <SelectItem value="30"> 30 </SelectItem>
+                  <SelectItem value="90"> 90 </SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" onClick={refetchAll} disabled={isLoading}>
                 <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                تحديث
+                
               </Button>
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">إجمالي التحليلات</p>
+                  <p className="text-sm text-muted-foreground"> Analysis</p>
                   <p className="text-3xl font-bold text-foreground">{totalAnalyses}</p>
                 </div>
                 <Activity className="h-10 w-10 text-purple-400" />
@@ -177,7 +177,7 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">التصنيفات النشطة</p>
+                  <p className="text-sm text-muted-foreground"> </p>
                   <p className="text-3xl font-bold text-foreground">{domainStatsQuery.data?.length || 0}</p>
                 </div>
                 <PieChart className="h-10 w-10 text-blue-400" />
@@ -189,7 +189,7 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">متوسط المخاطر</p>
+                  <p className="text-sm text-muted-foreground"> </p>
                   <p className="text-3xl font-bold text-foreground">{averageRisk}%</p>
                 </div>
                 <AlertTriangle className="h-10 w-10 text-amber-400" />
@@ -201,9 +201,9 @@ export default function Reports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">مستوى الأمان</p>
+                  <p className="text-sm text-muted-foreground"> </p>
                   <p className="text-3xl font-bold text-foreground">
-                    {averageRisk < 40 ? 'آمن' : averageRisk < 70 ? 'متوسط' : 'مرتفع'}
+                    {averageRisk < 40 ? '' : averageRisk < 70 ? '' : ''}
                   </p>
                 </div>
                 <Shield className="h-10 w-10 text-green-400" />
@@ -214,9 +214,9 @@ export default function Reports() {
 
         <Tabs defaultValue="domains" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="domains">التصنيفات</TabsTrigger>
-            <TabsTrigger value="sensitivity">الحساسية</TabsTrigger>
-            <TabsTrigger value="recent">الأخيرة</TabsTrigger>
+            <TabsTrigger value="domains"></TabsTrigger>
+            <TabsTrigger value="sensitivity"></TabsTrigger>
+            <TabsTrigger value="recent"></TabsTrigger>
           </TabsList>
 
           {/* Domain Distribution Tab */}
@@ -225,10 +225,10 @@ export default function Reports() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PieChart className="h-5 w-5 text-purple-400" />
-                  توزيع التحليلات حسب التصنيف
+                   Analysis  
                 </CardTitle>
                 <CardDescription>
-                  عدد التحليلات ومتوسط المخاطر لكل تصنيف محتوى
+                   Analysis     
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -261,9 +261,9 @@ export default function Reports() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-foreground">{count} تحليل</p>
+                              <p className="font-bold text-foreground">{count} Analysis</p>
                               <p className="text-sm text-muted-foreground">
-                                {percentage}% • خطورة {avgRisk}%
+                                {percentage}% •  {avgRisk}%
                               </p>
                             </div>
                           </div>
@@ -283,8 +283,8 @@ export default function Reports() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
                     <PieChart className="h-16 w-16 mb-4 opacity-50" />
-                    <p>لا توجد بيانات متاحة</p>
-                    <p className="text-sm">قم بإجراء بعض التحليلات لرؤية الإحصائيات</p>
+                    <p>   </p>
+                    <p className="text-sm">   Analysis  </p>
                   </div>
                 )}
               </CardContent>
@@ -297,10 +297,10 @@ export default function Reports() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-amber-400" />
-                  توزيع مستويات الحساسية
+                    
                 </CardTitle>
                 <CardDescription>
-                  عدد التحليلات حسب مستوى حساسية المحتوى
+                   Analysis    
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -334,7 +334,7 @@ export default function Reports() {
                               </span>
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-foreground">{count} تحليل</p>
+                              <p className="font-bold text-foreground">{count} Analysis</p>
                               <p className="text-sm text-muted-foreground">{percentage}%</p>
                             </div>
                           </div>
@@ -353,28 +353,28 @@ export default function Reports() {
 
                     {/* Risk Summary */}
                     <div className="mt-8 p-4 bg-muted/50 rounded-lg">
-                      <h4 className="font-semibold text-foreground mb-2">ملخص المخاطر</h4>
+                      <h4 className="font-semibold text-foreground mb-2"> </h4>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-muted-foreground">محتوى آمن (منخفض): </span>
+                          <span className="text-muted-foreground">  (): </span>
                           <span className="font-medium text-green-500">
                             {sensitivityStatsQuery.data?.find(s => s.sensitivity === 'low')?.count || 0}
                           </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">يحتاج مراجعة (متوسط): </span>
+                          <span className="text-muted-foreground">  (): </span>
                           <span className="font-medium text-amber-500">
                             {sensitivityStatsQuery.data?.find(s => s.sensitivity === 'medium')?.count || 0}
                           </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">حساس (عالي): </span>
+                          <span className="text-muted-foreground"> (): </span>
                           <span className="font-medium text-orange-500">
                             {sensitivityStatsQuery.data?.find(s => s.sensitivity === 'high')?.count || 0}
                           </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">حرج: </span>
+                          <span className="text-muted-foreground">: </span>
                           <span className="font-medium text-red-500">
                             {sensitivityStatsQuery.data?.find(s => s.sensitivity === 'critical')?.count || 0}
                           </span>
@@ -385,8 +385,8 @@ export default function Reports() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
                     <AlertTriangle className="h-16 w-16 mb-4 opacity-50" />
-                    <p>لا توجد بيانات متاحة</p>
-                    <p className="text-sm">قم بإجراء بعض التحليلات لرؤية الإحصائيات</p>
+                    <p>   </p>
+                    <p className="text-sm">   Analysis  </p>
                   </div>
                 )}
               </CardContent>
@@ -399,10 +399,10 @@ export default function Reports() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-cyan-400" />
-                  التحليلات الأخيرة
+                  Analysis 
                 </CardTitle>
                 <CardDescription>
-                  آخر التحليلات المصنفة مع تفاصيلها
+                   Analysis   
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -449,7 +449,7 @@ export default function Reports() {
                                     {sensitivity?.name || analysis.sensitivity}
                                   </Badge>
                                   <span className="text-sm text-muted-foreground">
-                                    خطورة: {analysis.emotionalRiskScore}%
+                                    : {analysis.emotionalRiskScore}%
                                   </span>
                                 </div>
                               </div>
@@ -470,8 +470,8 @@ export default function Reports() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
                     <Activity className="h-16 w-16 mb-4 opacity-50" />
-                    <p>لا توجد تحليلات مصنفة</p>
-                    <p className="text-sm">قم بإجراء تحليلات مع اختيار التصنيف لرؤيتها هنا</p>
+                    <p>  Analysis </p>
+                    <p className="text-sm">  Analysis     </p>
                   </div>
                 )}
               </CardContent>

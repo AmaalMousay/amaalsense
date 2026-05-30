@@ -1,10 +1,6 @@
 /**
  * USER PREFERENCES COMPONENT
  * 
- * تفضيلات المستخدم
- * - إدارة الإعدادات الشخصية
- * - تخصيص التنبيهات والإشعارات
- * - إدارة الخصوصية والأمان
  */
 
 import React, { useState } from 'react';
@@ -77,8 +73,8 @@ export function UserPreferences({
       shareData: false
     },
     content: {
-      preferredRegions: ['السعودية', 'الإمارات'],
-      preferredCategories: ['اقتصاد', 'تكنولوجيا'],
+      preferredRegions: ['', ''],
+      preferredCategories: ['', ''],
       excludedTopics: [],
       emotionFilters: []
     },
@@ -137,9 +133,9 @@ export function UserPreferences({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-black">تفضيلات المستخدم</h2>
+          <h2 className="text-2xl font-bold text-black"> </h2>
           <p className="text-sm text-gray-600 mt-1">
-            خصص تجربتك وأدر إعداداتك الشخصية
+                
           </p>
         </div>
       </div>
@@ -148,7 +144,7 @@ export function UserPreferences({
       <Card className="p-6 border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Bell className="w-5 h-5 text-black" />
-          <h3 className="text-lg font-semibold text-black">الإشعارات والتنبيهات</h3>
+          <h3 className="text-lg font-semibold text-black"> </h3>
         </div>
 
         <div className="space-y-4">
@@ -157,8 +153,8 @@ export function UserPreferences({
             <div className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-gray-600" />
               <div>
-                <p className="font-medium text-black">إشعارات البريد الإلكتروني</p>
-                <p className="text-xs text-gray-600">استقبل التحديثات عبر البريد الإلكتروني</p>
+                <p className="font-medium text-black">  </p>
+                <p className="text-xs text-gray-600">    </p>
               </div>
             </div>
             <button
@@ -169,7 +165,7 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.notifications.emailNotifications ? 'مفعّل' : 'معطّل'}
+              {preferences.notifications.emailNotifications ? '' : ''}
             </button>
           </div>
 
@@ -178,8 +174,8 @@ export function UserPreferences({
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-gray-600" />
               <div>
-                <p className="font-medium text-black">إشعارات المتصفح</p>
-                <p className="text-xs text-gray-600">استقبل إشعارات فورية على جهازك</p>
+                <p className="font-medium text-black"> </p>
+                <p className="text-xs text-gray-600">    </p>
               </div>
             </div>
             <button
@@ -190,7 +186,7 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.notifications.pushNotifications ? 'مفعّل' : 'معطّل'}
+              {preferences.notifications.pushNotifications ? '' : ''}
             </button>
           </div>
 
@@ -199,8 +195,8 @@ export function UserPreferences({
             <div className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-gray-600" />
               <div>
-                <p className="font-medium text-black">إشعارات الرسائل القصيرة</p>
-                <p className="text-xs text-gray-600">استقبل تنبيهات عاجلة عبر الرسائل النصية</p>
+                <p className="font-medium text-black">  </p>
+                <p className="text-xs text-gray-600">     </p>
               </div>
             </div>
             <button
@@ -211,7 +207,7 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.notifications.smsNotifications ? 'مفعّل' : 'معطّل'}
+              {preferences.notifications.smsNotifications ? '' : ''}
             </button>
           </div>
 
@@ -220,8 +216,8 @@ export function UserPreferences({
             <div className="flex items-center gap-2">
               <Volume2 className="w-4 h-4 text-gray-600" />
               <div>
-                <p className="font-medium text-black">تفعيل الصوت</p>
-                <p className="text-xs text-gray-600">تشغيل أصوات التنبيهات</p>
+                <p className="font-medium text-black"> </p>
+                <p className="text-xs text-gray-600">  </p>
               </div>
             </div>
             <button
@@ -232,16 +228,16 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.notifications.soundEnabled ? 'مفعّل' : 'معطّل'}
+              {preferences.notifications.soundEnabled ? '' : ''}
             </button>
           </div>
 
           {/* Quiet Hours */}
           <div className="p-3 bg-gray-50 rounded">
-            <p className="font-medium text-black mb-2">ساعات الهدوء</p>
+            <p className="font-medium text-black mb-2"> </p>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-gray-600">من</label>
+                <label className="text-xs text-gray-600"></label>
                 <input
                   type="time"
                   value={preferences.notifications.quietHours.start}
@@ -250,7 +246,7 @@ export function UserPreferences({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">إلى</label>
+                <label className="text-xs text-gray-600"></label>
                 <input
                   type="time"
                   value={preferences.notifications.quietHours.end}
@@ -267,33 +263,33 @@ export function UserPreferences({
       <Card className="p-6 border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Palette className="w-5 h-5 text-black" />
-          <h3 className="text-lg font-semibold text-black">العرض والمظهر</h3>
+          <h3 className="text-lg font-semibold text-black"> </h3>
         </div>
 
         <div className="space-y-4">
           {/* Theme */}
           <div className="p-3 bg-gray-50 rounded">
-            <label className="font-medium text-black mb-2 block">المظهر</label>
+            <label className="font-medium text-black mb-2 block"></label>
             <select
               value={preferences.display.theme}
               onChange={(e) => handleSelectChange('display.theme', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded"
             >
-              <option value="light">فاتح</option>
-              <option value="dark">داكن</option>
-              <option value="auto">تلقائي</option>
+              <option value="light"></option>
+              <option value="dark"></option>
+              <option value="auto"></option>
             </select>
           </div>
 
           {/* Language */}
           <div className="p-3 bg-gray-50 rounded">
-            <label className="font-medium text-black mb-2 block">اللغة</label>
+            <label className="font-medium text-black mb-2 block">Language</label>
             <select
               value={preferences.display.language}
               onChange={(e) => handleSelectChange('display.language', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded"
             >
-              <option value="ar">العربية</option>
+              <option value="ar"></option>
               <option value="en">English</option>
               <option value="fr">Français</option>
             </select>
@@ -301,23 +297,23 @@ export function UserPreferences({
 
           {/* Font Size */}
           <div className="p-3 bg-gray-50 rounded">
-            <label className="font-medium text-black mb-2 block">حجم الخط</label>
+            <label className="font-medium text-black mb-2 block"> </label>
             <select
               value={preferences.display.fontSize}
               onChange={(e) => handleSelectChange('display.fontSize', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded"
             >
-              <option value="small">صغير</option>
-              <option value="medium">متوسط</option>
-              <option value="large">كبير</option>
+              <option value="small"></option>
+              <option value="medium"></option>
+              <option value="large"></option>
             </select>
           </div>
 
           {/* Compact Mode */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">الوضع المضغوط</p>
-              <p className="text-xs text-gray-600">عرض مختصر للمحتوى</p>
+              <p className="font-medium text-black"> </p>
+              <p className="text-xs text-gray-600">  </p>
             </div>
             <button
               onClick={() => handleToggle('display.compactMode')}
@@ -327,7 +323,7 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.display.compactMode ? 'مفعّل' : 'معطّل'}
+              {preferences.display.compactMode ? '' : ''}
             </button>
           </div>
         </div>
@@ -337,29 +333,29 @@ export function UserPreferences({
       <Card className="p-6 border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Lock className="w-5 h-5 text-black" />
-          <h3 className="text-lg font-semibold text-black">الخصوصية والأمان</h3>
+          <h3 className="text-lg font-semibold text-black"> </h3>
         </div>
 
         <div className="space-y-4">
           {/* Profile Visibility */}
           <div className="p-3 bg-gray-50 rounded">
-            <label className="font-medium text-black mb-2 block">ظهور الملف الشخصي</label>
+            <label className="font-medium text-black mb-2 block">  </label>
             <select
               value={preferences.privacy.profileVisibility}
               onChange={(e) => handleSelectChange('privacy.profileVisibility', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded"
             >
-              <option value="public">عام</option>
-              <option value="friends">الأصدقاء فقط</option>
-              <option value="private">خاص</option>
+              <option value="public"></option>
+              <option value="friends"> </option>
+              <option value="private"></option>
             </select>
           </div>
 
           {/* Show Activity */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">عرض النشاط</p>
-              <p className="text-xs text-gray-600">السماح للآخرين برؤية نشاطك</p>
+              <p className="font-medium text-black"> </p>
+              <p className="text-xs text-gray-600">   </p>
             </div>
             <button
               onClick={() => handleToggle('privacy.showActivity')}
@@ -369,15 +365,15 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.privacy.showActivity ? 'مفعّل' : 'معطّل'}
+              {preferences.privacy.showActivity ? '' : ''}
             </button>
           </div>
 
           {/* Allow Messages */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">السماح بالرسائل</p>
-              <p className="text-xs text-gray-600">السماح للآخرين بإرسال رسائل لك</p>
+              <p className="font-medium text-black"> </p>
+              <p className="text-xs text-gray-600">    </p>
             </div>
             <button
               onClick={() => handleToggle('privacy.allowMessages')}
@@ -387,15 +383,15 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.privacy.allowMessages ? 'مفعّل' : 'معطّل'}
+              {preferences.privacy.allowMessages ? '' : ''}
             </button>
           </div>
 
           {/* Share Data */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">مشاركة البيانات</p>
-              <p className="text-xs text-gray-600">السماح بمشاركة بيانات الاستخدام</p>
+              <p className="font-medium text-black"> </p>
+              <p className="text-xs text-gray-600">   </p>
             </div>
             <button
               onClick={() => handleToggle('privacy.shareData')}
@@ -405,7 +401,7 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.privacy.shareData ? 'مفعّل' : 'معطّل'}
+              {preferences.privacy.shareData ? '' : ''}
             </button>
           </div>
         </div>
@@ -415,15 +411,15 @@ export function UserPreferences({
       <Card className="p-6 border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Eye className="w-5 h-5 text-black" />
-          <h3 className="text-lg font-semibold text-black">إعدادات التحليل</h3>
+          <h3 className="text-lg font-semibold text-black"> Analysis</h3>
         </div>
 
         <div className="space-y-4">
           {/* Auto Analysis */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">التحليل التلقائي</p>
-              <p className="text-xs text-gray-600">تحليل تلقائي للبيانات الجديدة</p>
+              <p className="font-medium text-black">Analysis </p>
+              <p className="text-xs text-gray-600">Analysis   </p>
             </div>
             <button
               onClick={() => handleToggle('analysis.autoAnalysis')}
@@ -433,15 +429,15 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.analysis.autoAnalysis ? 'مفعّل' : 'معطّل'}
+              {preferences.analysis.autoAnalysis ? '' : ''}
             </button>
           </div>
 
           {/* Detailed Reports */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">التقارير المفصلة</p>
-              <p className="text-xs text-gray-600">عرض تقارير مفصلة وشاملة</p>
+              <p className="font-medium text-black">Reports </p>
+              <p className="text-xs text-gray-600">   </p>
             </div>
             <button
               onClick={() => handleToggle('analysis.detailedReports')}
@@ -451,15 +447,15 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.analysis.detailedReports ? 'مفعّل' : 'معطّل'}
+              {preferences.analysis.detailedReports ? '' : ''}
             </button>
           </div>
 
           {/* Predictive Analytics */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">التحليلات التنبؤية</p>
-              <p className="text-xs text-gray-600">عرض التنبؤات والاتجاهات المستقبلية</p>
+              <p className="font-medium text-black">Analysis </p>
+              <p className="text-xs text-gray-600">   </p>
             </div>
             <button
               onClick={() => handleToggle('analysis.predictiveAnalytics')}
@@ -469,15 +465,15 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.analysis.predictiveAnalytics ? 'مفعّل' : 'معطّل'}
+              {preferences.analysis.predictiveAnalytics ? '' : ''}
             </button>
           </div>
 
           {/* Compare Mode */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
             <div>
-              <p className="font-medium text-black">وضع المقارنة</p>
-              <p className="text-xs text-gray-600">مقارنة البيانات والسيناريوهات</p>
+              <p className="font-medium text-black"> </p>
+              <p className="text-xs text-gray-600">  </p>
             </div>
             <button
               onClick={() => handleToggle('analysis.compareMode')}
@@ -487,7 +483,7 @@ export function UserPreferences({
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
-              {preferences.analysis.compareMode ? 'مفعّل' : 'معطّل'}
+              {preferences.analysis.compareMode ? '' : ''}
             </button>
           </div>
         </div>
@@ -501,7 +497,7 @@ export function UserPreferences({
           className="gap-2 border-gray-300 text-black hover:bg-gray-100"
         >
           <RotateCcw className="w-4 h-4" />
-          إعادة تعيين
+           
         </Button>
         <Button
           onClick={handleSave}
@@ -513,7 +509,7 @@ export function UserPreferences({
           }`}
         >
           <Save className="w-4 h-4" />
-          حفظ التغييرات
+          Save 
         </Button>
       </div>
 
@@ -521,7 +517,7 @@ export function UserPreferences({
       {hasChanges && (
         <Card className="p-4 border border-gray-200 bg-blue-50">
           <p className="text-sm text-gray-700">
-            ⚠️ لديك تغييرات غير محفوظة. اضغط على "حفظ التغييرات" لتطبيقها.
+            ⚠️    .   "Save " .
           </p>
         </Card>
       )}

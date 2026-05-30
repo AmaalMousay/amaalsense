@@ -36,7 +36,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
 
     return (
       <span className={`text-xs px-2 py-1 rounded-full ${color}`}>
-        {percentage}% ملاءمة
+        {percentage}% 
       </span>
     );
   };
@@ -48,7 +48,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-gray-200 flex items-center gap-2">
             <Lightbulb className="w-4 h-4 text-yellow-400" />
-            أسئلة متابعة مقترحة
+              
           </h3>
           <div className="grid gap-2">
             {followUpQuestions.map((q, idx) => (
@@ -78,7 +78,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-gray-200 flex items-center gap-2">
             <LinkIcon className="w-4 h-4 text-blue-400" />
-            موضوعات ذات صلة
+              
           </h3>
           <div className="flex flex-wrap gap-2">
             {relatedTopics.map((topic, idx) => (
@@ -101,7 +101,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-gray-200 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-red-400" />
-            تحذيرات مهمة
+             
           </h3>
           <div className="space-y-2">
             {importantWarnings.map((warning, idx) => (
@@ -121,7 +121,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
         relatedTopics.length === 0 &&
         importantWarnings.length === 0 && (
           <Card className="p-4 bg-gray-900/40 border-gray-700/50 text-center">
-            <p className="text-sm text-gray-400">لا توجد اقتراحات إضافية في الوقت الحالي</p>
+            <p className="text-sm text-gray-400">      </p>
           </Card>
         )}
     </div>

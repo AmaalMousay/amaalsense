@@ -1,6 +1,5 @@
 /**
  * Impact Prediction Timeline Component
- * الجدول الزمني للتنبؤ بالتأثير
  */
 
 import React from 'react';
@@ -28,32 +27,32 @@ export function ImpactPredictionTimeline({
   const displayPredictions: PredictionEvent[] = predictions.length > 0 ? predictions : [
     {
       timestamp: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      title: 'ارتفاع متوقع في التفاؤل',
-      description: 'من المتوقع أن ترتفع مستويات التفاؤل بنسبة 8-12% خلال الـ 24 ساعة القادمة',
+      title: '   ',
+      description: '       8-12%   24  ',
       impact: 'high',
       confidence: 85,
       category: 'positive'
     },
     {
       timestamp: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-      title: 'استقرار في المؤشرات',
-      description: 'المؤشرات العالمية ستشهد استقراراً نسبياً',
+      title: '  ',
+      description: '    ',
       impact: 'medium',
       confidence: 72,
       category: 'neutral'
     },
     {
       timestamp: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-      title: 'تحذير: قلق محتمل',
-      description: 'احتمالية ارتفاع مستويات القلق في بعض المناطق',
+      title: ':  ',
+      description: '      ',
       impact: 'medium',
       confidence: 68,
       category: 'warning'
     },
     {
       timestamp: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-      title: 'تحسن متوقع في المزاج العام',
-      description: 'تحسن ملحوظ في المزاج العام بنسبة 15%',
+      title: '    ',
+      description: '      15%',
       impact: 'high',
       confidence: 78,
       category: 'positive'
@@ -93,11 +92,11 @@ export function ImpactPredictionTimeline({
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
     if (days > 0) {
-      return `خلال ${days} ${days === 1 ? 'يوم' : 'أيام'}`;
+      return ` ${days} ${days === 1 ? '' : ''}`;
     } else if (hours > 0) {
-      return `خلال ${hours} ${hours === 1 ? 'ساعة' : 'ساعات'}`;
+      return ` ${hours} ${hours === 1 ? '' : ''}`;
     } else {
-      return 'قريباً';
+      return '';
     }
   };
 
@@ -106,7 +105,7 @@ export function ImpactPredictionTimeline({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-blue-500" />
-          التنبؤ بالتأثير - الجدول الزمني
+           Impact -  
         </CardTitle>
       </CardHeader>
 
@@ -142,9 +141,9 @@ export function ImpactPredictionTimeline({
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         <Badge variant="outline" className={getImpactColor(prediction.impact)}>
-                          {prediction.impact === 'high' && 'تأثير عالٍ'}
-                          {prediction.impact === 'medium' && 'تأثير متوسط'}
-                          {prediction.impact === 'low' && 'تأثير منخفض'}
+                          {prediction.impact === 'high' && ' '}
+                          {prediction.impact === 'medium' && ' '}
+                          {prediction.impact === 'low' && ' '}
                         </Badge>
                       </div>
                     </div>
@@ -157,7 +156,7 @@ export function ImpactPredictionTimeline({
                     {/* Confidence Bar */}
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">مستوى الثقة</span>
+                        <span className="text-muted-foreground"> Confidence</span>
                         <span className="font-semibold">{prediction.confidence}%</span>
                       </div>
                       <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
@@ -180,19 +179,19 @@ export function ImpactPredictionTimeline({
             <p className="text-2xl font-bold text-green-400">
               {displayPredictions.filter(p => p.category === 'positive').length}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">توقعات إيجابية</p>
+            <p className="text-xs text-muted-foreground mt-1"> </p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-yellow-400">
               {displayPredictions.filter(p => p.category === 'warning').length}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">تحذيرات</p>
+            <p className="text-xs text-muted-foreground mt-1"></p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-blue-400">
               {(displayPredictions.reduce((sum, p) => sum + p.confidence, 0) / displayPredictions.length).toFixed(0)}%
             </p>
-            <p className="text-xs text-muted-foreground mt-1">متوسط الثقة</p>
+            <p className="text-xs text-muted-foreground mt-1"> Confidence</p>
           </div>
         </div>
 
@@ -200,7 +199,7 @@ export function ImpactPredictionTimeline({
         <div className="p-3 rounded-lg bg-slate-800/30 border border-slate-700/30">
           <p className="text-xs text-muted-foreground">
             <AlertTriangle className="inline-block h-3 w-3 ml-1" />
-            التنبؤات مبنية على تحليل البيانات التاريخية والاتجاهات الحالية. النتائج الفعلية قد تختلف.
+               Analysis    .    .
           </p>
         </div>
       </CardContent>

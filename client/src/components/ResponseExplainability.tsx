@@ -2,10 +2,6 @@
 /**
  * RESPONSE EXPLAINABILITY - CONNECTED VERSION
  * 
- * يعرض شرح الاستجابة مع بيانات حقيقية من الخادم
- * - يستخدم explainabilityRouter.getResponseExplanation للحصول على البيانات
- * - يعرض الأسباب والمصادر والثقة
- * - يدعم التفاعل والاستفسارات المتقدمة
  */
 
 import React, { useMemo } from 'react';
@@ -65,10 +61,10 @@ export function ResponseExplainabilityConnected({
   };
 
   const getConfidenceLabel = (confidence: number) => {
-    if (confidence >= 80) return 'عالية جداً';
-    if (confidence >= 60) return 'عالية';
-    if (confidence >= 40) return 'متوسطة';
-    return 'منخفضة';
+    if (confidence >= 80) return ' ';
+    if (confidence >= 60) return '';
+    if (confidence >= 40) return '';
+    return '';
   };
 
   const toggleSection = (section: string) => {
@@ -80,7 +76,7 @@ export function ResponseExplainabilityConnected({
       <Card className="w-full p-8 bg-white border border-gray-200">
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
-          <span className="text-gray-600">جاري تحميل شرح الاستجابة...</span>
+          <span className="text-gray-600">   ...</span>
         </div>
       </Card>
     );
@@ -91,7 +87,7 @@ export function ResponseExplainabilityConnected({
       <Card className="w-full p-8 bg-white border border-red-200">
         <div className="flex items-center gap-2 text-red-600">
           <AlertCircle className="w-5 h-5" />
-          <span>خطأ في تحميل شرح الاستجابة</span>
+          <span>    </span>
         </div>
       </Card>
     );
@@ -102,33 +98,33 @@ export function ResponseExplainabilityConnected({
       {/* Question and Confidence */}
       <Card className="w-full p-6 bg-white border border-gray-200">
         <div className="mb-4">
-          <p className="text-sm text-gray-600 mb-2">السؤال:</p>
+          <p className="text-sm text-gray-600 mb-2">:</p>
           <p className="text-lg font-semibold text-gray-900">{explanation.question}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">مستوى الثقة</p>
+            <p className="text-sm text-gray-600 mb-1"> Confidence</p>
             <p className="text-2xl font-bold" style={{ color: getConfidenceColor(explanation.confidence) }}>
               {explanation.confidence.toFixed(0)}%
             </p>
             <p className="text-xs text-gray-500 mt-1">{getConfidenceLabel(explanation.confidence)}</p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">جودة البيانات</p>
+            <p className="text-sm text-gray-600 mb-1"> </p>
             <p className="text-2xl font-bold text-gray-900">{explanation.dataQuality.toFixed(0)}%</p>
-            <p className="text-xs text-gray-500 mt-1">معايير عالية</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">عدد المصادر</p>
+            <p className="text-sm text-gray-600 mb-1"> </p>
             <p className="text-2xl font-bold text-gray-900">{explanation.sources.length}</p>
-            <p className="text-xs text-gray-500 mt-1">مصدر موثوق</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
         </div>
 
         {/* Confidence Bar */}
         <div className="mt-4 flex items-center gap-3">
-          <span className="text-sm text-gray-600 w-16">الثقة:</span>
+          <span className="text-sm text-gray-600 w-16">Confidence:</span>
           <div className="flex-1 bg-gray-200 rounded h-3">
             <div
               className="h-full rounded transition-all"
@@ -149,7 +145,7 @@ export function ResponseExplainabilityConnected({
         >
           <div className="flex items-start gap-2">
             <FileText className="w-5 h-5 text-gray-900 mt-0.5" />
-            <h4 className="text-lg font-bold text-gray-900">السبب الرئيسي</h4>
+            <h4 className="text-lg font-bold text-gray-900"> </h4>
           </div>
           <span className="text-gray-600">{expandedSection === 'mainReason' ? '−' : '+'}</span>
         </button>
@@ -168,7 +164,7 @@ export function ResponseExplainabilityConnected({
             onClick={() => toggleSection('supportingReasons')}
             className="w-full flex items-center justify-between mb-4 hover:opacity-80 transition-opacity"
           >
-            <h4 className="text-lg font-bold text-gray-900">الأسباب الداعمة</h4>
+            <h4 className="text-lg font-bold text-gray-900"> </h4>
             <span className="text-gray-600">{expandedSection === 'supportingReasons' ? '−' : '+'}</span>
           </button>
 
@@ -176,7 +172,7 @@ export function ResponseExplainabilityConnected({
             <div className="space-y-3">
               {explanation.supportingReasons.map((reason, index) => (
                 <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <p className="text-sm font-semibold text-gray-900 mb-1">السبب {index + 1}:</p>
+                  <p className="text-sm font-semibold text-gray-900 mb-1"> {index + 1}:</p>
                   <p className="text-sm text-gray-700">{reason}</p>
                 </div>
               ))}
@@ -193,7 +189,7 @@ export function ResponseExplainabilityConnected({
         >
           <div className="flex items-center gap-2">
             <Link2 className="w-5 h-5 text-gray-900" />
-            <h4 className="text-lg font-bold text-gray-900">المصادر</h4>
+            <h4 className="text-lg font-bold text-gray-900"></h4>
           </div>
           <span className="text-gray-600">{expandedSection === 'sources' ? '−' : '+'}</span>
         </button>
@@ -210,7 +206,7 @@ export function ResponseExplainabilityConnected({
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-600 mb-1">الموثوقية</p>
+                    <p className="text-xs text-gray-600 mb-1"></p>
                     <p className="font-bold text-gray-900">{source.credibility.toFixed(0)}%</p>
                   </div>
                 </div>
@@ -230,7 +226,7 @@ export function ResponseExplainabilityConnected({
 
                 {/* Relevance */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-600 w-16">الملاءمة:</span>
+                  <span className="text-xs text-gray-600 w-16">:</span>
                   <div className="flex-1 bg-gray-200 rounded h-1.5">
                     <div
                       className="h-full rounded transition-all"
@@ -252,7 +248,7 @@ export function ResponseExplainabilityConnected({
                     rel="noopener noreferrer"
                     className="text-xs text-gray-600 hover:text-gray-900 mt-2 inline-block underline"
                   >
-                    عرض المصدر
+                     
                   </a>
                 )}
               </div>
@@ -268,7 +264,7 @@ export function ResponseExplainabilityConnected({
             onClick={() => toggleSection('limitations')}
             className="w-full flex items-center justify-between mb-4 hover:opacity-80 transition-opacity"
           >
-            <h4 className="text-lg font-bold text-gray-900">القيود والتحفظات</h4>
+            <h4 className="text-lg font-bold text-gray-900"> Save</h4>
             <span className="text-gray-600">{expandedSection === 'limitations' ? '−' : '+'}</span>
           </button>
 
@@ -291,7 +287,7 @@ export function ResponseExplainabilityConnected({
             onClick={() => toggleSection('perspectives')}
             className="w-full flex items-center justify-between mb-4 hover:opacity-80 transition-opacity"
           >
-            <h4 className="text-lg font-bold text-gray-900">وجهات نظر بديلة</h4>
+            <h4 className="text-lg font-bold text-gray-900">  </h4>
             <span className="text-gray-600">{expandedSection === 'perspectives' ? '−' : '+'}</span>
           </button>
 
@@ -299,7 +295,7 @@ export function ResponseExplainabilityConnected({
             <div className="space-y-3">
               {explanation.alternativePerspectives.map((perspective, index) => (
                 <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <p className="text-sm font-semibold text-gray-900 mb-1">الوجهة {index + 1}:</p>
+                  <p className="text-sm font-semibold text-gray-900 mb-1"> {index + 1}:</p>
                   <p className="text-sm text-gray-700">{perspective}</p>
                 </div>
               ))}
@@ -315,7 +311,7 @@ export function ResponseExplainabilityConnected({
             onClick={() => toggleSection('methodology')}
             className="w-full flex items-center justify-between mb-4 hover:opacity-80 transition-opacity"
           >
-            <h4 className="text-lg font-bold text-gray-900">المنهجية</h4>
+            <h4 className="text-lg font-bold text-gray-900"></h4>
             <span className="text-gray-600">{expandedSection === 'methodology' ? '−' : '+'}</span>
           </button>
 

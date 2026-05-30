@@ -382,7 +382,7 @@ export const es = {
     realTimeDataDesc: "Actualizaciones en vivo de múltiples fuentes",
     scientificPaper: "Artículo científico",
     paperTitle: "El nacimiento de la conciencia digital",
-    paperTitleAr: "ولادة الوعي الرقمي",
+    paperTitleAr: "  ",
     foundationalResearch: "La investigación fundamental detrás del motor Amaalsense",
     aiResearcher: "Investigadora de IA y teórica de la conciencia digital",
     location: "Ubicación",

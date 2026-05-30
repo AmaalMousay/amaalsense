@@ -1,6 +1,5 @@
 /**
  * Search Suggestions Component
- * مكون اقتراحات البحث
  */
 
 import React from 'react';
@@ -21,12 +20,12 @@ interface SearchSuggestionsProps {
 
 export function SearchSuggestions({ suggestions, onSuggestionClick }: SearchSuggestionsProps) {
   const defaultSuggestions: Suggestion[] = [
-    { text: 'المشاعر العالمية اليوم', category: 'trending', count: 1243 },
-    { text: 'تحليل الأمل والتفاؤل', category: 'trending', count: 856 },
-    { text: 'الاتجاهات الإقليمية', category: 'popular', count: 2341 },
-    { text: 'المؤشرات الاقتصادية', category: 'popular', count: 1876 },
-    { text: 'البحث السابق: المشاعر الاجتماعية', category: 'recent' },
-    { text: 'البحث السابق: تحليل الأزمات', category: 'recent' },
+    { text: 'Emotions  ', category: 'trending', count: 1243 },
+    { text: 'Analysis  ', category: 'trending', count: 856 },
+    { text: ' ', category: 'popular', count: 2341 },
+    { text: ' ', category: 'popular', count: 1876 },
+    { text: ' : Emotions ', category: 'recent' },
+    { text: ' : Analysis ', category: 'recent' },
   ];
 
   const displaySuggestions = suggestions || defaultSuggestions;
@@ -47,11 +46,11 @@ export function SearchSuggestions({ suggestions, onSuggestionClick }: SearchSugg
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'trending':
-        return 'رائج';
+        return '';
       case 'popular':
-        return 'شهير';
+        return '';
       case 'recent':
-        return 'حديث';
+        return '';
       default:
         return '';
     }
@@ -60,7 +59,7 @@ export function SearchSuggestions({ suggestions, onSuggestionClick }: SearchSugg
   return (
     <Card className="border-gray-300 bg-white">
       <CardHeader>
-        <CardTitle className="text-black">اقتراحات البحث</CardTitle>
+        <CardTitle className="text-black"> </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -79,7 +78,7 @@ export function SearchSuggestions({ suggestions, onSuggestionClick }: SearchSugg
                     <p className="text-sm font-medium text-black">{suggestion.text}</p>
                     {suggestion.count && (
                       <p className="text-xs text-gray-600 mt-1">
-                        {suggestion.count} نتيجة بحث
+                        {suggestion.count}  
                       </p>
                     )}
                   </div>

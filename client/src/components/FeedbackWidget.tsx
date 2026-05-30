@@ -49,7 +49,7 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
       <Card className="border-green-500/30 bg-green-500/5">
         <CardContent className="p-4 flex items-center gap-3">
           <CheckCircle className="w-5 h-5 text-green-500" />
-          <span className="text-green-400 text-sm font-medium">شكراً لتقييمك! يساعدنا هذا في تحسين دقة التحليل</span>
+          <span className="text-green-400 text-sm font-medium"> !      Analysis</span>
         </CardContent>
       </Card>
     );
@@ -61,7 +61,7 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
         <CardContent className="p-3 flex items-center justify-between">
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <MessageSquare className="w-4 h-4" />
-            <span>هل كان هذا التحليل مفيداً؟ قيّم لتحسين الدقة</span>
+            <span>   Analysis    </span>
           </div>
           <div className="flex gap-1">
             <Button variant="ghost" size="sm" className="h-7 px-2" onClick={(e) => { e.stopPropagation(); setWasHelpful("yes"); setRating(5); setIsExpanded(true); }}>
@@ -80,13 +80,13 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
     <Card className="border-primary/20 bg-primary/5">
       <CardContent className="p-4 space-y-4">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-semibold text-foreground">تقييم التحليل</h4>
-          <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => setIsExpanded(false)}>إغلاق</Button>
+          <h4 className="text-sm font-semibold text-foreground"> Analysis</h4>
+          <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => setIsExpanded(false)}>Close</Button>
         </div>
 
         {/* Star Rating */}
         <div className="space-y-1">
-          <label className="text-xs text-muted-foreground">التقييم العام</label>
+          <label className="text-xs text-muted-foreground"> </label>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -104,7 +104,7 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
               </button>
             ))}
             <span className="text-xs text-muted-foreground mr-2 self-center">
-              {rating > 0 ? ['', 'ضعيف', 'مقبول', 'جيد', 'جيد جداً', 'ممتاز'][rating] : ''}
+              {rating > 0 ? ['', '', '', '', ' ', ''][rating] : ''}
             </span>
           </div>
         </div>
@@ -112,12 +112,12 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
         {/* Quick Feedback Buttons */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">هل كان مفيداً؟</label>
+            <label className="text-xs text-muted-foreground">  </label>
             <div className="flex gap-1">
               {[
-                { value: "yes" as const, label: "نعم", icon: ThumbsUp, color: "text-green-500" },
-                { value: "partial" as const, label: "جزئياً", icon: null, color: "text-yellow-500" },
-                { value: "no" as const, label: "لا", icon: ThumbsDown, color: "text-red-500" },
+                { value: "yes" as const, label: "", icon: ThumbsUp, color: "text-green-500" },
+                { value: "partial" as const, label: "", icon: null, color: "text-yellow-500" },
+                { value: "no" as const, label: "", icon: ThumbsDown, color: "text-red-500" },
               ].map((opt) => (
                 <Button
                   key={opt.value}
@@ -133,12 +133,12 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">هل كان دقيقاً؟</label>
+            <label className="text-xs text-muted-foreground">  </label>
             <div className="flex gap-1">
               {[
-                { value: "yes" as const, label: "نعم" },
-                { value: "unsure" as const, label: "غير متأكد" },
-                { value: "no" as const, label: "لا" },
+                { value: "yes" as const, label: "" },
+                { value: "unsure" as const, label: " " },
+                { value: "no" as const, label: "" },
               ].map((opt) => (
                 <Button
                   key={opt.value}
@@ -156,11 +156,11 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
 
         {/* Comment */}
         <div className="space-y-1">
-          <label className="text-xs text-muted-foreground">ملاحظات إضافية (اختياري)</label>
+          <label className="text-xs text-muted-foreground">  ()</label>
           <Textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="أخبرنا كيف يمكننا تحسين التحليل..."
+            placeholder="    Analysis..."
             className="h-16 text-sm resize-none"
             maxLength={1000}
           />
@@ -176,12 +176,12 @@ export function FeedbackWidget({ question, response, topic, dominantEmotion, res
           {submitMutation.isPending ? (
             <span className="flex items-center gap-2">
               <span className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
-              جاري الإرسال...
+               ...
             </span>
           ) : (
             <span className="flex items-center gap-2">
               <Send className="w-4 h-4" />
-              إرسال التقييم
+               
             </span>
           )}
         </Button>

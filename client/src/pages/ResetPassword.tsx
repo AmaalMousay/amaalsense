@@ -55,17 +55,17 @@ export default function ResetPassword() {
     setError(null);
 
     if (!token) {
-      setError(isRTL ? 'رمز إعادة التعيين مفقود' : 'Reset token is missing');
+      setError(isRTL ? '   ' : 'Reset token is missing');
       return;
     }
 
     if (password.length < 8) {
-      setError(isRTL ? 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' : 'Password must be at least 8 characters');
+      setError(isRTL ? '     8   ' : 'Password must be at least 8 characters');
       return;
     }
 
     if (password !== confirmPassword) {
-      setError(isRTL ? 'كلمات المرور غير متطابقة' : 'Passwords do not match');
+      setError(isRTL ? '   ' : 'Passwords do not match');
       return;
     }
 
@@ -87,16 +87,16 @@ export default function ResetPassword() {
           <Card className="p-6 cosmic-card max-w-md w-full text-center">
             <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
             <h2 className="text-xl font-semibold mb-2">
-              {isRTL ? 'رابط غير صالح' : 'Invalid Link'}
+              {isRTL ? '  ' : 'Invalid Link'}
             </h2>
             <p className="text-muted-foreground mb-6">
               {isRTL 
-                ? 'رابط إعادة التعيين غير صالح أو منتهي الصلاحية.'
+                ? '       .'
                 : 'This reset link is invalid or has expired.'}
             </p>
             <Link href="/forgot-password">
               <Button className="glow-button text-white">
-                {isRTL ? 'طلب رابط جديد' : 'Request New Link'}
+                {isRTL ? '  ' : 'Request New Link'}
               </Button>
             </Link>
           </Card>
@@ -117,7 +117,7 @@ export default function ResetPassword() {
           <Link href="/login">
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="w-4 h-4" />
-              {isRTL ? 'العودة لتسجيل الدخول' : 'Back to Login'}
+              {isRTL ? '  ' : 'Back to Login'}
             </Button>
           </Link>
         </div>
@@ -129,11 +129,11 @@ export default function ResetPassword() {
           {/* Title */}
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold cosmic-text mb-2">
-              {isRTL ? 'إعادة تعيين كلمة المرور' : 'Reset Password'}
+              {isRTL ? '   ' : 'Reset Password'}
             </h2>
             <p className="text-muted-foreground">
               {isRTL 
-                ? 'أدخل كلمة المرور الجديدة'
+                ? '   '
                 : 'Enter your new password'}
             </p>
           </div>
@@ -145,16 +145,16 @@ export default function ResetPassword() {
                   <CheckCircle className="w-8 h-8 text-green-500" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">
-                  {isRTL ? 'تم تغيير كلمة المرور!' : 'Password Changed!'}
+                  {isRTL ? '   !' : 'Password Changed!'}
                 </h3>
                 <p className="text-muted-foreground mb-6">
                   {isRTL 
-                    ? 'يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.'
+                    ? '      .'
                     : 'You can now log in with your new password.'}
                 </p>
                 <Link href="/login">
                   <Button className="glow-button text-white">
-                    {isRTL ? 'تسجيل الدخول' : 'Sign In'}
+                    {isRTL ? ' ' : 'Sign In'}
                   </Button>
                 </Link>
               </div>
@@ -170,7 +170,7 @@ export default function ResetPassword() {
 
                 <div className="space-y-2">
                   <Label htmlFor="password">
-                    {isRTL ? 'كلمة المرور الجديدة' : 'New Password'}
+                    {isRTL ? '  ' : 'New Password'}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -178,7 +178,7 @@ export default function ResetPassword() {
                       id="password"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder={isRTL ? 'أدخل كلمة المرور الجديدة' : 'Enter new password'}
+                      placeholder={isRTL ? '   ' : 'Enter new password'}
                       className="pl-10 pr-10"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -212,8 +212,8 @@ export default function ResetPassword() {
                         passwordStrength.score <= 4 ? 'text-yellow-500' : 'text-green-500'
                       }`}>
                         {isRTL ? (
-                          passwordStrength.score <= 2 ? 'ضعيفة' : 
-                          passwordStrength.score <= 4 ? 'متوسطة' : 'قوية'
+                          passwordStrength.score <= 2 ? '' : 
+                          passwordStrength.score <= 4 ? '' : ''
                         ) : passwordStrength.label}
                       </p>
                     </div>
@@ -222,7 +222,7 @@ export default function ResetPassword() {
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">
-                    {isRTL ? 'تأكيد كلمة المرور' : 'Confirm Password'}
+                    {isRTL ? '  ' : 'Confirm Password'}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -230,7 +230,7 @@ export default function ResetPassword() {
                       id="confirmPassword"
                       name="confirmPassword"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder={isRTL ? 'أعد إدخال كلمة المرور' : 'Confirm password'}
+                      placeholder={isRTL ? '   ' : 'Confirm password'}
                       className="pl-10"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
@@ -240,7 +240,7 @@ export default function ResetPassword() {
                   </div>
                   {confirmPassword && password !== confirmPassword && (
                     <p className="text-xs text-red-500">
-                      {isRTL ? 'كلمات المرور غير متطابقة' : 'Passwords do not match'}
+                      {isRTL ? '   ' : 'Passwords do not match'}
                     </p>
                   )}
                 </div>
@@ -253,10 +253,10 @@ export default function ResetPassword() {
                   {resetMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {isRTL ? 'جاري التغيير...' : 'Changing...'}
+                      {isRTL ? ' ...' : 'Changing...'}
                     </>
                   ) : (
-                    isRTL ? 'تغيير كلمة المرور' : 'Change Password'
+                    isRTL ? '  ' : 'Change Password'
                   )}
                 </Button>
               </form>

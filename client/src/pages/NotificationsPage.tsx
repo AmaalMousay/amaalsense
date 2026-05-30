@@ -1,8 +1,6 @@
 /**
- * صفحة الإشعارات الشاملة
  * Comprehensive Notifications Page
  * 
- * عرض جميع الإشعارات مع التصفية والفرز
  */
 
 import React, { useState } from "react";
@@ -45,8 +43,8 @@ const mockNotifications: Notification[] = [
   {
     id: "1",
     type: "indicator_change",
-    title: "ارتفاع مؤشر المشاعر العالمية",
-    message: "ارتفع مؤشر المشاعر العالمية من 65.2 إلى 72.8 (زيادة 7.6 نقطة)",
+    title: "  Emotions ",
+    message: "  Emotions   65.2  72.8 ( 7.6 )",
     severity: "high",
     timestamp: new Date(Date.now() - 30 * 60000),
     read: false,
@@ -55,8 +53,8 @@ const mockNotifications: Notification[] = [
   {
     id: "2",
     type: "emotion_shift",
-    title: "تغيير العاطفة السائدة",
-    message: 'تغيرت العاطفة السائدة من "الحزن" إلى "الأمل" بثقة 87%',
+    title: "  ",
+    message: '    "Sadness"  ""  87%',
     severity: "medium",
     timestamp: new Date(Date.now() - 2 * 60 * 60000),
     read: false,
@@ -65,8 +63,8 @@ const mockNotifications: Notification[] = [
   {
     id: "3",
     type: "anomaly",
-    title: "شذوذ في منطقة الشرق الأوسط",
-    message: "تم اكتشاف شذوذ غير عادي في نمط المشاعر في منطقة الشرق الأوسط",
+    title: "    ",
+    message: "       Emotions    ",
     severity: "high",
     timestamp: new Date(Date.now() - 4 * 60 * 60000),
     read: true,
@@ -75,8 +73,8 @@ const mockNotifications: Notification[] = [
   {
     id: "4",
     type: "trending",
-    title: "موضوع جديد متجه للانتشار",
-    message: 'موضوع "التغير المناخي" يتجه للانتشار في آسيا بدرجة 89%',
+    title: "   ",
+    message: ' " "      89%',
     severity: "medium",
     timestamp: new Date(Date.now() - 6 * 60 * 60000),
     read: true,
@@ -85,8 +83,8 @@ const mockNotifications: Notification[] = [
   {
     id: "5",
     type: "impact",
-    title: "حدث ذو تأثير عالي جداً",
-    message: 'اكتشفنا حدثاً عن "الأزمة الاقتصادية" بدرجة تأثير 92%',
+    title: "    ",
+    message: '   " "   92%',
     severity: "critical",
     timestamp: new Date(Date.now() - 8 * 60 * 60000),
     read: false,
@@ -95,8 +93,8 @@ const mockNotifications: Notification[] = [
   {
     id: "6",
     type: "indicator_change",
-    title: "انخفاض مؤشر الثقة الجماعية",
-    message: "انخفض مؤشر الثقة الجماعية من 58.3 إلى 51.7 (انخفاض 6.6 نقطة)",
+    title: "  Confidence ",
+    message: "  Confidence   58.3  51.7 ( 6.6 )",
     severity: "high",
     timestamp: new Date(Date.now() - 12 * 60 * 60000),
     read: true,
@@ -147,9 +145,9 @@ function formatTime(date: Date): string {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 60) return `قبل ${minutes} دقيقة`;
-  if (hours < 24) return `قبل ${hours} ساعة`;
-  if (days < 7) return `قبل ${days} يوم`;
+  if (minutes < 60) return ` ${minutes} `;
+  if (hours < 24) return ` ${hours} `;
+  if (days < 7) return ` ${days} `;
   return date.toLocaleDateString("ar-SA");
 }
 
@@ -189,12 +187,12 @@ function NotificationCard({
             <div className="flex items-center gap-2 mt-3">
               <Badge className={getSeverityColor(notification.severity)}>
                 {notification.severity === "critical"
-                  ? "حرج"
+                  ? ""
                   : notification.severity === "high"
-                  ? "عالي"
+                  ? ""
                   : notification.severity === "medium"
-                  ? "متوسط"
-                  : "منخفض"}
+                  ? ""
+                  : ""}
               </Badge>
 
               <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -271,10 +269,10 @@ export default function NotificationsPage() {
             <div>
               <h1 className="text-3xl font-bold flex items-center gap-2">
                 <Bell className="h-8 w-8" />
-                الإشعارات
+                
               </h1>
               <p className="text-muted-foreground mt-2">
-                {unreadCount} إشعار غير مقروء من {notifications.length} إشعار
+                {unreadCount}     {notifications.length} 
               </p>
             </div>
 
@@ -283,7 +281,7 @@ export default function NotificationsPage() {
                 onClick={handleMarkAllAsRead}
                 className="bg-gradient-to-r from-purple-500 to-blue-500"
               >
-                وضع علامة على الكل كمقروء
+                    
               </Button>
             )}
           </div>
@@ -297,40 +295,40 @@ export default function NotificationsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Filter className="h-5 w-5" />
-              الفلاتر
+              
             </CardTitle>
           </CardHeader>
 
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">نوع الإشعار</label>
+                <label className="text-sm font-semibold"> </label>
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded"
                 >
-                  <option value="all">الكل</option>
-                  <option value="indicator_change">تغيير المؤشرات</option>
-                  <option value="emotion_shift">تغيير العاطفة</option>
-                  <option value="anomaly">الشذوذ</option>
-                  <option value="trending">الموضوعات المتجهة</option>
-                  <option value="impact">التأثير العالي</option>
+                  <option value="all"></option>
+                  <option value="indicator_change"> </option>
+                  <option value="emotion_shift"> </option>
+                  <option value="anomaly"></option>
+                  <option value="trending">Topic </option>
+                  <option value="impact">Impact </option>
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-semibold">مستوى الخطورة</label>
+                <label className="text-sm font-semibold"> </label>
                 <select
                   value={filterSeverity}
                   onChange={(e) => setFilterSeverity(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded"
                 >
-                  <option value="all">الكل</option>
-                  <option value="critical">حرج</option>
-                  <option value="high">عالي</option>
-                  <option value="medium">متوسط</option>
-                  <option value="low">منخفض</option>
+                  <option value="all"></option>
+                  <option value="critical"></option>
+                  <option value="high"></option>
+                  <option value="medium"></option>
+                  <option value="low"></option>
                 </select>
               </div>
             </div>
@@ -352,7 +350,7 @@ export default function NotificationsPage() {
             <Card className="border-slate-700/50">
               <CardContent className="pt-12 pb-12 text-center">
                 <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-muted-foreground">لا توجد إشعارات</p>
+                <p className="text-muted-foreground">  </p>
               </CardContent>
             </Card>
           )}
@@ -363,7 +361,7 @@ export default function NotificationsPage() {
           <Card className="border-slate-700/50">
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-muted-foreground text-sm">إجمالي الإشعارات</p>
+                <p className="text-muted-foreground text-sm"> </p>
                 <p className="text-3xl font-bold mt-2">{notifications.length}</p>
               </div>
             </CardContent>
@@ -372,7 +370,7 @@ export default function NotificationsPage() {
           <Card className="border-slate-700/50">
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-muted-foreground text-sm">غير مقروءة</p>
+                <p className="text-muted-foreground text-sm"> </p>
                 <p className="text-3xl font-bold mt-2 text-red-500">
                   {unreadCount}
                 </p>
@@ -383,7 +381,7 @@ export default function NotificationsPage() {
           <Card className="border-slate-700/50">
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-muted-foreground text-sm">حرجة</p>
+                <p className="text-muted-foreground text-sm"></p>
                 <p className="text-3xl font-bold mt-2 text-red-600">
                   {notifications.filter((n) => n.severity === "critical").length}
                 </p>
@@ -394,7 +392,7 @@ export default function NotificationsPage() {
           <Card className="border-slate-700/50">
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-muted-foreground text-sm">اليوم</p>
+                <p className="text-muted-foreground text-sm"></p>
                 <p className="text-3xl font-bold mt-2">
                   {
                     notifications.filter(

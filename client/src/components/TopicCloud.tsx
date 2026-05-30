@@ -1,6 +1,5 @@
 /**
  * Topic Cloud Component
- * سحابة الموضوعات - عرض الموضوعات الرائجة بأحجام مختلفة
  */
 
 import React from 'react';
@@ -26,18 +25,18 @@ export function TopicCloud({
 }: TopicCloudProps) {
   // Generate mock topics if not provided
   const displayTopics: Topic[] = topics.length > 0 ? topics : [
-    { text: 'الاقتصاد العالمي', weight: 95, trend: 'up', category: 'economy' },
-    { text: 'التغير المناخي', weight: 88, trend: 'up', category: 'environment' },
-    { text: 'التكنولوجيا', weight: 82, trend: 'stable', category: 'tech' },
-    { text: 'الصحة العامة', weight: 75, trend: 'down', category: 'health' },
-    { text: 'التعليم', weight: 70, trend: 'up', category: 'education' },
-    { text: 'الطاقة المتجددة', weight: 65, trend: 'up', category: 'environment' },
-    { text: 'الذكاء الاصطناعي', weight: 60, trend: 'up', category: 'tech' },
-    { text: 'الأمن السيبراني', weight: 55, trend: 'stable', category: 'tech' },
-    { text: 'التنمية المستدامة', weight: 50, trend: 'up', category: 'environment' },
-    { text: 'الابتكار', weight: 45, trend: 'stable', category: 'tech' },
-    { text: 'السياسة الدولية', weight: 40, trend: 'down', category: 'politics' },
-    { text: 'الرياضة', weight: 35, trend: 'stable', category: 'sports' },
+    { text: ' ', weight: 95, trend: 'up', category: 'economy' },
+    { text: ' ', weight: 88, trend: 'up', category: 'environment' },
+    { text: '', weight: 82, trend: 'stable', category: 'tech' },
+    { text: ' ', weight: 75, trend: 'down', category: 'health' },
+    { text: '', weight: 70, trend: 'up', category: 'education' },
+    { text: ' ', weight: 65, trend: 'up', category: 'environment' },
+    { text: ' ', weight: 60, trend: 'up', category: 'tech' },
+    { text: ' ', weight: 55, trend: 'stable', category: 'tech' },
+    { text: ' ', weight: 50, trend: 'up', category: 'environment' },
+    { text: '', weight: 45, trend: 'stable', category: 'tech' },
+    { text: ' ', weight: 40, trend: 'down', category: 'politics' },
+    { text: '', weight: 35, trend: 'stable', category: 'sports' },
   ];
 
   const maxWeight = Math.max(...displayTopics.map(t => t.weight));
@@ -83,7 +82,7 @@ export function TopicCloud({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Cloud className="h-5 w-5 text-cyan-500" />
-          سحابة الموضوعات
+           Topic
         </CardTitle>
       </CardHeader>
 
@@ -111,11 +110,11 @@ export function TopicCloud({
                 
                 {/* Tooltip */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                  <p className="text-xs font-semibold">الوزن: {topic.weight}</p>
+                  <p className="text-xs font-semibold">: {topic.weight}</p>
                   <p className="text-xs text-muted-foreground">
-                    {topic.trend === 'up' && 'رائج ↑'}
-                    {topic.trend === 'down' && 'متراجع ↓'}
-                    {topic.trend === 'stable' && 'مستقر →'}
+                    {topic.trend === 'up' && ' ↑'}
+                    {topic.trend === 'down' && ' ↓'}
+                    {topic.trend === 'stable' && ' →'}
                   </p>
                 </div>
               </button>
@@ -125,7 +124,7 @@ export function TopicCloud({
 
         {/* Category Breakdown */}
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">التصنيفات</p>
+          <p className="text-sm font-semibold text-muted-foreground"></p>
           <div className="flex flex-wrap gap-2">
             {Array.from(new Set(displayTopics.map(t => t.category).filter(Boolean))).map((category) => {
               const count = displayTopics.filter(t => t.category === category).length;
@@ -145,7 +144,7 @@ export function TopicCloud({
 
         {/* Top Trending Topics */}
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground">الموضوعات الأكثر رواجاً</p>
+          <p className="text-sm font-semibold text-muted-foreground">Topic  </p>
           <div className="space-y-2">
             {displayTopics
               .filter(t => t.trend === 'up')
@@ -172,17 +171,17 @@ export function TopicCloud({
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">إجمالي الموضوعات</p>
+            <p className="text-xs text-muted-foreground"> Topic</p>
             <p className="text-2xl font-bold text-cyan-400 mt-1">{displayTopics.length}</p>
           </div>
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">رائجة</p>
+            <p className="text-xs text-muted-foreground"></p>
             <p className="text-2xl font-bold text-green-400 mt-1">
               {displayTopics.filter(t => t.trend === 'up').length}
             </p>
           </div>
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">متراجعة</p>
+            <p className="text-xs text-muted-foreground"></p>
             <p className="text-2xl font-bold text-red-400 mt-1">
               {displayTopics.filter(t => t.trend === 'down').length}
             </p>

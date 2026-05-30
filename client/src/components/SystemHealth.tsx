@@ -1,10 +1,6 @@
 /**
  * SYSTEM HEALTH COMPONENT
  * 
- * صحة النظام
- * - مراقبة الأداء
- * - التنبيهات الفورية
- * - السجلات التاريخية
  */
 
 import React, { useState, useEffect } from 'react';
@@ -34,7 +30,7 @@ export function SystemHealth({
 }: SystemHealthProps) {
   const [metrics, setMetrics] = useState<HealthMetric[]>([
     {
-      name: 'استخدام CPU',
+      name: ' CPU',
       status: 'healthy',
       value: 45,
       unit: '%',
@@ -43,7 +39,7 @@ export function SystemHealth({
       lastUpdated: new Date()
     },
     {
-      name: 'استخدام الذاكرة',
+      name: ' ',
       status: 'warning',
       value: 72,
       unit: '%',
@@ -52,7 +48,7 @@ export function SystemHealth({
       lastUpdated: new Date()
     },
     {
-      name: 'توفر قاعدة البيانات',
+      name: '  ',
       status: 'healthy',
       value: 99.9,
       unit: '%',
@@ -61,7 +57,7 @@ export function SystemHealth({
       lastUpdated: new Date()
     },
     {
-      name: 'سرعة الاستجابة',
+      name: ' ',
       status: 'healthy',
       value: 125,
       unit: 'ms',
@@ -70,7 +66,7 @@ export function SystemHealth({
       lastUpdated: new Date()
     },
     {
-      name: 'معدل الخطأ',
+      name: ' ',
       status: 'healthy',
       value: 0.02,
       unit: '%',
@@ -79,7 +75,7 @@ export function SystemHealth({
       lastUpdated: new Date()
     },
     {
-      name: 'مساحة التخزين',
+      name: ' ',
       status: 'critical',
       value: 92,
       unit: '%',
@@ -176,9 +172,9 @@ export function SystemHealth({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-black">صحة النظام</h2>
+          <h2 className="text-2xl font-bold text-black"> </h2>
           <p className="text-sm text-gray-600 mt-1">
-            مراقبة فعلية لأداء وصحة النظام
+                
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -189,7 +185,7 @@ export function SystemHealth({
               onChange={(e) => setAutoRefresh(e.target.checked)}
               className="w-4 h-4"
             />
-            <span className="text-gray-700">تحديث فوري</span>
+            <span className="text-gray-700"> </span>
           </label>
           {autoRefresh && (
             <select
@@ -197,10 +193,10 @@ export function SystemHealth({
               onChange={(e) => setRefreshInterval(parseInt(e.target.value))}
               className="px-2 py-1 rounded border border-gray-300 text-sm"
             >
-              <option value="5">كل 5 ثوان</option>
-              <option value="10">كل 10 ثوان</option>
-              <option value="30">كل 30 ثانية</option>
-              <option value="60">كل دقيقة</option>
+              <option value="5"> 5 </option>
+              <option value="10"> 10 </option>
+              <option value="30"> 30 </option>
+              <option value="60"> </option>
             </select>
           )}
         </div>
@@ -211,7 +207,7 @@ export function SystemHealth({
         <Card className="p-4 border border-green-200 bg-green-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">سليم</p>
+              <p className="text-sm text-gray-600"></p>
               <p className="text-2xl font-bold text-green-600 mt-1">{healthyCount}</p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-400" />
@@ -221,7 +217,7 @@ export function SystemHealth({
         <Card className="p-4 border border-yellow-200 bg-yellow-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">تحذير</p>
+              <p className="text-sm text-gray-600"></p>
               <p className="text-2xl font-bold text-yellow-600 mt-1">{warningCount}</p>
             </div>
             <AlertTriangle className="w-8 h-8 text-yellow-400" />
@@ -231,7 +227,7 @@ export function SystemHealth({
         <Card className="p-4 border border-red-200 bg-red-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">حرج</p>
+              <p className="text-sm text-gray-600"></p>
               <p className="text-2xl font-bold text-red-600 mt-1">{criticalCount}</p>
             </div>
             <AlertTriangle className="w-8 h-8 text-red-400" />
@@ -253,17 +249,17 @@ export function SystemHealth({
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-start gap-3 flex-1">
                   <div className="mt-1">
-                    {metric.name === 'استخدام CPU' && <Zap className="w-5 h-5 text-gray-600" />}
-                    {metric.name === 'مساحة التخزين' && <Database className="w-5 h-5 text-gray-600" />}
-                    {metric.name === 'استخدام الذاكرة' && <Server className="w-5 h-5 text-gray-600" />}
-                    {!['استخدام CPU', 'مساحة التخزين', 'استخدام الذاكرة'].includes(metric.name) && (
+                    {metric.name === ' CPU' && <Zap className="w-5 h-5 text-gray-600" />}
+                    {metric.name === ' ' && <Database className="w-5 h-5 text-gray-600" />}
+                    {metric.name === ' ' && <Server className="w-5 h-5 text-gray-600" />}
+                    {![' CPU', ' ', ' '].includes(metric.name) && (
                       <Activity className="w-5 h-5 text-gray-600" />
                     )}
                   </div>
                   <div>
                     <h4 className="font-semibold text-black">{metric.name}</h4>
                     <p className="text-xs text-gray-600 mt-1">
-                      الحد الأقصى: {metric.threshold}{metric.unit}
+                       : {metric.threshold}{metric.unit}
                     </p>
                   </div>
                 </div>
@@ -277,9 +273,9 @@ export function SystemHealth({
                     {metric.value}{metric.unit}
                   </p>
                   <Badge className={`text-xs ${getStatusBadge(metric.status)}`}>
-                    {metric.status === 'healthy' && 'سليم'}
-                    {metric.status === 'warning' && 'تحذير'}
-                    {metric.status === 'critical' && 'حرج'}
+                    {metric.status === 'healthy' && ''}
+                    {metric.status === 'warning' && ''}
+                    {metric.status === 'critical' && ''}
                   </Badge>
                 </div>
 
@@ -311,7 +307,7 @@ export function SystemHealth({
                   </span>
                 </div>
                 <span className="text-gray-600 text-xs">
-                  آخر تحديث: {metric.lastUpdated.toLocaleTimeString('ar-SA')}
+                   : {metric.lastUpdated.toLocaleTimeString('ar-SA')}
                 </span>
               </div>
             </Card>
@@ -324,7 +320,7 @@ export function SystemHealth({
         <Card className="p-6 border-2 border-red-200 bg-red-50">
           <h3 className="font-semibold text-black mb-4 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-red-600" />
-            التنبيهات النشطة
+             
           </h3>
 
           <div className="space-y-2">
@@ -335,11 +331,11 @@ export function SystemHealth({
                   <div>
                     <p className="text-sm font-medium text-black">{metric.name}</p>
                     <p className="text-xs text-gray-600 mt-1">
-                      القيمة الحالية: {metric.value}{metric.unit} (الحد: {metric.threshold}{metric.unit})
+                       : {metric.value}{metric.unit} (: {metric.threshold}{metric.unit})
                     </p>
                   </div>
                   <Badge className={`text-xs ${getStatusBadge(metric.status)}`}>
-                    {metric.status === 'warning' ? 'تحذير' : 'حرج'}
+                    {metric.status === 'warning' ? '' : ''}
                   </Badge>
                 </div>
               ))}
@@ -347,7 +343,7 @@ export function SystemHealth({
 
           <Button className="w-full mt-4 gap-2 bg-red-600 text-white hover:bg-red-700">
             <AlertTriangle className="w-4 h-4" />
-            اتخاذ إجراء
+             
           </Button>
         </Card>
       )}
@@ -356,32 +352,32 @@ export function SystemHealth({
       <Card className="p-6 border border-gray-200">
         <h3 className="font-semibold text-black mb-4 flex items-center gap-2">
           <Server className="w-5 h-5" />
-          معلومات النظام
+           
         </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-xs text-gray-600">الإصدار</p>
+            <p className="text-xs text-gray-600"></p>
             <p className="text-sm font-medium text-black mt-1">v2.4.1</p>
           </div>
           <div>
-            <p className="text-xs text-gray-600">وقت التشغيل</p>
-            <p className="text-sm font-medium text-black mt-1">45 يوم 12 ساعة</p>
+            <p className="text-xs text-gray-600"> </p>
+            <p className="text-sm font-medium text-black mt-1">45  12 </p>
           </div>
           <div>
-            <p className="text-xs text-gray-600">البيئة</p>
-            <p className="text-sm font-medium text-black mt-1">الإنتاج</p>
+            <p className="text-xs text-gray-600"></p>
+            <p className="text-sm font-medium text-black mt-1"></p>
           </div>
           <div>
-            <p className="text-xs text-gray-600">معالج</p>
+            <p className="text-xs text-gray-600"></p>
             <p className="text-sm font-medium text-black mt-1">Intel Xeon</p>
           </div>
           <div>
-            <p className="text-xs text-gray-600">الذاكرة الكلية</p>
+            <p className="text-xs text-gray-600"> </p>
             <p className="text-sm font-medium text-black mt-1">64 GB</p>
           </div>
           <div>
-            <p className="text-xs text-gray-600">التخزين الكلي</p>
+            <p className="text-xs text-gray-600"> </p>
             <p className="text-sm font-medium text-black mt-1">2 TB</p>
           </div>
         </div>

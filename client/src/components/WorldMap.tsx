@@ -2,10 +2,6 @@
 /**
  * WORLD MAP - CONNECTED VERSION
  * 
- * يعرض خريطة العالم مع مؤشرات GMI/CFI/HRI الحقيقية
- * - يستخدم mapDataRouter.getWorldMapData للحصول على البيانات
- * - يعرض المؤشرات على مستوى العالم
- * - يسمح بالتفاعل والتحليل المقارن بين الدول
  */
 
 import React, { useMemo } from 'react';
@@ -71,12 +67,12 @@ export function WorldMapConnected({
 
   const getEmotionLabel = (emotion: string) => {
     const labels: Record<string, string> = {
-      joy: 'فرح',
-      fear: 'خوف',
-      anger: 'غضب',
-      sadness: 'حزن',
-      hope: 'أمل',
-      curiosity: 'فضول'
+      joy: 'Joy',
+      fear: 'Fear',
+      anger: 'Anger',
+      sadness: 'Sadness',
+      hope: '',
+      curiosity: ''
     };
     return labels[emotion] || emotion;
   };
@@ -86,7 +82,7 @@ export function WorldMapConnected({
       <Card className="w-full p-8 bg-white border border-gray-200">
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
-          <span className="text-gray-600">جاري تحميل خريطة العالم...</span>
+          <span className="text-gray-600">   ...</span>
         </div>
       </Card>
     );
@@ -97,7 +93,7 @@ export function WorldMapConnected({
       <Card className="w-full p-8 bg-white border border-red-200">
         <div className="flex items-center gap-2 text-red-600">
           <AlertCircle className="w-5 h-5" />
-          <span>خطأ في تحميل خريطة العالم</span>
+          <span>    </span>
         </div>
       </Card>
     );
@@ -115,24 +111,24 @@ export function WorldMapConnected({
       <Card className="w-full p-6 bg-white border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Globe className="w-5 h-5 text-gray-900" />
-          <h3 className="text-lg font-bold text-gray-900">إحصائيات عالمية</h3>
+          <h3 className="text-lg font-bold text-gray-900"> </h3>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
             <p className="text-sm text-gray-600 mb-1">GMI (Global Mood Index)</p>
             <p className="text-3xl font-bold text-gray-900">{globalStats.avgGMI}</p>
-            <p className="text-xs text-gray-500 mt-1">متوسط عالمي</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
             <p className="text-sm text-gray-600 mb-1">CFI (Crisis Fear Index)</p>
             <p className="text-3xl font-bold text-gray-900">{globalStats.avgCFI}</p>
-            <p className="text-xs text-gray-500 mt-1">متوسط عالمي</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
             <p className="text-sm text-gray-600 mb-1">HRI (Hope Resilience Index)</p>
             <p className="text-3xl font-bold text-gray-900">{globalStats.avgHRI}</p>
-            <p className="text-xs text-gray-500 mt-1">متوسط عالمي</p>
+            <p className="text-xs text-gray-500 mt-1"> </p>
           </div>
         </div>
       </Card>
@@ -148,7 +144,7 @@ export function WorldMapConnected({
                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            ترتيب حسب GMI
+              GMI
           </button>
           <button
             onClick={() => setSortBy('cfi')}
@@ -158,7 +154,7 @@ export function WorldMapConnected({
                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            ترتيب حسب CFI
+              CFI
           </button>
           <button
             onClick={() => setSortBy('hri')}
@@ -168,14 +164,14 @@ export function WorldMapConnected({
                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            ترتيب حسب HRI
+              HRI
           </button>
         </div>
       </Card>
 
       {/* Countries Grid */}
       <Card className="w-full p-6 bg-white border border-gray-200">
-        <h4 className="text-lg font-bold text-gray-900 mb-4">الدول والمناطق</h4>
+        <h4 className="text-lg font-bold text-gray-900 mb-4"> </h4>
         
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {sortedCountries.map((country, index) => (
@@ -192,7 +188,7 @@ export function WorldMapConnected({
                 <div>
                   <p className="font-semibold text-lg">{country.country}</p>
                   <p className={`text-xs ${selectedCountry?.country === country.country ? 'text-gray-300' : 'text-gray-600'}`}>
-                    السكان: {(country.population / 1000000).toFixed(1)}M
+                    : {(country.population / 1000000).toFixed(1)}M
                   </p>
                 </div>
                 <div className="text-right">
@@ -242,7 +238,7 @@ export function WorldMapConnected({
       {selectedCountry && (
         <Card className="w-full p-6 bg-white border border-gray-200">
           <h4 className="text-lg font-bold text-gray-900 mb-4">
-            تحليل: {selectedCountry.country}
+            Analysis: {selectedCountry.country}
           </h4>
 
           <div className="grid grid-cols-3 gap-4 mb-6">
@@ -265,34 +261,34 @@ export function WorldMapConnected({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">العاطفة المهيمنة</p>
+              <p className="text-sm text-gray-600 mb-1"> </p>
               <p className="font-semibold text-gray-900">
                 {getEmotionLabel(selectedCountry.dominantEmotion)}
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">شدة العاطفة</p>
+              <p className="text-sm text-gray-600 mb-1"> </p>
               <p className="font-semibold text-gray-900">
                 {selectedCountry.emotionIntensity.toFixed(0)}%
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">السكان</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className="font-semibold text-gray-900">
                 {(selectedCountry.population / 1000000).toFixed(1)}M
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">الاتجاه</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className="font-semibold text-gray-900">
-                {selectedCountry.trend === 'increasing' ? 'تصاعدي' : selectedCountry.trend === 'decreasing' ? 'تنازلي' : 'مستقر'}
+                {selectedCountry.trend === 'increasing' ? '' : selectedCountry.trend === 'decreasing' ? '' : ''}
               </p>
             </div>
           </div>
 
           <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
             <p className="text-gray-600">
-              آخر تحديث: {new Date(selectedCountry.timestamp).toLocaleString('ar-SA')}
+               : {new Date(selectedCountry.timestamp).toLocaleString('ar-SA')}
             </p>
           </div>
         </Card>

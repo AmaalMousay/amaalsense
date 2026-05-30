@@ -2,10 +2,6 @@
 /**
  * LIVE ALERT SYSTEM COMPONENT
  * 
- * نظام التنبيهات الفورية
- * - اتصال WebSocket للتحديثات الحية
- * - عرض التنبيهات الفورية
- * - إدارة اتصالات الخادم
  */
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
@@ -118,50 +114,50 @@ export function LiveAlertSystem({
     switch (type) {
       case 'gmi_change':
         alertType = severity === 'critical' ? 'critical' : 'warning';
-        title = 'تغيير مؤشر المشاعر العالمية';
-        message = `تغير GMI من ${oldValue} إلى ${newValue}`;
+        title = '  Emotions ';
+        message = ` GMI  ${oldValue}  ${newValue}`;
         break;
 
       case 'cfi_change':
         alertType = severity === 'critical' ? 'critical' : 'warning';
-        title = 'تغيير مؤشر الثقة الجماعية';
-        message = `تغير CFI من ${oldValue} إلى ${newValue}`;
+        title = '  Confidence ';
+        message = ` CFI  ${oldValue}  ${newValue}`;
         break;
 
       case 'hri_change':
         alertType = severity === 'critical' ? 'critical' : 'warning';
-        title = 'تغيير مؤشر الأمل والمرونة';
-        message = `تغير HRI من ${oldValue} إلى ${newValue}`;
+        title = '   ';
+        message = ` HRI  ${oldValue}  ${newValue}`;
         break;
 
       case 'emotion_shift':
         alertType = 'warning';
-        title = 'تغيير العاطفة السائدة';
-        message = `تغيرت العاطفة من ${oldValue} إلى ${newValue}`;
+        title = '  ';
+        message = `   ${oldValue}  ${newValue}`;
         break;
 
       case 'anomaly_detected':
         alertType = 'critical';
-        title = 'شذوذ مكتشف';
-        message = `تم اكتشاف شذوذ بدرجة ${newValue} في ${metric}`;
+        title = ' ';
+        message = `    ${newValue}  ${metric}`;
         break;
 
       case 'trend_detected':
         alertType = 'info';
-        title = 'موضوع متجه للانتشار';
-        message = `${metric} يتجه للانتشار بدرجة ${newValue}`;
+        title = '  ';
+        message = `${metric}    ${newValue}`;
         break;
 
       case 'impact_event':
         alertType = 'critical';
-        title = 'حدث ذو تأثير عالي';
-        message = `حدث "${metric}" بدرجة تأثير ${newValue}`;
+        title = '   ';
+        message = ` "${metric}"   ${newValue}`;
         break;
 
       default:
         alertType = 'info';
-        title = 'إشعار جديد';
-        message = data.message || 'تم استقبال إشعار جديد';
+        title = ' ';
+        message = data.message || '   ';
     }
 
     const alert: CustomAlert = {
@@ -228,17 +224,17 @@ export function LiveAlertSystem({
           {isConnecting ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              جاري الاتصال...
+               ...
             </>
           ) : isConnected ? (
             <>
               <Wifi className="w-4 h-4" />
-              متصل
+              
             </>
           ) : (
             <>
               <WifiOff className="w-4 h-4" />
-              غير متصل
+               
             </>
           )}
         </div>

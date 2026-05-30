@@ -382,7 +382,7 @@ export const ru = {
     realTimeDataDesc: "Обновления в реальном времени из множества источников",
     scientificPaper: "Научная статья",
     paperTitle: "Рождение цифрового сознания",
-    paperTitleAr: "ولادة الوعي الرقمي",
+    paperTitleAr: "  ",
     foundationalResearch: "Фундаментальное исследование Amaalsense Engine",
     aiResearcher: "Исследователь ИИ и теоретик цифрового сознания",
     location: "Местоположение",

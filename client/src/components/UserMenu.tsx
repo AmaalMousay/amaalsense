@@ -90,21 +90,21 @@ export function UserMenu({ isRTL = false }: UserMenuProps) {
         <Link href="/user-dashboard">
           <DropdownMenuItem className="cursor-pointer gap-2">
             <LayoutDashboard className="w-4 h-4" />
-            <span>{isRTL ? 'لوحة التحكم' : 'Dashboard'}</span>
+            <span>{isRTL ? 'Dashboard' : 'Dashboard'}</span>
           </DropdownMenuItem>
         </Link>
         
         <Link href="/profile">
           <DropdownMenuItem className="cursor-pointer gap-2">
             <User className="w-4 h-4" />
-            <span>{isRTL ? 'الملف الشخصي' : 'Profile'}</span>
+            <span>{isRTL ? ' ' : 'Profile'}</span>
           </DropdownMenuItem>
         </Link>
         
         <Link href="/pricing">
           <DropdownMenuItem className="cursor-pointer gap-2">
             <CreditCard className="w-4 h-4" />
-            <span>{isRTL ? 'الاشتراك' : 'Subscription'}</span>
+            <span>{isRTL ? '' : 'Subscription'}</span>
           </DropdownMenuItem>
         </Link>
         
@@ -114,7 +114,7 @@ export function UserMenu({ isRTL = false }: UserMenuProps) {
             <Link href="/admin">
               <DropdownMenuItem className="cursor-pointer gap-2 text-primary">
                 <Shield className="w-4 h-4" />
-                <span>{isRTL ? 'لوحة الإدارة' : 'Admin Panel'}</span>
+                <span>{isRTL ? ' ' : 'Admin Panel'}</span>
               </DropdownMenuItem>
             </Link>
           </>
@@ -127,7 +127,7 @@ export function UserMenu({ isRTL = false }: UserMenuProps) {
           onClick={handleLogout}
         >
           <LogOut className="w-4 h-4" />
-          <span>{isRTL ? 'تسجيل الخروج' : 'Logout'}</span>
+          <span>{isRTL ? 'Logout' : 'Logout'}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -28,74 +28,74 @@ import { COUNTRIES } from '@/data/countries';
 // Country positions for the map
 const COUNTRY_POSITIONS: Record<string, { x: number; y: number; name: string; nameEn: string }> = {
   // Middle East & North Africa
-  'LY': { x: 52, y: 38, name: 'ليبيا', nameEn: 'Libya' },
-  'EG': { x: 54, y: 40, name: 'مصر', nameEn: 'Egypt' },
-  'SA': { x: 58, y: 44, name: 'السعودية', nameEn: 'Saudi Arabia' },
-  'AE': { x: 62, y: 44, name: 'الإمارات', nameEn: 'UAE' },
-  'IQ': { x: 58, y: 38, name: 'العراق', nameEn: 'Iraq' },
-  'SY': { x: 56, y: 36, name: 'سوريا', nameEn: 'Syria' },
-  'JO': { x: 56, y: 40, name: 'الأردن', nameEn: 'Jordan' },
-  'LB': { x: 56, y: 37, name: 'لبنان', nameEn: 'Lebanon' },
-  'PS': { x: 55, y: 39, name: 'فلسطين', nameEn: 'Palestine' },
-  'KW': { x: 60, y: 42, name: 'الكويت', nameEn: 'Kuwait' },
-  'QA': { x: 61, y: 44, name: 'قطر', nameEn: 'Qatar' },
-  'BH': { x: 61, y: 43, name: 'البحرين', nameEn: 'Bahrain' },
-  'OM': { x: 64, y: 46, name: 'عمان', nameEn: 'Oman' },
-  'YE': { x: 60, y: 48, name: 'اليمن', nameEn: 'Yemen' },
-  'MA': { x: 44, y: 38, name: 'المغرب', nameEn: 'Morocco' },
-  'DZ': { x: 48, y: 38, name: 'الجزائر', nameEn: 'Algeria' },
-  'TN': { x: 50, y: 36, name: 'تونس', nameEn: 'Tunisia' },
-  'SD': { x: 54, y: 48, name: 'السودان', nameEn: 'Sudan' },
+  'LY': { x: 52, y: 38, name: '', nameEn: 'Libya' },
+  'EG': { x: 54, y: 40, name: '', nameEn: 'Egypt' },
+  'SA': { x: 58, y: 44, name: '', nameEn: 'Saudi Arabia' },
+  'AE': { x: 62, y: 44, name: '', nameEn: 'UAE' },
+  'IQ': { x: 58, y: 38, name: '', nameEn: 'Iraq' },
+  'SY': { x: 56, y: 36, name: '', nameEn: 'Syria' },
+  'JO': { x: 56, y: 40, name: '', nameEn: 'Jordan' },
+  'LB': { x: 56, y: 37, name: '', nameEn: 'Lebanon' },
+  'PS': { x: 55, y: 39, name: '', nameEn: 'Palestine' },
+  'KW': { x: 60, y: 42, name: '', nameEn: 'Kuwait' },
+  'QA': { x: 61, y: 44, name: '', nameEn: 'Qatar' },
+  'BH': { x: 61, y: 43, name: '', nameEn: 'Bahrain' },
+  'OM': { x: 64, y: 46, name: '', nameEn: 'Oman' },
+  'YE': { x: 60, y: 48, name: '', nameEn: 'Yemen' },
+  'MA': { x: 44, y: 38, name: '', nameEn: 'Morocco' },
+  'DZ': { x: 48, y: 38, name: '', nameEn: 'Algeria' },
+  'TN': { x: 50, y: 36, name: '', nameEn: 'Tunisia' },
+  'SD': { x: 54, y: 48, name: '', nameEn: 'Sudan' },
   
   // Europe
-  'GB': { x: 46, y: 26, name: 'بريطانيا', nameEn: 'UK' },
-  'FR': { x: 48, y: 30, name: 'فرنسا', nameEn: 'France' },
-  'DE': { x: 50, y: 28, name: 'ألمانيا', nameEn: 'Germany' },
-  'IT': { x: 52, y: 32, name: 'إيطاليا', nameEn: 'Italy' },
-  'ES': { x: 44, y: 32, name: 'إسبانيا', nameEn: 'Spain' },
-  'NL': { x: 49, y: 27, name: 'هولندا', nameEn: 'Netherlands' },
-  'BE': { x: 48, y: 28, name: 'بلجيكا', nameEn: 'Belgium' },
-  'SE': { x: 52, y: 20, name: 'السويد', nameEn: 'Sweden' },
-  'NO': { x: 50, y: 18, name: 'النرويج', nameEn: 'Norway' },
-  'PL': { x: 54, y: 27, name: 'بولندا', nameEn: 'Poland' },
-  'UA': { x: 58, y: 28, name: 'أوكرانيا', nameEn: 'Ukraine' },
-  'RU': { x: 70, y: 20, name: 'روسيا', nameEn: 'Russia' },
-  'TR': { x: 56, y: 34, name: 'تركيا', nameEn: 'Turkey' },
-  'GR': { x: 54, y: 34, name: 'اليونان', nameEn: 'Greece' },
-  'CH': { x: 49, y: 30, name: 'سويسرا', nameEn: 'Switzerland' },
+  'GB': { x: 46, y: 26, name: '', nameEn: 'UK' },
+  'FR': { x: 48, y: 30, name: '', nameEn: 'France' },
+  'DE': { x: 50, y: 28, name: '', nameEn: 'Germany' },
+  'IT': { x: 52, y: 32, name: '', nameEn: 'Italy' },
+  'ES': { x: 44, y: 32, name: '', nameEn: 'Spain' },
+  'NL': { x: 49, y: 27, name: '', nameEn: 'Netherlands' },
+  'BE': { x: 48, y: 28, name: '', nameEn: 'Belgium' },
+  'SE': { x: 52, y: 20, name: '', nameEn: 'Sweden' },
+  'NO': { x: 50, y: 18, name: '', nameEn: 'Norway' },
+  'PL': { x: 54, y: 27, name: '', nameEn: 'Poland' },
+  'UA': { x: 58, y: 28, name: '', nameEn: 'Ukraine' },
+  'RU': { x: 70, y: 20, name: '', nameEn: 'Russia' },
+  'TR': { x: 56, y: 34, name: '', nameEn: 'Turkey' },
+  'GR': { x: 54, y: 34, name: '', nameEn: 'Greece' },
+  'CH': { x: 49, y: 30, name: '', nameEn: 'Switzerland' },
   
   // Americas
-  'US': { x: 20, y: 35, name: 'أمريكا', nameEn: 'USA' },
-  'CA': { x: 18, y: 25, name: 'كندا', nameEn: 'Canada' },
-  'MX': { x: 16, y: 42, name: 'المكسيك', nameEn: 'Mexico' },
-  'BR': { x: 30, y: 55, name: 'البرازيل', nameEn: 'Brazil' },
-  'AR': { x: 28, y: 68, name: 'الأرجنتين', nameEn: 'Argentina' },
-  'CO': { x: 24, y: 50, name: 'كولومبيا', nameEn: 'Colombia' },
-  'CL': { x: 26, y: 65, name: 'تشيلي', nameEn: 'Chile' },
+  'US': { x: 20, y: 35, name: '', nameEn: 'USA' },
+  'CA': { x: 18, y: 25, name: '', nameEn: 'Canada' },
+  'MX': { x: 16, y: 42, name: '', nameEn: 'Mexico' },
+  'BR': { x: 30, y: 55, name: '', nameEn: 'Brazil' },
+  'AR': { x: 28, y: 68, name: '', nameEn: 'Argentina' },
+  'CO': { x: 24, y: 50, name: '', nameEn: 'Colombia' },
+  'CL': { x: 26, y: 65, name: '', nameEn: 'Chile' },
   
   // Asia
-  'CN': { x: 72, y: 38, name: 'الصين', nameEn: 'China' },
-  'JP': { x: 82, y: 35, name: 'اليابان', nameEn: 'Japan' },
-  'KR': { x: 80, y: 36, name: 'كوريا الجنوبية', nameEn: 'South Korea' },
-  'IN': { x: 66, y: 45, name: 'الهند', nameEn: 'India' },
-  'PK': { x: 64, y: 40, name: 'باكستان', nameEn: 'Pakistan' },
-  'ID': { x: 74, y: 55, name: 'إندونيسيا', nameEn: 'Indonesia' },
-  'TH': { x: 72, y: 48, name: 'تايلاند', nameEn: 'Thailand' },
-  'VN': { x: 74, y: 48, name: 'فيتنام', nameEn: 'Vietnam' },
-  'MY': { x: 72, y: 52, name: 'ماليزيا', nameEn: 'Malaysia' },
-  'SG': { x: 73, y: 54, name: 'سنغافورة', nameEn: 'Singapore' },
-  'PH': { x: 78, y: 48, name: 'الفلبين', nameEn: 'Philippines' },
+  'CN': { x: 72, y: 38, name: '', nameEn: 'China' },
+  'JP': { x: 82, y: 35, name: '', nameEn: 'Japan' },
+  'KR': { x: 80, y: 36, name: ' ', nameEn: 'South Korea' },
+  'IN': { x: 66, y: 45, name: '', nameEn: 'India' },
+  'PK': { x: 64, y: 40, name: '', nameEn: 'Pakistan' },
+  'ID': { x: 74, y: 55, name: '', nameEn: 'Indonesia' },
+  'TH': { x: 72, y: 48, name: '', nameEn: 'Thailand' },
+  'VN': { x: 74, y: 48, name: '', nameEn: 'Vietnam' },
+  'MY': { x: 72, y: 52, name: '', nameEn: 'Malaysia' },
+  'SG': { x: 73, y: 54, name: '', nameEn: 'Singapore' },
+  'PH': { x: 78, y: 48, name: '', nameEn: 'Philippines' },
   
   // Africa
-  'NG': { x: 50, y: 50, name: 'نيجيريا', nameEn: 'Nigeria' },
-  'ZA': { x: 54, y: 68, name: 'جنوب أفريقيا', nameEn: 'South Africa' },
-  'KE': { x: 58, y: 54, name: 'كينيا', nameEn: 'Kenya' },
-  'ET': { x: 58, y: 50, name: 'إثيوبيا', nameEn: 'Ethiopia' },
-  'GH': { x: 46, y: 50, name: 'غانا', nameEn: 'Ghana' },
+  'NG': { x: 50, y: 50, name: '', nameEn: 'Nigeria' },
+  'ZA': { x: 54, y: 68, name: ' ', nameEn: 'South Africa' },
+  'KE': { x: 58, y: 54, name: '', nameEn: 'Kenya' },
+  'ET': { x: 58, y: 50, name: '', nameEn: 'Ethiopia' },
+  'GH': { x: 46, y: 50, name: '', nameEn: 'Ghana' },
   
   // Oceania
-  'AU': { x: 78, y: 65, name: 'أستراليا', nameEn: 'Australia' },
-  'NZ': { x: 86, y: 72, name: 'نيوزيلندا', nameEn: 'New Zealand' },
+  'AU': { x: 78, y: 65, name: '', nameEn: 'Australia' },
+  'NZ': { x: 86, y: 72, name: '', nameEn: 'New Zealand' },
 };
 
 // Function to determine mood from GMI, CFI, HRI
@@ -345,7 +345,7 @@ export default function Home() {
 
   const handleInstallApp = async () => {
     if (!deferredPrompt) {
-      alert(isRTL ? "عذراً، المتصفح لم يطلق طلب التثبيت بعد. حاول مجدداً لاحقاً أو استخدم قائمة المتصفح (إضافة إلى الشاشة الرئيسية)." : "Sorry, the install prompt is not available yet. Try again later or use your browser's 'Add to Home Screen' menu.");
+      alert(isRTL ? "      .        (   Home)." : "Sorry, the install prompt is not available yet. Try again later or use your browser's 'Add to Home Screen' menu.");
       return;
     }
     // Show the install prompt
@@ -428,16 +428,16 @@ export default function Home() {
   };
 
   const navLinks = [
-    { href: '/api-management', label: isRTL ? 'إدارة الـ API' : 'API Management', icon: <Zap className="w-4 h-4" /> },
-    { href: '/chat', label: isRTL ? 'المحلل (العدسة المعرفية)' : 'Analyzer Lens', icon: (
+    { href: '/api-management', label: isRTL ? '  API' : 'API Management', icon: <Zap className="w-4 h-4" /> },
+    { href: '/chat', label: isRTL ? ' ( )' : 'Analyzer Lens', icon: (
       <div className="relative">
         <Brain className="w-4 h-4" />
         <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-background animate-pulse" />
       </div>
     ) },
-    { href: '/indices', label: isRTL ? 'المؤشرات' : 'Indices', icon: <LineChart className="w-4 h-4" /> },
-    { href: '/search', label: isRTL ? 'بحث' : 'Search', icon: <Search className="w-4 h-4" /> },
-    { href: '/live-alerts', label: isRTL ? 'التنبيهات' : 'Alerts', icon: (
+    { href: '/indices', label: isRTL ? '' : 'Indices', icon: <LineChart className="w-4 h-4" /> },
+    { href: '/search', label: isRTL ? '' : 'Search', icon: <Search className="w-4 h-4" /> },
+    { href: '/live-alerts', label: isRTL ? '' : 'Alerts', icon: (
       <div className="relative">
         <AlertTriangle className={`w-4 h-4 ${indices && indices.cfi > 70 ? 'text-red-500 animate-bounce' : ''}`} />
         {indices && indices.cfi > 50 && (
@@ -445,12 +445,12 @@ export default function Home() {
         )}
       </div>
     ) },
-    { href: '/compare', label: isRTL ? 'مقارنة الدول' : 'Compare Countries', icon: <Compass className="w-4 h-4" /> },
+    { href: '/compare', label: isRTL ? ' ' : 'Compare Countries', icon: <Compass className="w-4 h-4" /> },
     { href: '/theory', label: t.nav.theory, icon: <Microscope className="w-4 h-4" /> },
-    { href: '/dcft', label: isRTL ? 'نظرية DCFT' : 'DCFT Theory', icon: <Layers className="w-4 h-4" /> },
-    { href: '/engine-dashboard', label: isRTL ? 'لوحة المحرك' : 'Engine Dashboard', icon: <Gauge className="w-4 h-4" /> },
-    { href: '/event-prediction', label: isRTL ? 'التنبؤات' : 'Predictions', icon: <Target className="w-4 h-4" /> },
-    { href: '/historical-events', label: isRTL ? 'الأحداث التاريخية' : 'Historical Events', icon: <Calendar className="w-4 h-4" /> },
+    { href: '/dcft', label: isRTL ? ' DCFT' : 'DCFT Theory', icon: <Layers className="w-4 h-4" /> },
+    { href: '/engine-dashboard', label: isRTL ? ' ' : 'Engine Dashboard', icon: <Gauge className="w-4 h-4" /> },
+    { href: '/event-prediction', label: isRTL ? '' : 'Predictions', icon: <Target className="w-4 h-4" /> },
+    { href: '/historical-events', label: isRTL ? ' ' : 'Historical Events', icon: <Calendar className="w-4 h-4" /> },
     { href: '/about', label: t.nav.about },
     { href: '/pricing', label: t.nav.pricing },
   ];
@@ -460,9 +460,9 @@ export default function Home() {
     { href: '/case-studies', label: t.nav.caseStudies, icon: <Building2 className="w-4 h-4" /> },
     { href: '/faq', label: t.nav.faq, icon: <HelpCircle className="w-4 h-4" /> },
     { href: '/blog', label: t.nav.blog, icon: <BookOpen className="w-4 h-4" /> },
-    { href: '/api-docs', label: isRTL ? 'وثائق API' : 'API Docs', icon: <FileText className="w-4 h-4" /> },
-    { href: '/use-cases', label: isRTL ? 'حالات الاستخدام' : 'Use Cases', icon: <Users className="w-4 h-4" /> },
-    { href: '/settings', label: isRTL ? 'الإعدادات' : 'Settings', icon: <Settings className="w-4 h-4" /> },
+    { href: '/api-docs', label: isRTL ? ' API' : 'API Docs', icon: <FileText className="w-4 h-4" /> },
+    { href: '/use-cases', label: isRTL ? ' ' : 'Use Cases', icon: <Users className="w-4 h-4" /> },
+    { href: '/settings', label: isRTL ? 'Settings' : 'Settings', icon: <Settings className="w-4 h-4" /> },
   ];
 
   return (
@@ -516,13 +516,13 @@ export default function Home() {
                 <Link href="/login">
                   <Button variant="ghost" size="sm" className="gap-2">
                     <LogIn className="w-4 h-4" />
-                    {isRTL ? 'دخول' : 'Login'}
+                    {isRTL ? '' : 'Login'}
                   </Button>
                 </Link>
                 <Link href="/register">
                   <Button className="glow-button text-white gap-2">
                     <UserPlus className="w-4 h-4" />
-                    {isRTL ? 'تسجيل' : 'Sign Up'}
+                    {isRTL ? '' : 'Sign Up'}
                   </Button>
                 </Link>
               </>
@@ -577,27 +577,27 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="font-medium">{user?.name}</p>
-                      <p className="text-xs text-muted-foreground">{isRTL ? 'مستخدم مسجل' : 'Logged in'}</p>
+                      <p className="text-xs text-muted-foreground">{isRTL ? ' ' : 'Logged in'}</p>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Link href="/user-dashboard">
                       <Button variant="outline" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
                         <LayoutDashboard className="w-4 h-4" />
-                        {isRTL ? 'لوحة التحكم' : 'Dashboard'}
+                        {isRTL ? 'Dashboard' : 'Dashboard'}
                       </Button>
                     </Link>
                     <Link href="/profile">
                       <Button variant="outline" className="w-full justify-start gap-2" onClick={() => setMobileMenuOpen(false)}>
                         <User className="w-4 h-4" />
-                        {isRTL ? 'الملف الشخصي' : 'Profile'}
+                        {isRTL ? ' ' : 'Profile'}
                       </Button>
                     </Link>
                     {user?.role === 'admin' && (
                       <Link href="/admin">
                         <Button variant="outline" className="w-full justify-start gap-2 text-primary" onClick={() => setMobileMenuOpen(false)}>
                           <Shield className="w-4 h-4" />
-                          {isRTL ? 'لوحة الإدارة' : 'Admin Panel'}
+                          {isRTL ? ' ' : 'Admin Panel'}
                         </Button>
                       </Link>
                     )}
@@ -612,7 +612,7 @@ export default function Home() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <LogIn className="w-4 h-4" />
-                      {isRTL ? 'دخول' : 'Login'}
+                      {isRTL ? '' : 'Login'}
                     </Button>
                   </Link>
                   <Link href="/register" className="flex-1">
@@ -621,7 +621,7 @@ export default function Home() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <UserPlus className="w-4 h-4" />
-                      {isRTL ? 'تسجيل' : 'Sign Up'}
+                      {isRTL ? '' : 'Sign Up'}
                     </Button>
                   </Link>
                 </div>
@@ -631,15 +631,15 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section - جرب التحليل الآن */}
+      {/* Hero Section -  Analysis  */}
       <section id="analysis-section" className="py-20 border-b border-border/50">
         <div className="container max-w-4xl">
           <div className="text-center space-y-8">
-            {/* Main Headline - بارز وكبير */}
+            {/* Main Headline -   */}
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
               {isRTL ? (
                 <>
-                  <span className="gradient-text">جرب التحليل</span> الآن
+                  <span className="gradient-text"> Analysis</span> 
                 </>
               ) : (
                 <>
@@ -651,25 +651,25 @@ export default function Home() {
             {/* Subheadline */}
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               {isRTL 
-                ? 'أدخل أي موضوع واكتشف كيف يشعر الناس تجاهه'
+                ? '       '
                 : 'Enter any topic and discover how people feel about it'
               }
             </p>
             
-            {/* Analysis Input Box - بارز */}
+            {/* Analysis Input Box -  */}
             <Card className="cosmic-card p-8 max-w-2xl mx-auto">
               <div className="space-y-6">
                 {/* Topic Input */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-muted-foreground">
-                    {isRTL ? 'الموضوع' : 'Topic'}
+                    {isRTL ? 'Topic' : 'Topic'}
                   </label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
                       value={analysisTopic}
                       onChange={(e) => setAnalysisTopic(e.target.value)}
-                      placeholder={isRTL ? 'مثال: الانتخابات الأمريكية، أسعار النفط، الذكاء الاصطناعي...' : 'e.g., US Elections, Oil Prices, AI Technology...'}
+                      placeholder={isRTL ? ':      ...' : 'e.g., US Elections, Oil Prices, AI Technology...'}
                       className="pl-10 h-14 text-lg bg-background/50"
                     />
                   </div>
@@ -686,12 +686,12 @@ export default function Home() {
                   {isAnalyzing ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                      {isRTL ? 'جاري التحليل...' : 'Analyzing...'}
+                      {isRTL ? ' Analysis...' : 'Analyzing...'}
                     </>
                   ) : (
                     <>
                       <Brain className="w-5 h-5 mr-2" />
-                      {isRTL ? 'حلل الآن' : 'Analyze Now'}
+                      {isRTL ? ' ' : 'Analyze Now'}
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </>
                   )}
@@ -703,7 +703,7 @@ export default function Home() {
                   onClick={handleInstallApp}
                 >
                   <Zap className="w-4 h-4 mr-2 text-accent" />
-                  {isRTL ? 'تثبيت AmalSense كـ تطبيق هاتف' : 'Install AmalSense as App'}
+                  {isRTL ? ' AmalSense   ' : 'Install AmalSense as App'}
                 </Button>
               </div>
             </Card>
@@ -792,12 +792,12 @@ export default function Home() {
             <div className="text-center md:text-start">
               <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
                 <h3 className="text-2xl font-bold cosmic-text">
-                  {isRTL ? 'خريطة المشاعر العالمية' : 'Global Emotion Map'}
+                  {isRTL ? ' Emotions ' : 'Global Emotion Map'}
                 </h3>
                 <RealTimePulse isRTL={isRTL} />
               </div>
               <p className="text-muted-foreground text-sm">
-                {isRTL ? 'اضغط على أي دولة لعرض تفاصيل المزاج • يتحدث كل 30 ثانية' : 'Click on any country to view mood details • Updates every 30 seconds'}
+                {isRTL ? '       •   30 ' : 'Click on any country to view mood details • Updates every 30 seconds'}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -820,12 +820,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works - كيف يعمل */}
+      {/* How It Works -   */}
       <section className="py-12 border-t border-border/50">
         <div className="container max-w-4xl">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold cosmic-text mb-2">
-              {isRTL ? 'كيف يعمل AmalSense؟' : 'How AmalSense Works?'}
+              {isRTL ? '  AmalSense' : 'How AmalSense Works?'}
             </h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -833,27 +833,27 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
                 <span className="text-xl font-bold">1</span>
               </div>
-              <h4 className="font-bold mb-2">{isRTL ? 'أدخل الموضوع' : 'Enter Topic'}</h4>
+              <h4 className="font-bold mb-2">{isRTL ? ' Topic' : 'Enter Topic'}</h4>
               <p className="text-sm text-muted-foreground">
-                {isRTL ? 'اكتب أي موضوع أو قضية تريد تحليلها' : 'Type any topic or issue you want to analyze'}
+                {isRTL ? '      Analysis' : 'Type any topic or issue you want to analyze'}
               </p>
             </div>
             <div className="text-center p-4">
               <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
                 <span className="text-xl font-bold">2</span>
               </div>
-              <h4 className="font-bold mb-2">{isRTL ? 'الذكاء يحلل' : 'AI Analyzes'}</h4>
+              <h4 className="font-bold mb-2">{isRTL ? ' ' : 'AI Analyzes'}</h4>
               <p className="text-sm text-muted-foreground">
-                {isRTL ? 'الذكاء يكتشف السياق ويحلل المشاعر' : 'AI detects context and analyzes emotions'}
+                {isRTL ? '    Emotions' : 'AI detects context and analyzes emotions'}
               </p>
             </div>
             <div className="text-center p-4">
               <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
                 <span className="text-xl font-bold">3</span>
               </div>
-              <h4 className="font-bold mb-2">{isRTL ? 'احصل على النتائج' : 'Get Results'}</h4>
+              <h4 className="font-bold mb-2">{isRTL ? '  ' : 'Get Results'}</h4>
               <p className="text-sm text-muted-foreground">
-                {isRTL ? 'شاهد تحليل المشاعر والأسباب والتوصيات' : 'View emotion analysis, causes, and recommendations'}
+                {isRTL ? ' Analysis Emotions  ' : 'View emotion analysis, causes, and recommendations'}
               </p>
             </div>
           </div>

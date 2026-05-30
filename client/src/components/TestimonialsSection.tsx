@@ -1,6 +1,5 @@
 /**
  * Testimonials Section Component
- * قسم شهادات المستخدمين
  */
 
 import React from 'react';
@@ -24,31 +23,31 @@ interface TestimonialsSectionProps {
 export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
   const defaultTestimonials: Testimonial[] = [
     {
-      name: 'أحمد محمد',
-      role: 'محلل بيانات',
-      company: 'شركة التكنولوجيا المتقدمة',
-      content: 'AmalSense غيّر طريقة فهمنا للاتجاهات العالمية. الدقة والسرعة مذهلة!',
+      name: ' ',
+      role: ' ',
+      company: '  ',
+      content: 'AmalSense     .   !',
       rating: 5
     },
     {
-      name: 'فاطمة علي',
-      role: 'مدير مشاريع',
-      company: 'مؤسسة البحث الاجتماعي',
-      content: 'أداة قيمة جداً لفهم المشاعر الجماعية. تساعدنا في اتخاذ قرارات أفضل.',
+      name: ' ',
+      role: ' ',
+      company: '  ',
+      content: '    Emotions .     .',
       rating: 5
     },
     {
-      name: 'محمود إبراهيم',
-      role: 'باحث أكاديمي',
-      company: 'جامعة الدراسات العليا',
-      content: 'البيانات المقدمة موثوقة وشاملة. أفضل منصة للتحليل العاطفي الجماعي.',
+      name: ' ',
+      role: ' ',
+      company: '  ',
+      content: '   .   Analysis  .',
       rating: 5
     },
     {
-      name: 'ليلى حسن',
-      role: 'مستشار استراتيجي',
-      company: 'شركة الاستشارات الدولية',
-      content: 'تساعدنا في فهم احتياجات السوق بشكل أعمق. استثمار ممتاز!',
+      name: ' ',
+      role: ' ',
+      company: '  ',
+      content: '      .  !',
       rating: 5
     }
   ];
@@ -58,8 +57,8 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold mb-2">ماذا يقول مستخدمونا</h2>
-        <p className="text-muted-foreground">آراء من محترفين يستخدمون AmalSense</p>
+        <h2 className="text-3xl font-bold mb-2">  </h2>
+        <p className="text-muted-foreground">    AmalSense</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

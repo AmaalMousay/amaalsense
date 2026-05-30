@@ -72,25 +72,25 @@ export default function Register() {
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError(isRTL ? 'البريد الإلكتروني غير صالح' : 'Invalid email address');
+      setError(isRTL ? '   ' : 'Invalid email address');
       return false;
     }
 
     // Password validation
     if (formData.password.length < 8) {
-      setError(isRTL ? 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' : 'Password must be at least 8 characters');
+      setError(isRTL ? '     8   ' : 'Password must be at least 8 characters');
       return false;
     }
 
     // Password match
     if (formData.password !== formData.confirmPassword) {
-      setError(isRTL ? 'كلمات المرور غير متطابقة' : 'Passwords do not match');
+      setError(isRTL ? '   ' : 'Passwords do not match');
       return false;
     }
 
     // Organization validation
     if (accountType === 'organization' && !formData.orgName) {
-      setError(isRTL ? 'اسم المؤسسة مطلوب' : 'Organization name is required');
+      setError(isRTL ? '  ' : 'Organization name is required');
       return false;
     }
 
@@ -131,7 +131,7 @@ export default function Register() {
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="w-4 h-4" />
-              {isRTL ? 'العودة للرئيسية' : 'Back to Home'}
+              {isRTL ? ' ' : 'Back to Home'}
             </Button>
           </Link>
         </div>
@@ -143,10 +143,10 @@ export default function Register() {
           {/* Title */}
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold cosmic-text mb-2">
-              {isRTL ? 'إنشاء حساب جديد' : 'Create Account'}
+              {isRTL ? '  ' : 'Create Account'}
             </h2>
             <p className="text-muted-foreground">
-              {isRTL ? 'اختر نوع حسابك للبدء' : 'Choose your account type to get started'}
+              {isRTL ? '   ' : 'Choose your account type to get started'}
             </p>
           </div>
 
@@ -167,9 +167,9 @@ export default function Register() {
                   <User className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">{isRTL ? 'فرد' : 'Individual'}</h3>
+                  <h3 className="font-semibold">{isRTL ? '' : 'Individual'}</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {isRTL ? 'للاستخدام الشخصي' : 'For personal use'}
+                    {isRTL ? ' ' : 'For personal use'}
                   </p>
                 </div>
                 {accountType === 'individual' && (
@@ -193,9 +193,9 @@ export default function Register() {
                   <Building2 className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">{isRTL ? 'مؤسسة' : 'Organization'}</h3>
+                  <h3 className="font-semibold">{isRTL ? '' : 'Organization'}</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {isRTL ? 'للشركات والفرق' : 'For teams & companies'}
+                    {isRTL ? ' ' : 'For teams & companies'}
                   </p>
                 </div>
                 {accountType === 'organization' && (
@@ -219,7 +219,7 @@ export default function Register() {
               {/* Common Fields */}
               <div className="space-y-2">
                 <Label htmlFor="name">
-                  {isRTL ? 'الاسم الكامل' : 'Full Name'}
+                  {isRTL ? ' ' : 'Full Name'}
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -227,7 +227,7 @@ export default function Register() {
                     id="name"
                     name="name"
                     type="text"
-                    placeholder={isRTL ? 'أدخل اسمك الكامل' : 'Enter your full name'}
+                    placeholder={isRTL ? '  ' : 'Enter your full name'}
                     className="pl-10"
                     value={formData.name}
                     onChange={handleInputChange}
@@ -239,7 +239,7 @@ export default function Register() {
 
               <div className="space-y-2">
                 <Label htmlFor="email">
-                  {isRTL ? 'البريد الإلكتروني' : 'Email Address'}
+                  {isRTL ? ' ' : 'Email Address'}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -247,7 +247,7 @@ export default function Register() {
                     id="email"
                     name="email"
                     type="email"
-                    placeholder={isRTL ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
+                    placeholder={isRTL ? '  ' : 'Enter your email'}
                     className="pl-10"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -262,13 +262,13 @@ export default function Register() {
                 <>
                   <div className="border-t border-border pt-4 mt-4">
                     <h4 className="font-medium mb-4 text-accent">
-                      {isRTL ? 'معلومات المؤسسة' : 'Organization Details'}
+                      {isRTL ? ' ' : 'Organization Details'}
                     </h4>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="orgName">
-                      {isRTL ? 'اسم المؤسسة' : 'Organization Name'}
+                      {isRTL ? ' ' : 'Organization Name'}
                     </Label>
                     <div className="relative">
                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -276,7 +276,7 @@ export default function Register() {
                         id="orgName"
                         name="orgName"
                         type="text"
-                        placeholder={isRTL ? 'أدخل اسم المؤسسة' : 'Enter organization name'}
+                        placeholder={isRTL ? '  ' : 'Enter organization name'}
                         className="pl-10"
                         value={formData.orgName}
                         onChange={handleInputChange}
@@ -288,7 +288,7 @@ export default function Register() {
 
                   <div className="space-y-2">
                     <Label htmlFor="orgWebsite">
-                      {isRTL ? 'الموقع الإلكتروني (اختياري)' : 'Website (optional)'}
+                      {isRTL ? '  ()' : 'Website (optional)'}
                     </Label>
                     <div className="relative">
                       <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -308,7 +308,7 @@ export default function Register() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="orgSize">
-                        {isRTL ? 'حجم المؤسسة' : 'Organization Size'}
+                        {isRTL ? ' ' : 'Organization Size'}
                       </Label>
                       <select
                         id="orgSize"
@@ -319,7 +319,7 @@ export default function Register() {
                         required={accountType === 'organization'}
                         disabled={registerMutation.isPending}
                       >
-                        <option value="">{isRTL ? 'اختر...' : 'Select...'}</option>
+                        <option value="">{isRTL ? '...' : 'Select...'}</option>
                         <option value="1-10">1-10</option>
                         <option value="11-50">11-50</option>
                         <option value="51-200">51-200</option>
@@ -330,13 +330,13 @@ export default function Register() {
 
                     <div className="space-y-2">
                       <Label htmlFor="jobTitle">
-                        {isRTL ? 'المسمى الوظيفي' : 'Job Title'}
+                        {isRTL ? ' ' : 'Job Title'}
                       </Label>
                       <Input
                         id="jobTitle"
                         name="jobTitle"
                         type="text"
-                        placeholder={isRTL ? 'مثال: مدير' : 'e.g. Manager'}
+                        placeholder={isRTL ? ': ' : 'e.g. Manager'}
                         value={formData.jobTitle}
                         onChange={handleInputChange}
                         disabled={registerMutation.isPending}
@@ -349,7 +349,7 @@ export default function Register() {
               {/* Password Fields */}
               <div className="space-y-2">
                 <Label htmlFor="password">
-                  {isRTL ? 'كلمة المرور' : 'Password'}
+                  {isRTL ? ' ' : 'Password'}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -357,7 +357,7 @@ export default function Register() {
                     id="password"
                     name="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder={isRTL ? 'أدخل كلمة المرور' : 'Enter password'}
+                    placeholder={isRTL ? '  ' : 'Enter password'}
                     className="pl-10 pr-10"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -391,8 +391,8 @@ export default function Register() {
                       passwordStrength.score <= 4 ? 'text-yellow-500' : 'text-green-500'
                     }`}>
                       {isRTL ? (
-                        passwordStrength.score <= 2 ? 'ضعيفة' : 
-                        passwordStrength.score <= 4 ? 'متوسطة' : 'قوية'
+                        passwordStrength.score <= 2 ? '' : 
+                        passwordStrength.score <= 4 ? '' : ''
                       ) : passwordStrength.label}
                     </p>
                   </div>
@@ -401,7 +401,7 @@ export default function Register() {
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">
-                  {isRTL ? 'تأكيد كلمة المرور' : 'Confirm Password'}
+                  {isRTL ? '  ' : 'Confirm Password'}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -409,7 +409,7 @@ export default function Register() {
                     id="confirmPassword"
                     name="confirmPassword"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder={isRTL ? 'أعد إدخال كلمة المرور' : 'Confirm password'}
+                    placeholder={isRTL ? '   ' : 'Confirm password'}
                     className="pl-10"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
@@ -419,7 +419,7 @@ export default function Register() {
                 </div>
                 {formData.confirmPassword && formData.password !== formData.confirmPassword && (
                   <p className="text-xs text-red-500">
-                    {isRTL ? 'كلمات المرور غير متطابقة' : 'Passwords do not match'}
+                    {isRTL ? '   ' : 'Passwords do not match'}
                   </p>
                 )}
               </div>
@@ -433,10 +433,10 @@ export default function Register() {
                 {registerMutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {isRTL ? 'جاري التسجيل...' : 'Creating Account...'}
+                    {isRTL ? ' ...' : 'Creating Account...'}
                   </>
                 ) : (
-                  isRTL ? 'إنشاء الحساب' : 'Create Account'
+                  isRTL ? ' ' : 'Create Account'
                 )}
               </Button>
 
@@ -447,7 +447,7 @@ export default function Register() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-card px-2 text-muted-foreground">
-                    {isRTL ? 'أو' : 'Or'}
+                    {isRTL ? '' : 'Or'}
                   </span>
                 </div>
               </div>
@@ -463,16 +463,16 @@ export default function Register() {
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
                 </svg>
-                {isRTL ? 'تسجيل الدخول باستخدام Manus' : 'Continue with Manus'}
+                {isRTL ? '   Manus' : 'Continue with Manus'}
               </Button>
             </form>
 
             {/* Login Link */}
             <p className="text-center text-sm text-muted-foreground mt-6">
-              {isRTL ? 'لديك حساب بالفعل؟' : 'Already have an account?'}{' '}
+              {isRTL ? '  ' : 'Already have an account?'}{' '}
               <Link href="/login">
                 <span className="text-accent hover:underline cursor-pointer font-medium">
-                  {isRTL ? 'تسجيل الدخول' : 'Sign In'}
+                  {isRTL ? ' ' : 'Sign In'}
                 </span>
               </Link>
             </p>
@@ -485,7 +485,7 @@ export default function Register() {
                 <Check className="w-5 h-5 text-accent" />
               </div>
               <p className="text-xs text-muted-foreground">
-                {isRTL ? 'تجربة مجانية' : 'Free Trial'}
+                {isRTL ? ' ' : 'Free Trial'}
               </p>
             </div>
             <div className="space-y-2">
@@ -493,7 +493,7 @@ export default function Register() {
                 <Lock className="w-5 h-5 text-accent" />
               </div>
               <p className="text-xs text-muted-foreground">
-                {isRTL ? 'بيانات آمنة' : 'Secure Data'}
+                {isRTL ? ' ' : 'Secure Data'}
               </p>
             </div>
             <div className="space-y-2">
@@ -501,7 +501,7 @@ export default function Register() {
                 <Globe className="w-5 h-5 text-accent" />
               </div>
               <p className="text-xs text-muted-foreground">
-                {isRTL ? 'وصول عالمي' : 'Global Access'}
+                {isRTL ? ' ' : 'Global Access'}
               </p>
             </div>
           </div>

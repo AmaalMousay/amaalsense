@@ -37,10 +37,10 @@ export default function UsageQuota({ compact = false, language = "en" }: UsageQu
   const isAtLimit = percentage >= 100;
 
   const tierLabels = {
-    free: { en: "Free", ar: "مجاني" },
-    pro: { en: "Pro", ar: "احترافي" },
-    enterprise: { en: "Enterprise", ar: "مؤسسي" },
-    government: { en: "Government", ar: "حكومي" },
+    free: { en: "Free", ar: "" },
+    pro: { en: "Pro", ar: "" },
+    enterprise: { en: "Enterprise", ar: "" },
+    government: { en: "Government", ar: "" },
   };
 
   const tierColors = {
@@ -76,7 +76,7 @@ export default function UsageQuota({ compact = false, language = "en" }: UsageQu
         <div className="flex items-center gap-2">
           <Zap className={`w-5 h-5 ${isAtLimit ? "text-red-400" : isNearLimit ? "text-yellow-400" : "text-cyan-400"}`} />
           <span className="font-medium text-white">
-            {isArabic ? "حصة الاستخدام اليومية" : "Daily Usage Quota"}
+            {isArabic ? "  " : "Daily Usage Quota"}
           </span>
         </div>
         <Badge className={tierColors[tier as keyof typeof tierColors]}>
@@ -97,12 +97,12 @@ export default function UsageQuota({ compact = false, language = "en" }: UsageQu
       <div className="flex items-center justify-between text-sm">
         <span className="text-slate-400">
           {isArabic 
-            ? `${used} من ${limit} تحليل مستخدم`
+            ? `${used}  ${limit} Analysis `
             : `${used} of ${limit} analyses used`
           }
         </span>
         <span className={`font-medium ${isAtLimit ? "text-red-400" : isNearLimit ? "text-yellow-400" : "text-green-400"}`}>
-          {limit - used} {isArabic ? "متبقي" : "remaining"}
+          {limit - used} {isArabic ? "" : "remaining"}
         </span>
       </div>
 
@@ -112,19 +112,19 @@ export default function UsageQuota({ compact = false, language = "en" }: UsageQu
           <div className="flex items-center gap-2 text-red-400 mb-2">
             <AlertTriangle className="w-4 h-4" />
             <span className="font-medium">
-              {isArabic ? "وصلت للحد الأقصى!" : "Limit Reached!"}
+              {isArabic ? "  !" : "Limit Reached!"}
             </span>
           </div>
           <p className="text-sm text-slate-400 mb-2">
             {isArabic 
-              ? "قم بالترقية للحصول على تحليلات غير محدودة"
+              ? "    Analysis  "
               : "Upgrade to get unlimited analyses"
             }
           </p>
           <Link href="/pricing">
             <Button size="sm" className="w-full bg-gradient-to-r from-purple-500 to-cyan-500">
               <TrendingUp className="w-4 h-4 mr-2" />
-              {isArabic ? "ترقية الآن" : "Upgrade Now"}
+              {isArabic ? " " : "Upgrade Now"}
             </Button>
           </Link>
         </div>
@@ -136,7 +136,7 @@ export default function UsageQuota({ compact = false, language = "en" }: UsageQu
             <AlertTriangle className="w-4 h-4" />
             <span>
               {isArabic 
-                ? "أنت قريب من الحد الأقصى. فكر في الترقية!"
+                ? "    .   !"
                 : "You're approaching your limit. Consider upgrading!"
               }
             </span>
@@ -149,7 +149,7 @@ export default function UsageQuota({ compact = false, language = "en" }: UsageQu
           <Link href="/pricing">
             <Button variant="outline" size="sm" className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10">
               <Crown className="w-4 h-4 mr-2" />
-              {isArabic ? "ترقية للمزيد من الميزات" : "Upgrade for More Features"}
+              {isArabic ? "   Features" : "Upgrade for More Features"}
             </Button>
           </Link>
         </div>

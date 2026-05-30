@@ -1,13 +1,7 @@
 /**
- * صفحة الإعدادات الشاملة
  * Comprehensive Settings Page
  * 
- * تتضمن:
- * - إدارة الحساب
- * - تفضيلات اللغة والمنطقة
- * - إعدادات الإشعارات
- * - خصوصية وأمان
- * - إدارة البيانات
+ // 
  */
 
 import React, { useState } from "react";
@@ -48,11 +42,11 @@ function AccountSettings() {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
-    name: user?.name || "المستخدم",
+    name: user?.name || "",
     email: user?.email || "user@example.com",
     phone: "+966501234567",
     joinDate: "2024-01-15",
-    lastLogin: "منذ ساعة",
+    lastLogin: " ",
   });
 
   const [editedInfo, setEditedInfo] = useState(accountInfo);
@@ -69,7 +63,7 @@ function AccountSettings() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            معلومات الحساب
+             
           </CardTitle>
 
           <Button
@@ -77,7 +71,7 @@ function AccountSettings() {
             size="sm"
             onClick={() => setIsEditing(!isEditing)}
           >
-            {isEditing ? "إلغاء" : "تعديل"}
+            {isEditing ? "Cancel" : "Edit"}
           </Button>
         </CardHeader>
 
@@ -85,7 +79,7 @@ function AccountSettings() {
           {isEditing ? (
             <>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">الاسم</label>
+                <label className="text-sm font-semibold"></label>
                 <input
                   type="text"
                   value={editedInfo.name}
@@ -97,7 +91,7 @@ function AccountSettings() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-semibold">البريد الإلكتروني</label>
+                <label className="text-sm font-semibold"> </label>
                 <input
                   type="email"
                   value={editedInfo.email}
@@ -109,7 +103,7 @@ function AccountSettings() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-semibold">رقم الهاتف</label>
+                <label className="text-sm font-semibold"> </label>
                 <input
                   type="tel"
                   value={editedInfo.phone}
@@ -125,43 +119,43 @@ function AccountSettings() {
                 className="w-full bg-gradient-to-r from-purple-500 to-blue-500"
               >
                 <Save className="h-4 w-4 mr-2" />
-                حفظ التغييرات
+                Save 
               </Button>
             </>
           ) : (
             <>
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
                 <div>
-                  <p className="text-xs text-muted-foreground">الاسم</p>
+                  <p className="text-xs text-muted-foreground"></p>
                   <p className="font-semibold">{accountInfo.name}</p>
                 </div>
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
                 <div>
-                  <p className="text-xs text-muted-foreground">البريد الإلكتروني</p>
+                  <p className="text-xs text-muted-foreground"> </p>
                   <p className="font-semibold">{accountInfo.email}</p>
                 </div>
                 <Badge className="bg-green-500/20 text-green-700">
-                  مؤكد
+                  
                 </Badge>
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
                 <div>
-                  <p className="text-xs text-muted-foreground">رقم الهاتف</p>
+                  <p className="text-xs text-muted-foreground"> </p>
                   <p className="font-semibold">{accountInfo.phone}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 rounded-lg bg-slate-800/50">
-                  <p className="text-xs text-muted-foreground">تاريخ الانضمام</p>
+                  <p className="text-xs text-muted-foreground"> </p>
                   <p className="font-semibold text-sm">{accountInfo.joinDate}</p>
                 </div>
 
                 <div className="p-3 rounded-lg bg-slate-800/50">
-                  <p className="text-xs text-muted-foreground">آخر دخول</p>
+                  <p className="text-xs text-muted-foreground"> </p>
                   <p className="font-semibold text-sm">{accountInfo.lastLogin}</p>
                 </div>
               </div>
@@ -173,13 +167,13 @@ function AccountSettings() {
       {/* Danger Zone */}
       <Card className="border-red-500/30 bg-red-500/5">
         <CardHeader>
-          <CardTitle className="text-red-500">منطقة الخطر</CardTitle>
+          <CardTitle className="text-red-500"> </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-3">
           <Button variant="outline" className="w-full justify-start gap-2">
             <LogOut className="h-4 w-4" />
-            تسجيل الخروج من جميع الأجهزة
+            Logout   
           </Button>
 
           <Button
@@ -187,7 +181,7 @@ function AccountSettings() {
             className="w-full justify-start gap-2 text-red-500 hover:text-red-600"
           >
             <Trash2 className="h-4 w-4" />
-            حذف الحساب نهائياً
+            Delete  
           </Button>
         </CardContent>
       </Card>
@@ -211,32 +205,32 @@ interface NotificationPreference {
 const notificationPreferences: NotificationPreference[] = [
   {
     id: "1",
-    title: "التنبيهات الفورية",
-    description: "إشعارات حول التغييرات الكبيرة في المؤشرات",
+    title: " ",
+    description: "     ",
     email: true,
     push: true,
     sms: false,
   },
   {
     id: "2",
-    title: "التقارير اليومية",
-    description: "ملخص يومي للمؤشرات والاتجاهات",
+    title: "Reports ",
+    description: "   ",
     email: true,
     push: false,
     sms: false,
   },
   {
     id: "3",
-    title: "التقارير الأسبوعية",
-    description: "تقرير شامل أسبوعي",
+    title: "Reports ",
+    description: "  ",
     email: true,
     push: false,
     sms: false,
   },
   {
     id: "4",
-    title: "تنبيهات الاهتمامات",
-    description: "إشعارات حول موضوعاتك المفضلة",
+    title: " ",
+    description: "   ",
     email: true,
     push: true,
     sms: true,
@@ -274,7 +268,7 @@ function NotificationSettings() {
                 }`}
               >
                 <Mail className={`h-5 w-5 mx-auto mb-2 ${pref.email ? "text-purple-500" : "text-muted-foreground"}`} />
-                <p className="text-xs font-semibold">البريد</p>
+                <p className="text-xs font-semibold"></p>
               </button>
 
               <button
@@ -286,7 +280,7 @@ function NotificationSettings() {
                 }`}
               >
                 <Bell className={`h-5 w-5 mx-auto mb-2 ${pref.push ? "text-purple-500" : "text-muted-foreground"}`} />
-                <p className="text-xs font-semibold">الإشعارات</p>
+                <p className="text-xs font-semibold"></p>
               </button>
 
               <button
@@ -298,7 +292,7 @@ function NotificationSettings() {
                 }`}
               >
                 <Smartphone className={`h-5 w-5 mx-auto mb-2 ${pref.sms ? "text-purple-500" : "text-muted-foreground"}`} />
-                <p className="text-xs font-semibold">الرسائل</p>
+                <p className="text-xs font-semibold"></p>
               </button>
             </div>
           </CardContent>
@@ -322,13 +316,13 @@ function PrivacySecuritySettings() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5" />
-            كلمة المرور
+             
           </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-semibold">كلمة المرور الحالية</label>
+            <label className="text-sm font-semibold">  </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -349,7 +343,7 @@ function PrivacySecuritySettings() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold">كلمة المرور الجديدة</label>
+            <label className="text-sm font-semibold">  </label>
             <input
               type="password"
               placeholder="••••••••"
@@ -358,7 +352,7 @@ function PrivacySecuritySettings() {
           </div>
 
           <Button className="w-full bg-gradient-to-r from-purple-500 to-blue-500">
-            تحديث كلمة المرور
+              
           </Button>
         </CardContent>
       </Card>
@@ -369,21 +363,21 @@ function PrivacySecuritySettings() {
           <CardTitle className="flex items-center justify-between">
             <span className="flex items-center gap-2">
               <Lock className="h-5 w-5" />
-              المصادقة الثنائية
+               
             </span>
             <Badge className="bg-orange-500/20 text-orange-700">
-              غير مفعلة
+               
             </Badge>
           </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            أضف طبقة أمان إضافية لحسابك باستخدام تطبيق المصادقة
+                   
           </p>
 
           <Button className="w-full bg-gradient-to-r from-purple-500 to-blue-500">
-            تفعيل المصادقة الثنائية
+              
           </Button>
         </CardContent>
       </Card>
@@ -391,22 +385,22 @@ function PrivacySecuritySettings() {
       {/* Privacy Settings */}
       <Card className="border-slate-700/50">
         <CardHeader>
-          <CardTitle>إعدادات الخصوصية</CardTitle>
+          <CardTitle> </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
           {[
             {
-              title: "جعل الملف الشخصي عاماً",
-              description: "السماح للآخرين برؤية ملفك الشخصي",
+              title: "   ",
+              description: "    ",
             },
             {
-              title: "السماح بالتوصيات الشخصية",
-              description: "استخدام بيانات نشاطك لتحسين التوصيات",
+              title: "  ",
+              description: "    ",
             },
             {
-              title: "مشاركة البيانات مع الشركاء",
-              description: "السماح بمشاركة بيانات مجهولة الهوية",
+              title: "   ",
+              description: "    ",
             },
           ].map((item) => (
             <div
@@ -448,13 +442,13 @@ function PreferencesSettings() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Globe className="h-5 w-5" />
-            اللغة والمنطقة
+            Language Region
           </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-semibold">اللغة</label>
+            <label className="text-sm font-semibold">Language</label>
             <select
               value={preferences.language}
               onChange={(e) =>
@@ -462,14 +456,14 @@ function PreferencesSettings() {
               }
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded"
             >
-              <option value="ar">العربية</option>
+              <option value="ar"></option>
               <option value="en">English</option>
               <option value="fr">Français</option>
             </select>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold">المنطقة</label>
+            <label className="text-sm font-semibold">Region</label>
             <select
               value={preferences.region}
               onChange={(e) =>
@@ -477,15 +471,15 @@ function PreferencesSettings() {
               }
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded"
             >
-              <option value="mena">الشرق الأوسط وشمال أفريقيا</option>
-              <option value="asia">آسيا</option>
-              <option value="europe">أوروبا</option>
-              <option value="americas">الأمريكتان</option>
+              <option value="mena">   </option>
+              <option value="asia"></option>
+              <option value="europe"></option>
+              <option value="americas"></option>
             </select>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold">المنطقة الزمنية</label>
+            <label className="text-sm font-semibold">Region </label>
             <select
               value={preferences.timezone}
               onChange={(e) =>
@@ -500,7 +494,7 @@ function PreferencesSettings() {
           </div>
 
           <Button className="w-full bg-gradient-to-r from-purple-500 to-blue-500">
-            حفظ التفضيلات
+            Save 
           </Button>
         </CardContent>
       </Card>
@@ -508,14 +502,14 @@ function PreferencesSettings() {
       {/* Theme */}
       <Card className="border-slate-700/50">
         <CardHeader>
-          <CardTitle>المظهر</CardTitle>
+          <CardTitle></CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-3">
           {[
-            { value: "light", label: "فاتح" },
-            { value: "dark", label: "داكن" },
-            { value: "auto", label: "تلقائي" },
+            { value: "light", label: "" },
+            { value: "dark", label: "" },
+            { value: "auto", label: "" },
           ].map((theme) => (
             <button
               key={theme.value}
@@ -547,9 +541,9 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="border-b border-slate-700/50 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-40 py-6">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold">الإعدادات</h1>
+          <h1 className="text-3xl font-bold">Settings</h1>
           <p className="text-muted-foreground mt-2">
-            إدارة حسابك والتفضيلات الشخصية
+               
           </p>
         </div>
       </div>
@@ -558,10 +552,10 @@ export default function SettingsPage() {
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="account" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 bg-slate-800/50">
-            <TabsTrigger value="account">الحساب</TabsTrigger>
-            <TabsTrigger value="notifications">الإشعارات</TabsTrigger>
-            <TabsTrigger value="privacy">الأمان</TabsTrigger>
-            <TabsTrigger value="preferences">التفضيلات</TabsTrigger>
+            <TabsTrigger value="account"></TabsTrigger>
+            <TabsTrigger value="notifications"></TabsTrigger>
+            <TabsTrigger value="privacy"></TabsTrigger>
+            <TabsTrigger value="preferences"></TabsTrigger>
           </TabsList>
 
           <TabsContent value="account">

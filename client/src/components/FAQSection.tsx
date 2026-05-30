@@ -1,6 +1,5 @@
 /**
  * FAQ Section Component
- * قسم الأسئلة الشائعة
  */
 
 import React, { useState } from 'react';
@@ -21,28 +20,28 @@ export function FAQSection({ faqs }: FAQSectionProps) {
 
   const defaultFAQs: FAQItem[] = [
     {
-      question: 'ما هو AmalSense؟',
-      answer: 'AmalSense هو محرك ذكاء عاطفي جماعي يحلل ويفسر العواطف من المصادر الرقمية حول العالم. يستخدم تقنيات متقدمة لفهم المشاعر الجماعية والاتجاهات العالمية.'
+      question: '  AmalSense',
+      answer: 'AmalSense             .     Emotions   .'
     },
     {
-      question: 'كيف يتم جمع البيانات؟',
-      answer: 'نجمع البيانات من مصادر رقمية متعددة بما في ذلك وسائل التواصل الاجتماعي والأخبار والمنتديات. جميع البيانات يتم معالجتها بشكل آمن وخاص.'
+      question: '   ',
+      answer: '             .       .'
     },
     {
-      question: 'ما مدى دقة التحليلات؟',
-      answer: 'معدل دقتنا يصل إلى 94% في التنبؤ بالاتجاهات. نستخدم نماذج تعلم آلي متقدمة وتحقق مستمر من الجودة.'
+      question: '   Analysis',
+      answer: '    94%   .         .'
     },
     {
-      question: 'هل البيانات آمنة وخاصة؟',
-      answer: 'نعم، نحن نلتزم بأعلى معايير الأمان والخصوصية. جميع البيانات مشفرة وتتم معالجتها وفقاً للوائح حماية البيانات الدولية.'
+      question: '   ',
+      answer: '      .          .'
     },
     {
-      question: 'كيف يمكنني الوصول إلى البيانات؟',
-      answer: 'يمكنك الوصول إلى البيانات من خلال لوحة التحكم الخاصة بك. نوفر تقارير مفصلة وتحليلات قابلة للتخصيص حسب احتياجاتك.'
+      question: '    ',
+      answer: '      Dashboard  .    Analysis    .'
     },
     {
-      question: 'هل هناك خطة مجانية؟',
-      answer: 'نعم، نوفر نسخة تجريبية مجانية للمستخدمين الجدد. يمكنك الوصول إلى الميزات الأساسية دون الحاجة لبطاقة ائتمان.'
+      question: '   ',
+      answer: '      .    Features     .'
     }
   ];
 
@@ -51,8 +50,8 @@ export function FAQSection({ faqs }: FAQSectionProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold mb-2">الأسئلة الشائعة</h2>
-        <p className="text-muted-foreground">إجابات على الأسئلة الأكثر شيوعاً</p>
+        <h2 className="text-3xl font-bold mb-2"> </h2>
+        <p className="text-muted-foreground">    </p>
       </div>
 
       <div className="space-y-3">
@@ -88,16 +87,16 @@ export function FAQSection({ faqs }: FAQSectionProps) {
       <Card className="border-slate-700/50 bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
         <CardContent className="pt-6">
           <div className="text-center space-y-3">
-            <h3 className="font-semibold text-lg">لم تجد إجابتك؟</h3>
+            <h3 className="font-semibold text-lg">  </h3>
             <p className="text-muted-foreground">
-              تواصل مع فريق الدعم لدينا للحصول على مساعدة إضافية
+                      
             </p>
             <div className="flex gap-3 justify-center">
               <button className="px-6 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition font-medium">
-                تواصل معنا
+                 
               </button>
               <button className="px-6 py-2 rounded-lg border border-indigo-500/30 hover:bg-indigo-500/10 transition font-medium">
-                الوثائق
+                
               </button>
             </div>
           </div>

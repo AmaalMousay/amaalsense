@@ -1,10 +1,6 @@
 /**
  * REPORTS COMPONENT
  * 
- * التقارير المتقدمة
- * - تقارير شاملة
- * - تحليلات معمقة
- * - جدولة التقارير
  */
 
 import React, { useState } from 'react';
@@ -43,11 +39,11 @@ export function Reports({
   const [reports, setReports] = useState<Report[]>([
     {
       id: 'report-1',
-      name: 'تقرير الأسبوع الأخير',
+      name: '  ',
       type: 'summary',
       createdDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      generatedBy: 'النظام',
-      period: 'آخر 7 أيام',
+      generatedBy: '',
+      period: ' 7 ',
       status: 'ready',
       metrics: {
         gmi: 65.4,
@@ -57,18 +53,18 @@ export function Reports({
         sourceCount: 1250
       },
       insights: [
-        'ارتفاع في مؤشر الأمل والمرونة بنسبة 8%',
-        'انخفاض في مؤشر الخوف الجماعي بنسبة 3%',
-        'زيادة في عدد الموضوعات المتداولة بنسبة 12%'
+        '      8%',
+        '   Fear   3%',
+        '   Topic   12%'
       ]
     },
     {
       id: 'report-2',
-      name: 'تقرير المقارنة الشهري',
+      name: '  ',
       type: 'comparison',
       createdDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      generatedBy: 'النظام',
-      period: 'آخر 30 يوم',
+      generatedBy: '',
+      period: ' 30 ',
       status: 'ready',
       metrics: {
         gmi: 63.2,
@@ -78,18 +74,18 @@ export function Reports({
         sourceCount: 4500
       },
       insights: [
-        'تحسن عام في المؤشرات الرئيسية',
-        'تنويع أفضل في المصادر',
-        'زيادة في الاهتمام بالموضوعات الاقتصادية'
+        '    Home',
+        '   ',
+        '   Topic '
       ]
     },
     {
       id: 'report-3',
-      name: 'تقرير الاتجاهات السنوي',
+      name: '  ',
       type: 'trend',
       createdDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      generatedBy: 'النظام',
-      period: 'آخر 365 يوم',
+      generatedBy: '',
+      period: ' 365 ',
       status: 'ready',
       metrics: {
         gmi: 62.1,
@@ -99,9 +95,9 @@ export function Reports({
         sourceCount: 12500
       },
       insights: [
-        'اتجاه صعودي في الثقة العامة',
-        'تقلبات موسمية في مؤشر الخوف',
-        'نمو مستقر في المشاركة'
+        '   Confidence ',
+        '    Fear',
+        '   '
       ]
     }
   ]);
@@ -112,10 +108,10 @@ export function Reports({
   const [isGenerating, setIsGenerating] = useState(false);
 
   const reportTypes = [
-    { id: 'summary', name: 'تقرير ملخص', description: 'ملخص سريع للمؤشرات الرئيسية' },
-    { id: 'detailed', name: 'تقرير مفصل', description: 'تحليل عميق مع جميع التفاصيل' },
-    { id: 'trend', name: 'تقرير الاتجاهات', description: 'تحليل الاتجاهات والتنبؤات' },
-    { id: 'comparison', name: 'تقرير المقارنة', description: 'مقارنة بين فترات زمنية مختلفة' }
+    { id: 'summary', name: ' ', description: '   Home' },
+    { id: 'detailed', name: ' ', description: 'Analysis    ' },
+    { id: 'trend', name: ' ', description: 'Analysis  ' },
+    { id: 'comparison', name: ' ', description: '    ' }
   ];
 
   const handleGenerateReport = async () => {
@@ -125,11 +121,11 @@ export function Reports({
       
       const newReport: Report = {
         id: `report-${Date.now()}`,
-        name: `تقرير ${reportTypes.find(t => t.id === reportType)?.name}`,
+        name: ` ${reportTypes.find(t => t.id === reportType)?.name}`,
         type: reportType,
         createdDate: new Date(),
-        generatedBy: 'المستخدم',
-        period: dateRange === 'week' ? 'آخر 7 أيام' : dateRange === 'month' ? 'آخر 30 يوم' : 'آخر 365 يوم',
+        generatedBy: '',
+        period: dateRange === 'week' ? ' 7 ' : dateRange === 'month' ? ' 30 ' : ' 365 ',
         status: 'ready',
         metrics: {
           gmi: Math.round(Math.random() * 40 + 50),
@@ -139,9 +135,9 @@ export function Reports({
           sourceCount: Math.round(Math.random() * 3000 + 1000)
         },
         insights: [
-          'رؤية أساسية 1 حول الاتجاهات الحالية',
-          'رؤية أساسية 2 حول تطور المؤشرات',
-          'رؤية أساسية 3 حول التوقعات المستقبلية'
+          '  1   ',
+          '  2   ',
+          '  3   '
         ]
       };
 
@@ -162,21 +158,21 @@ export function Reports({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-black">التقارير</h2>
+          <h2 className="text-2xl font-bold text-black">Reports</h2>
           <p className="text-sm text-gray-600 mt-1">
-            إنشاء وإدارة التقارير الشاملة والتحليلات المتقدمة
+              Reports  Analysis 
           </p>
         </div>
       </div>
 
       {/* Generate Report Section */}
       <Card className="p-6 border border-gray-200">
-        <h3 className="font-semibold text-black mb-4">إنشاء تقرير جديد</h3>
+        <h3 className="font-semibold text-black mb-4">  </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           {/* Report Type */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">نوع التقرير</label>
+            <label className="text-sm font-medium text-gray-700 mb-2 block"> </label>
             <select
               value={reportType}
               onChange={(e) => setReportType(e.target.value as any)}
@@ -193,15 +189,15 @@ export function Reports({
 
           {/* Date Range */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">نطاق التاريخ</label>
+            <label className="text-sm font-medium text-gray-700 mb-2 block"> </label>
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-black"
             >
-              <option value="week">آخر أسبوع</option>
-              <option value="month">آخر شهر</option>
-              <option value="year">آخر سنة</option>
+              <option value="week"> </option>
+              <option value="month"> </option>
+              <option value="year"> </option>
             </select>
           </div>
         </div>
@@ -218,12 +214,12 @@ export function Reports({
           {isGenerating ? (
             <>
               <div className="animate-spin">⏳</div>
-              جاري إنشاء التقرير...
+                ...
             </>
           ) : (
             <>
               <Plus className="w-4 h-4" />
-              إنشاء التقرير
+               
             </>
           )}
         </Button>
@@ -231,7 +227,7 @@ export function Reports({
 
       {/* Reports List */}
       <div className="space-y-4">
-        <h3 className="font-semibold text-black">التقارير السابقة</h3>
+        <h3 className="font-semibold text-black">Reports </h3>
 
         {reports.length > 0 ? (
           reports.map(report => (
@@ -257,9 +253,9 @@ export function Reports({
                     ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-blue-100 text-blue-800'
                 }`}>
-                  {report.status === 'ready' && 'جاهز'}
-                  {report.status === 'generating' && 'جاري الإنشاء'}
-                  {report.status === 'scheduled' && 'مجدول'}
+                  {report.status === 'ready' && ''}
+                  {report.status === 'generating' && ' '}
+                  {report.status === 'scheduled' && ''}
                 </Badge>
               </div>
 
@@ -278,18 +274,18 @@ export function Reports({
                   <p className="text-lg font-bold text-black">{report.metrics.hri}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600">الموضوعات</p>
+                  <p className="text-xs text-gray-600">Topic</p>
                   <p className="text-lg font-bold text-black">{report.metrics.topicCount}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600">المصادر</p>
+                  <p className="text-xs text-gray-600"></p>
                   <p className="text-lg font-bold text-black">{report.metrics.sourceCount}</p>
                 </div>
               </div>
 
               {/* Insights */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">الرؤى الأساسية:</p>
+                <p className="text-sm font-medium text-gray-700 mb-2"> :</p>
                 <ul className="space-y-1">
                   {report.insights.map((insight, idx) => (
                     <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
@@ -311,7 +307,7 @@ export function Reports({
                   }}
                 >
                   <Share2 className="w-4 h-4" />
-                  مشاركة
+                  
                 </Button>
                 <Button
                   variant="outline"
@@ -322,7 +318,7 @@ export function Reports({
                   }}
                 >
                   <Download className="w-4 h-4" />
-                  تحميل
+                  
                 </Button>
                 <Button
                   variant="outline"
@@ -333,7 +329,7 @@ export function Reports({
                     handleDeleteReport(report.id);
                   }}
                 >
-                  حذف
+                  Delete
                 </Button>
               </div>
             </Card>
@@ -341,7 +337,7 @@ export function Reports({
         ) : (
           <Card className="p-8 border border-gray-200 text-center">
             <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-600">لا توجد تقارير حالياً</p>
+            <p className="text-gray-600">   </p>
           </Card>
         )}
       </div>
@@ -350,13 +346,13 @@ export function Reports({
       <Card className="p-6 border border-gray-200">
         <h3 className="font-semibold text-black mb-4 flex items-center gap-2">
           <Calendar className="w-5 h-5" />
-          التقارير المجدولة
+          Reports 
         </h3>
 
         <div className="space-y-3">
           {[
-            { name: 'التقرير الأسبوعي', schedule: 'كل أحد الساعة 09:00', nextRun: '2024-03-10' },
-            { name: 'التقرير الشهري', schedule: 'أول يوم من الشهر الساعة 08:00', nextRun: '2024-04-01' }
+            { name: ' ', schedule: '   09:00', nextRun: '2024-03-10' },
+            { name: ' ', schedule: '     08:00', nextRun: '2024-04-01' }
           ].map((scheduled, idx) => (
             <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded">
               <div>
@@ -364,7 +360,7 @@ export function Reports({
                 <p className="text-xs text-gray-600 mt-1">{scheduled.schedule}</p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-600">التشغيل التالي</p>
+                <p className="text-xs text-gray-600"> </p>
                 <p className="text-sm font-medium text-black">{scheduled.nextRun}</p>
               </div>
             </div>
@@ -373,7 +369,7 @@ export function Reports({
 
         <Button className="w-full mt-4 gap-2 bg-gray-100 text-black hover:bg-gray-200">
           <Plus className="w-4 h-4" />
-          جدولة تقرير جديد
+            
         </Button>
       </Card>
     </div>

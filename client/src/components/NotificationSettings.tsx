@@ -1,10 +1,6 @@
 /**
  * NOTIFICATION SETTINGS COMPONENT
  * 
- * إعدادات الإشعارات والتنبيهات
- * - إدارة تفضيلات الإشعارات
- * - تعيين عتبات التنبيهات
- * - اختيار قنوات الإشعارات
  */
 
 import React, { useState } from 'react';
@@ -117,9 +113,9 @@ export function NotificationSettings({
       <Card className="p-6 border border-gray-200">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-black">تفعيل الإشعارات</h3>
+            <h3 className="font-semibold text-black"> </h3>
             <p className="text-sm text-gray-600 mt-1">
-              تفعيل أو تعطيل جميع الإشعارات والتنبيهات
+                   
             </p>
           </div>
           <Switch
@@ -135,12 +131,12 @@ export function NotificationSettings({
         <>
           {/* Thresholds */}
           <Card className="p-6 border border-gray-200">
-            <h3 className="font-semibold text-black mb-4">عتبات التنبيهات</h3>
+            <h3 className="font-semibold text-black mb-4"> </h3>
             <div className="space-y-4">
               {/* GMI Threshold */}
               <div>
                 <label className="text-sm font-medium text-gray-700">
-                  مؤشر المشاعر العالمية (GMI)
+                   Emotions  (GMI)
                 </label>
                 <div className="flex items-center gap-4 mt-2">
                   <input
@@ -158,14 +154,14 @@ export function NotificationSettings({
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  تنبيه عند تغيير GMI بأكثر من {settings.thresholds.gmi} نقطة
+                     GMI   {settings.thresholds.gmi} 
                 </p>
               </div>
 
               {/* CFI Threshold */}
               <div>
                 <label className="text-sm font-medium text-gray-700">
-                  مؤشر الثقة الجماعية (CFI)
+                   Confidence  (CFI)
                 </label>
                 <div className="flex items-center gap-4 mt-2">
                   <input
@@ -187,7 +183,7 @@ export function NotificationSettings({
               {/* HRI Threshold */}
               <div>
                 <label className="text-sm font-medium text-gray-700">
-                  مؤشر الأمل والمرونة (HRI)
+                     (HRI)
                 </label>
                 <div className="flex items-center gap-4 mt-2">
                   <input
@@ -209,7 +205,7 @@ export function NotificationSettings({
               {/* Emotion Shift Threshold */}
               <div>
                 <label className="text-sm font-medium text-gray-700">
-                  حساسية تغيير العاطفة
+                    
                 </label>
                 <div className="flex items-center gap-4 mt-2">
                   <input
@@ -232,7 +228,7 @@ export function NotificationSettings({
               {/* Anomaly Score Threshold */}
               <div>
                 <label className="text-sm font-medium text-gray-700">
-                  حساسية الشذوذ
+                   
                 </label>
                 <div className="flex items-center gap-4 mt-2">
                   <input
@@ -256,12 +252,12 @@ export function NotificationSettings({
 
           {/* Notification Channels */}
           <Card className="p-6 border border-gray-200">
-            <h3 className="font-semibold text-black mb-4">قنوات الإشعارات</h3>
+            <h3 className="font-semibold text-black mb-4"> </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                 <div className="flex items-center gap-3">
                   <Bell className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">إشعارات داخل التطبيق</span>
+                  <span className="text-sm text-gray-700">  </span>
                 </div>
                 <Switch
                   checked={settings.channels.inApp}
@@ -272,7 +268,7 @@ export function NotificationSettings({
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">البريد الإلكتروني</span>
+                  <span className="text-sm text-gray-700"> </span>
                 </div>
                 <Switch
                   checked={settings.channels.email}
@@ -283,7 +279,7 @@ export function NotificationSettings({
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                 <div className="flex items-center gap-3">
                   <Smartphone className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">رسائل نصية</span>
+                  <span className="text-sm text-gray-700"> </span>
                 </div>
                 <Switch
                   checked={settings.channels.sms}
@@ -294,7 +290,7 @@ export function NotificationSettings({
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                 <div className="flex items-center gap-3">
                   <Volume2 className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">أصوات التنبيهات</span>
+                  <span className="text-sm text-gray-700"> </span>
                 </div>
                 <Switch
                   checked={settings.channels.sound}
@@ -305,7 +301,7 @@ export function NotificationSettings({
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                 <div className="flex items-center gap-3">
                   <Bell className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">إشعارات المتصفح</span>
+                  <span className="text-sm text-gray-700"> </span>
                 </div>
                 <Switch
                   checked={settings.channels.browser}
@@ -317,7 +313,7 @@ export function NotificationSettings({
 
           {/* Frequency */}
           <Card className="p-6 border border-gray-200">
-            <h3 className="font-semibold text-black mb-4">تكرار الإشعارات</h3>
+            <h3 className="font-semibold text-black mb-4"> </h3>
             <div className="space-y-2">
               {(['instant', 'hourly', 'daily', 'weekly'] as const).map(freq => (
                 <label key={freq} className="flex items-center gap-3 p-3 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
@@ -332,10 +328,10 @@ export function NotificationSettings({
                     className="w-4 h-4"
                   />
                   <span className="text-sm text-gray-700">
-                    {freq === 'instant' && 'فوري'}
-                    {freq === 'hourly' && 'كل ساعة'}
-                    {freq === 'daily' && 'يومي'}
-                    {freq === 'weekly' && 'أسبوعي'}
+                    {freq === 'instant' && ''}
+                    {freq === 'hourly' && ' '}
+                    {freq === 'daily' && ''}
+                    {freq === 'weekly' && ''}
                   </span>
                 </label>
               ))}
@@ -345,7 +341,7 @@ export function NotificationSettings({
           {/* Quiet Hours */}
           <Card className="p-6 border border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-black">ساعات الهدوء</h3>
+              <h3 className="font-semibold text-black"> </h3>
               <Switch
                 checked={settings.quietHours.enabled}
                 onCheckedChange={(checked) =>
@@ -360,7 +356,7 @@ export function NotificationSettings({
             {settings.quietHours.enabled && (
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">من</label>
+                  <label className="text-sm font-medium text-gray-700"></label>
                   <input
                     type="time"
                     value={settings.quietHours.start}
@@ -375,7 +371,7 @@ export function NotificationSettings({
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">إلى</label>
+                  <label className="text-sm font-medium text-gray-700"></label>
                   <input
                     type="time"
                     value={settings.quietHours.end}
@@ -390,7 +386,7 @@ export function NotificationSettings({
                 </div>
 
                 <p className="text-xs text-gray-500">
-                  لن تتلقى إشعارات خلال ساعات الهدوء المحددة
+                        
                 </p>
               </div>
             )}
@@ -406,7 +402,7 @@ export function NotificationSettings({
           className="gap-2 bg-black text-white hover:bg-gray-800"
         >
           <Save className="w-4 h-4" />
-          {isSaving ? 'جاري الحفظ...' : 'حفظ الإعدادات'}
+          {isSaving ? ' Save...' : 'Save Settings'}
         </Button>
       </div>
     </div>

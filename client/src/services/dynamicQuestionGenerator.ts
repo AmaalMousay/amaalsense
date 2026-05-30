@@ -30,106 +30,106 @@ export class DynamicQuestionGenerator {
     // 1. Impact-based questions
     if (emotionData?.dominantEmotion === 'fear' || (emotionData?.emotions.fear ?? 0) > 60) {
       questions.push({
-        text: `ما هي التداعيات المباشرة على الاستقرار الاجتماعي والاقتصادي؟`,
+        text: `       `,
         category: 'impact',
         relevance: 95,
-        reasoning: 'مستوى الخوف مرتفع جداً، يتطلب فهم التأثيرات العملية',
+        reasoning: ' Fear     Impact ',
       });
     }
 
     if ((emotionData?.emotions.hope ?? 0) > 50) {
       questions.push({
-        text: `ما هي الفرص الإيجابية التي يمكن استغلالها من هذا الوضع؟`,
+        text: `         `,
         category: 'impact',
         relevance: 85,
-        reasoning: 'وجود مستوى أمل معقول يشير إلى فرص محتملة',
+        reasoning: '       ',
       });
     }
 
     // 2. Future-oriented questions
     if (intelligentResponse && intelligentResponse.length > 500) {
       questions.push({
-        text: `ما هي السيناريوهات المحتملة للأسابيع القادمة؟`,
+        text: `     `,
         category: 'future',
         relevance: 90,
-        reasoning: 'التحليل شامل يسمح بتوقعات مستقبلية دقيقة',
+        reasoning: 'Analysis     ',
       });
 
       questions.push({
-        text: `كيف قد يتطور الوضع إذا استمرت الاتجاهات الحالية؟`,
+        text: `       `,
         category: 'scenarios',
         relevance: 88,
-        reasoning: 'فهم عميق للديناميكيات الحالية يمكن أن يساعد في التنبؤ',
+        reasoning: '        ',
       });
     }
 
     // 3. Solutions-oriented questions
     if ((emotionData?.emotions.anger ?? 0) > 40 || (emotionData?.emotions.fear ?? 0) > 70) {
       questions.push({
-        text: `ما هي الخطوات العملية التي يمكن اتخاذها لتحسين الوضع؟`,
+        text: `        `,
         category: 'solutions',
         relevance: 92,
-        reasoning: 'مستويات عالية من المشاعر السلبية تتطلب حلولاً عملية',
+        reasoning: '   Emotions    ',
       });
     }
 
     // 4. Risk assessment questions
     if ((pipelineMetadata?.confidence ?? 100) < 70) {
       questions.push({
-        text: `ما هي المخاطر المحتملة من سوء التقدير أو عدم اليقين؟`,
+        text: `         `,
         category: 'risks',
         relevance: 80,
-        reasoning: 'مستوى الثقة أقل من المثالي، يتطلب تقييم المخاطر',
+        reasoning: ' Confidence      ',
       });
     }
 
     // 5. Recommendation questions
     if ((emotionData?.emotions.curiosity ?? 0) > 50) {
       questions.push({
-        text: `ما هي أفضل الممارسات الدولية في التعامل مع حالات مماثلة؟`,
+        text: `         `,
         category: 'recommendations',
         relevance: 85,
-        reasoning: 'مستوى فضول مرتفع يشير إلى اهتمام بالتعلم والمقارنة',
+        reasoning: '       ',
       });
     }
 
     // 6. Clarification questions based on analysis gaps
     if (!intelligentResponse || intelligentResponse.length < 300) {
       questions.push({
-        text: `هل هناك جوانب محددة تود التعمق فيها أكثر؟`,
+        text: `       `,
         category: 'clarification',
         relevance: 75,
-        reasoning: 'التحليل قد يحتاج إلى توضيحات إضافية',
+        reasoning: 'Analysis     ',
       });
     }
 
     // 7. Context-specific questions
     const lowerResponse = intelligentResponse?.toLowerCase() || '';
     
-    if (lowerResponse.includes('مصالحة') || lowerResponse.includes('توافق')) {
+    if (lowerResponse.includes('') || lowerResponse.includes('')) {
       questions.push({
-        text: `كيف يمكن تعزيز الحوار والتفاهم بين الأطراف المختلفة؟`,
+        text: `       `,
         category: 'solutions',
         relevance: 88,
-        reasoning: 'الرد يركز على المصالحة والتوافق',
+        reasoning: '    ',
       });
     }
 
-    if (lowerResponse.includes('قانون') || lowerResponse.includes('عدالة')) {
+    if (lowerResponse.includes('') || lowerResponse.includes('')) {
       questions.push({
-        text: `ما دور المؤسسات القانونية والدولية في هذا السياق؟`,
+        text: `       `,
         category: 'impact',
         relevance: 86,
-        reasoning: 'الرد يشير إلى أهمية العدالة والقانون',
+        reasoning: '     ',
       });
     }
 
-    if (lowerResponse.includes('دولي') || lowerResponse.includes('عالمي')) {
+    if (lowerResponse.includes('') || lowerResponse.includes('')) {
       questions.push({
-        text: `ما هي المواقف والضغوط الدولية المؤثرة على الوضع؟`,
+        text: `       `,
         category: 'impact',
         relevance: 84,
-        reasoning: 'الرد يتضمن عناصر دولية مهمة',
+        reasoning: '    ',
       });
     }
 
@@ -149,33 +149,33 @@ export class DynamicQuestionGenerator {
   ): DynamicQuestion {
     const emotionMap: Record<string, { question: string; category: DynamicQuestion['category'] }> = {
       fear: {
-        question: `ما هي الإجراءات الوقائية التي يمكن اتخاذها لتقليل المخاطر؟`,
+        question: `        `,
         category: 'solutions',
       },
       hope: {
-        question: `كيف يمكن تعزيز هذا الشعور بالأمل وتحويله إلى إجراءات فعلية؟`,
+        question: `         `,
         category: 'recommendations',
       },
       anger: {
-        question: `ما هي الطرق البناءة للتعبير عن الاستياء وتحقيق التغيير؟`,
+        question: `        `,
         category: 'solutions',
       },
       sadness: {
-        question: `كيف يمكن تحويل هذا الشعور إلى دافع للإصلاح والتحسين؟`,
+        question: `        `,
         category: 'solutions',
       },
       joy: {
-        question: `كيف يمكن الحفاظ على هذا الزخم الإيجابي وتعميمه؟`,
+        question: `       `,
         category: 'recommendations',
       },
       curiosity: {
-        question: `ما هي الجوانب الأخرى التي تستحق الاستكشاف والتعمق؟`,
+        question: `       `,
         category: 'clarification',
       },
     };
 
     const emotionQuestion = emotionMap[emotion.toLowerCase()] || {
-      question: `ما هي الخطوات التالية المقترحة؟`,
+      question: `    `,
       category: 'recommendations',
     };
 
@@ -183,7 +183,7 @@ export class DynamicQuestionGenerator {
       text: emotionQuestion.question,
       category: emotionQuestion.category,
       relevance: 85,
-      reasoning: `السؤال مستوحى من المشاعر السائدة (${emotion}) والموضوع (${topic})`,
+      reasoning: `   Emotions  (${emotion}) Topic (${topic})`,
     };
   }
 
@@ -193,28 +193,28 @@ export class DynamicQuestionGenerator {
   static generateScenarioQuestions(topic: string, currentState: string): DynamicQuestion[] {
     const scenarios: DynamicQuestion[] = [
       {
-        text: `ماذا لو تطورت الأحداث بشكل أسرع من المتوقع؟`,
+        text: `       `,
         category: 'scenarios',
         relevance: 80,
-        reasoning: 'استكشاف السيناريوهات السريعة',
+        reasoning: '  ',
       },
       {
-        text: `ماذا لو تدخلت أطراف خارجية إضافية؟`,
+        text: `     `,
         category: 'scenarios',
         relevance: 78,
-        reasoning: 'استكشاف تأثير العوامل الخارجية',
+        reasoning: '   ',
       },
       {
-        text: `ماذا لو لم يتم اتخاذ أي إجراء فوري؟`,
+        text: `       `,
         category: 'scenarios',
         relevance: 82,
-        reasoning: 'استكشاف السيناريو الأسوأ',
+        reasoning: '  ',
       },
       {
-        text: `ماذا لو تعاون جميع الأطراف بشكل كامل؟`,
+        text: `      `,
         category: 'scenarios',
         relevance: 85,
-        reasoning: 'استكشاف السيناريو الأفضل',
+        reasoning: '  ',
       },
     ];
 

@@ -1,6 +1,5 @@
 /**
  * Emotion Distribution Chart Component
- * مخطط توزيع العواطف مع رسوم بيانية تفاعلية
  */
 
 import React from 'react';
@@ -21,14 +20,14 @@ interface EmotionDistributionChartProps {
 }
 
 const emotionConfig: Record<string, { color: string; icon: React.ReactNode; arabicName: string }> = {
-  joy: { color: 'text-yellow-400', icon: <Smile className="h-5 w-5" />, arabicName: 'فرح' },
-  sadness: { color: 'text-blue-400', icon: <Frown className="h-5 w-5" />, arabicName: 'حزن' },
-  anger: { color: 'text-red-400', icon: <Angry className="h-5 w-5" />, arabicName: 'غضب' },
-  fear: { color: 'text-purple-400', icon: <Zap className="h-5 w-5" />, arabicName: 'خوف' },
-  surprise: { color: 'text-pink-400', icon: <Heart className="h-5 w-5" />, arabicName: 'مفاجأة' },
-  neutral: { color: 'text-gray-400', icon: <Meh className="h-5 w-5" />, arabicName: 'محايد' },
-  hope: { color: 'text-green-400', icon: <Heart className="h-5 w-5" />, arabicName: 'أمل' },
-  curiosity: { color: 'text-cyan-400', icon: <Zap className="h-5 w-5" />, arabicName: 'فضول' },
+  joy: { color: 'text-yellow-400', icon: <Smile className="h-5 w-5" />, arabicName: 'Joy' },
+  sadness: { color: 'text-blue-400', icon: <Frown className="h-5 w-5" />, arabicName: 'Sadness' },
+  anger: { color: 'text-red-400', icon: <Angry className="h-5 w-5" />, arabicName: 'Anger' },
+  fear: { color: 'text-purple-400', icon: <Zap className="h-5 w-5" />, arabicName: 'Fear' },
+  surprise: { color: 'text-pink-400', icon: <Heart className="h-5 w-5" />, arabicName: 'Surprise' },
+  neutral: { color: 'text-gray-400', icon: <Meh className="h-5 w-5" />, arabicName: 'Neutral' },
+  hope: { color: 'text-green-400', icon: <Heart className="h-5 w-5" />, arabicName: '' },
+  curiosity: { color: 'text-cyan-400', icon: <Zap className="h-5 w-5" />, arabicName: '' },
 };
 
 export function EmotionDistributionChart({ 
@@ -48,11 +47,11 @@ export function EmotionDistributionChart({
 
   // If no emotions provided, use mock data
   const displayData = emotionData.length > 0 ? emotionData : [
-    { emotion: 'joy', value: 35, color: 'text-yellow-400', icon: <Smile className="h-5 w-5" />, arabicName: 'فرح' },
-    { emotion: 'hope', value: 28, color: 'text-green-400', icon: <Heart className="h-5 w-5" />, arabicName: 'أمل' },
-    { emotion: 'curiosity', value: 20, color: 'text-cyan-400', icon: <Zap className="h-5 w-5" />, arabicName: 'فضول' },
-    { emotion: 'neutral', value: 10, color: 'text-gray-400', icon: <Meh className="h-5 w-5" />, arabicName: 'محايد' },
-    { emotion: 'sadness', value: 7, color: 'text-blue-400', icon: <Frown className="h-5 w-5" />, arabicName: 'حزن' },
+    { emotion: 'joy', value: 35, color: 'text-yellow-400', icon: <Smile className="h-5 w-5" />, arabicName: 'Joy' },
+    { emotion: 'hope', value: 28, color: 'text-green-400', icon: <Heart className="h-5 w-5" />, arabicName: '' },
+    { emotion: 'curiosity', value: 20, color: 'text-cyan-400', icon: <Zap className="h-5 w-5" />, arabicName: '' },
+    { emotion: 'neutral', value: 10, color: 'text-gray-400', icon: <Meh className="h-5 w-5" />, arabicName: 'Neutral' },
+    { emotion: 'sadness', value: 7, color: 'text-blue-400', icon: <Frown className="h-5 w-5" />, arabicName: 'Sadness' },
   ];
 
   const maxValue = Math.max(...displayData.map(d => d.value));
@@ -62,14 +61,14 @@ export function EmotionDistributionChart({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Heart className="h-5 w-5 text-pink-500" />
-          توزيع العواطف
+           
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-6">
         {/* Dominant Emotion Display */}
         <div className="p-4 rounded-lg bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20">
-          <p className="text-sm text-muted-foreground mb-2">العاطفة السائدة</p>
+          <p className="text-sm text-muted-foreground mb-2"> </p>
           <div className="flex items-center gap-3">
             <div className={`${emotionConfig[dominantEmotion]?.color || 'text-gray-400'}`}>
               {emotionConfig[dominantEmotion]?.icon || <Meh className="h-8 w-8" />}
@@ -148,11 +147,11 @@ export function EmotionDistributionChart({
         {/* Summary Stats */}
         <div className="grid grid-cols-2 gap-4">
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">عدد العواطف المكتشفة</p>
+            <p className="text-xs text-muted-foreground">  </p>
             <p className="text-2xl font-bold text-purple-400 mt-1">{displayData.length}</p>
           </div>
           <div className="p-3 rounded-lg bg-slate-800/50 text-center">
-            <p className="text-xs text-muted-foreground">تنوع عاطفي</p>
+            <p className="text-xs text-muted-foreground"> </p>
             <p className="text-2xl font-bold text-blue-400 mt-1">
               {((1 - (maxValue / 100)) * 100).toFixed(0)}%
             </p>

@@ -16,10 +16,10 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
   disclaimers = [],
 }) => {
   const getConfidenceLevel = (conf: number) => {
-    if (conf >= 80) return { label: 'عالية جداً', color: 'bg-green-500/20 border-green-500/30', icon: CheckCircle };
-    if (conf >= 60) return { label: 'عالية', color: 'bg-blue-500/20 border-blue-500/30', icon: CheckCircle };
-    if (conf >= 40) return { label: 'متوسطة', color: 'bg-yellow-500/20 border-yellow-500/30', icon: HelpCircle };
-    return { label: 'منخفضة', color: 'bg-red-500/20 border-red-500/30', icon: AlertCircle };
+    if (conf >= 80) return { label: ' ', color: 'bg-green-500/20 border-green-500/30', icon: CheckCircle };
+    if (conf >= 60) return { label: '', color: 'bg-blue-500/20 border-blue-500/30', icon: CheckCircle };
+    if (conf >= 40) return { label: '', color: 'bg-yellow-500/20 border-yellow-500/30', icon: HelpCircle };
+    return { label: '', color: 'bg-red-500/20 border-red-500/30', icon: AlertCircle };
   };
 
   const level = getConfidenceLevel(confidence);
@@ -33,7 +33,7 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Icon className="w-5 h-5" />
-              <span className="font-semibold text-sm">مستوى الثقة</span>
+              <span className="font-semibold text-sm"> Confidence</span>
             </div>
             <span className="text-lg font-bold">{confidence}%</span>
           </div>
@@ -55,7 +55,7 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
           </div>
 
           <p className="text-xs text-gray-300">
-            {level.label} - {confidence < 50 ? 'يُنصح بالحذر من هذه الإجابة' : 'هذه الإجابة موثوقة نسبياً'}
+            {level.label} - {confidence < 50 ? '    ' : '   '}
           </p>
         </div>
       </Card>
@@ -64,7 +64,7 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
       {alternatives.length > 0 && confidence < 70 && (
         <Card className="p-4 bg-purple-900/20 border-purple-500/30">
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-purple-200">بدائل ممكنة</h4>
+            <h4 className="text-sm font-semibold text-purple-200"> </h4>
             <ul className="space-y-1">
               {alternatives.map((alt, idx) => (
                 <li key={idx} className="text-sm text-purple-100 flex items-start gap-2">
@@ -81,7 +81,7 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
       {needsMoreInfo.length > 0 && (
         <Card className="p-4 bg-blue-900/20 border-blue-500/30">
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-blue-200">لتحسين الإجابة، نحتاج إلى معلومات عن</h4>
+            <h4 className="text-sm font-semibold text-blue-200">     </h4>
             <ul className="space-y-1">
               {needsMoreInfo.map((info, idx) => (
                 <li key={idx} className="text-sm text-blue-100 flex items-start gap-2">
@@ -98,7 +98,7 @@ export const ConfidenceIndicator: React.FC<ConfidenceIndicatorProps> = ({
       {disclaimers.length > 0 && (
         <Card className="p-4 bg-orange-900/20 border-orange-500/30">
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-orange-200">تنويهات مهمة</h4>
+            <h4 className="text-sm font-semibold text-orange-200"> </h4>
             <ul className="space-y-1">
               {disclaimers.map((disclaimer, idx) => (
                 <li key={idx} className="text-sm text-orange-100 flex items-start gap-2">

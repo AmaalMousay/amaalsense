@@ -2,10 +2,6 @@
 /**
  * SAVED SEARCHES COMPONENT
  * 
- * البحوث المحفوظة
- * - حفظ الاستعلامات المهمة
- * - إعادة تشغيل البحوث السابقة
- * - إدارة المجلدات والعلامات
  */
 
 import React, { useState, useMemo } from 'react';
@@ -46,67 +42,67 @@ export function SavedSearches({
   const [searches, setSearches] = useState<SavedSearch[]>([
     {
       id: 'search-1',
-      name: 'أخبار الاقتصاد العالمي',
-      query: 'الاقتصاد العالمي الأسواق المالية',
-      description: 'متابعة أخبار الاقتصاد والأسواق المالية العالمية',
-      tags: ['اقتصاد', 'أسواق', 'عالمي'],
-      folder: 'الاقتصاد',
+      name: '  ',
+      query: '   ',
+      description: '     ',
+      tags: ['', '', ''],
+      folder: '',
       createdDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       lastUsed: new Date(Date.now() - 2 * 60 * 60 * 1000),
       resultsCount: 1250,
       isFavorite: true,
       frequency: 'daily',
       filters: {
-        regions: ['عالمي'],
-        emotions: ['قلق', 'فضول']
+        regions: [''],
+        emotions: ['', '']
       }
     },
     {
       id: 'search-2',
-      name: 'التطورات التكنولوجية الحديثة',
-      query: 'تكنولوجيا ذكاء اصطناعي ابتكار',
-      description: 'آخر التطورات في عالم التكنولوجيا والذكاء الاصطناعي',
-      tags: ['تكنولوجيا', 'ذكاء اصطناعي', 'ابتكار'],
-      folder: 'التكنولوجيا',
+      name: '  ',
+      query: '   ',
+      description: '      ',
+      tags: ['', ' ', ''],
+      folder: '',
       createdDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
       lastUsed: new Date(Date.now() - 5 * 60 * 60 * 1000),
       resultsCount: 890,
       isFavorite: true,
       frequency: 'daily',
       filters: {
-        emotions: ['أمل', 'فضول']
+        emotions: ['', '']
       }
     },
     {
       id: 'search-3',
-      name: 'التغيرات المناخية والبيئة',
-      query: 'تغير المناخ البيئة الاحتباس الحراري',
-      description: 'أخبار ودراسات عن تغير المناخ والقضايا البيئية',
-      tags: ['بيئة', 'مناخ', 'استدامة'],
-      folder: 'البيئة',
+      name: '  ',
+      query: '    ',
+      description: '      ',
+      tags: ['', '', ''],
+      folder: '',
       createdDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
       lastUsed: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       resultsCount: 650,
       isFavorite: false,
       frequency: 'weekly',
       filters: {
-        emotions: ['قلق', 'أمل']
+        emotions: ['', '']
       }
     },
     {
       id: 'search-4',
-      name: 'الأخبار السياسية الدولية',
-      query: 'سياسة دولية علاقات دبلوماسية',
-      description: 'تطورات سياسية وعلاقات دولية',
-      tags: ['سياسة', 'دولي', 'دبلوماسية'],
-      folder: 'السياسة',
+      name: '  ',
+      query: '   ',
+      description: '   ',
+      tags: ['', '', ''],
+      folder: '',
       createdDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
       lastUsed: new Date(Date.now() - 30 * 60 * 1000),
       resultsCount: 2100,
       isFavorite: false,
       frequency: 'instant',
       filters: {
-        emotions: ['فضول', 'قلق']
+        emotions: ['', '']
       }
     }
   ]);
@@ -165,7 +161,7 @@ export function SavedSearches({
     const newSearch: SavedSearch = {
       ...search,
       id: `search-${Date.now()}`,
-      name: `${search.name} (نسخة)`,
+      name: `${search.name} ()`,
       createdDate: new Date()
     };
     setSearches([...searches, newSearch]);
@@ -183,14 +179,14 @@ export function SavedSearches({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-black">البحوث المحفوظة</h2>
+          <h2 className="text-2xl font-bold text-black"> </h2>
           <p className="text-sm text-gray-600 mt-1">
-            {searches.length} بحث محفوظ
+            {searches.length}  
           </p>
         </div>
         <Button className="gap-2 bg-black text-white hover:bg-gray-800">
           <Plus className="w-4 h-4" />
-          بحث جديد
+           
         </Button>
       </div>
 
@@ -200,7 +196,7 @@ export function SavedSearches({
           <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
           <input
             type="text"
-            placeholder="ابحث عن البحوث المحفوظة..."
+            placeholder="   ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-black"
@@ -212,12 +208,12 @@ export function SavedSearches({
       <Card className="p-6 border border-gray-200">
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-black mb-3">الفرز</h3>
+            <h3 className="font-semibold text-black mb-3"></h3>
             <div className="flex gap-2 flex-wrap">
               {[
-                { value: 'recent' as const, label: 'الأحدث استخداماً' },
-                { value: 'favorite' as const, label: 'المفضلة' },
-                { value: 'popular' as const, label: 'الأكثر نتائج' }
+                { value: 'recent' as const, label: ' ' },
+                { value: 'favorite' as const, label: '' },
+                { value: 'popular' as const, label: ' ' }
               ].map(({ value, label }) => (
                 <button
                   key={value}
@@ -235,7 +231,7 @@ export function SavedSearches({
           </div>
 
           <div>
-            <h3 className="font-semibold text-black mb-3">المجلدات</h3>
+            <h3 className="font-semibold text-black mb-3"></h3>
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => setFilterFolder(null)}
@@ -245,7 +241,7 @@ export function SavedSearches({
                     : 'bg-gray-100 text-black hover:bg-gray-200'
                 }`}
               >
-                الكل
+                
               </button>
               {folders.map(folder => (
                 <button
@@ -301,13 +297,13 @@ export function SavedSearches({
 
                 {/* Stats */}
                 <div className="flex items-center gap-4 text-xs text-gray-600">
-                  <span>📊 {search.resultsCount} نتيجة</span>
-                  <span>📅 {Math.floor((Date.now() - search.lastUsed.getTime()) / (1000 * 60))} دقيقة</span>
+                  <span>📊 {search.resultsCount} </span>
+                  <span>📅 {Math.floor((Date.now() - search.lastUsed.getTime()) / (1000 * 60))} </span>
                   <span>🔄 {
-                    search.frequency === 'once' ? 'مرة واحدة' :
-                    search.frequency === 'daily' ? 'يومي' :
-                    search.frequency === 'weekly' ? 'أسبوعي' :
-                    'شهري'
+                    search.frequency === 'once' ? ' ' :
+                    search.frequency === 'daily' ? '' :
+                    search.frequency === 'weekly' ? '' :
+                    ''
                   }</span>
                 </div>
               </div>
@@ -318,7 +314,7 @@ export function SavedSearches({
                 <button
                   onClick={() => handleRunSearch(search)}
                   className="p-2 rounded bg-black text-white hover:bg-gray-800 transition"
-                  title="تشغيل البحث"
+                  title=" "
                 >
                   <Play className="w-4 h-4" />
                 </button>
@@ -331,7 +327,7 @@ export function SavedSearches({
                       ? 'bg-yellow-100 text-yellow-600'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
-                  title={search.isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
+                  title={search.isFavorite ? '  ' : '  '}
                 >
                   <Star className="w-4 h-4" />
                 </button>
@@ -340,7 +336,7 @@ export function SavedSearches({
                 <button
                   onClick={() => handleDuplicateSearch(search)}
                   className="p-2 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
-                  title="نسخ البحث"
+                  title=" "
                 >
                   <Copy className="w-4 h-4" />
                 </button>
@@ -348,7 +344,7 @@ export function SavedSearches({
                 {/* Share */}
                 <button
                   className="p-2 rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
-                  title="مشاركة البحث"
+                  title=" "
                 >
                   <Share2 className="w-4 h-4" />
                 </button>
@@ -357,7 +353,7 @@ export function SavedSearches({
                 <button
                   onClick={() => handleDeleteSearch(search.id)}
                   className="p-2 rounded bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 transition"
-                  title="حذف البحث"
+                  title="Delete "
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -371,39 +367,39 @@ export function SavedSearches({
       {sortedSearches.length === 0 && (
         <Card className="p-12 border border-gray-200 text-center">
           <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="font-semibold text-black mb-2">لا توجد بحوث محفوظة</h3>
-          <p className="text-gray-600 mb-4">احفظ البحوث المهمة لإعادة استخدامها لاحقاً</p>
+          <h3 className="font-semibold text-black mb-2">   </h3>
+          <p className="text-gray-600 mb-4">Save     </p>
           <Button className="gap-2 bg-black text-white hover:bg-gray-800">
             <Plus className="w-4 h-4" />
-            إنشاء بحث جديد
+              
           </Button>
         </Card>
       )}
 
       {/* Statistics */}
       <Card className="p-6 border border-gray-200 bg-gray-50">
-        <h3 className="font-semibold text-black mb-4">الإحصائيات</h3>
+        <h3 className="font-semibold text-black mb-4"></h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <p className="text-sm text-gray-600">إجمالي البحوث</p>
+            <p className="text-sm text-gray-600"> </p>
             <p className="text-2xl font-bold text-black mt-1">{searches.length}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">المفضلة</p>
+            <p className="text-sm text-gray-600"></p>
             <p className="text-2xl font-bold text-black mt-1">
               {searches.filter(s => s.isFavorite).length}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">إجمالي النتائج</p>
+            <p className="text-sm text-gray-600"> </p>
             <p className="text-2xl font-bold text-black mt-1">
               {searches.reduce((sum, s) => sum + s.resultsCount, 0).toLocaleString()}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">آخر استخدام</p>
+            <p className="text-sm text-gray-600"> </p>
             <p className="text-sm font-bold text-black mt-1">
-              {Math.floor((Date.now() - Math.max(...searches.map(s => s.lastUsed.getTime()))) / (1000 * 60))} دقيقة
+              {Math.floor((Date.now() - Math.max(...searches.map(s => s.lastUsed.getTime()))) / (1000 * 60))} 
             </p>
           </div>
         </div>

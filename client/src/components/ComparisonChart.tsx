@@ -1,6 +1,5 @@
 /**
  * Comparison Chart Component
- * مخطط المقارنة
  */
 
 import React from 'react';
@@ -20,11 +19,11 @@ interface ComparisonChartProps {
 
 export function ComparisonChart({ title, items, maxValue = 100 }: ComparisonChartProps) {
   const defaultItems: ComparisonItem[] = [
-    { label: 'الشرق الأوسط', value: 68, previousValue: 65 },
-    { label: 'أوروبا', value: 62, previousValue: 60 },
-    { label: 'آسيا', value: 70, previousValue: 68 },
-    { label: 'أمريكا', value: 65, previousValue: 67 },
-    { label: 'أفريقيا', value: 58, previousValue: 55 },
+    { label: ' ', value: 68, previousValue: 65 },
+    { label: '', value: 62, previousValue: 60 },
+    { label: '', value: 70, previousValue: 68 },
+    { label: '', value: 65, previousValue: 67 },
+    { label: '', value: 58, previousValue: 55 },
   ];
 
   const displayItems = items || defaultItems;
@@ -71,19 +70,19 @@ export function ComparisonChart({ title, items, maxValue = 100 }: ComparisonChar
         {/* Summary stats */}
         <div className="mt-6 pt-4 border-t border-gray-300 grid grid-cols-3 gap-4">
           <div className="text-center">
-            <p className="text-xs text-gray-600">الأعلى</p>
+            <p className="text-xs text-gray-600"></p>
             <p className="text-lg font-bold text-black">
               {Math.max(...displayItems.map(i => i.value))}%
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-gray-600">المتوسط</p>
+            <p className="text-xs text-gray-600"></p>
             <p className="text-lg font-bold text-black">
               {Math.round(displayItems.reduce((sum, i) => sum + i.value, 0) / displayItems.length)}%
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-gray-600">الأقل</p>
+            <p className="text-xs text-gray-600"></p>
             <p className="text-lg font-bold text-black">
               {Math.min(...displayItems.map(i => i.value))}%
             </p>

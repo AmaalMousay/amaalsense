@@ -1,6 +1,4 @@
 /**
- * AnalysisSkeleton - مكون تحميل متقدم لصفحات التحليل
- * يعرض هيكل عظمي متحرك يحاكي شكل النتائج الحقيقية
  */
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -12,11 +10,11 @@ const shimmer = "animate-pulse bg-gradient-to-r from-muted/60 via-muted to-muted
 
 // Analysis steps for progress display
 const ANALYSIS_STEPS = [
-  { icon: Globe, labelAr: 'جمع البيانات من المصادر...', labelEn: 'Collecting data from sources...', duration: 3000 },
-  { icon: Newspaper, labelAr: 'تحليل الأخبار والمنشورات...', labelEn: 'Analyzing news and posts...', duration: 5000 },
-  { icon: Brain, labelAr: 'معالجة بالذكاء الاصطناعي...', labelEn: 'AI processing...', duration: 8000 },
-  { icon: BarChart3, labelAr: 'حساب المؤشرات...', labelEn: 'Calculating indices...', duration: 10000 },
-  { icon: Activity, labelAr: 'إعداد التقرير النهائي...', labelEn: 'Preparing final report...', duration: 12000 },
+  { icon: Globe, labelAr: '   ...', labelEn: 'Collecting data from sources...', duration: 3000 },
+  { icon: Newspaper, labelAr: 'Analysis  ...', labelEn: 'Analyzing news and posts...', duration: 5000 },
+  { icon: Brain, labelAr: '  ...', labelEn: 'AI processing...', duration: 8000 },
+  { icon: BarChart3, labelAr: ' ...', labelEn: 'Calculating indices...', duration: 10000 },
+  { icon: Activity, labelAr: '  ...', labelEn: 'Preparing final report...', duration: 12000 },
 ];
 
 interface AnalysisSkeletonProps {
@@ -54,7 +52,7 @@ function FullSkeleton({ topic }: { topic?: string }) {
               <div className="flex items-center gap-3">
                 <Brain className="w-6 h-6 text-primary animate-pulse" />
                 <h2 className="text-lg font-bold text-foreground">
-                  {topic ? `جاري تحليل: ${topic}` : 'جاري التحليل...'}
+                  {topic ? ` Analysis: ${topic}` : ' Analysis...'}
                 </h2>
               </div>
               <div className="flex gap-2">
@@ -305,7 +303,7 @@ export function AnalysisSkeleton({ variant = 'full', topic, showSteps = false }:
             <CardContent className="pt-4 pb-3">
               <div className="flex items-center gap-2 mb-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary/30 border-t-primary" />
-                <span className="text-sm font-medium">جاري التحليل...</span>
+                <span className="text-sm font-medium"> Analysis...</span>
               </div>
               <AnalysisProgress startTime={startTime} />
             </CardContent>

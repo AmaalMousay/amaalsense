@@ -2,10 +2,6 @@
 /**
  * RESPONSE FEEDBACK - CONNECTED VERSION
  * 
- * يعرض تقييمات الاستجابة مع بيانات حقيقية من الخادم
- * - يستخدم explainabilityRouter.getResponseFeedback للحصول على البيانات
- * - يسمح بإرسال تقييمات جديدة
- * - يعرض إحصائيات الجودة
  */
 
 import React, { useMemo } from 'react';
@@ -80,7 +76,7 @@ export function ResponseFeedbackConnected({
 
   const handleSubmitFeedback = () => {
     if (userRating === 0) {
-      alert('يرجى تقييم الاستجابة');
+      alert('  ');
       return;
     }
 
@@ -102,11 +98,11 @@ export function ResponseFeedbackConnected({
   };
 
   const getRatingLabel = (rating: number) => {
-    if (rating >= 4.5) return 'ممتاز جداً';
-    if (rating >= 3.5) return 'ممتاز';
-    if (rating >= 2.5) return 'جيد';
-    if (rating >= 1.5) return 'مقبول';
-    return 'ضعيف';
+    if (rating >= 4.5) return ' ';
+    if (rating >= 3.5) return '';
+    if (rating >= 2.5) return '';
+    if (rating >= 1.5) return '';
+    return '';
   };
 
   if (isLoading) {
@@ -114,7 +110,7 @@ export function ResponseFeedbackConnected({
       <Card className="w-full p-8 bg-white border border-gray-200">
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
-          <span className="text-gray-600">جاري تحميل التقييمات...</span>
+          <span className="text-gray-600">  ...</span>
         </div>
       </Card>
     );
@@ -125,7 +121,7 @@ export function ResponseFeedbackConnected({
       <Card className="w-full p-8 bg-white border border-red-200">
         <div className="flex items-center gap-2 text-red-600">
           <AlertCircle className="w-5 h-5" />
-          <span>خطأ في تحميل التقييمات</span>
+          <span>   </span>
         </div>
       </Card>
     );
@@ -136,11 +132,11 @@ export function ResponseFeedbackConnected({
       {/* Feedback Statistics */}
       {feedbackStats && (
         <Card className="w-full p-6 bg-white border border-gray-200">
-          <h4 className="text-lg font-bold text-gray-900 mb-4">إحصائيات التقييمات</h4>
+          <h4 className="text-lg font-bold text-gray-900 mb-4"> </h4>
 
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">متوسط التقييم</p>
+              <p className="text-sm text-gray-600 mb-1"> </p>
               <div className="flex items-center gap-2">
                 <p className="text-3xl font-bold" style={{ color: getRatingColor(feedbackStats.averageRating) }}>
                   {feedbackStats.averageRating.toFixed(1)}
@@ -150,16 +146,16 @@ export function ResponseFeedbackConnected({
               <p className="text-xs text-gray-500 mt-1">{getRatingLabel(feedbackStats.averageRating)}</p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">عدد التقييمات</p>
+              <p className="text-sm text-gray-600 mb-1"> </p>
               <p className="text-3xl font-bold text-gray-900">{feedbackStats.totalFeedback}</p>
-              <p className="text-xs text-gray-500 mt-1">تقييم</p>
+              <p className="text-xs text-gray-500 mt-1"></p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">الموثوقية</p>
+              <p className="text-sm text-gray-600 mb-1"></p>
               <p className="text-3xl font-bold text-gray-900">
                 {((feedbackStats.accurateCount / feedbackStats.totalFeedback) * 100).toFixed(0)}%
               </p>
-              <p className="text-xs text-gray-500 mt-1">دقيقة</p>
+              <p className="text-xs text-gray-500 mt-1"></p>
             </div>
           </div>
 
@@ -192,17 +188,17 @@ export function ResponseFeedbackConnected({
 
       {/* User Feedback Form */}
       <Card className="w-full p-6 bg-white border border-gray-200">
-        <h4 className="text-lg font-bold text-gray-900 mb-4">قيّم هذه الاستجابة</h4>
+        <h4 className="text-lg font-bold text-gray-900 mb-4">  </h4>
 
         {submitted && (
           <div className="p-4 bg-gray-100 border border-gray-200 rounded-lg mb-4">
-            <p className="text-sm font-semibold text-gray-900">شكراً لتقييمك! تم حفظ تقييمك بنجاح.</p>
+            <p className="text-sm font-semibold text-gray-900"> !  Save  .</p>
           </div>
         )}
 
         {/* Rating Stars */}
         <div className="mb-6">
-          <p className="text-sm text-gray-600 mb-3">التقييم العام:</p>
+          <p className="text-sm text-gray-600 mb-3"> :</p>
           <div className="flex gap-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -218,7 +214,7 @@ export function ResponseFeedbackConnected({
           </div>
           {userRating > 0 && (
             <p className="text-xs text-gray-600 mt-2">
-              تقييمك: {userRating} نجوم - {getRatingLabel(userRating)}
+              : {userRating}  - {getRatingLabel(userRating)}
             </p>
           )}
         </div>
@@ -233,7 +229,7 @@ export function ResponseFeedbackConnected({
                 onChange={(e) => setIsHelpful(e.target.checked ? true : null)}
                 className="w-4 h-4"
               />
-              <span className="text-sm text-gray-700">هذه الاستجابة مفيدة</span>
+              <span className="text-sm text-gray-700">  </span>
             </label>
           </div>
           <div className="flex items-center gap-3">
@@ -244,7 +240,7 @@ export function ResponseFeedbackConnected({
                 onChange={(e) => setIsAccurate(e.target.checked ? true : null)}
                 className="w-4 h-4"
               />
-              <span className="text-sm text-gray-700">هذه الاستجابة دقيقة</span>
+              <span className="text-sm text-gray-700">  </span>
             </label>
           </div>
           <div className="flex items-center gap-3">
@@ -255,18 +251,18 @@ export function ResponseFeedbackConnected({
                 onChange={(e) => setIsComplete(e.target.checked ? true : null)}
                 className="w-4 h-4"
               />
-              <span className="text-sm text-gray-700">هذه الاستجابة شاملة</span>
+              <span className="text-sm text-gray-700">  </span>
             </label>
           </div>
         </div>
 
         {/* Comment */}
         <div className="mb-6">
-          <label className="text-sm text-gray-600 mb-2 block">تعليق (اختياري):</label>
+          <label className="text-sm text-gray-600 mb-2 block"> ():</label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="شارك رأيك حول هذه الاستجابة..."
+            placeholder="    ..."
             className="w-full p-3 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-400"
             rows={3}
           />
@@ -278,14 +274,14 @@ export function ResponseFeedbackConnected({
           disabled={submitFeedbackMutation.isPending || submitted}
           className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-2 rounded-lg transition-all"
         >
-          {submitFeedbackMutation.isPending ? 'جاري الإرسال...' : 'إرسال التقييم'}
+          {submitFeedbackMutation.isPending ? ' ...' : ' '}
         </Button>
       </Card>
 
       {/* Existing Feedback */}
       {existingFeedback.length > 0 && (
         <Card className="w-full p-6 bg-white border border-gray-200">
-          <h4 className="text-lg font-bold text-gray-900 mb-4">تقييمات المستخدمين</h4>
+          <h4 className="text-lg font-bold text-gray-900 mb-4"> </h4>
 
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {existingFeedback.map((feedback, index) => (
@@ -309,12 +305,12 @@ export function ResponseFeedbackConnected({
                   <div className="flex gap-2">
                     {feedback.helpful && (
                       <span className="px-2 py-1 bg-gray-900 text-white text-xs rounded font-semibold">
-                        مفيد
+                        
                       </span>
                     )}
                     {feedback.accurate && (
                       <span className="px-2 py-1 bg-gray-900 text-white text-xs rounded font-semibold">
-                        دقيق
+                        
                       </span>
                     )}
                   </div>
