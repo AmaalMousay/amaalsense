@@ -168,7 +168,7 @@ export const unifiedEngineRouter = router({
       model: z.enum(['general', 'trader', 'journalist', 'researcher', 'decision_maker']).default('general'),
     }))
     .mutation(async ({ input }) => {
-      return await analyzeForSmartAnalysis(input.query, 'system', input.language, input.model);
+      return await analyzeForSmartAnalysis(input.query, 'system');
     }),
 
   /**
