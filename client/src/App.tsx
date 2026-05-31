@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -40,7 +41,8 @@ import FollowedTopics from "./pages/FollowedTopics";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { ApiManagement } from "./pages/ApiManagement";
 import OnboardingTour, { useOnboarding } from "./components/OnboardingTour";
-import { LanguageProvider } from "./contexts/LanguageContext";
+import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
+import { useI18n } from "@/i18n";
 import SearchPageBound from "./pages/SearchPageBound";
 import MapsBound from "./pages/MapsBound";
 import AlertsBound from "./pages/AlertsBound";
@@ -62,8 +64,16 @@ import HistoricalEvents from "./pages/HistoricalEvents";
 import EventComparison from "./pages/EventComparison";
 import EventPrediction from "./pages/EventPrediction";
 
+function LanguageSyncer() {
+  const { language: i18nLang } = useI18n();
+  const { setLanguage: setLang } = useLanguage();
+  React.useEffect(() => {
+    setLang(i18nLang);
+  }, [i18nLang, setLang]);
+  return null;
+}
+
 function Router() {
-  // Routes will be added here
   return (
     <Switch>
       <Route path={"/"} component={Home} />
@@ -148,7 +158,8 @@ function App() {
   return (
     <ErrorBoundary>
       <AnalyticsProvider>
-        <LanguageProvider>
+        <LanguageSyncer />
+          <LanguageProvider>
           <ThemeProvider
             defaultTheme="dark"
             switchable
