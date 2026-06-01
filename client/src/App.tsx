@@ -158,22 +158,22 @@ function App() {
   return (
     <ErrorBoundary>
       <AnalyticsProvider>
-        <LanguageSyncer />
-          <LanguageProvider>
-          <ThemeProvider
+    <LanguageProvider>
+      <LanguageSyncer />
+            <ThemeProvider
             defaultTheme="dark"
             switchable
           >
-            <TooltipProvider>
-              <Toaster />
-              <Router />
-              {showTour && (
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+          {showTour && (
                 <OnboardingTour
                   onComplete={() => setShowTour(false)}
                   language="en"
                 />
               )}
-            </TooltipProvider>
+        </TooltipProvider>
           </ThemeProvider>
         </LanguageProvider>
       </AnalyticsProvider>
