@@ -370,13 +370,13 @@ export default function Home() {
   // Fetch global mood from Unified Engine
   const { data: latestIndices, isLoading: indicesLoading } = trpc.engine.getGlobalMood.useQuery(
     undefined,
-    { refetchInterval: 30000 }
+    { refetchInterval: 15000 }
   );
 
   // Fetch all countries emotion data from Unified Engine
   const { data: countriesData, isLoading: countriesLoading } = trpc.engine.getMapData.useQuery(
     undefined,
-    { refetchInterval: 30000 }
+    { refetchInterval: 15000 }
   );
 
   // Fetch historical data for sparklines (keep using emotion router as it has DB history)

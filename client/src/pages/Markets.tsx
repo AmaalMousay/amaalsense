@@ -16,6 +16,7 @@ import {
 import { LogoIcon } from '@/components/Logo';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 import { UserMenu } from '@/components/UserMenu';
 
 // Types
@@ -240,6 +241,7 @@ export default function Markets() {
   const [, navigate] = useLocation();
   const { user, isAuthenticated } = useAuth();
   const [selectedAsset, setSelectedAsset] = useState<MarketAsset | null>(null);
+  const { data: globalMood } = trpc.engine.getGlobalMood.useQuery(undefined, { refetchInterval: 30000 });
   const [isArabic, setIsArabic] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 

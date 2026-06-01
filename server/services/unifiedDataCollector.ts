@@ -68,7 +68,7 @@ export interface CollectedData {
 const scraper = new WebScraperService();
 
 const dataCache = new Map<string, { data: CollectedData; expiresAt: number }>();
-const CACHE_TTL_MS = 15 * 60 * 1000;
+const CACHE_TTL_MS = 2 * 60 * 1000;
 
 function genId(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
