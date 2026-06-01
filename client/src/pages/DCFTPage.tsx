@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DCFTMetricsCard } from '@/components/DCFTMetricsCard';
 import { DCFTTrendChart } from '@/components/DCFTTrendChart';
 import { DCFTRegionalBreakdown } from '@/components/DCFTRegionalBreakdown';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Download, Share2 } from 'lucide-react';
 import { DCFTResultsDisplay } from '@/components/DCFTResultsDisplay';
