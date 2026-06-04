@@ -1,7 +1,8 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
-import { defineConfig } from "vite";
+import fs from "node:fs";
+import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin

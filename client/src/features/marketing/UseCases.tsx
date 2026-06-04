@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { 
   Building2, Landmark, Newspaper, Heart, TrendingUp, Shield, Target, 
-  BarChart3, Globe, Users, AlertTriangle, CheckCircle, ArrowRight, Brain, Zap
+  BarChart3, Globe, Users, AlertTriangle, CheckCircle, ArrowRight, Brain, Zap, Database
 } from "lucide-react";
 
 interface UseCaseCardProps {

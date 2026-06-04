@@ -7,6 +7,7 @@ import { trpc } from '@/lib/trpc';
 
 export function EventVectorPage() {
   const [filterSentiment, setFilterSentiment] = useState<'all' | 'positive' | 'negative' | 'neutral'>('all');
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Real data from unified engine
   const { data: dcfResults, isLoading, refetch } = trpc.engine.calculateDCF.useQuery(
@@ -90,9 +91,9 @@ export function EventVectorPage() {
     : mockEventVectors.filter(v => v.sentiment === filterSentiment);
 
   const handleRefresh = async () => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
+    setIsRefreshing(true);
+    await refetch();
+    setIsRefreshing(false);
   };
 
   return (
@@ -106,11 +107,11 @@ export function EventVectorPage() {
         <div className="flex gap-2">
           <Button
             onClick={handleRefresh}
-            disabled={isLoading}
+            disabled={isLoading || isRefreshing}
             variant="outline"
             className="gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isLoading || isRefreshing ? 'animate-spin' : ''}`} />
             
           </Button>
           <Button variant="outline" className="gap-2">
