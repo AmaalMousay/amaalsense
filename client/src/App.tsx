@@ -7,6 +7,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import PageErrorBoundary from "./components/PageErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./features/analysis/Home";
+import Analysis from "./features/analysis/Analysis";
 // Analyzer page removed - analysis now works directly from Home page
 // Map, Live, Trends, Weather pages removed - functionality integrated into results pages
 import Theory from "./features/marketing/Theory";
@@ -77,6 +78,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/analysis"} component={Analysis} />
       <Route path={"/system-health"} component={SystemHealth} />
       <Route path={"/source-monitor"} component={SourceMonitor} />
       
