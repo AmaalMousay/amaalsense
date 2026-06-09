@@ -38,6 +38,7 @@ export default function Home() {
             <Link href="/pricing" className="text-sm text-muted-foreground hover:text-white transition-colors">Pricing</Link>
             <Link href="/about" className="text-sm text-muted-foreground hover:text-white transition-colors">About</Link>
             <Link href="/analysis" className="text-sm text-muted-foreground hover:text-white transition-colors">Analysis</Link>
+            <Link href="/emotional-weather" className="text-sm text-muted-foreground hover:text-white transition-colors">Emotional Weather</Link>
           </div>
           <Button variant="outline" size="sm" onClick={() => navigate('/chat')}>
             Try Free
