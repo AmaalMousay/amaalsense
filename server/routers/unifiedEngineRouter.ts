@@ -168,7 +168,18 @@ export const unifiedEngineRouter = router({
       model: z.enum(['general', 'trader', 'journalist', 'researcher', 'decision_maker']).default('general'),
     }))
     .mutation(async ({ input }) => {
-      return await analyzeForSmartAnalysis(input.query, 'system');
+      const ctx = await analyzeForSmartAnalysis(input.query, 'system', input.language, input.model);
+      return {
+        response: ctx.generation?.response || 'Analysis completed',
+        confidence: ctx.analysis?.confidence || 0.7,
+        dominantEmotion: ctx.analysis?.dominantEmotion || 'neutral',
+        emotions: ctx.analysis?.emotions || {},
+        gmi: ctx.dcft?.indices?.gmi || 0,
+        cfi: ctx.dcft?.indices?.cfi || 0,
+        hri: ctx.dcft?.indices?.hri || 0,
+        sourceCount: ctx.collection?.totalItems || 0,
+        totalItems: ctx.collection?.totalItems || 0,
+      };
     }),
 
   /**
