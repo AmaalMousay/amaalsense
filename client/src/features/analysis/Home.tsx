@@ -30,6 +30,23 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950">
       
+      {/* Top Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-md border-b border-white/10">
+        <div className="container mx-auto flex items-center justify-between px-6 h-16">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="font-semibold text-lg">AmalSense</Link>
+            <Link href="/pricing" className="text-sm text-muted-foreground hover:text-white transition-colors">Pricing</Link>
+            <Link href="/about" className="text-sm text-muted-foreground hover:text-white transition-colors">About</Link>
+            <Link href="/analysis" className="text-sm text-muted-foreground hover:text-white transition-colors">Analysis</Link>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => navigate('/chat')}>
+            Try Free
+          </Button>
+        </div>
+      </nav>
+
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950">
+      
       {/* Hero Section */}
       <section className="pt-20 pb-16 px-4">
         <div className="container mx-auto text-center max-w-4xl">
