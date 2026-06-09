@@ -29,7 +29,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950">
-      
       {/* Top Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto flex items-center justify-between px-6 h-16">
@@ -46,8 +45,6 @@ export default function Home() {
         </div>
       </nav>
 
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950">
-      
       {/* Hero Section */}
       <section className="pt-20 pb-16 px-4">
         <div className="container mx-auto text-center max-w-4xl">
